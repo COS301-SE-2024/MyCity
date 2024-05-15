@@ -3,6 +3,8 @@ Team: LanLords
 
 ## 🛠️ Technologies Used
 
+![Next.js](https://static-00.iconduck.com/assets.00/next-js-icon-2048x2048-5dqjgeku.png)
+
 - **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/)
 - **Backend**: [Python](https://www.python.org/)
 - **Database**: [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/)
