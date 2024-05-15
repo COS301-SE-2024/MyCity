@@ -3,7 +3,7 @@ Team: LanLords
 
 ## 🛠️ Technologies Used
 
-<img src="/images/icon_nextjs" alt="Next.js" width="150" height="150" />
+<img src="/images/icon_nextjs.png" alt="Next.js" width="150" height="150" />
 
 - **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/)
 - **Backend**: [Python](https://www.python.org/)
