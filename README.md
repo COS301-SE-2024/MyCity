@@ -3,23 +3,33 @@ Team: LanLords
 
 ## 🛠️ Technologies Used
 
-<img src="/images/icon_nextjs.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_react.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_python.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_amazonrds.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_postgresql.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_aws.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_googlemapsapi.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_lambda.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_github.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_gitlens.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_overleaf.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_markdown.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_jest.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_pytest.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_discord.png" alt="Next.js" width="150" height="150" />
-<img src="/images/icon_googlecalendar.png" alt="Next.js" width="150" height="150" />
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+  <img src="/images/icon_nextjs.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_react.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_python.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_amazonrds.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_postgresql.png" alt="Next.js" width="75" height="75" />
+</div>
 
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+  <img src="/images/icon_aws.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_googlemapsapi.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_lambda.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_github.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_gitlens.png" alt="Next.js" width="75" height="75" />
+</div>
+
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+  <img src="/images/icon_overleaf.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_markdown.png" alt="Next.js" width="75" height="75" />  
+  <img src="/images/icon_jest.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_pytest.png" alt="Next.js" width="75" height="75" />
+  <img src="/images/icon_discord.png" alt="Next.js" width="75" height="75" />
+</div>
+
+<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+  <img src="/images/icon_googlecalendar.png" alt="Next.js" width="75" height="75" />
+</div>
 
 
 - **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/)
