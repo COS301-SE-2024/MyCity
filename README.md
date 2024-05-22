@@ -64,112 +64,77 @@
 # Who are we?
 Team: LanLords
 
-<style>
-  .profile-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-  }
-  .profile {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    margin: 10px;
-    width: calc(50% - 20px);
-    text-align: center;
-    font-family: 'Arial', sans-serif;
-  }
-  .profile img {
-    width: 100%;
-    height: auto;
-  }
-  .profile-info {
-    padding: 15px;
-  }
-  .profile-link {
-    margin: 5px;
-    display: inline-block;
-    text-decoration: none;
-    color: #0077b5;
-  }
-  .profile-link.github {
-    color: #333;
-  }
-</style>
+<div class="profile_container" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
+    <img src="/images/profile_Dominique_Da_Silva.jpg" alt="Profile Image" style="width: 250px; height: auto;">
+    <div style="padding: 15px;">
+      <h3 style="margin: 0;">Dominique Da Silva</h3>
+      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
+      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
+      <div classname="socials" style="display: flex; justify-content: center">
+      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
+      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
+      </div>
+    </div>
+  </div>
 
-<div class="profile-container">
-  <!-- Profile 1 -->
-  <td>
-  <tr>
-  <div class="profile">
-    <img src="/images/profile_Dominique_Da_Silva.jpg" alt="Profile Image">
-    <div class="profile-info">
-      <h3>Dominique Da Silva</h3>
-      <p>Bio: As a seasoned software developer in the university setting, Dominique excels in delivering innovative solutions that generate tangible value.</p>
-      <p>Roles: Project Manager</p>
-      <a href="https://www.linkedin.com/in/DominiqueDaSilva/" class="profile-link">LinkedIn</a>
-      <a href="https://github.com/Dominique-Da-Silva" class="profile-link github">GitHub</a>
-    </div>
-  </div>
-  </tr>
   <!-- Profile 2 -->
-  <tr>
-  <div class="profile">
-    <img src="/images/profile_Matthew_Els.jpg.jpg" alt="Profile Image">
-    <div class="profile-info">
-      <h3>Matthew Els</h3>
-      <p>Bio: Creative designer with a keen eye for aesthetics.</p>
-      <p>Contributions: Led the UI/UX design for our products.</p>
-      <a href="https://www.linkedin.com/in/janesmith" class="profile-link">LinkedIn</a>
-      <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
+
+  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
+    <img src="/images/profile_Matthew_Els.jpg" alt="Profile Image" style="width: 250px; height: auto;">
+    <div style="padding: 15px;">
+      <h3 style="margin: 0;">Matthew Els</h3>
+      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
+      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
+      <div classname="socials" style="display: flex; justify-content: center">
+      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
+      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
+      </div>
     </div>
   </div>
-  </tr>
-  </td>
+
 
   <!-- Profile 3 -->
-  <td>
-  <tr>
-  <div class="profile">
-    <img src="/images/profile_Kyle_Marshall.jpg.jpg" alt="Profile Image">
-    <div class="profile-info">
-      <h3>Kyle Marshall</h3>
-      <p>Bio: Creative designer with a keen eye for aesthetics.</p>
-      <p>Contributions: Led the UI/UX design for our products.</p>
-      <a href="https://www.linkedin.com/in/janesmith" class="profile-link">LinkedIn</a>
-      <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
+  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
+    <img src="/images/profile_Kyle_Marshall.jpg" alt="Profile Image" style="width: 250px; height: auto;">
+    <div style="padding: 15px;">
+      <h3 style="margin: 0;">Kyle Marshall</h3>
+      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
+      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
+      <div classname="socials" style="display: flex; justify-content: center">
+      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
+      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
+      </div>
     </div>
   </div>
-  </tr>
 
   <!-- Profile 4 -->
-  <tr>
-  <div class="profile">
-    <img src="/images/profile_Andinda_Bakainaga.jpg" alt="Profile Image">
-    <div class="profile-info">
-      <h3>Andinda Bakainaga</h3>
-      <p>Bio: Creative designer with a keen eye for aesthetics.</p>
-      <p>Contributions: Led the UI/UX design for our products.</p>
-      <a href="https://www.linkedin.com/in/janesmith" class="profile-link">LinkedIn</a>
-      <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
+  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
+    <img src="/images/profile_Andinda_Bakainaga.jpg.jpg" alt="Profile Image" style="width: 250px; height: auto;">
+    <div style="padding: 15px;">
+      <h3 style="margin: 0;">Andinda Bakainaga</h3>
+      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
+      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
+      <div classname="socials" style="display: flex; justify-content: center">
+      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
+      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
+      </div>
     </div>
   </div>
-  </tr>
-  </td>
 
 <!-- Profile 5 -->
-<td>
-<tr>
-  <div class="profile">
-    <img src="/images/profile_Tino_Gwanyanya.jpg" alt="Profile Image">
-    <div class="profile-info">
-      <h3>Tino Gwanyanya</h3>
-      <p>Bio: Creative designer with a keen eye for aesthetics.</p>
-      <p>Contributions: Led the UI/UX design for our products.</p>
-      <a href="https://www.linkedin.com/in/janesmith" class="profile-link">LinkedIn</a>
-      <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
+  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
+    <img src="/images/profile_Tino_Gwanyanya.jpg.jpg" alt="Profile Image" style="width: 250px; height: auto;">
+    <div style="padding: 15px;">
+      <h3 style="margin: 0;">Tino Gwanyanya</h3>
+      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
+      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
+      <div classname="socials" style="display: flex; justify-content: center">
+      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
+      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
+      </div>
     </div>
   </div>
-  </tr>
-  </td>
 
 </div>
 
