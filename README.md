@@ -97,6 +97,8 @@ Team: LanLords
 
 <div class="profile-container">
   <!-- Profile 1 -->
+  <td>
+  <tr>
   <div class="profile">
     <img src="/images/profile_Dominique_Da_Silva.jpg" alt="Profile Image">
     <div class="profile-info">
@@ -107,8 +109,9 @@ Team: LanLords
       <a href="https://github.com/Dominique-Da-Silva" class="profile-link github">GitHub</a>
     </div>
   </div>
-
+  </tr>
   <!-- Profile 2 -->
+  <tr>
   <div class="profile">
     <img src="/images/profile_Matthew_Els.jpg.jpg" alt="Profile Image">
     <div class="profile-info">
@@ -119,8 +122,12 @@ Team: LanLords
       <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
     </div>
   </div>
+  </tr>
+  </td>
 
   <!-- Profile 3 -->
+  <td>
+  <tr>
   <div class="profile">
     <img src="/images/profile_Kyle_Marshall.jpg.jpg" alt="Profile Image">
     <div class="profile-info">
@@ -131,8 +138,10 @@ Team: LanLords
       <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
     </div>
   </div>
+  </tr>
 
   <!-- Profile 4 -->
+  <tr>
   <div class="profile">
     <img src="/images/profile_Andinda_Bakainaga.jpg" alt="Profile Image">
     <div class="profile-info">
@@ -143,8 +152,12 @@ Team: LanLords
       <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
     </div>
   </div>
+  </tr>
+  </td>
 
 <!-- Profile 5 -->
+<td>
+<tr>
   <div class="profile">
     <img src="/images/profile_Tino_Gwanyanya.jpg" alt="Profile Image">
     <div class="profile-info">
@@ -155,6 +168,8 @@ Team: LanLords
       <a href="https://www.github.com/janesmith" class="profile-link github">GitHub</a>
     </div>
   </div>
+  </tr>
+  </td>
 
 </div>
 
