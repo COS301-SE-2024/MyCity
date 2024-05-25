@@ -4,15 +4,20 @@
   <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
 </p>
 
+<img src="/images/styling_bar.png" alt="Alt text" title="bar">
+
 <p align="center">
-
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square)
-![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square)
-![GitHub License](https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=flat-square)
-![GitHub repo size](https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=flat-square)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/MyCity/.github%2Fworkflows%2Ftest.yml?style=flat-square)
-
+    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square">
+    <img alt="Code_Coverage" src="https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square"> 
+    <img alt="GitHub_License" src="https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=flat-square">
+    <img alt="GitHub_repo_size" src="https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=flat-square">
+    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/MyCity/.github%2Fworkflows%2Ftest.yml?style=flat-square">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues/COS301-SE-2024/MyCity.svg?style=flat-square">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=flat-square">
 </p>
+
+
+<img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
 # Table of contents
 
@@ -142,6 +147,9 @@ Team: LanLords
 
 </div>
 
+
+
+<img src="/images/icon_react" alt="icon" style="width: 50px; height: auto;">
 
 - **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/)
 - **Backend**: [Python](https://www.python.org/)
