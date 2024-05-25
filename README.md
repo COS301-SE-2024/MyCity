@@ -1,7 +1,7 @@
 # MyCity
 
 <p align="center">
-  <img src="/images/logo_MyCity.png" />
+  <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
 </p>
 
 <p align="center">
