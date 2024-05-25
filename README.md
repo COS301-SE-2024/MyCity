@@ -1,6 +1,10 @@
 # MyCity
 
 <p align="center">
+  <img src="/images/logo_MyCity.png" />
+</p>
+
+<p align="center">
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square)
 ![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square)
