@@ -29,5 +29,5 @@ jobs:
           VALIDATE_PYTHON_BLACK: true
           IGNORE_GITIGNORED_FILES: true
           IGNORE_GENERATED_FILES: true
-          DEFAULT_BRANCH: master
+          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
