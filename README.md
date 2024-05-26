@@ -1,4 +1,5 @@
 # MyCity
+# Team LanLords
 
 <p align="center">
   <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
@@ -23,6 +24,7 @@
 # Table of contents
 
 - [MyCity](#mycity)
+- [Team LanLords](#team-lanlords)
 - [Table of contents](#table-of-contents)
 - [Project Overview](#project-overview)
 - [Features (a short summary of the user's functionality)](#features-a-short-summary-of-the-users-functionality)
