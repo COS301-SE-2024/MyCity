@@ -4,15 +4,21 @@
   <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
 </p>
 
+<img src="/images/styling_bar.png" alt="Alt text" title="bar">
+
+
 <p align="center">
-
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square)
-![Codecov](https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square)
-![GitHub License](https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=flat-square)
-![GitHub repo size](https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=flat-square)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/MyCity/.github%2Fworkflows%2Ftest.yml?style=flat-square)
-
+    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square">
+    <img alt="Code_Coverage" src="https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square"> 
+    <img alt="GitHub_License" src="https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=flat-square">
+    <img alt="GitHub_repo_size" src="https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=flat-square">
+    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/MyCity/.github%2Fworkflows%2Ftest.yml?style=flat-square">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues/COS301-SE-2024/MyCity.svg?style=flat-square">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=flat-square">
 </p>
+
+
+<img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
 # Table of contents
 
@@ -51,11 +57,22 @@
 
 # Our Tech stack
 
-<p align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=nextjs,react,figma,python,aws,postgres,md,jest,discord&perline=6&theme=light" />
-  </a>
-</p>
+<!-- <p align="center"> -->
+  | Name                            | Default value      | Description                                                                 |
+  | ------------------------------- | ------------------ | --------------------------------------------------------------------------- |
+  | Frontend                        | <img style="width: 30px; height: auto;" src="/images/icon_react.png" /> <img style="width: 30px; height: auto;" src="/images/icon_nextjs.png" /> | [Next.js](https://nextjs.org/), [React](https://reactjs.org/)                                                          |
+  | Backend                         | <img style="width: 30px; height: auto;" src="/images/icon_python.png" /> | [Python](https://www.python.org/)                          |
+  | Database                        | <img style="width: 30px; height: auto;" src="/images/icon_rds.png" />            | [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/)                                          |
+  | Hosting                         | <img style="width: 30px; height: auto;" src="/images/icon_aws.png" />     | [AWS EC2](https://aws.amazon.com/ec2/)                                                             |
+  | API                             | <img style="width: 30px; height: auto;" src="/images/icon_maps.png" />        | [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/overview)                                                      |
+  | Serverless Computing Platform   | <img style="width: 30px; height: auto;" src="/images/icon_lambda.png" />                  | [AWS Lambda](https://aws.amazon.com/lambda/)                                            |
+  | Version Control                 | <img style="width: 30px; height: auto;" src="/images/icon_github.png" /> <img style="width: 30px; height: auto;" src="/images/icon_gitlens.png" />                  | [Github GitLens](https://www.gitkraken.com/gitlens)                                      |
+  | CI/CD                           | <img style="width: 30px; height: auto;" src="/images/icon_actions.png" />                  | [Github Actions](https://github.com/features/actions)          |
+  | Documentation                   | <img style="width: 30px; height: auto;" src="/images/icon_overleaf.png" /> <img style="width: 30px; height: auto;" src="/images/icon_md.png" />                  | [Overleaf](https://www.overleaf.com/), [Markdown](https://www.markdownguide.org/),[Dokka](https://github.com/Kotlin/dokka)                                                  |
+  | Testing                         | <img style="width: 30px; height: auto;" src="/images/icon_jest.png" /> <img style="width: 30px; height: auto;" src="/images/icon_pytest.png" />                  | [Jest](https://jestjs.io/),[PyTest](https://pytest.org/),[Chalice's Test Client](https://aws.github.io/chalice/topics/testing.html)                                                   |
+  | Team Organisation               | <img style="width: 30px; height: auto;" src="/images/icon_discord.png" /> <img style="width: 30px; height: auto;" src="/images/icon_calendar.png" />                  | [Discord](https://discord.com/),  [Google Calendar](https://calendar.google.com/)                                                 |
+  
+<!-- </p> -->
 
 # The Version control and CI/CD Utilized
 
@@ -143,8 +160,9 @@ Team: LanLords
 </div>
 
 
-- **Frontend**: [Next.js](https://nextjs.org/), [React](https://reactjs.org/)
-- **Backend**: [Python](https://www.python.org/)
+
+<img src="/images/icon_react" alt="icon" style="width: 50px; height: auto;">
+
 - **Database**: [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/)
 - **Hosting**: [AWS EC2](https://aws.amazon.com/ec2/)
 - **API**:
@@ -157,5 +175,4 @@ Team: LanLords
   [Markdown](https://www.markdownguide.org/),[Dokka](https://github.com/Kotlin/dokka)
 - **Testing**:
   [Jest](https://jestjs.io/),[PyTest](https://pytest.org/),[Chalice's Test Client](https://aws.github.io/chalice/topics/testing.html)
-- **Team Organisation**: [Discord](https://discord.com/),
-  [Google Calendar](https://calendar.google.com/)
+- **Team Organisation**: [Discord](https://discord.com/),  [Google Calendar](https://calendar.google.com/)
