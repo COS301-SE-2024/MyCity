@@ -1,4 +1,5 @@
 from chalice import Chalice
+
 from chalicelib.auth.auth_routes import auth_routes
 from chalicelib.issues.issues_routes import issues_routes
 

@@ -1,5 +1,8 @@
 .chalice/deployments/
 
+# IDEs
+.vscode
+
 # virtual environments
 .chalice/venv/
 mycity-venv/
