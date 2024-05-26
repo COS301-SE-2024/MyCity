@@ -2,13 +2,37 @@
 > Clone the repository into WSL. Running the following commands in Windows might lead to problems.
 
 ## Get Started With Frontend
+If you do not have nodejs installed on your WSL machine, follow this tutorial
+
 #### 1. Working directory setup:
 Open a terminal in your IDE and set frontend folder as the current working directory (if you have not already done so):
 ```
 cd frontend
 ```
+
+#### 2. Install Node.js (skip if already installed)
+* To check if it is installed run the following command:
+ ```
+  node -v
+ ```
+
+Steps to install
+
+```
+# installs nvm (Node Version Manager)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# download and install Node.js
+nvm install 20
+
+# verifies the right Node.js version is in the environment
+node -v # should print `v20.13.1`
+
+# verifies the right NPM version is in the environment
+npm -v # should print `10.5.2`
+```
    
-#### 2. Install npm dependencies for the app
+#### 3. Install dependencies for the app
 Install the required dependencies from package.json by running:
 ```
 npm install
@@ -29,6 +53,7 @@ To run tests inside the \__tests\__ folder, execute the following command:
 npm test
 ```
 
+### Frameworks and libraries
 > [!Note]
 > The app is already configured to work with NextUI. Other frameworks and libraries may be added as needed.
 
