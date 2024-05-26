@@ -1,23 +1,35 @@
-name: Super-Linter
+name: Lint Code Base
 
-on: 
+
+on:
   pull_request:
-      branches: [main, release, development]
+    branches: [main, development, release]
+  workflow_dispatch: {}  
 
 jobs:
-  lint:
+  build:
+    
+    name: Lint Code Base
+    
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    permissions:
+      contents: write
+      packages: write
+      statuses: write
 
-    - name: Super-Linter
-      uses: super-linter/super-linter@v6.5.1
-      env:
-        VALIDATE_ALL_CODEBASE: false
-        VALIDATE_PYTHON_BLACK: true
-        IGNORE_GITIGNORED_FILES: true
-        IGNORE_GENERATED_FILES: true
-        DEFAULT_BRANCH: master
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Lint Code Base
+        uses: github/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_PYTHON_BLACK: true
+          IGNORE_GITIGNORED_FILES: true
+          IGNORE_GENERATED_FILES: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
