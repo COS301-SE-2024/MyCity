@@ -3,7 +3,7 @@ from chalice import Chalice
 from chalicelib.auth.auth_routes import auth_routes
 from chalicelib.issues.issues_routes import issues_routes
 
-app = Chalice(app_name='mycity')
+app = Chalice(app_name="mycity")
 
 # handle all requests related to authentication
 app.register_blueprint(auth_routes, "Auth", "/auth")
@@ -12,9 +12,9 @@ app.register_blueprint(auth_routes, "Auth", "/auth")
 app.register_blueprint(issues_routes, "Issues", "/issues")
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return {'hello': 'world'}
+    return {"hello": "world"}
 
 
 # The view function above will return {"hello": "world"}
