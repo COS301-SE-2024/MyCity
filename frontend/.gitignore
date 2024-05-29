@@ -40,3 +40,6 @@ next-env.d.ts
 
 # next.js transpiler
 .swc
+
+# jest & playwright test results
+/test-results
