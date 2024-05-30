@@ -1,9 +1,24 @@
+'use client'
+
+import { Button } from "@nextui-org/react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 dark">
       <h1 className="opacity-15">Hello</h1>
+
+      //The linking or routing examples
+      <Link href="/signup">
+        Go to signup using method 1
+      </Link>
+
+      <Button onClick={() => router.push('/signup')}>Go to signup using method 2</Button>
+
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
         <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
           Get started by adding new routes to&nbsp;
