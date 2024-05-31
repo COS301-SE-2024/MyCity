@@ -29,7 +29,7 @@ export default function Signup() {
 
                 <Tabs aria-label="Signup Options" defaultSelectedKey={1} className="mt-5 flex justify-center w-full" classNames={{
                     tab: "min-w-32 min-h-10",
-                    panel:"w-full",
+                    panel: "w-full",
                     cursor: "w-full bg-orange-200/20 border-3 border-orange-700/40",
                     tabContent: "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md"
                 }} onSelectionChange={handleTabChange}>
