@@ -12,7 +12,7 @@ export default function Signup() {
     const [userType, setUserType] = useState<UserType>("citizen");
 
     return (
-        <main className="flex min-h-screen flex-col items-center p-24 dark">
+        <main className="flex min-h-screen flex-col items-center p-24">
             <RadioGroup color="secondary" value={userType} onChange={(event)=>setUserType(event.target.value as UserType)} className="flex flex-row justify-between">
                 <Radio value="citizen">Citizen</Radio>
                 <Radio value="municipality">Municipality</Radio>

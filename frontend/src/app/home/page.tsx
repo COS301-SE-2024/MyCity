@@ -9,7 +9,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 dark">
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1 className="opacity-15">Hello</h1>
 
       //The linking or routing examples
