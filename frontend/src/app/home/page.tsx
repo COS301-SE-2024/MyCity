@@ -3,7 +3,9 @@
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
+
+import styles from "./styles.module.scss";
 
 export default function Home() {
   const router = useRouter();
@@ -16,6 +18,7 @@ export default function Home() {
       <Link href="/signup">
         Go to signup using method 1
       </Link>
+
 
       <Button onClick={() => router.push('/signup')}>Go to signup using method 2</Button>
 

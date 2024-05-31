@@ -55,4 +55,45 @@ export default function MunicipalitySignup() {
       </form>
     </React.Fragment>
   );
+
+
+
+
+  return (
+    <div className="px-12">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 pt-8">
+        <div>
+          <span className="font-semibold block mb-1">Email/Phone number</span>
+          <Input
+            variant={"bordered"}
+            fullWidth
+            classNames={{
+              inputWrapper: "h-[3em]"
+            }}
+            type="email" placeholder="example@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+
+        <div>
+          <span className="font-semibold block mb-1">Create Password</span>
+
+          <Input
+            variant={"bordered"}
+            fullWidth
+            classNames={{
+              inputWrapper: "h-[3em]"
+            }}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)} />
+        </div>
+
+        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+          Submit
+        </Button>
+        {/* Social Media Sign Up Options */}
+        {/* Render different options based on userType */}
+      </form>
+    </div>
+  );
 }

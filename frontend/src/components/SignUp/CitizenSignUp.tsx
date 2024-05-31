@@ -13,35 +13,40 @@ export default function CitizenSignup() {
   };
 
   return (
-    <React.Fragment>
+    <div className="px-12">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-y-6 pt-8">
+        <div>
+          <span className="font-semibold block mb-1">Email/Phone number</span>
+          <Input
+            variant={"bordered"}
+            fullWidth
+            classNames={{
+              inputWrapper: "h-[3em]"
+            }}
+            type="email" placeholder="example@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
 
-    <form onSubmit={handleSubmit}>
-      <Input
-        className="mt-10"
-        type="email"
-        fullWidth
-        color="primary"
-        size="lg"
-        placeholder="Email Address"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        className="mt-10"
-        type="password"
-        fullWidth
-        color="primary"
-        size="lg"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button className="mt-10" type="submit">
-        Continue
-      </Button>
-      {/* Social Media Sign Up Options */}
-      {/* Render different options based on userType */}
-    </form>
-    </React.Fragment>
+        <div>
+          <span className="font-semibold block mb-1">Create Password</span>
+
+          <Input
+            variant={"bordered"}
+            fullWidth
+            classNames={{
+              inputWrapper: "h-[3em]"
+            }}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)} />
+        </div>
+
+        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+          Submit
+        </Button>
+        {/* Social Media Sign Up Options */}
+        {/* Render different options based on userType */}
+      </form>
+    </div>
   );
 }
