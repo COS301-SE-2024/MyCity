@@ -1,37 +1,43 @@
 'use client'
 
-import React, { useState } from "react";
-import { RadioGroup, Radio } from "@nextui-org/react";
+import React, { Key, useState } from "react";
+import { Tabs, Tab } from "@nextui-org/react";
+
 import CitizenSignup from "@/components/SignUp/CitizenSignUp";
 import MunicipalitySignup from "@/components/SignUp/MunicipalitySignUp";
 import OrganizationSignup from "@/components/SignUp/OrganizationSignUp";
 
-type UserType='citizen'| 'municipality' |'organization'
+
 
 export default function Signup() {
-    const [userType, setUserType] = useState<UserType>("citizen");
+    const headers: string[] = ["Get Connected.", "Take Control.", "Be The Change."];
+    const [currentFormHeader, setCurrentFormHeader] = useState(headers[0]);
+
+
+    const handleTabChange = (key: Key) => {
+        const index = Number(key);
+        setCurrentFormHeader(headers[index]);
+    };
+
 
     return (
-        <main className="flex min-h-screen flex-col items-center p-24">
-            <RadioGroup color="secondary" value={userType} onChange={(event)=>setUserType(event.target.value as UserType)} className="flex flex-row justify-between">
-                <Radio value="citizen">Citizen</Radio>
-                <Radio value="municipality">Municipality</Radio>
-                <Radio value="organization">Organization</Radio>
-            </RadioGroup>
+        <main className="h-screen flex flex-col items-center p-24">
 
-            <div className="mt-20">
-                {userType == "citizen" && (
+            <span className="text-[2.5em] font-bold">{currentFormHeader}</span>
+
+            <Tabs aria-label="Signup Options" defaultSelectedKey={"citizen"} className="mt-5" onSelectionChange={handleTabChange}>
+                <Tab key={0} title="Citizen">
                     <CitizenSignup />
-                )}
+                </Tab>
 
-                {userType == "municipality" && (
+                <Tab key={1} title="Municipality">
                     <MunicipalitySignup />
-                )}
+                </Tab>
 
-                {userType == "organization" && (
+                <Tab key={2} title="Organization">
                     <OrganizationSignup />
-                )}
-            </div>
+                </Tab>
+            </Tabs>
 
         </main>
     );

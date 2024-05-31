@@ -14,7 +14,6 @@ export default function CitizenSignup() {
 
   return (
     <React.Fragment>
-    <h3>Citizen Signup Form</h3>
 
     <form onSubmit={handleSubmit}>
       <Input

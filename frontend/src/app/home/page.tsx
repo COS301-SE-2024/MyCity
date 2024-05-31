@@ -12,7 +12,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1 className="opacity-15">Hello</h1>
 
-      //The linking or routing examples
+      {/* The linking or routing examples */}
       <Link href="/signup">
         Go to signup using method 1
       </Link>
