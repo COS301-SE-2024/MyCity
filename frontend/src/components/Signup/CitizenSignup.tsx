@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 
 
-export default function CitizenSignUp() {
+export default function CitizenSignup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { CircleHelp } from 'lucide-react';
 
 
-export default function ServiceProviderSignIn() {
+export default function ServiceProviderLogin() {
   // const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [password, setPassword] = useState('');

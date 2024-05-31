@@ -3,9 +3,9 @@
 import React, { Key, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 
-import CitizenSignUp from "@/components/SignUp/CitizenSignUp";
-import MunicipalitySignUp from "@/components/SignUp/MunicipalitySignUp";
-import ServiceProviderSignUp from "@/components/SignUp/ServiceProviderSignUp";
+import CitizenSignup from "@/components/Signup/CitizenSignup";
+import MunicipalitySignup from "@/components/Signup/MunicipalitySignup";
+import ServiceProviderSignup from "@/components/Signup/ServiceProviderSignup";
 
 
 
@@ -34,15 +34,15 @@ export default function Signup() {
                     tabContent: "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md"
                 }} onSelectionChange={handleTabChange}>
                     <Tab key={0} title="Citizen">
-                        <CitizenSignUp />
+                        <CitizenSignup />
                     </Tab>
 
                     <Tab key={1} title="Municipality" >
-                        <MunicipalitySignUp />
+                        <MunicipalitySignup />
                     </Tab>
 
                     <Tab key={2} title="Service Provider" >
-                        <ServiceProviderSignUp />
+                        <ServiceProviderSignup />
                     </Tab>
                 </Tabs>
 

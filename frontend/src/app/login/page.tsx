@@ -1,9 +1,9 @@
 'use client'
 
 import { Tabs, Tab } from "@nextui-org/react";
-import CitizenSignIn from "@/components/SignIn/CitizenSignIn";
-import MunicipalitySignIn from "@/components/SignIn/MunicipalitySignIn";
-import ServiceProviderSignIn from "@/components/SignIn/ServiceProviderSignIn";
+import CitizenLogin from "@/components/Login/CitizenLogin";
+import MunicipalityLogin from "@/components/Login/MunicipalityLogin";
+import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
 
 
 export default function Signup() {
@@ -23,15 +23,15 @@ export default function Signup() {
                     tabContent: "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md"
                 }}>
                     <Tab key={0} title="Citizen">
-                        <CitizenSignIn />
+                        <CitizenLogin />
                     </Tab>
 
                     <Tab key={1} title="Municipality" >
-                        <MunicipalitySignIn />
+                        <MunicipalityLogin />
                     </Tab>
 
                     <Tab key={2} title="Service Provider" >
-                        <ServiceProviderSignIn />
+                        <ServiceProviderLogin />
                     </Tab>
                 </Tabs>
 

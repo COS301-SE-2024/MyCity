@@ -3,7 +3,7 @@ import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react
 import { Upload } from 'lucide-react';
 
 
-export default function ServiceProviderSignUp() {
+export default function ServiceProviderSignup() {
   const [email, setEmail] = useState('');
   const [serviceArea, setServiceArea] = useState('');
 

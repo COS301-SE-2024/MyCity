@@ -3,7 +3,7 @@ import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
 
 
-export default function CitizenSignIn() {
+export default function CitizenLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
