@@ -1,0 +1,17 @@
+# IDEs
+.vscode
+
+# virtual environments
+mycity-venv/
+
+# auto-generated python bytecode
+__pycache__/
+
+# env files
+.env
+.env.local
+.env.development
+.env.production
+
+# next.js transpiler
+.swc
