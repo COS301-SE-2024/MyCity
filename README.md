@@ -1,5 +1,4 @@
-# MyCity
-# Team LanLords
+# MyCity by team LAN Lords
 
 <p align="center">
   <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
@@ -24,11 +23,10 @@
 # Table of contents
 
 - [MyCity](#mycity)
-- [Team LanLords](#team-lanlords)
 - [Table of contents](#table-of-contents)
 - [Project Overview](#project-overview)
 - [Features (a short summary of the user's functionality)](#features-a-short-summary-of-the-users-functionality)
-- [Demo Video](#demo-video)
+- [Demo Content](#demo-content)
 - [Documentation](#documentation)
 - [Our Tech stack](#our-tech-stack)
 - [Meet Team LAN Lords](#meet-team-lan-lords)
@@ -52,7 +50,14 @@
 
 # Features (a short summary of the user's functionality)
 
-# Demo Video
+# Demo Content
+<p align="center">
+<a href="">Demo 1</a><br>
+<a href="">Demo 2</a><br>
+<a href="">Demo 3</a><br>
+<a href="">Demo 4</a><br>
+<a href="">Project Day</a><br>
+</p>
 
 # Documentation
 
@@ -68,6 +73,63 @@
 </p>
 
 # Our Tech stack
+
+<p align="center">
+  <a href="https://nextjs.org/">
+    <img style="width: 30px; height: auto;" src="/images/icon_nextjs.png" alt="Next.js" />
+  </a>
+  <a href="https://reactjs.org/">
+    <img style="width: 30px; height: auto;" src="/images/icon_react.png" alt="React" />
+  </a>
+  <a href="https://www.python.org/">
+    <img style="width: 30px; height: auto;" src="/images/icon_python.png" alt="Python" />
+  </a>
+  <a href="https://aws.amazon.com/rds/">
+    <img style="width: 30px; height: auto;" src="/images/icon_rds.png" alt="Amazon RDS for PostgreSQL" />
+  </a>
+  <a href="https://aws.amazon.com/ec2/">
+    <img style="width: 30px; height: auto;" src="/images/icon_aws.png" alt="AWS EC2" />
+  </a>
+  <a href="https://developers.google.com/maps/documentation/javascript/overview">
+    <img style="width: 30px; height: auto;" src="/images/icon_maps.png" alt="Google Maps Javascript API" />
+  </a>
+  <a href="https://aws.amazon.com/lambda/">
+    <img style="width: 30px; height: auto;" src="/images/icon_lambda.png" alt="AWS Lambda" />
+  </a>
+  <a href="https://www.overleaf.com/">
+    <img style="width: 30px; height: auto;" src="/images/icon_overleaf.png" alt="Overleaf" />
+  </a>
+  <a href="https://www.markdownguide.org/">
+    <img style="width: 30px; height: auto;" src="/images/icon_md.png" alt="Markdown" />
+  </a>
+  <a href="https://github.com/Kotlin/dokka">
+    <img style="width: 30px; height: auto;" src="/images/icon_dokka.png" alt="Dokka" />
+  </a>
+  <a href="https://jestjs.io/">
+    <img style="width: 30px; height: auto;" src="/images/icon_jest.png" alt="Jest" />
+  </a>
+  <a href="https://pytest.org/">
+    <img style="width: 30px; height: auto;" src="/images/icon_pytest.png" alt="PyTest" />
+  </a>
+  <a href="https://aws.github.io/chalice/topics/testing.html">
+    <img style="width: 30px; height: auto;" src="/images/icon_chalice.png" alt="Chalice's Test Client" />
+  </a>
+  <a href="https://discord.com/">
+    <img style="width: 30px; height: auto;" src="/images/icon_discord.png" alt="Discord" />
+  </a>
+  <a href="https://calendar.google.com/">
+    <img style="width: 30px; height: auto;" src="/images/icon_calendar.png" alt="Google Calendar" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://www.gitkraken.com/gitlens">
+    <img style="width: 30px; height: auto;" src="/images/icon_gitlens.png" alt="GitLens" />
+  </a>
+  <a href="https://github.com/features/actions">
+    <img style="width: 30px; height: auto;" src="/images/icon_actions.png" alt="Github Actions" />
+  </a>
+</p>
 
 <!-- <p align="center"> -->
   | Name                            | Default value      | Description                                                                 |
