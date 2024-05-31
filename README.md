@@ -102,18 +102,18 @@
   <a href="https://www.markdownguide.org/">
     <img src="/images/icon_md.png" alt="Markdown" style="width: 60px; height: auto;"/>
   </a>
-  <a href="https://github.com/Kotlin/dokka">
+  <!--<a href="https://github.com/Kotlin/dokka">
     <img src="/images/icon_dokka.png" alt="Dokka" style="width: 60px; height: auto;"/>
-  </a>
+  </a>-->
   <a href="https://jestjs.io/">
     <img src="/images/icon_jest.png" alt="Jest" style="width: 60px; height: auto;"/>
   </a>
   <a href="https://pytest.org/">
     <img src="/images/icon_pytest.png" alt="PyTest" style="width: 60px; height: auto;"/>
   </a>
-  <a href="https://aws.github.io/chalice/topics/testing.html">
+  <!--<a href="https://aws.github.io/chalice/topics/testing.html">
     <img src="/images/icon_chalice.png" alt="Chalice's Test Client" style="width: 60px; height: auto;"/>
-  </a>
+  </a>-->
   <a href="https://discord.com/">
     <img src="/images/icon_discord.png" alt="Discord" style="width: 60px; height: auto;"/>
   </a>
