@@ -3,7 +3,7 @@ import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react
 import { Upload } from 'lucide-react';
 
 
-export default function ServiceProviderSignup() {
+export default function ServiceProviderSignUp() {
   const [email, setEmail] = useState('');
   const [serviceArea, setServiceArea] = useState('');
 
@@ -27,28 +27,12 @@ export default function ServiceProviderSignup() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     // Handle the submit action here
-    console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
+    // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
   };
 
   return (
     <div className="px-12">
       <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
-
-
-        {/* <Autocomplete
-          label={<span className="font-semibold text-medium">Province</span>}
-          labelPlacement="outside"
-          placeholder="Gauteng"
-          defaultItems={provinces}
-          fullWidth
-          disableSelectorIconRotation
-          isClearable={false}
-          size={"lg"}
-          menuTrigger={"input"}
-          onChange={(event) => setProvince(event.target.value)}
-        >
-          {(province) => <AutocompleteItem key={province.id}>{province.name}</AutocompleteItem>}
-        </Autocomplete> */}
 
         <Input
           variant={"bordered"}
@@ -60,6 +44,7 @@ export default function ServiceProviderSignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="text"
+          autoComplete="new-company"
           placeholder="Company Name"
           value={email} onChange={(e) => setEmail(e.target.value)}
         />
@@ -88,6 +73,8 @@ export default function ServiceProviderSignup() {
           disableSelectorIconRotation
           isClearable={false}
           size={"lg"}
+          type="text"
+          autoComplete="new-service-area"
           menuTrigger={"input"}
           onChange={(event) => setServiceArea(event.target.value)}
         >
@@ -105,6 +92,7 @@ export default function ServiceProviderSignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="email"
+          autoComplete="new-email"
           placeholder="example@company.com"
           value={email} onChange={(e) => setEmail(e.target.value)}
         />

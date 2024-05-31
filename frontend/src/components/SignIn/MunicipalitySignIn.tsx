@@ -1,36 +1,17 @@
 import React, { useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
-import { Building2 } from 'lucide-react';
+import { Building2, CircleHelp } from 'lucide-react';
 
-export default function MunicipalitySignUp() {
-  const [province, setProvince] = useState('Gauteng');
+export default function MunicipalitySignIn() {
   const [municipality, setMunicipality] = useState('');
-  const [email, setEmail] = useState('');
-  // const [verificationCode, setVerificationCode] = useState('123456');
-  // const [showCode, setShowCode] = useState(false);
+  const [password, setPassword] = useState('');
 
-  type Province = {
-    id: number | string;
-    name: string;
-  };
 
   type Municipality = {
     id: number | string;
     name: string;
   };
 
-
-  const provinces: Province[] = [
-    { id: 0, name: "Gauteng" },
-    { id: 1, name: "KwaZulu-Natal" },
-    { id: 2, name: "Western Cape" },
-    { id: 3, name: "Eastern Cape" },
-    { id: 4, name: "Limpopo" },
-    { id: 5, name: "Mpumalanga" },
-    { id: 6, name: "Northen Cape" },
-    { id: 7, name: "North West" },
-    { id: 8, name: "Free State" }
-  ];
 
   const municipalities: Municipality[] = [
     { id: 0, name: "City of Ekurhuleni" },
@@ -47,25 +28,6 @@ export default function MunicipalitySignUp() {
     <div className="px-12">
       <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
-
-        <Autocomplete
-          label={<span className="font-semibold text-medium">Province</span>}
-          labelPlacement="outside"
-          placeholder="Gauteng"
-          defaultItems={provinces}
-          fullWidth
-          disableSelectorIconRotation
-          isClearable={false}
-          size={"lg"}
-          type="text"
-          autoComplete="new-province"
-          menuTrigger={"input"}
-          onChange={(event) => setProvince(event.target.value)}
-        >
-          {(province) => <AutocompleteItem key={province.id}>{province.name}</AutocompleteItem>}
-        </Autocomplete>
-
-
         <Autocomplete
           label={<span className="font-semibold text-medium">Select Your Municipality</span>}
           labelPlacement="outside"
@@ -74,10 +36,10 @@ export default function MunicipalitySignUp() {
           defaultItems={municipalities}
           disableSelectorIconRotation
           isClearable={false}
-          menuTrigger={"input"}
-          size={"lg"}
           type="text"
           autoComplete="new-municipality"
+          menuTrigger={"input"}
+          size={"lg"}
           onChange={(event) => setMunicipality(event.target.value)}
         >
           {(municipality) =>
@@ -92,18 +54,16 @@ export default function MunicipalitySignUp() {
         <Input
           variant={"bordered"}
           fullWidth
-          label="Email"
+          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">MuniCode<sup>TM</sup> <CircleHelp className="ml-2.5 text-orange-500" size={20} /></span>}
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
-            label: "font-semibold text-medium mt-[-1px]"
           }}
-          type="email"
-          autoComplete="new-email"
-          placeholder="example@gov.com"
-          value={email} onChange={(e) => setEmail(e.target.value)}
-        />
-
+          type="password"
+          autoComplete="new-password"
+          placeholder="Password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)} />
 
         <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
           Submit
