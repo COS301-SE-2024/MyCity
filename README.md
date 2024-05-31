@@ -84,72 +84,55 @@
   <a href="https://www.python.org/">
     <img style="width: 30px; height: auto;" src="/images/icon_python.png" alt="Python" />
   </a>
-  <a href="https://aws.amazon.com/rds/">
+  <!--<a href="https://aws.amazon.com/rds/">
     <img style="width: 30px; height: auto;" src="/images/icon_rds.png" alt="Amazon RDS for PostgreSQL" />
-  </a>
+  </a>-->
   <a href="https://aws.amazon.com/ec2/">
     <img style="width: 30px; height: auto;" src="/images/icon_aws.png" alt="AWS EC2" />
   </a>
-  <a href="https://developers.google.com/maps/documentation/javascript/overview">
+  <!--<a href="https://developers.google.com/maps/documentation/javascript/overview">
     <img style="width: 30px; height: auto;" src="/images/icon_maps.png" alt="Google Maps Javascript API" />
-  </a>
+  </a>-->
   <a href="https://aws.amazon.com/lambda/">
     <img style="width: 30px; height: auto;" src="/images/icon_lambda.png" alt="AWS Lambda" />
   </a>
   <a href="https://www.overleaf.com/">
     <img style="width: 30px; height: auto;" src="/images/icon_overleaf.png" alt="Overleaf" />
   </a>
-  <a href="https://www.markdownguide.org/">
+  <!--<a href="https://www.markdownguide.org/">
     <img style="width: 30px; height: auto;" src="/images/icon_md.png" alt="Markdown" />
-  </a>
-  <a href="https://github.com/Kotlin/dokka">
+  </a>-->
+  <!--<a href="https://github.com/Kotlin/dokka">
     <img style="width: 30px; height: auto;" src="/images/icon_dokka.png" alt="Dokka" />
-  </a>
+  </a>-->
   <a href="https://jestjs.io/">
     <img style="width: 30px; height: auto;" src="/images/icon_jest.png" alt="Jest" />
   </a>
   <a href="https://pytest.org/">
     <img style="width: 30px; height: auto;" src="/images/icon_pytest.png" alt="PyTest" />
   </a>
-  <a href="https://aws.github.io/chalice/topics/testing.html">
+  <!--<a href="https://aws.github.io/chalice/topics/testing.html">
     <img style="width: 30px; height: auto;" src="/images/icon_chalice.png" alt="Chalice's Test Client" />
-  </a>
+  </a>-->
   <a href="https://discord.com/">
     <img style="width: 30px; height: auto;" src="/images/icon_discord.png" alt="Discord" />
   </a>
-  <a href="https://calendar.google.com/">
+  <!--<a href="https://calendar.google.com/">
     <img style="width: 30px; height: auto;" src="/images/icon_calendar.png" alt="Google Calendar" />
-  </a>
+  </a>-->
 </p>
 
 <p align="center">
   <a href="https://www.gitkraken.com/gitlens">
     <img style="width: 30px; height: auto;" src="/images/icon_gitlens.png" alt="GitLens" />
   </a>
-  <a href="https://github.com/features/actions">
+  <!--<a href="https://github.com/features/actions">
     <img style="width: 30px; height: auto;" src="/images/icon_actions.png" alt="Github Actions" />
-  </a>
+  </a>-->
 </p>
 
-<!-- <p align="center"> -->
-  | Name                            | Default value      | Description                                                                 |
-  | ------------------------------- | ------------------ | --------------------------------------------------------------------------- |
-  | Frontend                        | <img style="width: 30px; height: auto;" src="/images/icon_react.png" /> <img style="width: 30px; height: auto;" src="/images/icon_nextjs.png" /> | [Next.js](https://nextjs.org/), [React](https://reactjs.org/)                                                          |
-  | Backend                         | <img style="width: 30px; height: auto;" src="/images/icon_python.png" /> | [Python](https://www.python.org/)                          |
-  | Database                        | <img style="width: 30px; height: auto;" src="/images/icon_rds.png" />            | [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/)                                          |
-  | Hosting                         | <img style="width: 30px; height: auto;" src="/images/icon_aws.png" />     | [AWS EC2](https://aws.amazon.com/ec2/)                                                             |
-  | API                             | <img style="width: 30px; height: auto;" src="/images/icon_maps.png" />        | [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/overview)                                                      |
-  | Serverless Computing Platform   | <img style="width: 30px; height: auto;" src="/images/icon_lambda.png" />                  | [AWS Lambda](https://aws.amazon.com/lambda/)                                            |
-  | Version Control                 | <img style="width: 30px; height: auto;" src="/images/icon_github.png" /> <img style="width: 30px; height: auto;" src="/images/icon_gitlens.png" />                  | [Github GitLens](https://www.gitkraken.com/gitlens)                                      |
-  | CI/CD                           | <img style="width: 30px; height: auto;" src="/images/icon_actions.png" />                  | [Github Actions](https://github.com/features/actions)          |
-  | Documentation                   | <img style="width: 30px; height: auto;" src="/images/icon_overleaf.png" /> <img style="width: 30px; height: auto;" src="/images/icon_md.png" />                  | [Overleaf](https://www.overleaf.com/), [Markdown](https://www.markdownguide.org/),[Dokka](https://github.com/Kotlin/dokka)                                                  |
-  | Testing                         | <img style="width: 30px; height: auto;" src="/images/icon_jest.png" /> <img style="width: 30px; height: auto;" src="/images/icon_pytest.png" />                  | [Jest](https://jestjs.io/),[PyTest](https://pytest.org/),[Chalice's Test Client](https://aws.github.io/chalice/topics/testing.html)                                                   |
-  | Team Organisation               | <img style="width: 30px; height: auto;" src="/images/icon_discord.png" /> <img style="width: 30px; height: auto;" src="/images/icon_calendar.png" />                  | [Discord](https://discord.com/),  [Google Calendar](https://calendar.google.com/)                                                 |
-  
-<!-- </p> -->
-
-
 # Meet Team LAN Lords
+
 | Name and Surname             | Github Profiles                                                                                           | LinkedIn Profile                                 | Roles                  | Bio                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Profile Image                                                                |
 | :--------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | Dominique Da Silva           | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)                                        | Team Lead and Documentation      | Ensuring Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Dominique_Da_Silva.jpg" width="100">                       |
