@@ -134,7 +134,6 @@
   </a>
 </p>
 
-<<<<<<< fix/ReadMeLinks
 # Meet Team LAN Lords
 
 | Name and Surname             | Github Profiles                                                                                           | LinkedIn Profile                                 | Roles                  | Bio                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Profile Image                                                                |
