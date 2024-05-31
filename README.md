@@ -76,59 +76,62 @@
 
 <p align="center">
   <a href="https://nextjs.org/">
-    <img style="width: 30px; height: auto;" src="/images/icon_nextjs.png" alt="Next.js" />
+    <img src="/images/icon_nextjs.png" alt="Next.js" style="width: 60px; height: auto;"/>
   </a>
   <a href="https://reactjs.org/">
-    <img style="width: 30px; height: auto;" src="/images/icon_react.png" alt="React" />
+    <img src="/images/icon_react.png" alt="React" style="width: 60px; height: auto;"/>
   </a>
   <a href="https://www.python.org/">
-    <img style="width: 30px; height: auto;" src="/images/icon_python.png" alt="Python" />
+    <img src="/images/icon_python.png" alt="Python" style="width: 60px; height: auto;"/>
   </a>
-  <!--<a href="https://aws.amazon.com/rds/">
-    <img style="width: 30px; height: auto;" src="/images/icon_rds.png" alt="Amazon RDS for PostgreSQL" />
-  </a>-->
+  <a href="https://aws.amazon.com/rds/">
+    <img src="/images/icon_rds.png" alt="Amazon RDS for PostgreSQL" style="width: 60px; height: auto;"/>
+  </a>
   <a href="https://aws.amazon.com/ec2/">
-    <img style="width: 30px; height: auto;" src="/images/icon_aws.png" alt="AWS EC2" />
+    <img src="/images/icon_aws.png" alt="AWS EC2" style="width: 60px; height: auto;"/>
   </a>
-  <!--<a href="https://developers.google.com/maps/documentation/javascript/overview">
-    <img style="width: 30px; height: auto;" src="/images/icon_maps.png" alt="Google Maps Javascript API" />
-  </a>-->
+  <a href="https://developers.google.com/maps/documentation/javascript/overview">
+    <img src="/images/icon_maps.png" alt="Google Maps Javascript API" style="width: 60px; height: auto;"/>
+  </a>
   <a href="https://aws.amazon.com/lambda/">
-    <img style="width: 30px; height: auto;" src="/images/icon_lambda.png" alt="AWS Lambda" />
+    <img src="/images/icon_lambda.png" alt="AWS Lambda" style="width: 60px; height: auto;"/>
   </a>
   <a href="https://www.overleaf.com/">
-    <img style="width: 30px; height: auto;" src="/images/icon_overleaf.png" alt="Overleaf" />
+    <img src="/images/icon_overleaf.png" alt="Overleaf" style="width: 60px; height: auto;"/>
   </a>
-  <!--<a href="https://www.markdownguide.org/">
-    <img style="width: 30px; height: auto;" src="/images/icon_md.png" alt="Markdown" />
-  </a>-->
-  <!--<a href="https://github.com/Kotlin/dokka">
-    <img style="width: 30px; height: auto;" src="/images/icon_dokka.png" alt="Dokka" />
-  </a>-->
+  <a href="https://www.markdownguide.org/">
+    <img src="/images/icon_md.png" alt="Markdown" style="width: 60px; height: auto;"/>
+  </a>
+  <a href="https://github.com/Kotlin/dokka">
+    <img src="/images/icon_dokka.png" alt="Dokka" style="width: 60px; height: auto;"/>
+  </a>
   <a href="https://jestjs.io/">
-    <img style="width: 30px; height: auto;" src="/images/icon_jest.png" alt="Jest" />
+    <img src="/images/icon_jest.png" alt="Jest" style="width: 60px; height: auto;"/>
   </a>
   <a href="https://pytest.org/">
-    <img style="width: 30px; height: auto;" src="/images/icon_pytest.png" alt="PyTest" />
+    <img src="/images/icon_pytest.png" alt="PyTest" style="width: 60px; height: auto;"/>
   </a>
-  <!--<a href="https://aws.github.io/chalice/topics/testing.html">
-    <img style="width: 30px; height: auto;" src="/images/icon_chalice.png" alt="Chalice's Test Client" />
-  </a>-->
+  <a href="https://aws.github.io/chalice/topics/testing.html">
+    <img src="/images/icon_chalice.png" alt="Chalice's Test Client" style="width: 60px; height: auto;"/>
+  </a>
   <a href="https://discord.com/">
-    <img style="width: 30px; height: auto;" src="/images/icon_discord.png" alt="Discord" />
+    <img src="/images/icon_discord.png" alt="Discord" style="width: 60px; height: auto;"/>
   </a>
-  <!--<a href="https://calendar.google.com/">
-    <img style="width: 30px; height: auto;" src="/images/icon_calendar.png" alt="Google Calendar" />
-  </a>-->
+  <a href="https://calendar.google.com/">
+    <img src="/images/icon_calendar.png" alt="Google Calendar" style="width: 60px; height: auto;"/>
+  </a>
 </p>
 
 <p align="center">
-  <a href="https://www.gitkraken.com/gitlens">
-    <img style="width: 30px; height: auto;" src="/images/icon_gitlens.png" alt="GitLens" />
+  <a href="https://github.com/">
+    <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
   </a>
-  <!--<a href="https://github.com/features/actions">
-    <img style="width: 30px; height: auto;" src="/images/icon_actions.png" alt="Github Actions" />
-  </a>-->
+  <a href="https://www.gitkraken.com/gitlens">
+    <img src="/images/icon_gitlens.png" alt="GitLens" style="width: 60px; height: auto;"/>
+  </a>
+  <a href="https://github.com/features/actions">
+    <img src="/images/icon_actions.png" alt="GitHub Actions" style="width: 60px; height: auto;"/>
+  </a>
 </p>
 
 # Meet Team LAN Lords
