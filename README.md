@@ -31,7 +31,7 @@
 - [Demo Video](#demo-video)
 - [Documentation](#documentation)
 - [Our Tech stack](#our-tech-stack)
-- [Who are we?](#who-are-we)
+- [Meet Team LAN Lords](#meet-team-lan-lords)
 
 
 # Project Overview
@@ -56,6 +56,17 @@
 
 # Documentation
 
+<p align="center">
+<a href="https://docs.google.com/document/d/14rKvx6jj_NwY2N7VSHivkXs2QrL1ifd2jE4sj98GxWM/edit?usp=sharing">System Requirements (SRS)</a><br>
+<a href="">System Architectural Design</a><br>
+<a href="">Testing Guidelines</a><br>
+<a href="">GitHub Strategy</a><br>
+<a href="">Database Requirements and Overview</a><br>
+<a href="">Design Specification</a><br>
+<a href="">Coding Development Guidelines</a><br>
+<a href="">Project Timeline</a><br>
+</p>
+
 # Our Tech stack
 
 <!-- <p align="center"> -->
@@ -76,97 +87,16 @@
 <!-- </p> -->
 
 
-# Who are we?
-Team: LanLords
-
-<div class="profile_container" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
-  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
-    <img src="/images/profile_Dominique_Da_Silva.jpg" alt="Profile Image" style="width: 250px; height: auto;">
-    <div style="padding: 15px;">
-      <h3 style="margin: 0;">Dominique Da Silva</h3>
-      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
-      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
-      <div classname="socials" style="display: flex; justify-content: center">
-      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
-      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Profile 2 -->
-
-  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
-    <img src="/images/profile_Matthew_Els.jpg" alt="Profile Image" style="width: 250px; height: auto;">
-    <div style="padding: 15px;">
-      <h3 style="margin: 0;">Matthew Els</h3>
-      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
-      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
-      <div classname="socials" style="display: flex; justify-content: center">
-      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
-      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
-      </div>
-    </div>
-  </div>
+# Meet Team LAN Lords
+| Name and Surname             | Github Profiles                                                                                           | LinkedIn Profile                                 | Roles                  | Bio                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Profile Image                                                                |
+| :--------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Dominique Da Silva           | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn]([https://www.linkedin.com/in/dominique-da-silva-6019b11a5/](https://www.linkedin.com/in/DominiqueDaSilva/))                                        | Team Lead and Documentation      | Ensuring Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Dominique_Da_Silva.jpg" width="100">                       |
 
 
-  <!-- Profile 3 -->
-  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
-    <img src="/images/profile_Kyle_Marshall.jpg" alt="Profile Image" style="width: 250px; height: auto;">
-    <div style="padding: 15px;">
-      <h3 style="margin: 0;">Kyle Marshall</h3>
-      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
-      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
-      <div classname="socials" style="display: flex; justify-content: center">
-      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
-      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
-      </div>
-    </div>
-  </div>
+| Kyle Marshall                | <a href=""><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn]([https://www.linkedin.com/in/kyle-marshall/](https://www.linkedin.com/in/kyle-marshall23?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app))                                                        | UI Engineer and Documentation              | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function.                                                                             | <img src="/images/profile_Kyle_Marshall.jpg" width="100">                       |
 
-  <!-- Profile 4 -->
-  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
-    <img src="/images/profile_Andinda_Bakainaga.jpg.jpg" alt="Profile Image" style="width: 250px; height: auto;">
-    <div style="padding: 15px;">
-      <h3 style="margin: 0;">Andinda Bakainaga</h3>
-      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
-      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
-      <div classname="socials" style="display: flex; justify-content: center">
-      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
-      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
-      </div>
-    </div>
-  </div>
+| Tino Gwanyanya                | <a href=""><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn]([https://www.linkedin.com/in/kyle-marshall/](https://www.linkedin.com/in/kyle-marshall23?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app))                                                        | Backend and Documentation               | Hi, I am Tino. Learning new technologies is my super power!                                                                            | <img src="/images/profile_Tino_Gwanyanya.jpg" width="100">                       |
 
-<!-- Profile 5 -->
-  <div style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); margin: 10px; width: calc(50% - 20px); text-align: center; font-family: 'Arial', sans-serif;">
-    <img src="/images/profile_Tino_Gwanyanya.jpg.jpg" alt="Profile Image" style="width: 250px; height: auto;">
-    <div style="padding: 15px;">
-      <h3 style="margin: 0;">Tino Gwanyanya</h3>
-      <p style="margin: 5px 0;">Bio: Developer with a passion for creating innovative solutions.</p>
-      <p style="margin: 5px 0;">Contributions: Developed the core system architecture.</p>
-      <div classname="socials" style="display: flex; justify-content: center">
-      <div><a href="https://www.linkedin.com/in/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #0077b5;">LinkedIn</a></div>
-      <div><a href="https://www.github.com/johndoe" style="margin: 5px; display: inline-block; text-decoration: none; color: #333;">GitHub</a></div>
-      </div>
-    </div>
-  </div>
+| Matt                | <a href=""><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn]([https://www.linkedin.com/in/kyle-marshall/](https://www.linkedin.com/in/kyle-marshall23?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app))                                                        | Dev Ops and Documentation              | Hi, I am Matt. I have a passion for networks.                                                                             | <img src="/images/profile_Matthew_Els.jpg" width="100">                       |
 
-</div>
-
-
-
-<img src="/images/icon_react" alt="icon" style="width: 50px; height: auto;">
-
-- **Database**: [Amazon RDS for PostgreSQL](https://aws.amazon.com/rds/)
-- **Hosting**: [AWS EC2](https://aws.amazon.com/ec2/)
-- **API**:
-  [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/overview)
-- **Serverless Computing Platform**:
-  [AWS Lambda](https://aws.amazon.com/lambda/)
-- **Version Control**: [Github GitLens](https://www.gitkraken.com/gitlens)
-- **CI/CD**: [Github Actions](https://github.com/features/actions)
-- **Documentation**: [Overleaf](https://www.overleaf.com/),
-  [Markdown](https://www.markdownguide.org/),[Dokka](https://github.com/Kotlin/dokka)
-- **Testing**:
-  [Jest](https://jestjs.io/),[PyTest](https://pytest.org/),[Chalice's Test Client](https://aws.github.io/chalice/topics/testing.html)
-- **Team Organisation**: [Discord](https://discord.com/),  [Google Calendar](https://calendar.google.com/)
+| Andinda Bakainaga               | <a href=""><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn]([https://www.linkedin.com/in/kyle-marshall/](https://www.linkedin.com/in/kyle-marshall23?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app))                                                        | Backend and Documentation               | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                             | <img src="/images/profile_Andinda_Bakainaga.jpg" width="100">                       |
