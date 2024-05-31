@@ -5,7 +5,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 
 import CitizenSignup from "@/components/SignUp/CitizenSignUp";
 import MunicipalitySignup from "@/components/SignUp/MunicipalitySignUp";
-import OrganizationSignup from "@/components/SignUp/OrganizationSignUp";
+import ServiceProviderSignup from "@/components/SignUp/ServiceProviderSignUp";
 
 
 
@@ -27,7 +27,7 @@ export default function Signup() {
 
                 <span className="text-[2.5em] font-bold">{currentFormHeader}</span>
 
-                <Tabs aria-label="Signup Options" defaultSelectedKey={1} className="mt-5 flex justify-center w-full" classNames={{
+                <Tabs aria-label="Signup Options" defaultSelectedKey={0} className="mt-5 flex justify-center w-full" classNames={{
                     tab: "min-w-32 min-h-10",
                     panel: "w-full",
                     cursor: "w-full bg-orange-200/20 border-3 border-orange-700/40",
@@ -41,8 +41,8 @@ export default function Signup() {
                         <MunicipalitySignup />
                     </Tab>
 
-                    <Tab key={2} title="Organization" >
-                        <OrganizationSignup />
+                    <Tab key={2} title="Service Provider" >
+                        <ServiceProviderSignup />
                     </Tab>
                 </Tabs>
 

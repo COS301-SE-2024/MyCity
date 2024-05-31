@@ -95,7 +95,7 @@ export default function MunicipalitySignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="email"
-          placeholder="municipality@gov.com"
+          placeholder="example@gov.com"
           value={email} onChange={(e) => setEmail(e.target.value)}
         />
 
