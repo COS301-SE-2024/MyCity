@@ -15,7 +15,7 @@ export default function CitizenLogin() {
 
   return (
     <div className="px-12">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form data-testid="loginform" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
         <Input
           variant={"bordered"}

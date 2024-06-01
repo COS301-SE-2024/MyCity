@@ -1,5 +1,5 @@
 import CitizenLogin from "@/components/Login/CitizenLogin";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("CitizenLogin", () => {
 
@@ -24,10 +24,21 @@ describe("CitizenLogin", () => {
         expect(forgotPasswordLink).toBeInTheDocument();
     });
 
+    it("renders a submit button", () => {
+        render(<CitizenLogin />);
+        const submitButton = screen.getByText("Submit");
+        expect(submitButton).toBeInTheDocument();
+    });
 
-    // it("renders a heading", () => {
-    //     const forgotPasswordLink = screen.getByText("Forgot pasword?");
-    //     expect(forgotPasswordLink).toBeInTheDocument();
-    // });
+
+    test("onSubmit function is called after clicking submit button", () => {
+        render(<CitizenLogin />);
+        const mockFunction = jest.fn();
+        const loginForm = screen.getByTestId("loginform");
+        loginForm.addEventListener("submit", mockFunction);
+
+        fireEvent.submit(loginForm)
+        expect(mockFunction).toHaveBeenCalledTimes(1);
+    });
 
 })
