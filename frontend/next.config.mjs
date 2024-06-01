@@ -1,4 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {destDir: "build", output: "export"};
+const nextConfig = {distDir: 'build', output: 'export'};
 
 export default nextConfig;
