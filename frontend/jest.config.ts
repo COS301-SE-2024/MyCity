@@ -15,7 +15,11 @@ const config: Config = {
   moduleNameMapper: {
     // ...
     '^@/components/(.*)$': '<rootDir>/components/$1',
-  }
+  },
+  testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/", "<rootDir>/e2e/", "<rootDir>/tests-examples/"],
+  coverageDirectory:"test-results/jest",
+  collectCoverage: true,
+  // coverageReporters: [['html', {}]],
 }
 
  
