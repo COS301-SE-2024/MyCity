@@ -41,12 +41,12 @@
           run: npm run build
   
         - name: Copy files to the production website with the AWS CLI
-          working-directory: frontend
+          working-directory: frontend/build
           run: |
-            aws s3 sync --delete ${{ env.NEXTJS_DIST }} s3://${{ env.S3_BUCKET }}
+            aws s3 sync . s3://${{ env.S3_BUCKET }} \ --delete
   
         - name: Copy files to the production website with the AWS CLI
-          working-directory: frontend
+          working-directory: frontend/build
           run: |
             aws cloudfront create-invalidation \
               --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
