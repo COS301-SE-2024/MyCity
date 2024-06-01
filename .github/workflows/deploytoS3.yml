@@ -1,7 +1,7 @@
 ---
   name: Build and Deploy NextJS App to S3 and CloudFront
   on:
-    push:
+    pull_request:
       branches: [main]
   # These permissions are needed to interact with GitHub's OIDC Token endpoint.
   permissions:
