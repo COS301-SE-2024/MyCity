@@ -23,7 +23,7 @@
           uses: actions/checkout@v3
   
         - name: Configure AWS credentials from AWS account
-          uses: aws-actions/configure-aws-credentials@v3
+          uses: aws-actions/configure-aws-credentials@v4
           with:
             role-to-assume: ${{secrets.ROLE_TO_ASSUME}}}
             role-session-name: GithubActions
