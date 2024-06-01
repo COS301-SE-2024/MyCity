@@ -29,6 +29,7 @@
             aws-region: ${{ secrets.AWS_REGION }}
   
         - name: Install Dependencies
+          working-directory: frontend
           run: |
             node --version
             npm ci --production
@@ -36,6 +37,7 @@
             npm install @types/node
   
         - name: Build Static Website
+          working-directory: frontend
           run: npm run build
   
         - name: Copy files to the production website with the AWS CLI
