@@ -43,7 +43,8 @@
         - name: Copy files to the production website with the AWS CLI
           working-directory: frontend/build
           run: |
-            aws s3 sync . s3://${{ env.S3_BUCKET }} \ --delete
+            aws s3 sync --delete . s3://${{ env.S3_BUCKET }}
+
   
         - name: Copy files to the production website with the AWS CLI
           working-directory: frontend/build
