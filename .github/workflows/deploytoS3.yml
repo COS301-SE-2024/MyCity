@@ -1,21 +1,49 @@
-name: Deploying to S3 Bucket
-
-on:
-  push:
-    branches:
-    - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks --delete --exclude '.git*/*'
+---
+  name: Build and Deploy NextJS App to S3 and CloudFront
+  on:
+    push:
+      branches: [main]
+  # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+  permissions:
+    id-token: write
+    contents: read
+  jobs:
+    build-and-deploy:
+      name: Build and Deploy
+      runs-on: ubuntu-latest
+  
       env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        NEXTJS_DIST: frontend/build 
         AWS_REGION: ${{secrets.AWS_REGION}}
-        SOURCE_DIR: "public"
+        S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+  
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+  
+        - name: Configure AWS credentials from AWS account
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            role-to-assume: ${{secrets.ROLE_TO_ASSUME}}}
+            aws-region: ${{ env.AWS_REGION }}
+  
+        - name: Install Dependencies
+          run: |
+            node --version
+            npm ci --production
+            npm install @types/react 
+            npm install @types/node
+  
+        - name: Build Static Website
+          run: npm run build
+  
+        - name: Copy files to the production website with the AWS CLI
+          run: |
+            aws s3 sync --delete ${{ env.NEXTJS_DIST }} s3://${{ env.S3_BUCKET }}
+  
+        - name: Copy files to the production website with the AWS CLI
+          run: |
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+              --paths "/*"
