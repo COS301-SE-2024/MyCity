@@ -25,7 +25,7 @@
         - name: Configure AWS credentials from AWS account
           uses: aws-actions/configure-aws-credentials@v4
           with:
-            role-to-assume: ${{secrets.ROLE_TO_ASSUME}}}
+            role-to-assume: ${{secrets.ROLE_TO_ASSUME}}
             role-session-name: GithubActions
             aws-region: ${{ secrets.AWS_REGION }}
             source-account-id: ${{secrets.AWS_ACCOUNT_ID}}
