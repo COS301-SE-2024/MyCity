@@ -28,6 +28,7 @@
             role-to-assume: ${{secrets.ROLE_TO_ASSUME}}}
             role-session-name: GithubActions
             aws-region: ${{ secrets.AWS_REGION }}
+            source-account-id: ${{secrets.AWS_ACCOUNT_ID}}
   
         - name: Install Dependencies
           run: |
