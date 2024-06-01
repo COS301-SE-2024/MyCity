@@ -11,7 +11,8 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.3.6",
+    "@nextui-org/react": "^2.4.1",
+    "@nextui-org/system": "^2.2.1",
     "framer-motion": "^11.2.6",
     "icons": "^1.0.0",
     "lucide-react": "^0.381.0",
