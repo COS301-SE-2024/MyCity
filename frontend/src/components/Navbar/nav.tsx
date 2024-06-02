@@ -1,15 +1,17 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
 // Dynamic import of useRouter to handle SSR
-const useRouter = dynamic(() => import('next/router'), {
+const DynamicRouter = dynamic(() => import('next/router'), {
   ssr: false
 });
 
 const Navbar = () => {
   const [isHome, setIsHome] = useState(false);
   const [routerLoaded, setRouterLoaded] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -39,12 +41,12 @@ const Navbar = () => {
           </div>
         </Link>
         <Link href="/how-it-works">
-          <div className={`text-white hover:text-gray-300 cursor-pointer ${typeof window !== 'undefined' && useRouter().pathname === '/how-it-works' ? 'underline' : ''}`}>
+          <div className={`text-white hover:text-gray-300 cursor-pointer ${typeof window !== 'undefined' && router.pathname === '/how-it-works' ? 'underline' : ''}`}>
             How it works
           </div>
         </Link>
         <Link href="/about">
-          <div className={`text-white hover:text-gray-300 cursor-pointer ${typeof window !== 'undefined' && useRouter().pathname === '/about' ? 'underline' : ''}`}>
+          <div className={`text-white hover:text-gray-300 cursor-pointer ${typeof window !== 'undefined' && router.pathname === '/about' ? 'underline' : ''}`}>
             About us
           </div>
         </Link>
