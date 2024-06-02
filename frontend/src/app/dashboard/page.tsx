@@ -3,28 +3,10 @@
 import Nav from "@/components/Navbar/nav";
 import React, { Key, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
-import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 
 
 export default function Home() {
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    // Dummy data or components for the carousel
-    const carouselItems = [
-        <FaultCardUser key={1} />,
-        <FaultCardUser key={2} />,
-        <FaultCardUser key={3} />,
-        // Add more FaultCardUser components as needed
-    ];
-
-    const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === carouselItems.length - 1 ? 0 : prevIndex + 1));
-    };
-
-    const prevSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? carouselItems.length - 1 : prevIndex - 1));
-    };
 
     const handleTabChange = (key: Key) => {
         const index = Number(key);
