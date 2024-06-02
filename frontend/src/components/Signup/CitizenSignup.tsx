@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
 import Navbar from '../Navbar/nav';
@@ -8,7 +8,7 @@ export default function CitizenSignup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // Handle the submit action here
     console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
@@ -27,6 +27,7 @@ export default function CitizenSignup() {
             inputWrapper: "h-[3em]",
           }}
           type="email"
+          name="email"
           autoComplete="new-email"
           placeholder="example@mail.com"
           value={email}
@@ -41,6 +42,7 @@ export default function CitizenSignup() {
             inputWrapper: "h-[3em]",
           }}
           type="password"
+          name="password"
           autoComplete="new-password"
           placeholder="Password"
           value={password}
@@ -51,6 +53,7 @@ export default function CitizenSignup() {
         Submit
       </div>
     </Link>
+
         {/* Social Media Sign Up Options */}
         {/* Render different options based on userType */}
       </form>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2 } from 'lucide-react';
 
@@ -38,7 +38,7 @@ export default function MunicipalitySignup() {
     { id: 2, name: "City of Tshwane" },
   ];
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // console.log(`Province: ${province}, Municipality: ${municipality}, Verification Code: ${verificationCode}`);
   };
@@ -58,6 +58,7 @@ export default function MunicipalitySignup() {
           isClearable={false}
           size={"lg"}
           type="text"
+          name="province"
           autoComplete="new-province"
           menuTrigger={"input"}
           onChange={(event) => setProvince(event.target.value)}
@@ -77,6 +78,7 @@ export default function MunicipalitySignup() {
           menuTrigger={"input"}
           size={"lg"}
           type="text"
+          name="municipality"
           autoComplete="new-municipality"
           onChange={(event) => setMunicipality(event.target.value)}
         >
@@ -99,13 +101,14 @@ export default function MunicipalitySignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="email"
+          name="email"
           autoComplete="new-email"
           placeholder="example@gov.com"
           value={email} onChange={(e) => setEmail(e.target.value)}
         />
 
 
-        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
           Submit
         </Button>
 
