@@ -1,15 +1,53 @@
 from chalice import Blueprint
 import boto3
 import bcrypt
+import random
 
 auth_routes = Blueprint(__name__)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('users')
 municipality = dynamodb.Table('municipalities')
+companies = dynamodb.Table('private_companies')
+#signup for companies
+@auth_routes.route("/signup/company", methods=["POST"])
+def signup_company():
+    request = auth_routes.current_request
+    data = request.json_body
+    hashed_pass = hashPassword(data.get('password'))
+    if DoesFieldExist(data.get('email'),'email',True):
+        return {"Error":"Email Exists", "message": "Email already exists"}
+    if DoesFieldExist(data.get('company_name'),'company_name',True):
+        return {"Error":"Company name", "message": "Company name already exists"}  
+    if not DoesMunicipalityExist(data.get('municipality')):
+        return {"Error":"Municipality", "message": "Muncipality name doesnt exists"}    
+    municipality.put_item(Item={
+        'company_name' : data.get('company_name') ,
+        'email' : data.get('email'),
+        'quality_rating' : 0,
+        'password' : hashed_pass,
+        'email' : data.get('email'),
+        'Municipality' : data.get('municipality') 
+    })
+    return {"status": "success"}
+    
+
 #signup for municipality
 @auth_routes.route("/signup/municipality", methods=["POST"])
 def signup_municipality():
     request = auth_routes.current_request
+    data = request.json_body
+    municode = CreateMuniCode(data.get('name'))
+    hashed_pass = hashPassword(data.get('password'))
+    while not DoesMunicipalityExist(municode) :
+        municode = CreateMuniCode(data.get('name'))
+        municipality.put_item(Item={
+            'municipality_id' : municode,
+            'name' : data.get('name'),
+            'AuthCode' : "DHBywy434",
+            'password' : hashed_pass,
+            'email' : data.get('email'),
+            'location' : data.get('location') 
+        })
     return {"status": "success"}
  ###signup for User
 @auth_routes.route("/signup/user", methods=["POST"])
@@ -62,14 +100,23 @@ def login_user():
     
 
 
-def DoesFieldExist(data,field):
-    response = table.query(
-        KeyConditionExpression=Key(field).eq(data)
-    )
-    if 'Item' in response:
-        return True
+def DoesFieldExist(data,field,isCompany=False):
+    if isCompany == False :
+        response = table.query(
+            KeyConditionExpression=Key(field).eq(data)
+        )
+        if 'Item' in response:
+            return True
+        else:
+            return False
     else:
-        return False
+        response = companies.query(
+            KeyConditionExpression=Key(field).eq(data)
+        )
+        if 'Item' in response:
+            return True
+        else:
+            return False
     
 def DoesMunicipalityExist(data):
     response = municipality.query(
@@ -83,3 +130,18 @@ def hashPassword(password):
 
 def verify_password( user_password,db_password):
     return bcrypt.checkpw(user_password.encode(), db_password)
+
+def CreateMuniCode(name):
+    firstletter = name[0]
+    k = 0
+    redo = True
+    municode = firstletter
+    while k<2 and redo:
+        randint = random.randint(0,len(name)-1)
+        if(name[randint] != " " and name[randint] != '-' ):
+            municode = municode + name[randint]
+            k+=1
+    for i in range(3):
+        rands = random.randint(0,9)
+        municode += rands
+    return municode
