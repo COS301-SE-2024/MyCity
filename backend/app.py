@@ -38,5 +38,5 @@ def index():
 #     # We'll echo the json body back to the user in a 'user' key.
 #     return {'user': user_as_json}
 #
-# See the README documentation for more examples. 
+# See the README documentation for more examples.
 #
