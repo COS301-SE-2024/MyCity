@@ -1,29 +1,25 @@
-import CitizenLogin from "@/components/Login/CitizenLogin";
+import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
 import { fireEvent, render, screen } from "@testing-library/react";
 
-describe("CitizenLogin", () => {
+describe("ServiceProviderLogin", () => {
 
 
-    it("renders an email input", () => {
-        render(<CitizenLogin />);
-        const emailInput = screen.getByLabelText("Email");
-
-        expect(emailInput).toBeInTheDocument();
-        expect(emailInput).toHaveAttribute("type", "email");
+    it("renders a company name input", () => {
+        render(<ServiceProviderLogin />);
+        const companyInput = screen.getByPlaceholderText("e.g Plumbing");
+        expect(companyInput).toBeInTheDocument();
     });
 
     it("renders a password input", () => {
-        render(<CitizenLogin />);
-        const passwordInput = screen.getByLabelText("Password");
-
-        expect(passwordInput).toBeInTheDocument();
+        render(<ServiceProviderLogin />);
+        const passwordInput = screen.getByPlaceholderText("Company Password");
         expect(passwordInput).toHaveAttribute("type", "password");
     });
 
 
     it("renders a forgot password link", () => {
-        render(<CitizenLogin />);
-        // const forgotPasswordLink = screen.getByText("Forgot password?");
+        render(<ServiceProviderLogin />);
+
         const forgotPasswordLink = screen.getByRole("link");
 
         expect(forgotPasswordLink).toBeInTheDocument();
@@ -31,8 +27,9 @@ describe("CitizenLogin", () => {
     });
 
     it("renders a submit button", () => {
-        render(<CitizenLogin />);
-        const submitButton = screen.getByRole("button", {name:/submit/i});
+        render(<ServiceProviderLogin />);
+
+        const submitButton = screen.getByRole("button", { name: /submit/i });
 
         expect(submitButton).toBeInTheDocument();
         expect(submitButton).toHaveTextContent("Submit");
@@ -40,9 +37,9 @@ describe("CitizenLogin", () => {
 
 
     test("onSubmit function is called after clicking submit button", () => {
-        render(<CitizenLogin />);
+        render(<ServiceProviderLogin />);
         const mockFunction = jest.fn();
-        const loginForm = screen.getByTestId("citizen-login-form");
+        const loginForm = screen.getByTestId("service-provider-login-form");
         loginForm.addEventListener("submit", mockFunction);
 
         fireEvent.submit(loginForm)

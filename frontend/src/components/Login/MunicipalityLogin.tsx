@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2, CircleHelp } from 'lucide-react';
 
@@ -19,14 +19,14 @@ export default function MunicipalityLogin() {
     { id: 2, name: "City of Tshwane" },
   ];
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // console.log(`Province: ${province}, Municipality: ${municipality}, Verification Code: ${verificationCode}`);
   };
 
   return (
     <div className="px-12">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form data-testid="municipality-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
         <Autocomplete
           label={<span className="font-semibold text-medium">Select Your Municipality</span>}
@@ -37,6 +37,7 @@ export default function MunicipalityLogin() {
           disableSelectorIconRotation
           isClearable={false}
           type="text"
+          name="municipality"
           autoComplete="new-municipality"
           menuTrigger={"input"}
           size={"lg"}
@@ -60,12 +61,13 @@ export default function MunicipalityLogin() {
             inputWrapper: "h-[3em]",
           }}
           type="password"
+          name="password"
           autoComplete="new-password"
           placeholder="Password"
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 
-        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
           Submit
         </Button>
 

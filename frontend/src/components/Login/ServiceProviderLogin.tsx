@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { CircleHelp } from 'lucide-react';
@@ -22,7 +22,7 @@ export default function ServiceProviderLogin() {
   ];
 
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
@@ -30,7 +30,7 @@ export default function ServiceProviderLogin() {
 
   return (
     <div className="px-12">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form data-testid="service-provider-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
         <Autocomplete
           label={<span className="font-semibold text-medium">Company Name</span>}
@@ -42,6 +42,7 @@ export default function ServiceProviderLogin() {
           isClearable={false}
           size={"lg"}
           type="text"
+          name="company"
           autoComplete="new-company"
           menuTrigger={"input"}
           onChange={(event) => setCompany(event.target.value)}
@@ -58,6 +59,7 @@ export default function ServiceProviderLogin() {
             inputWrapper: "h-[3em]",
           }}
           type="password"
+          name="password"
           autoComplete="new-password"
           placeholder="Company Password"
           value={password}
@@ -65,7 +67,7 @@ export default function ServiceProviderLogin() {
 
         <Link href={"/forgot-password"} className="text-orange-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
-        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
           Submit
         </Button>
         {/* Social Media Sign Up Options */}
