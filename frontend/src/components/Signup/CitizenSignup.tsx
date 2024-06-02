@@ -1,5 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
+import Link from 'next/link';
+import Navbar from '../Navbar/nav';
 
 
 export default function CitizenSignup() {
@@ -46,9 +48,12 @@ export default function CitizenSignup() {
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 
-        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
-          Submit
-        </Button>
+<Link href="/dashboard">
+      <div className="bg-orange-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-orange-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
+        Submit
+      </div>
+    </Link>
+
         {/* Social Media Sign Up Options */}
         {/* Render different options based on userType */}
       </form>
