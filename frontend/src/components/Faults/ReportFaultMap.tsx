@@ -1,4 +1,3 @@
-
 import { Loader } from '@googlemaps/js-api-loader';
 import { MapPin } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -17,7 +16,7 @@ export default function ReportFaultMap({ className }: ReportFaultMapProps) {
 
     const loadMap = () => {
         const loader = new Loader({
-            apiKey: "AIzaSyD4Sj_iQXC4UckhG-EUTxuL2zwMp_oR22Y",
+            apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
             version: "weekly",
         });
 
