@@ -14,3 +14,4 @@ def create_ticket_route():
 def delete_ticket_route(ticket_id):
     response = delete_ticket(ticket_id)
     return response
+    
