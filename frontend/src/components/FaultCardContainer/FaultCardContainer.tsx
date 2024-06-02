@@ -6,37 +6,37 @@ const FaultCardContainer = () => {
     const itemsPerPage = 4; // Number of items to display per page
     const totalItems = 15; // Total number of items (you should calculate this dynamically in your application)
 
-    // Example data for cards
     const cardData = [
         {
             title: 'Pothole 1',
             address: '271 Berry Street, Birmingham',
-            arrowCount: '10.8k',
-            commentCount: '4.9k',
-            viewCount: '873',
+            arrowCount: 10800,
+            commentCount: 4900,
+            viewCount: 873,
         },
         {
             title: 'Pothole 2',
             address: '55 Elm Avenue, Manchester',
-            arrowCount: '8.5k',
-            commentCount: '3.2k',
-            viewCount: '1.2k',
+            arrowCount: 8500,
+            commentCount: 3200,
+            viewCount: 1200,
         },
         {
             title: 'Pothole 3',
             address: '123 Oak Lane, London',
-            arrowCount: '12.3k',
-            commentCount: '6.7k',
-            viewCount: '2.3k',
+            arrowCount: 12300,
+            commentCount: 6700,
+            viewCount: 2300,
         },
         {
             title: 'Pothole 4',
             address: '789 Maple Road, Liverpool',
-            arrowCount: '9.1k',
-            commentCount: '5.4k',
-            viewCount: '1.8k',
+            arrowCount: 9100,
+            commentCount: 5400,
+            viewCount: 1800,
         },
     ];
+    
 
     // Function to handle displaying the next set of items
     const showNextItems = () => {

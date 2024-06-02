@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { FaArrowUp, FaEye, FaCommentAlt } from 'react-icons/fa';
 
-const FaultCardUser = ({ title, address, arrowCount, commentCount, viewCount }) => {
+interface FaultCardUserProps {
+    title: string;
+    address: string;
+    arrowCount: number;
+    commentCount: number;
+    viewCount: number;
+}
+
+const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCount, commentCount, viewCount }) => {
     // Example state for dynamic colors on icons
     const [arrowColor, setArrowColor] = useState('black');
     const [commentColor, setCommentColor] = useState('black');
@@ -19,29 +27,36 @@ const FaultCardUser = ({ title, address, arrowCount, commentCount, viewCount }) 
                 <p className="text-gray-700 text-base">{address}</p>
             </div>
             <div className="px-6 pt-4 pb-2 flex justify-between">
-                <div className="flex items-center">
-                    <FaArrowUp
+                <div className="flex flex-col items-center">
+                    <div
                         className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
                         style={{ color: arrowColor }}
                         onClick={handleArrowClick}
-                    />
-                    <span className="ml-2 text-gray-700">{arrowCount}</span>
+                    >
+                        <FaArrowUp />
+                    </div>
+                    <span className="mt-2 text-gray-700">{arrowCount}</span>
                 </div>
-                <div className="flex items-center">
-                    <FaCommentAlt
+
+                <div className="flex flex-col items-center">
+                    <div
                         className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
                         style={{ color: commentColor }}
                         onClick={handleCommentClick}
-                    />
-                    <span className="ml-2 text-gray-700">{commentCount}</span>
+                    >
+                        <FaCommentAlt />
+                    </div>
+                    <span className="mt-2 text-gray-700">{commentCount}</span>
                 </div>
-                <div className="flex items-center">
-                    <FaEye
+                <div className="flex flex-col items-center">
+                    <div
                         className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
                         style={{ color: eyeColor }}
                         onClick={handleEyeClick}
-                    />
-                    <span className="ml-2 text-gray-700">{viewCount}</span>
+                    >
+                        <FaEye />
+                    </div>
+                    <span className="mt-2 text-gray-700">{viewCount}</span>
                 </div>
             </div>
         </div>
