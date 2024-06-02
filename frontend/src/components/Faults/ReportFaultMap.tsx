@@ -25,8 +25,8 @@ export default function ReportFaultMap({ className }: ReportFaultMapProps) {
         loader.importLibrary("maps").then(async () => {
             const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
             map = new Map(mapRef.current!, {
-                center: { lat: -34.397, lng: 150.644 },
-                zoom: 8,
+                center: { lat: -25.75442, lng: 28.23142 },
+                zoom: 16,
                 disableDefaultUI: true
 
             });
