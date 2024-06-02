@@ -12,6 +12,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^1.16.6",
     "@nextui-org/react": "^2.4.1",
     "@nextui-org/system": "^2.2.1",
     "framer-motion": "^11.2.6",
