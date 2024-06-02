@@ -16,7 +16,7 @@ export default function ReportFaultMap({ className }: ReportFaultMapProps) {
 
     const loadMap = () => {
         const loader = new Loader({
-            apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+            apiKey: process.env.GOOGLE_MAPS_API_KEY!,
             version: "weekly",
         });
 
@@ -37,7 +37,7 @@ export default function ReportFaultMap({ className }: ReportFaultMapProps) {
     useRunOnce({
         fn: () => {
             console.log("Runs once per session");
-            // loadMap();
+            loadMap();
         },
         // Session storage key ensures that the callback only runs once per session.
         // sessionKey: "changeMeAndFnWillRerun"
