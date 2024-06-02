@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Upload } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export default function ServiceProviderSignup() {
   ];
 
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
@@ -44,6 +44,7 @@ export default function ServiceProviderSignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="text"
+          name="company"
           autoComplete="new-company"
           placeholder="Company Name"
           value={email} onChange={(e) => setEmail(e.target.value)}
@@ -74,6 +75,7 @@ export default function ServiceProviderSignup() {
           isClearable={false}
           size={"lg"}
           type="text"
+          name="service-area"
           autoComplete="new-service-area"
           menuTrigger={"input"}
           onChange={(event) => setServiceArea(event.target.value)}
@@ -92,13 +94,14 @@ export default function ServiceProviderSignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="email"
+          name="email"
           autoComplete="new-email"
           placeholder="example@company.com"
           value={email} onChange={(e) => setEmail(e.target.value)}
         />
 
 
-        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
           Submit
         </Button>
 
