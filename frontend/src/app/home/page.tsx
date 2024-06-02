@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div>
+    <div style={{ backgroundImage: 'url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")' }}>
       <Nav />
       <div className="h-[30vh] flex items-center justify-center"></div>
       <div className='container mx-auto p-2'>
