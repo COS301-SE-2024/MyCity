@@ -1,0 +1,44 @@
+name: Run Tests
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+env:
+  CI: true
+
+jobs:
+  frontend_tests:
+    name: Run Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Run Unit & Integration tests
+        working-directory: frontend
+        run: npm test
+
+      # - name: Run End-to-End tests
+      #   run: npm run test:e2e
+
+    # backend_tests:
+    # name: Run Backend Tests
+    # runs-on: ubuntu-latest
+
+    # steps:
+    #   - name: Checkout repository
+    #     uses: actions/checkout@v4
+
