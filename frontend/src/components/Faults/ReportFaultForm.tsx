@@ -85,7 +85,7 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
                         />
 
                         <div>
-                            <span className="font-semibold text-medium">Fault type <sup className="text-blue-500">*</sup></span>
+                            <span className="font-semibold text-medium">Address <sup className="text-blue-500">*</sup></span>
 
                             <div className="flex flex-col gap-y-5">
 
