@@ -1,7 +1,8 @@
 from chalice import Blueprint
 import boto3
-import bcrypt
+import hashlib
 import random
+from boto3.dynamodb.conditions import Key
 
 auth_routes = Blueprint(__name__)
 dynamodb = boto3.resource('dynamodb')
@@ -14,10 +15,8 @@ def signup_company():
     request = auth_routes.current_request
     data = request.json_body
     hashed_pass = hashPassword(data.get('password'))
-    if DoesFieldExist(data.get('email'),'email',True):
-        return {"Error":"Email Exists", "message": "Email already exists"}
-    if DoesFieldExist(data.get('company_name'),'company_name',True):
-        return {"Error":"Company name", "message": "Company name already exists"}  
+    if DoesFieldExist(data.get('compay_name'),'company_name',data.get('email'),'email',True):
+        return {"Error":"Email Exists", "message": "Email already exists"}  
     if not DoesMunicipalityExist(data.get('municipality')):
         return {"Error":"Municipality", "message": "Muncipality name doesnt exists"}    
     municipality.put_item(Item={
@@ -59,36 +58,32 @@ def signup_user():
         data = request.json_body
         hashed_pass = hashPassword(data.get('password'))
         #Checking that email and username is unique
-        if DoesFieldExist(data.get('username'),'username'):
-            return {"Error":"Username Exists", "message": "username already exists"}
-        if DoesFieldExist(data.get('email'),'email'):
-            return {"Error":"Email", "message": "Email already exists"}
+        if DoesFieldExist(data.get('username'),'username',data.get('email'),'email'):
+            return {"Error":"Username & Email", "message": "username or email already exists"}
         table.put_item(Item={
-            'username' : data.get('username'),
-            'email' : data.get('email'),
-            'name' : data.get('name'),
-            'surname' : data.get('surname'),
-            'age' : data.get('age'),
-            'password' : hashed_pass,
-            'cellphone' : data.get('cellphone'),
-            'municipality' : Municipality
+            "username" : data.get('username'),
+            "email" : data.get('email'),
+            "name" : data.get('name'),
+            "surname" : data.get('surname'),
+            "age" : data.get('age'),
+            "password" : hashed_pass,
+            "cellphone" : data.get('cellphone'),
+            "municipality" : Municipality
             
         })
         return {'Status' : 200, 'Message': 'Successfull placed'}
-    except:
-        raise ("Invalid JSON data")
+    except Exception as e:
+        return {'Status' : 400, 'Message': str(e),'password': hashed_pass}
     return {"status": "success"}
 ###login for users
 @auth_routes.route("/login/user", methods=["POST"])
 def login_user():
     request = auth_routes.current_request
     data = request.json_body
-    if(not DoesFieldExist(data.get('username'),'username')):
+    if(not DoesFieldExist(data.get('username'),'username',data.get('email'),'email')):
         return {'Error':'Userame','Message':'Username Doesnt exist'}
-    if(not DoesFieldExist(data.get('email'),'email')):
-        return {'Error':'Email','Message':'email Doesnt exist'}
     response = table.query(
-        KeyConditionExpression=Key(field).eq(data)
+        KeyConditionExpression=Key('username').eq(data.get('username'))
     )
     items = response['Item']
     for item in items:
@@ -100,18 +95,19 @@ def login_user():
     
 
 
-def DoesFieldExist(data,field,isCompany=False):
-    if isCompany == False :
+def DoesFieldExist(data,field,data2,field2,isCompany=False):
+    if isCompany ==False:
         response = table.query(
-            KeyConditionExpression=Key(field).eq(data)
+            KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
         )
+        
         if 'Item' in response:
             return True
         else:
             return False
-    else:
+    else :
         response = companies.query(
-            KeyConditionExpression=Key(field).eq(data)
+            KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
         )
         if 'Item' in response:
             return True
@@ -124,12 +120,14 @@ def DoesMunicipalityExist(data):
     )
 
 def hashPassword(password):
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password.encode(), salt)
+    md5 = hashlib.md5()
+    md5.update(password.encode('utf-8'))
+    hashed_password = hashed_password = md5.hexdigest()
     return hashed_password
 
 def verify_password( user_password,db_password):
-    return bcrypt.checkpw(user_password.encode(), db_password)
+    provided_password = hashPassword(user_password)
+    return provided_password == db_password
 
 def CreateMuniCode(name):
     firstletter = name[0]
