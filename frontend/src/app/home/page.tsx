@@ -2,26 +2,24 @@ import Nav from "@/components/Navbar/nav";
 import Link from 'next/link';
 
 export default function Home() {
-  return (
+  return (<div style={{
+    position: 'relative',
+    height: '100vh',
+    overflow: 'hidden',  // Prevents content overflow
+  }}>
+    {/* Background image */}
     <div style={{
-      position: 'relative',
-      height: '100vh',
-      overflow: 'hidden',  // Prevents content overflow
-    }}>
-      {/* Background image */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundImage: 'url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        zIndex: -1,  // Ensures the background is behind other content
-      }}></div>
-
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      zIndex: -1,  // Ensures the background is behind other content
+    }}></div>
       {/* Content */}
       <Nav />
       <div className="h-[30vh] flex items-center justify-center" ></div>

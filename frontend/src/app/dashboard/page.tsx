@@ -14,6 +14,7 @@ export default function Home() {
 
     return (
         <div>
+            
             <Nav />
             <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">
                 Dashboard
