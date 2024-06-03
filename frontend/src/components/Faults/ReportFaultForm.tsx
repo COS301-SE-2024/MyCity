@@ -4,6 +4,7 @@ import React, { useState, FormEvent } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem, Textarea, Checkbox } from '@nextui-org/react';
 import { BadgeAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 
 interface ReportFaultFormProps extends React.HTMLAttributes<HTMLElement> {
@@ -136,9 +137,11 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
 
 
 
-                        <Button className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
-                            Submit
-                        </Button>
+                        <Link href="/dashboard">
+                            <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
+                                Submit
+                            </div>
+                        </Link>
 
                     </form>
                 </div>
