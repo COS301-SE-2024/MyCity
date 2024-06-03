@@ -21,11 +21,11 @@ def signup_company():
         return {"Error":"Municipality", "message": "Muncipality name doesnt exists"}    
     municipality.put_item(Item={
         'company_name' : data.get('company_name') ,
-        'email' : data.get('email'),
+        'Municipality' : data.get('municipality'),
         'quality_rating' : 0,
         'password' : hashed_pass,
         'email' : data.get('email'),
-        'Municipality' : data.get('municipality') 
+         
     })
     return {"status": "success"}
     
@@ -40,9 +40,8 @@ def signup_municipality():
     while not DoesMunicipalityExist(municode) :
         municode = CreateMuniCode(data.get('name'))
         municipality.put_item(Item={
-            'municipality_id' : municode,
-            'name' : data.get('name'),
-            'AuthCode' : "DHBywy434",
+            'municipality_id' :data.get('municipality_id'),
+            'AuthCode' : municode,
             'password' : hashed_pass,
             'email' : data.get('email'),
             'location' : data.get('location') 
@@ -60,15 +59,17 @@ def signup_user():
         #Checking that email and username is unique
         if DoesFieldExist(data.get('username'),'username',data.get('email'),'email'):
             return {"Error":"Username & Email", "message": "username or email already exists"}
+        if not DoesMunicipalityExist(data.get('municipality')):
+            return {"Error":"Municipality", "message": "Municipality doesnt exists " + data.get('municipality')}
         table.put_item(Item={
             "username" : data.get('username'),
             "email" : data.get('email'),
-            "name" : data.get('name'),
             "surname" : data.get('surname'),
-            "age" : data.get('age'),
+            "firstname" : data.get('firstname'),
+            "dob" : data.get('dob'),
+            "municipality" : data.get('municipality'),
             "password" : hashed_pass,
             "cellphone" : data.get('cellphone'),
-            "municipality" : Municipality
             
         })
         return {'Status' : 200, 'Message': 'Successfull placed'}
@@ -85,7 +86,7 @@ def login_user():
     response = table.query(
         KeyConditionExpression=Key('username').eq(data.get('username'))
     )
-    items = response['Item']
+    items = response['Items']
     for item in items:
         password = item.get('password')
         if verify_password(data.get('password'),password) :
@@ -98,10 +99,10 @@ def login_user():
 def DoesFieldExist(data,field,data2,field2,isCompany=False):
     if isCompany ==False:
         response = table.query(
-            KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
+            KeyConditionExpression=Key(field).eq(data) 
         )
-        
-        if 'Item' in response:
+        items = response['Items']
+        if len(items) > 0:
             return True
         else:
             return False
@@ -109,7 +110,8 @@ def DoesFieldExist(data,field,data2,field2,isCompany=False):
         response = companies.query(
             KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
         )
-        if 'Item' in response:
+        items = response['Items']
+        if len(items) > 0:
             return True
         else:
             return False
@@ -118,6 +120,12 @@ def DoesMunicipalityExist(data):
     response = municipality.query(
          KeyConditionExpression=Key('municipality_id').eq(data)
     )
+    items = response['Items']
+    if len(items) > 0:
+        return True
+    else:
+        return False
+
 
 def hashPassword(password):
     md5 = hashlib.md5()
