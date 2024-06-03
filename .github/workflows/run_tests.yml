@@ -28,8 +28,9 @@ jobs:
         working-directory: frontend
         run: npm test
 
-      # - name: Run End-to-End tests
-      #   run: npm run test:e2e
+      - name: Run End-to-End tests
+        working-directory: frontend
+        run: npm run test:e2e
 
     # backend_tests:
     # name: Run Backend Tests
