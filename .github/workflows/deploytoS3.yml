@@ -18,7 +18,7 @@
         AWS_REGION: ${{secrets.AWS_REGION}}
         S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
   
       steps:
         - name: Checkout
