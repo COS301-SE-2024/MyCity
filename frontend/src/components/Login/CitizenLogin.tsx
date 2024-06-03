@@ -46,13 +46,13 @@ export default function CitizenLogin() {
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 
-        <Link href={"/forgot-password"} className="text-orange-500 underline text-right mt-[-1em]">Forgot password?</Link>
+        <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
+        <Link href="/dashboard" data-testid="submit-btn">
+          <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
+            Login
+          </div>
+        </Link>
 
-        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
-          Submit
-        </Button>
-        {/* Social Media Sign Up Options */}
-        {/* Render different options based on userType */}
       </form>
     </div>
   );
