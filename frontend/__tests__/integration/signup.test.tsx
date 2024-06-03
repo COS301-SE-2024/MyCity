@@ -1,13 +1,13 @@
-import Login from "@/app/login/page";
+import Signup from "@/app/signup/page";
 import { fireEvent, render, screen } from "@testing-library/react";
 
-describe("Login Page", () => {
+describe("Signup Page", () => {
 
-    it("renders CitizenLogin form by default", () => {
-        render(<Login />);
-        const citizenForm = screen.queryByTestId("citizen-login-form");
-        const municipalityForm = screen.queryByTestId("municipality-login-form");
-        const serviceProviderForm = screen.queryByTestId("service-provider-login-form");
+    it("renders CitizenSignup form by default", () => {
+        render(<Signup />);
+        const citizenForm = screen.queryByTestId("citizen-signup-form");
+        const municipalityForm = screen.queryByTestId("municipality-signup-form");
+        const serviceProviderForm = screen.queryByTestId("service-provider-signup-form");
 
         expect(citizenForm).toBeInTheDocument();
         expect(municipalityForm).not.toBeInTheDocument();
@@ -16,14 +16,14 @@ describe("Login Page", () => {
 
 
     it("renders Municipality form when Municipality tab is clicked", () => {
-        render(<Login />);
+        render(<Signup />);
         const tabButton = screen.getByTestId("municipality-tab");
         fireEvent.click(tabButton);
         fireEvent.select(tabButton);
 
-        const citizenForm = screen.queryByTestId("citizen-login-form");
-        const municipalityForm = screen.queryByTestId("municipality-login-form");
-        const serviceProviderForm = screen.queryByTestId("service-provider-login-form");
+        const citizenForm = screen.queryByTestId("citizen-signup-form");
+        const municipalityForm = screen.queryByTestId("municipality-signup-form");
+        const serviceProviderForm = screen.queryByTestId("service-provider-signup-form");
 
         expect(citizenForm).not.toBeInTheDocument();
         expect(municipalityForm).toBeInTheDocument();
@@ -31,14 +31,14 @@ describe("Login Page", () => {
     });
 
     it("renders Service Provider form when Service Provider tab is clicked", () => {
-        render(<Login />);
+        render(<Signup />);
         const tabButton = screen.getByTestId("service-provider-tab");
         fireEvent.click(tabButton);
         fireEvent.select(tabButton);
 
-        const citizenForm = screen.queryByTestId("citizen-login-form");
-        const municipalityForm = screen.queryByTestId("municipality-login-form");
-        const serviceProviderForm = screen.queryByTestId("service-provider-login-form");
+        const citizenForm = screen.queryByTestId("citizen-signup-form");
+        const municipalityForm = screen.queryByTestId("municipality-signup-form");
+        const serviceProviderForm = screen.queryByTestId("service-provider-signup-form");
 
         expect(municipalityForm).not.toBeInTheDocument();
         expect(citizenForm).not.toBeInTheDocument();

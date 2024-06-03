@@ -25,7 +25,7 @@ describe("MunicipalityLogin", () => {
     });
 
 
-    test("onSubmit function is called after clicking submit button", () => {
+    test("handler function is called after clicking submit button", () => {
         render(<MunicipalityLogin />);
         const mockFunction = jest.fn();
         const loginForm = screen.getByTestId("municipality-login-form");

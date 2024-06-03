@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2, CircleHelp } from 'lucide-react';
 
+
 export default function MunicipalityLogin() {
   const [municipality, setMunicipality] = useState('');
   const [password, setPassword] = useState('');
