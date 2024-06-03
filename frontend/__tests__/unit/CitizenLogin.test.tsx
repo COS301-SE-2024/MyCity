@@ -39,7 +39,7 @@ describe("CitizenLogin", () => {
     });
 
 
-    test("onSubmit function is called after clicking submit button", () => {
+    test("handler function is called after clicking submit button", () => {
         render(<CitizenLogin />);
         const mockFunction = jest.fn();
         const loginForm = screen.getByTestId("citizen-login-form");

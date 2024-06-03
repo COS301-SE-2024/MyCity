@@ -32,7 +32,7 @@ export default function ServiceProviderSignup() {
 
   return (
     <div className="px-12">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form data-testid="service-provider-signup-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
         <Input
           variant={"bordered"}
