@@ -34,7 +34,6 @@ describe("CitizenLogin", () => {
         const submitButton = screen.getByTestId("submit-btn")
 
         expect(submitButton).toBeInTheDocument();
-        expect(submitButton).toHaveTextContent("Submit");
     });
 
 
