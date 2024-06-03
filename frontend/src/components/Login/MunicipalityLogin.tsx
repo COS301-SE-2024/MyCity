@@ -47,7 +47,7 @@ export default function MunicipalityLogin() {
           {(municipality) =>
             <AutocompleteItem key={municipality.id} textValue={municipality.name}>
               <div className="flex gap-2 items-center">
-                <Building2 className="flex-shrink-0 text-orange-700" size={18} />
+                <Building2 className="flex-shrink-0 text-blue-700" size={18} />
                 <span className="text-small">{municipality.name}</span>
               </div>
             </AutocompleteItem>}
@@ -56,7 +56,7 @@ export default function MunicipalityLogin() {
         <Input
           variant={"bordered"}
           fullWidth
-          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">MuniCode<sup>TM</sup> <CircleHelp className="ml-2.5 text-orange-500" size={20} /></span>}
+          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">MuniCode<sup>TM</sup> <CircleHelp className="ml-2.5 text-blue-500" size={20} /></span>}
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
@@ -68,7 +68,7 @@ export default function MunicipalityLogin() {
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 
-        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
 
