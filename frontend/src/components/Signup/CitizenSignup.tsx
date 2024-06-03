@@ -16,7 +16,7 @@ export default function CitizenSignup() {
 
   return (
     <div className="px-12">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form data-testid="citizen-signup-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
         <Input
           variant={"bordered"}
@@ -48,11 +48,11 @@ export default function CitizenSignup() {
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 
-<Link href="/dashboard">
-      <div className="bg-orange-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-orange-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
-        Submit
-      </div>
-    </Link>
+        <Link href="/dashboard">
+          <div className="bg-orange-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-orange-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
+            Submit
+          </div>
+        </Link>
 
         {/* Social Media Sign Up Options */}
         {/* Render different options based on userType */}
