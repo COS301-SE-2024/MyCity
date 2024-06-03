@@ -16,19 +16,22 @@ companies = dynamodb.Table("private_companies")
 def signup_company():
     request = auth_routes.current_request
     data = request.json_body
-    hashed_pass = hashPassword(data.get('password'))
-    if DoesFieldExist(data.get('compay_name'),'company_name',data.get('email'),'email',True):
-        return {"Error":"Email Exists", "message": "Email already exists"}  
-    if not DoesMunicipalityExist(data.get('municipality')):
-        return {"Error":"Municipality", "message": "Muncipality name doesnt exists"}    
-    municipality.put_item(Item={
-        'company_name' : data.get('company_name') ,
-        'Municipality' : data.get('municipality'),
-        'quality_rating' : 0,
-        'password' : hashed_pass,
-        'email' : data.get('email'),
-         
-    })
+    hashed_pass = hashPassword(data.get("password"))
+    if DoesFieldExist(
+        data.get("compay_name"), "company_name", data.get("email"), "email", True
+    ):
+        return {"Error": "Email Exists", "message": "Email already exists"}
+    if not DoesMunicipalityExist(data.get("municipality")):
+        return {"Error": "Municipality", "message": "Muncipality name doesnt exists"}
+    municipality.put_item(
+        Item={
+            "company_name": data.get("company_name"),
+            "Municipality": data.get("municipality"),
+            "quality_rating": 0,
+            "password": hashed_pass,
+            "email": data.get("email"),
+        }
+    )
     return {"status": "success"}
 
 
@@ -37,17 +40,19 @@ def signup_company():
 def signup_municipality():
     request = auth_routes.current_request
     data = request.json_body
-    municode = CreateMuniCode(data.get('name'))
-    hashed_pass = hashPassword(data.get('password'))
-    while not DoesMunicipalityExist(municode) :
-        municode = CreateMuniCode(data.get('name'))
-        municipality.put_item(Item={
-            'municipality_id' :data.get('municipality_id'),
-            'AuthCode' : municode,
-            'password' : hashed_pass,
-            'email' : data.get('email'),
-            'location' : data.get('location') 
-        })
+    municode = CreateMuniCode(data.get("name"))
+    hashed_pass = hashPassword(data.get("password"))
+    while not DoesMunicipalityExist(municode):
+        municode = CreateMuniCode(data.get("name"))
+        municipality.put_item(
+            Item={
+                "municipality_id": data.get("municipality_id"),
+                "AuthCode": municode,
+                "password": hashed_pass,
+                "email": data.get("email"),
+                "location": data.get("location"),
+            }
+        )
     return {"status": "success"}
 
 
@@ -59,24 +64,31 @@ def signup_user():
     Municipality = "TSW32"
     try:
         data = request.json_body
-        hashed_pass = hashPassword(data.get('password'))
-        #Checking that email and username is unique
-        if DoesFieldExist(data.get('username'),'username',data.get('email'),'email'):
-            return {"Error":"Username & Email", "message": "username or email already exists"}
-        if not DoesMunicipalityExist(data.get('municipality')):
-            return {"Error":"Municipality", "message": "Municipality doesnt exists " + data.get('municipality')}
-        table.put_item(Item={
-            "username" : data.get('username'),
-            "email" : data.get('email'),
-            "surname" : data.get('surname'),
-            "firstname" : data.get('firstname'),
-            "dob" : data.get('dob'),
-            "municipality" : data.get('municipality'),
-            "password" : hashed_pass,
-            "cellphone" : data.get('cellphone'),
-            
-        })
-        return {'Status' : 200, 'Message': 'Successfull placed'}
+        hashed_pass = hashPassword(data.get("password"))
+        # Checking that email and username is unique
+        if DoesFieldExist(data.get("username"), "username", data.get("email"), "email"):
+            return {
+                "Error": "Username & Email",
+                "message": "username or email already exists",
+            }
+        if not DoesMunicipalityExist(data.get("municipality")):
+            return {
+                "Error": "Municipality",
+                "message": "Municipality doesnt exists " + data.get("municipality"),
+            }
+        table.put_item(
+            Item={
+                "username": data.get("username"),
+                "email": data.get("email"),
+                "surname": data.get("surname"),
+                "firstname": data.get("firstname"),
+                "dob": data.get("dob"),
+                "municipality": data.get("municipality"),
+                "password": hashed_pass,
+                "cellphone": data.get("cellphone"),
+            }
+        )
+        return {"Status": 200, "Message": "Successfull placed"}
     except Exception as e:
         return {"Status": 400, "Message": str(e), "password": hashed_pass}
     return {"status": "success"}
@@ -92,7 +104,7 @@ def login_user():
     response = table.query(
         KeyConditionExpression=Key("username").eq(data.get("username"))
     )
-    items = response['Items']
+    items = response["Items"]
     for item in items:
         password = item.get("password")
         if verify_password(data.get("password"), password):
@@ -103,10 +115,8 @@ def login_user():
 
 def DoesFieldExist(data, field, data2, field2, isCompany=False):
     if isCompany == False:
-        response = table.query(
-            KeyConditionExpression=Key(field).eq(data) 
-        )
-        items = response['Items']
+        response = table.query(KeyConditionExpression=Key(field).eq(data))
+        items = response["Items"]
         if len(items) > 0:
             return True
         else:
@@ -115,7 +125,7 @@ def DoesFieldExist(data, field, data2, field2, isCompany=False):
         response = companies.query(
             KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
         )
-        items = response['Items']
+        items = response["Items"]
         if len(items) > 0:
             return True
         else:
@@ -126,12 +136,11 @@ def DoesMunicipalityExist(data):
     response = municipality.query(
         KeyConditionExpression=Key("municipality_id").eq(data)
     )
-    items = response['Items']
+    items = response["Items"]
     if len(items) > 0:
         return True
     else:
         return False
-
 
 
 def hashPassword(password):
