@@ -70,7 +70,7 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
                             {(faultType) =>
                                 <AutocompleteItem key={faultType.id} textValue={faultType.name}>
                                     <div className="flex gap-2 items-center">
-                                        <BadgeAlert className="flex-shrink-0 text-orange-700" size={18} />
+                                        <BadgeAlert className="flex-shrink-0 text-blue-700" size={18} />
                                         <span className="text-small">{faultType.name}</span>
                                     </div>
                                 </AutocompleteItem>}
@@ -136,7 +136,7 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
 
 
 
-                        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+                        <Button className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
                             Submit
                         </Button>
 

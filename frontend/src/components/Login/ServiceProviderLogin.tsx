@@ -53,7 +53,7 @@ export default function ServiceProviderLogin() {
         <Input
           variant={"bordered"}
           fullWidth
-          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">Comapny Password<CircleHelp className="ml-2.5 text-orange-500" size={20} /></span>}
+          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">Comapny Password<CircleHelp className="ml-2.5 text-blue-500" size={20} /></span>}
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
@@ -65,9 +65,9 @@ export default function ServiceProviderLogin() {
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 
-        <Link href={"/forgot-password"} className="text-orange-500 underline text-right mt-[-1em]">Forgot password?</Link>
+        <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
-        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
         {/* Social Media Sign Up Options */}

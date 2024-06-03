@@ -49,7 +49,7 @@ export default function CitizenSignup() {
           onChange={(event) => setPassword(event.target.value)} />
 
         <Link href="/dashboard">
-          <div className="bg-orange-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-orange-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
+          <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
             Submit
           </div>
         </Link>
