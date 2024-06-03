@@ -5,11 +5,13 @@ import random
 from boto3.dynamodb.conditions import Key
 
 auth_routes = Blueprint(__name__)
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('users')
-municipality = dynamodb.Table('municipalities')
-companies = dynamodb.Table('private_companies')
-#signup for companies
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("users")
+municipality = dynamodb.Table("municipalities")
+companies = dynamodb.Table("private_companies")
+
+
+# signup for companies
 @auth_routes.route("/signup/company", methods=["POST"])
 def signup_company():
     request = auth_routes.current_request
@@ -28,9 +30,9 @@ def signup_company():
          
     })
     return {"status": "success"}
-    
 
-#signup for municipality
+
+# signup for municipality
 @auth_routes.route("/signup/municipality", methods=["POST"])
 def signup_municipality():
     request = auth_routes.current_request
@@ -47,7 +49,9 @@ def signup_municipality():
             'location' : data.get('location') 
         })
     return {"status": "success"}
- ###signup for User
+
+
+###signup for User
 @auth_routes.route("/signup/user", methods=["POST"])
 def signup_user():
     request = auth_routes.current_request
@@ -74,30 +78,31 @@ def signup_user():
         })
         return {'Status' : 200, 'Message': 'Successfull placed'}
     except Exception as e:
-        return {'Status' : 400, 'Message': str(e),'password': hashed_pass}
+        return {"Status": 400, "Message": str(e), "password": hashed_pass}
     return {"status": "success"}
+
+
 ###login for users
 @auth_routes.route("/login/user", methods=["POST"])
 def login_user():
     request = auth_routes.current_request
     data = request.json_body
-    if(not DoesFieldExist(data.get('username'),'username',data.get('email'),'email')):
-        return {'Error':'Userame','Message':'Username Doesnt exist'}
+    if not DoesFieldExist(data.get("username"), "username", data.get("email"), "email"):
+        return {"Error": "Userame", "Message": "Username Doesnt exist"}
     response = table.query(
-        KeyConditionExpression=Key('username').eq(data.get('username'))
+        KeyConditionExpression=Key("username").eq(data.get("username"))
     )
     items = response['Items']
     for item in items:
-        password = item.get('password')
-        if verify_password(data.get('password'),password) :
-            return {"Success" : 200, 'Message' : 'Verified'}
-        else :
-            return {'Error' : 'Password', 'Message' : 'Password was wrong'}
-    
+        password = item.get("password")
+        if verify_password(data.get("password"), password):
+            return {"Success": 200, "Message": "Verified"}
+        else:
+            return {"Error": "Password", "Message": "Password was wrong"}
 
 
-def DoesFieldExist(data,field,data2,field2,isCompany=False):
-    if isCompany ==False:
+def DoesFieldExist(data, field, data2, field2, isCompany=False):
+    if isCompany == False:
         response = table.query(
             KeyConditionExpression=Key(field).eq(data) 
         )
@@ -106,7 +111,7 @@ def DoesFieldExist(data,field,data2,field2,isCompany=False):
             return True
         else:
             return False
-    else :
+    else:
         response = companies.query(
             KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
         )
@@ -115,10 +120,11 @@ def DoesFieldExist(data,field,data2,field2,isCompany=False):
             return True
         else:
             return False
-    
+
+
 def DoesMunicipalityExist(data):
     response = municipality.query(
-         KeyConditionExpression=Key('municipality_id').eq(data)
+        KeyConditionExpression=Key("municipality_id").eq(data)
     )
     items = response['Items']
     if len(items) > 0:
@@ -127,27 +133,30 @@ def DoesMunicipalityExist(data):
         return False
 
 
+
 def hashPassword(password):
     md5 = hashlib.md5()
-    md5.update(password.encode('utf-8'))
+    md5.update(password.encode("utf-8"))
     hashed_password = hashed_password = md5.hexdigest()
     return hashed_password
 
-def verify_password( user_password,db_password):
+
+def verify_password(user_password, db_password):
     provided_password = hashPassword(user_password)
     return provided_password == db_password
+
 
 def CreateMuniCode(name):
     firstletter = name[0]
     k = 0
     redo = True
     municode = firstletter
-    while k<2 and redo:
-        randint = random.randint(0,len(name)-1)
-        if(name[randint] != " " and name[randint] != '-' ):
+    while k < 2 and redo:
+        randint = random.randint(0, len(name) - 1)
+        if name[randint] != " " and name[randint] != "-":
             municode = municode + name[randint]
-            k+=1
+            k += 1
     for i in range(3):
-        rands = random.randint(0,9)
+        rands = random.randint(0, 9)
         municode += rands
     return municode
