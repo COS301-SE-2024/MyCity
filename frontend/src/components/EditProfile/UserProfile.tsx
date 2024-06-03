@@ -87,7 +87,7 @@ export default function CitizenSignup() {
             }}
             type="input"
             autoComplete="new-email"
-            placeholder="example@mail.com"
+            placeholder="Chad"
           
             onChange={(event) => setEmail(event.target.value)}
           />
@@ -112,7 +112,7 @@ export default function CitizenSignup() {
             }}
             type="input"
             autoComplete="new-email"
-            placeholder="example@mail.com"
+            placeholder="Surname"
            
             onChange={(event) => setEmail(event.target.value)} />
           {/* <Link href="/dashboard"> */}
@@ -135,7 +135,7 @@ export default function CitizenSignup() {
             }}
             type="input"
             autoComplete="new-email"
-            placeholder="example@mail.com"
+            placeholder="Cellphone Number"
           
             onChange={(event) => setEmail(event.target.value)} />
           {/* <Link href="/dashboard"> */}
