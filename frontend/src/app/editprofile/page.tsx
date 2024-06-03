@@ -57,7 +57,7 @@ const CitizenProfilePage: React.FC = () => {
       <div>
         <Navbar/>
         <main className="h-screen flex justify-center p-20">
-          <div className="flex flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-orange-800/15 w-[32em] h-fit py-12">
+          <div className="flex flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12">
             <span className="text-[2.5em] font-bold">{"Update User Profile."}</span>
             <EditCitizenProfile/>
           </div>
