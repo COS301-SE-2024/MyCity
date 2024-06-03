@@ -45,7 +45,6 @@ export default function CitizenLogin() {
           placeholder="Password"
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
-
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
         <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
@@ -53,6 +52,7 @@ export default function CitizenLogin() {
         </Button>
         {/* Social Media Sign Up Options */}
         {/* Render different options based on userType */}
+
       </form>
     </div>
   );

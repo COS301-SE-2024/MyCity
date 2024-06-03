@@ -6,6 +6,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 import CitizenSignup from "@/components/Signup/CitizenSignup";
 import MunicipalitySignup from "@/components/Signup/MunicipalitySignup";
 import ServiceProviderSignup from "@/components/Signup/ServiceProviderSignup";
+import Navbar from "@/components/Navbar/nav";
 
 
 
@@ -22,7 +23,8 @@ export default function Signup() {
 
     return (
         <div>
-            {/* //<Navbar /> */}
+
+            <Navbar />
 
             <main className="h-screen flex justify-center p-20">
 

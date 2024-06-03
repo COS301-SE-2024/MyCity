@@ -35,7 +35,7 @@ export default function Home() {
           to identify and solve problems in your city - fast.
         </p>
         <Link href="/signup">
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600 transition duration-300">
+          <button className="bg-blue-500 text-white px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
             Get Started
           </button>
         </Link>
