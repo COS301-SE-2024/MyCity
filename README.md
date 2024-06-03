@@ -50,7 +50,8 @@
 
 ## Project Board
 
-<p> You can track the progress of our project on the [Project Board](https://github.com/orgs/COS301-SE-2024/projects/95/views/1). </p>
+<p> You can track the progress of our project on the <a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1">Project Board</a><br> for MyCity.</p>
+
 
 
 # Features (a short summary of the user's functionality)
