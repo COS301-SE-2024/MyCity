@@ -15,7 +15,7 @@ export default function Home() {
         left: 0,
         width: '100%',
         height: '100%',
-        backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+        backgroundImage: 'url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -24,7 +24,7 @@ export default function Home() {
 
       {/* Content */}
       <Nav />
-      <div className="h-[30vh] flex items-center justify-center"></div>
+      <div className="h-[30vh] flex items-center justify-center" ></div>
       <div className='container mx-auto p-2 relative z-10'> {/* Ensure content is above the background */}
         <h1 className="text-4xl text-white font-bold mb-4">
           Be the change in your city <br />
