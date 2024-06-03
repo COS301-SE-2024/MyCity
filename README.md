@@ -48,7 +48,7 @@
 <p>An additional feature that could offer potential benefits, and is open for discussion, would be the ability to upload a photo of the asset or fault at the location of the asset.  With the ability to upload a photo with a ticket, the stakeholders would easily be able to verify the authenticity of the report, and to act and prioritise accordingly.</p>
 </details>
 
-## Project Board
+# Project Board
 
 <p> You can track the progress of our project on the <a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1">Project Board</a> for MyCity.</p>
 
