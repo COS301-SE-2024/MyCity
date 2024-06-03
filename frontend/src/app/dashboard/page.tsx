@@ -4,8 +4,8 @@ import Nav from "@/components/Navbar/Navbar";
 import React, { Key, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
-
-
+import FaultTable from "@/components/FaultTable/FaultTable";
+import FaultMapView from "@/components/FaultMapView/FaultMapView";
 export default function Home() {
 
     const handleTabChange = (key: Key) => {
@@ -44,14 +44,24 @@ export default function Home() {
                             Based on your proximity to the issue.
                         </h1>
                         <FaultCardContainer />
+                        <h1 className="text-2xl font-bold mt-2 ml-2">
+                            Watchlist
+                        </h1>
+                        <h1 className="text-l mb-4 ml-2">
+                        All of the issues you have added to your watchlist.
+                        </h1>
+                        <FaultCardContainer />
                     </Tab>
 
                     <Tab key={1} title="List" >
-
+                        <FaultTable />
                     </Tab>
-
+                        
                     <Tab key={2} title="Map" >
-
+                    <h1 className="text-4xl font-bold mb-4 mt-2 ml-2 text-center">
+                Pretoria
+            </h1>
+                        <FaultMapView />
                     </Tab>
                 </Tabs>
             </div>

@@ -16,19 +16,14 @@ export default function Navbar() {
             How it works
           </div>
         </Link>
-        <Link href="/about">
+        <Link href="/report-fault">
           <div className="text-white hover:text-gray-300 cursor-pointer">
-            About us
+            Report a Fault
           </div>
         </Link>
         <Link href="/login">
           <div className="bg-gray-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-600 transition duration-300 font-bold">
             Login
-          </div>
-        </Link>
-        <Link href="/signup">
-          <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-600 transition duration-300 font-bold">
-            Register Now
           </div>
         </Link>
       </div>
