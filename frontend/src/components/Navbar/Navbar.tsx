@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const Navbar = () => {
+export default function Navbar() {
   return (
     <nav className="bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <div className="text-white font-bold"><img src="https://i.imgur.com/4RVgkf9.png" alt="MyCity" width={50} height={50} /></div>
@@ -34,6 +34,4 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}

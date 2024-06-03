@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
-import Navbar from '../Navbar/nav';
+import Navbar from '../Navbar/Navbar';
 
 
 export default function CitizenSignup() {

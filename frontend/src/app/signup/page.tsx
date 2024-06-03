@@ -2,11 +2,12 @@
 
 import React, { Key, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
-import Navbar from "@/components/Navbar/nav";
+// import Navbar from "@/components/Navbar/nav";
 
 import CitizenSignup from "@/components/Signup/CitizenSignup";
 import MunicipalitySignup from "@/components/Signup/MunicipalitySignup";
 import ServiceProviderSignup from "@/components/Signup/ServiceProviderSignup";
+import Navbar from "@/components/Navbar/Navbar";
 
 
 

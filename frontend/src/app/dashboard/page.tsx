@@ -1,6 +1,6 @@
 'use client'
 
-import Nav from "@/components/Navbar/nav";
+import Nav from "@/components/Navbar/Navbar";
 import React, { Key, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
@@ -34,14 +34,14 @@ export default function Home() {
                             Most up-voted
                         </h1>
                         <h1 className="text-l mb-4 ml-2">
-                        Based on votes from the community in your area.
+                            Based on votes from the community in your area.
                         </h1>
                         <FaultCardContainer />
                         <h1 className="text-2xl font-bold mt-2 ml-2">
                             Nearest to you
                         </h1>
                         <h1 className="text-l mb-4 ml-2">
-                        Based on your proximity to the issue.
+                            Based on your proximity to the issue.
                         </h1>
                         <FaultCardContainer />
                     </Tab>
