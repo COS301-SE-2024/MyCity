@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Upload } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export default function ServiceProviderSignup() {
   ];
 
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
@@ -32,7 +32,7 @@ export default function ServiceProviderSignup() {
 
   return (
     <div className="px-12">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form data-testid="service-provider-signup-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
         <Input
           variant={"bordered"}
@@ -44,6 +44,7 @@ export default function ServiceProviderSignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="text"
+          name="company"
           autoComplete="new-company"
           placeholder="Company Name"
           value={email} onChange={(e) => setEmail(e.target.value)}
@@ -55,10 +56,10 @@ export default function ServiceProviderSignup() {
 
           <div className="flex justify-evenly items-center align-middle">
             <div className="rounded-2xl border border-black/15 border-dashed px-8 py-7 w-fit h-fit">
-              <Upload className="text-orange-400" size={40} />
+              <Upload className="text-blue-400" size={40} />
             </div>
 
-            <span className="text-orange-400">Upload a file or drag and drop.</span>
+            <span className="text-blue-400">Upload a file or drag and drop.</span>
 
           </div>
         </div>
@@ -74,6 +75,7 @@ export default function ServiceProviderSignup() {
           isClearable={false}
           size={"lg"}
           type="text"
+          name="service-area"
           autoComplete="new-service-area"
           menuTrigger={"input"}
           onChange={(event) => setServiceArea(event.target.value)}
@@ -92,13 +94,14 @@ export default function ServiceProviderSignup() {
             label: "font-semibold text-medium mt-[-1px]"
           }}
           type="email"
+          name="email"
           autoComplete="new-email"
           placeholder="example@company.com"
           value={email} onChange={(e) => setEmail(e.target.value)}
         />
 
 
-        <Button className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
 

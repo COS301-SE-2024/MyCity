@@ -9,6 +9,13 @@ interface FaultCardUserProps {
     viewCount: number;
 }
 
+function formatNumber(num: number): string {
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'k';
+    }
+    return num.toString();
+}
+
 const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCount, commentCount, viewCount }) => {
     // Example state for dynamic colors on icons
     const [arrowColor, setArrowColor] = useState('black');
@@ -21,7 +28,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCoun
     const handleEyeClick = () => setEyeColor(eyeColor === 'black' ? 'blue' : 'black');
 
     return (
-        <div className="max-w-full sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl bg-white rounded-lg shadow-md overflow-hidden m-2">
+        <div className="w-80 h-48 bg-white rounded-lg shadow-md overflow-hidden m-2">
             <div className="px-6 py-4">
                 <div className="font-bold text-xl mb-2">{title}</div>
                 <p className="text-gray-700 text-base">{address}</p>
@@ -35,7 +42,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCoun
                     >
                         <FaArrowUp />
                     </div>
-                    <span className="mt-2 text-gray-700">{arrowCount}</span>
+                    <span className="mt-2 text-gray-700">{formatNumber(arrowCount)}</span>
                 </div>
 
                 <div className="flex flex-col items-center">
@@ -46,8 +53,9 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCoun
                     >
                         <FaCommentAlt />
                     </div>
-                    <span className="mt-2 text-gray-700">{commentCount}</span>
+                    <span className="mt-2 text-gray-700">{formatNumber(commentCount)}</span>
                 </div>
+
                 <div className="flex flex-col items-center">
                     <div
                         className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
@@ -56,7 +64,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCoun
                     >
                         <FaEye />
                     </div>
-                    <span className="mt-2 text-gray-700">{viewCount}</span>
+                    <span className="mt-2 text-gray-700">{formatNumber(viewCount)}</span>
                 </div>
             </div>
         </div>

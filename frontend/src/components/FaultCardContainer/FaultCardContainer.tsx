@@ -8,28 +8,28 @@ const FaultCardContainer = () => {
 
     const cardData = [
         {
-            title: 'Pothole 1',
+            title: 'Pothole',
             address: '271 Berry Street, Birmingham',
             arrowCount: 10800,
             commentCount: 4900,
             viewCount: 873,
         },
         {
-            title: 'Pothole 2',
+            title: 'Power Outage',
             address: '55 Elm Avenue, Manchester',
             arrowCount: 8500,
             commentCount: 3200,
             viewCount: 1200,
         },
         {
-            title: 'Pothole 3',
+            title: 'Leaking Fire Hydrant',
             address: '123 Oak Lane, London',
             arrowCount: 12300,
             commentCount: 6700,
             viewCount: 2300,
         },
         {
-            title: 'Pothole 4',
+            title: 'Gas Leak',
             address: '789 Maple Road, Liverpool',
             arrowCount: 9100,
             commentCount: 5400,

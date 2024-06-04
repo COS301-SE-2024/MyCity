@@ -47,7 +47,6 @@ export default function CitizenSignup() {
             autoComplete="new-email"
             placeholder="example@mail.com"
             value={"chadmartin81"}
-            disabled
           />
         </div>
 
@@ -65,7 +64,6 @@ export default function CitizenSignup() {
             type="input"
             autoComplete="new-email"
             placeholder="example@mail.com"
-            value={"chad.martin@example.com"}
             onChange={(event) => setEmail(event.target.value)}
           />
           {/* <Link href="/"> */}
@@ -87,8 +85,7 @@ export default function CitizenSignup() {
             }}
             type="input"
             autoComplete="new-email"
-            placeholder="example@mail.com"
-            value={"Chad"}
+            placeholder="Chad"
             onChange={(event) => setEmail(event.target.value)}
           />
           {/* <Link href="/dashboard"> */}
@@ -112,8 +109,8 @@ export default function CitizenSignup() {
             }}
             type="input"
             autoComplete="new-email"
-            placeholder="example@mail.com"
-            value={"Martin"}
+            placeholder="Surname"
+           
             onChange={(event) => setEmail(event.target.value)} />
           {/* <Link href="/dashboard"> */}
             <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Surname updated succesfully!")}>
@@ -135,8 +132,7 @@ export default function CitizenSignup() {
             }}
             type="input"
             autoComplete="new-email"
-            placeholder="example@mail.com"
-            value={"0658402012"}
+            placeholder="Cellphone Number"
             onChange={(event) => setEmail(event.target.value)} />
           {/* <Link href="/dashboard"> */}
             <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Cellphone number updated succesfully!")}>
