@@ -23,19 +23,17 @@ describe("CitizenLogin", () => {
 
     it("renders a forgot password link", () => {
         render(<CitizenLogin />);
-        // const forgotPasswordLink = screen.getByText("Forgot password?");
-        const forgotPasswordLink = screen.getByRole("link");
+        const forgotPasswordLink = screen.getByText("Forgot password?");
 
         expect(forgotPasswordLink).toBeInTheDocument();
-        expect(forgotPasswordLink).toHaveTextContent("Forgot password?");
     });
 
-    it("renders a submit button", () => {
+    it("renders a Login button", () => {
         render(<CitizenLogin />);
-        const submitButton = screen.getByRole("button", {name:/submit/i});
+        const submitButton = screen.getByTestId("login-btn")
 
         expect(submitButton).toBeInTheDocument();
-        expect(submitButton).toHaveTextContent("Submit");
+        expect(submitButton).toHaveTextContent("Login");
     });
 
 

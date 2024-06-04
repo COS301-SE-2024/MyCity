@@ -11,7 +11,7 @@ export default function CitizenSignup() {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     // Handle the submit action here
-    console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
+    // console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
   };
 
   return (
