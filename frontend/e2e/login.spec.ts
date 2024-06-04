@@ -7,7 +7,7 @@ test("citizen login takes them to dashboard", async ({ page }) => {
     await page.getByText("Login").click();
 
     // fill in email
-    await page.getByLabel("Email").fill("tinogwanz12@gmail.com");
+    await page.getByLabel("Email").fill("james@gmail.com");
 
     // fill in password
     await page.getByLabel("Password").fill("password");
