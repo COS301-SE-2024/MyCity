@@ -1,4 +1,4 @@
-name: Sync Main with Dev after hotfix PR merge
+name: Sync Main with hotfix after devlopemnt PR merge
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   sync:
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'hotfix')
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'development')
     runs-on: ubuntu-latest
 
     steps:
@@ -26,12 +26,12 @@ jobs:
         run: git fetch --all
 
       - name: Checkout dev branch
-        run: git checkout development
+        run: git checkout dev
 
       - name: Merge main into dev
         run: git merge origin/main
 
       - name: Push changes
-        run: git push origin dev
+        run: git push origin hotfix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
