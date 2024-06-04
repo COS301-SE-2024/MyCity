@@ -2,6 +2,7 @@ from chalice import Chalice
 
 from chalicelib.auth.auth_routes import auth_routes
 from chalicelib.issues.issues_routes import issues_routes
+from chalicelib.tickets.tickets_routes import tickets_routes
 
 app = Chalice(app_name="mycity")
 
@@ -10,6 +11,9 @@ app.register_blueprint(auth_routes, "Auth", "/auth")
 
 # handle all requests related to issues
 app.register_blueprint(issues_routes, "Issues", "/issues")
+
+# handle all requests related to tickets
+app.register_blueprint(tickets_routes, "Tickets", "/tickets")
 
 
 @app.route("/")
