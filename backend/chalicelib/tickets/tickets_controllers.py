@@ -3,8 +3,9 @@ import uuid
 import boto3
 from botocore.exceptions import ClientError
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('tickets')
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("tickets")
+
 
 def create_ticket(ticket_data):
     try:
