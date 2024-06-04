@@ -1,21 +1,57 @@
-name: Upload Website
-
-on:
-  push:
-    branches:
-    - master
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --follow-symlinks --delete --exclude '.git*/*'
+  name: Build and Deploy NextJS App to S3 and CloudFront
+  on:
+    pull_request:
+      types:
+        - closed
+      branches: [main]
+  # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+  permissions:
+    id-token: write
+    contents: read
+  jobs:
+    build-and-deploy:
+      name: Build and Deploy
+      runs-on: ubuntu-latest
+  
       env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        NEXTJS_DIST: build/*
         AWS_REGION: ${{secrets.AWS_REGION}}
-        SOURCE_DIR: "public"
+        S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+  
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+  
+        - name: Configure AWS credentials from AWS account
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            role-to-assume: ${{secrets.ROLE_TO_ASSUME}}
+            role-session-name: GithubActions
+            aws-region: ${{ secrets.AWS_REGION }}
+  
+        - name: Install Dependencies
+          working-directory: frontend
+          run: |
+            node --version
+            npm ci --production
+            npm install @types/react 
+            npm install @types/node
+  
+        - name: Build Static Website
+          working-directory: frontend
+          run: npm run build
+  
+        - name: Copy files to the production website with the AWS CLI
+          working-directory: frontend/build
+          run: |
+            aws s3 sync --delete . s3://${{ env.S3_BUCKET }}
+
+  
+        - name: Copy files to the production website with the AWS CLI
+          working-directory: frontend/build
+          run: |
+            aws cloudfront create-invalidation \
+              --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+              --paths "/*"
