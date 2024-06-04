@@ -15,3 +15,6 @@ __pycache__/
 .env.local
 .env.development
 .env.production
+
+# all installed dependencies
+uninstall.txt
