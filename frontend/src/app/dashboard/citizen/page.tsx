@@ -6,7 +6,8 @@ import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
-export default function Home() {
+
+export default function CitizenDashboard() {
 
     const handleTabChange = (key: Key) => {
         const index = Number(key);

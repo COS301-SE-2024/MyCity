@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <nav className="bg-black bg-opacity-50 p-4 flex items-center justify-between">
+    <nav className="fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <div className="text-white font-bold"><img src="https://i.imgur.com/4RVgkf9.png" alt="MyCity" width={50} height={50} /></div>
       
       <div className="flex-initial flex mr-0 space-x-4 items-center">

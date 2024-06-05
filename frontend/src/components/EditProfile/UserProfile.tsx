@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
-import Navbar from '../Navbar/nav';
 import { Baseline } from 'lucide-react';
 // import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
