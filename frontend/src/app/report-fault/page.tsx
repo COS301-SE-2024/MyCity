@@ -13,10 +13,10 @@ export default function ReportFault() {
             <Navbar />
         <main className="h-screen flex justify-center py-5">
             
-            <div className="flex flex-row justify-evenly w-[70em] h-screen rounded-lg border-t-0 border shadow-lg shadow-orange-800/15">
+            <div className="flex flex-row justify-evenly w-[70em] h-screen rounded-lg border-t-0 border shadow-lg shadow-blue-800/15">
                 <ReportFaultForm className="w-full h-full" />
                 </div>
-            <div className="flex flex-row justify-evenly w-[70em] h-full rounded-lg border-t-0 border shadow-lg shadow-orange-800/15">
+            <div className="flex flex-row justify-evenly w-[70em] h-full rounded-lg border-t-0 border shadow-lg shadow-blue-800/15">
                 <ReportFaultMap className="w-full" />
             </div>
 

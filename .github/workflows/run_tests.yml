@@ -1,10 +1,7 @@
 name: Run Tests
 on:
   pull_request:
-    types:
-      - closed
-    branches:
-      - main
+    branches: [main, development]
 
 env:
   CI: true
