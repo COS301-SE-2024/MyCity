@@ -3,6 +3,13 @@ import boto3
 import hashlib
 import random
 from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr
+from chalice import Chalice, CORSConfig
+
+cors_config = CORSConfig(
+    allow_origin='*',  # Allow requests from any origin (for development; restrict for production)
+    allow_headers=['Content-Type'],  # Include necessary headers
+)
 
 auth_routes = Blueprint(__name__)
 dynamodb = boto3.resource("dynamodb")
@@ -12,17 +19,18 @@ companies = dynamodb.Table("private_companies")
 
 
 # signup for companies
-@auth_routes.route("/signup/company", methods=["POST"])
+@auth_routes.route("/signup/company", methods=["POST"],cors=True)
 def signup_company():
     request = auth_routes.current_request
     data = request.json_body
     hashed_pass = hashPassword(data.get("password"))
     if DoesFieldExist(
-        data.get("compay_name"), "company_name", data.get("email"), "email", True
+        data.get("compay_name"), "company_name", True
     ):
-        return {"Error": "Email Exists", "message": "Email already exists"}
+        return {
+            "Status": 400,"Error": "Email Exists", "message": "Email already exists"}
     if not DoesMunicipalityExist(data.get("municipality")):
-        return {"Error": "Municipality", "message": "Muncipality name doesnt exists"}
+        return {"Status": 400,"Error": "Municipality", "message": "Muncipality name doesnt exists"}
     municipality.put_item(
         Item={
             "company_name": data.get("company_name"),
@@ -32,11 +40,11 @@ def signup_company():
             "email": data.get("email"),
         }
     )
-    return {"status": "success"}
+    return {"Status": 200}
 
 
 # signup for municipality
-@auth_routes.route("/signup/municipality", methods=["POST"])
+@auth_routes.route("/signup/municipality", methods=["POST"],cors=True)
 def signup_municipality():
     request = auth_routes.current_request
     data = request.json_body
@@ -53,11 +61,11 @@ def signup_municipality():
                 "location": data.get("location"),
             }
         )
-    return {"status": "success"}
+    return {"status": 200}
 
 
 ###signup for User
-@auth_routes.route("/signup/user", methods=["POST"])
+@auth_routes.route("/signup/user", methods=["POST"],cors=True)
 def signup_user():
     request = auth_routes.current_request
     location = "-29.789614, 30.741924"
@@ -66,26 +74,26 @@ def signup_user():
         data = request.json_body
         hashed_pass = hashPassword(data.get("password"))
         # Checking that email and username is unique
-        if DoesFieldExist(data.get("username"), "username", data.get("email"), "email"):
+        if DoesFieldExist(data.get("username"), "username"):
             return {
-                "Error": "Username & Email",
-                "message": "username or email already exists",
+                "Status": 400,
+                "Error": "Username",
+                "message": "username already exists",
             }
-        if not DoesMunicipalityExist(data.get("municipality")):
+        if DoesEmailExist(data.get('email')) :
             return {
-                "Error": "Municipality",
-                "message": "Municipality doesnt exists " + data.get("municipality"),
+                "Status": 400,
+               "Error": "Email",
+                "message": "email already exists", 
             }
         table.put_item(
             Item={
                 "username": data.get("username"),
-                "email": data.get("email"),
-                "surname": data.get("surname"),
                 "firstname": data.get("firstname"),
+                "surname": data.get("surname"),
                 "dob": data.get("dob"),
-                "municipality": data.get("municipality"),
                 "password": hashed_pass,
-                "cellphone": data.get("cellphone"),
+                "email": data.get("email"),
             }
         )
         return {"Status": 200, "Message": "Successfull placed"}
@@ -95,25 +103,42 @@ def signup_user():
 
 
 ###login for users
-@auth_routes.route("/login/user", methods=["POST"])
+@auth_routes.route("/login/user", methods=["POST"],cors=True)
 def login_user():
     request = auth_routes.current_request
     data = request.json_body
-    if not DoesFieldExist(data.get("username"), "username", data.get("email"), "email"):
-        return {"Error": "Userame", "Message": "Username Doesnt exist"}
-    response = table.query(
-        KeyConditionExpression=Key("username").eq(data.get("username"))
-    )
-    items = response["Items"]
-    for item in items:
-        password = item.get("password")
-        if verify_password(data.get("password"), password):
-            return {"Success": 200, "Message": "Verified"}
-        else:
-            return {"Error": "Password", "Message": "Password was wrong"}
+    try: 
+        if not DoesFieldExist(data.get("username"), "username"):
+            return {"Status": 400,"Error": "Userame", "message": "Username Doesnt exist"}
+        if not DoesEmailExist(data.get('email')) :
+            return {
+                "Status": 400,
+                "Error": "Email",
+                "message": "email doesnt exists", 
+            }
+        response = table.query(
+            KeyConditionExpression=Key("username").eq(data.get("username"))
+        )
+        items = response["Items"]
+        for item in items:
+            password = item.get("password")
+            if verify_password(data.get("password"), password):
+                return {"Success": 200, "message": "Verified"}
+            else:
+                return {"Status": 400,"Error": "Password", "message": "Password was wrong"}
+    except Exception as e:
+        return {"Status": 400, "Message": str(e),}
+
+def DoesEmailExist(data):
+    response = table.scan(FilterExpression= Attr("email").eq(data))
+    items = response['Items']
+    if len(items) > 0:
+        return True
+    else:
+        return False
 
 
-def DoesFieldExist(data, field, data2, field2, isCompany=False):
+def DoesFieldExist(data, field, isCompany=False):
     if isCompany == False:
         response = table.query(KeyConditionExpression=Key(field).eq(data))
         items = response["Items"]
@@ -123,7 +148,7 @@ def DoesFieldExist(data, field, data2, field2, isCompany=False):
             return False
     else:
         response = companies.query(
-            KeyConditionExpression=Key(field).eq(data) & Key(field2).eq(data2)
+            KeyConditionExpression=Key(field).eq(data)
         )
         items = response["Items"]
         if len(items) > 0:

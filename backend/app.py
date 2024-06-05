@@ -2,10 +2,14 @@ from chalice import Chalice
 
 from chalicelib.auth.auth_routes import auth_routes
 from chalicelib.issues.issues_routes import issues_routes
-from chalicelib.tickets.tickets_routes import tickets_routes
+from chalice import Chalice, CORSConfig
+# from chalicelib.tickets.tickets_routes import tickets_routes
 
 app = Chalice(app_name="mycity")
-
+cors_config = CORSConfig(
+    allow_origin='*',  # Adjust this as needed
+    allow_headers=['Content-Type'],  # Include headers as needed
+)
 # handle all requests related to authentication
 app.register_blueprint(auth_routes, "Auth", "/auth")
 
@@ -13,12 +17,12 @@ app.register_blueprint(auth_routes, "Auth", "/auth")
 app.register_blueprint(issues_routes, "Issues", "/issues")
 
 # handle all requests related to tickets
-app.register_blueprint(tickets_routes, "Tickets", "/tickets")
+# app.register_blueprint(tickets_routes, "Tickets", "/tickets")
 
 
-@app.route("/")
+@app.route("/",cors=True)
 def index():
-    return {"hello": "world"}
+    return {'statusCode': 200,'headers': {'Content-Type': 'application/json'},"hello": "world"}
 
 
 # The view function above will return {"hello": "world"}
