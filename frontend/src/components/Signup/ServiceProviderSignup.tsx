@@ -56,10 +56,10 @@ export default function ServiceProviderSignup() {
 
           <div className="flex justify-evenly items-center align-middle">
             <div className="rounded-2xl border border-black/15 border-dashed px-8 py-7 w-fit h-fit">
-              <Upload className="text-orange-400" size={40} />
+              <Upload className="text-blue-400" size={40} />
             </div>
 
-            <span className="text-orange-400">Upload a file or drag and drop.</span>
+            <span className="text-blue-400">Upload a file or drag and drop.</span>
 
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function ServiceProviderSignup() {
         />
 
 
-        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-orange-500 text-white font-semibold" type="submit">
+        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
 

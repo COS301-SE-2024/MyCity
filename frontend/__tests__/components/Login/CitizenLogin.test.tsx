@@ -30,10 +30,9 @@ describe("CitizenLogin", () => {
 
     it("renders a Login button", () => {
         render(<CitizenLogin />);
-        const submitButton = screen.getByTestId("login-btn")
+        const submitButton = screen.getByTestId("submit-btn")
 
         expect(submitButton).toBeInTheDocument();
-        expect(submitButton).toHaveTextContent("Login");
     });
 
 

@@ -28,6 +28,6 @@ def create_ticket(ticket_data):
 def delete_ticket(ticket_id):
     try:
         table.delete_item(Key={"ticket_id": ticket_id})
-        return {"status": "success", "ticket_id": ticketid}
+        return {"status": "success", "ticket_id": ticket_id}
     except ClientError as e:
         return {"status": "error", "message": str(e)}

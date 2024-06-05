@@ -25,6 +25,7 @@
 - [MyCity](#mycity)
 - [Table of contents](#table-of-contents)
 - [Project Overview](#project-overview)
+- [Project Board](#project-board)
 - [Features (a short summary of the user's functionality)](#features-a-short-summary-of-the-users-functionality)
 - [Demo Content](#demo-content)
 - [Documentation](#documentation)
@@ -46,6 +47,11 @@
 
 <p>An additional feature that could offer potential benefits, and is open for discussion, would be the ability to upload a photo of the asset or fault at the location of the asset.  With the ability to upload a photo with a ticket, the stakeholders would easily be able to verify the authenticity of the report, and to act and prioritise accordingly.</p>
 </details>
+
+# Project Board
+
+<p> You can track the progress of our project on the <a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1">Project Board</a> for MyCity.</p>
+
 
 
 # Features (a short summary of the user's functionality)
@@ -84,8 +90,8 @@
   <a href="https://www.python.org/">
     <img src="/images/icon_python.png" alt="Python" style="width: 60px; height: auto;"/>
   </a>
-  <a href="https://aws.amazon.com/rds/">
-    <img src="/images/icon_rds.png" alt="Amazon RDS for PostgreSQL" style="width: 60px; height: auto;"/>
+  <a href="https://aws.amazon.com/dynamodb/">
+    <img src="/images/icon_dynamoDB.png" alt="Amazon DynamoDB" style="width: 60px; height: auto;"/>
   </a>
   <a href="https://aws.amazon.com/ec2/">
     <img src="/images/icon_aws.png" alt="AWS EC2" style="width: 60px; height: auto;"/>

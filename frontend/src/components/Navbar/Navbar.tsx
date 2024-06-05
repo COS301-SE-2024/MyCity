@@ -11,9 +11,9 @@ export default function Navbar() {
             Welcome
           </div>
         </Link>
-        <Link href="/how-it-works">
+        <Link href="/editprofile">
           <div className="text-white hover:text-gray-300 cursor-pointer">
-            How it works
+            Edit Profile
           </div>
         </Link>
         <Link href="/report-fault">
