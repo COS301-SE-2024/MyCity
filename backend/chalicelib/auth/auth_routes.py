@@ -2,6 +2,7 @@ from chalice import Blueprint
 import boto3
 import hashlib
 import random
+import uuid
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
 from chalice import Chalice, CORSConfig
@@ -24,24 +25,24 @@ def signup_company():
     request = auth_routes.current_request
     data = request.json_body
     hashed_pass = hashPassword(data.get("password"))
-    if DoesFieldExist(
-        data.get("compay_name"), "company_name", True
-    ):
-        return {
-            "Status": 400,"Error": "Email Exists", "message": "Email already exists"}
-    if not DoesMunicipalityExist(data.get("municipality")):
-        return {"Status": 400,"Error": "Municipality", "message": "Muncipality name doesnt exists"}
-    municipality.put_item(
-        Item={
-            "company_name": data.get("company_name"),
-            "Municipality": data.get("municipality"),
-            "quality_rating": 0,
-            "password": hashed_pass,
-            "email": data.get("email"),
-        }
-    )
-    return {"Status": 200}
-
+    pid = str(uuid.uuid1())
+    try:
+        if DoesEmailExist(data.get("email"), True):
+            return {
+                "Status": 400,"Error": "Email Exists", "message": "Email already exists"}
+        companies.put_item(
+            Item={
+                "pid" : pid,
+                "email": data.get("email"),
+                "name": data.get("name"),
+                "password": hashed_pass,
+                "quality_rating": 0,
+                "service_type" : data.get("service_type")
+            }
+        )
+        return {"Status": 200, "pid" : pid, "name" :data.get("name") , "service_type" : data.get("service_type") }
+    except Exception as e:
+        return {"Status": 400, "message": str(e), "password": hashed_pass}
 
 # signup for municipality
 @auth_routes.route("/signup/municipality", methods=["POST"],cors=True)
@@ -89,11 +90,12 @@ def signup_user():
         table.put_item(
             Item={
                 "username": data.get("username"),
-                "firstname": data.get("firstname"),
-                "surname": data.get("surname"),
-                "dob": data.get("dob"),
-                "password": hashed_pass,
                 "email": data.get("email"),
+                "firstname": data.get("firstname"),
+                "municipality" : "City of Tshwane Metropolitan",
+                "password": hashed_pass,
+                "profilePicture" :"https://i.imgur.com/xKEKm62.png",
+                "surname": data.get("surname"),
             }
         )
         return {"Status": 200, "message": "Successfull placed"}
@@ -129,13 +131,21 @@ def login_user():
     except Exception as e:
         return {"Status": 400, "Message": str(e),}
 
-def DoesEmailExist(data):
-    response = table.scan(FilterExpression= Attr("email").eq(data))
-    items = response['Items']
-    if len(items) > 0:
-        return True
-    else:
-        return False
+def DoesEmailExist(data,isCompany=False):
+    if isCompany == False:
+        response = table.scan(FilterExpression= Attr("email").eq(data))
+        items = response['Items']
+        if len(items) > 0:
+            return True
+        else:
+            return False
+    else :
+        response = companies.scan(FilterExpression= Attr("email").eq(data))
+        items = response['Items']
+        if len(items) > 0:
+            return True
+        else:
+            return False
 
 
 def DoesFieldExist(data, field, isCompany=False):
