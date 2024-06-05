@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import axios from 'axios';
 
 
 export default function CitizenLogin() {
@@ -10,20 +11,16 @@ export default function CitizenLogin() {
   const router = useRouter();
   const  handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const response = await fetch('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/login/user',{
-      method: "POST",
-      headers : {"Content-Type" : "application/json"},
-      body : JSON.stringify({
+    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/login/user',{
         email : email,
         username : "Dindoss",
         password : password
-      })
     });
     console.log("Something happened")
-    if ( !response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
+    // if ( !response.ok) {
+    //   throw new Error(`HTTP error! status: ${response.status}`);
+    // }
+    const data = await response.data;
     console.log(data)
     console.log(data.Status)
     if(data.Success)
