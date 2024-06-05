@@ -3,7 +3,7 @@ from chalice import Chalice, CORSConfig
 from chalicelib.auth.auth_routes import auth_routes
 from chalicelib.issues.issues_routes import issues_routes
 # from chalicelib.tickets.tickets_routes import tickets_routes
-from chalicelib.profiles.profiles_routes import profiles_routes
+# from chalicelib.profiles.profiles_routes import profiles_routes
 
 app = Chalice(app_name="mycity")
 cors_config = CORSConfig(
@@ -20,7 +20,7 @@ app.register_blueprint(issues_routes, "Issues", "/issues")
 # app.register_blueprint(tickets_routes, "Tickets", "/tickets")
 
 # handle all requests related to editing the profiles of the 3 different typed of users
-app.register_blueprint(profiles_routes, "Profiles", "/profiles")
+# app.register_blueprint(profiles_routes, "Profiles", "/profiles")
 
 
 @app.route("/",cors=True)

@@ -25,6 +25,8 @@ export default function CitizenLogin() {
     console.log(data.Status)
     if(data.Success)
     {
+      sessionStorage.setItem('username',data.username)
+      sessionStorage.setItem('name',data.firstname)
       router.push("/dashboard")
     }
   

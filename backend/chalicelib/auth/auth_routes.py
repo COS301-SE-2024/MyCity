@@ -96,9 +96,9 @@ def signup_user():
                 "email": data.get("email"),
             }
         )
-        return {"Status": 200, "Message": "Successfull placed"}
+        return {"Status": 200, "message": "Successfull placed"}
     except Exception as e:
-        return {"Status": 400, "Message": str(e), "password": hashed_pass}
+        return {"Status": 400, "message": str(e), "password": hashed_pass}
     return {"status": "success"}
 
 
@@ -123,7 +123,7 @@ def login_user():
         for item in items:
             password = item.get("password")
             if verify_password(data.get("password"), password):
-                return {"Success": 200, "message": "Verified"}
+                return {"Success": 200, "message": "Verified","username": item.get('username'),"firstname": item.get('firstname'),"surname": item.get('surname')}
             else:
                 return {"Status": 400,"Error": "Password", "message": "Password was wrong"}
     except Exception as e:
