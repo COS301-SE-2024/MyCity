@@ -1,4 +1,6 @@
-import Nav from "@/components/Navbar/nav";
+'use client'
+
+import Nav from "@/components/Navbar/Navbar";
 import Link from 'next/link';
 
 export default function Home() {

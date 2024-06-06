@@ -26,10 +26,9 @@ describe("CitizenLogin", () => {
         const forgotPasswordLink = screen.getByText("Forgot password?");
 
         expect(forgotPasswordLink).toBeInTheDocument();
-        expect(forgotPasswordLink).toHaveTextContent("Forgot password?");
     });
 
-    it("renders a submit button", () => {
+    it("renders a Login button", () => {
         render(<CitizenLogin />);
         const submitButton = screen.getByTestId("submit-btn")
 
