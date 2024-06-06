@@ -1,11 +1,15 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Upload } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import Link from 'next/link';
 
 
 export default function ServiceProviderSignup() {
-  const [email, setEmail] = useState('');
-  const [serviceArea, setServiceArea] = useState('');
+  
+  const [servicetype, setServicetype] = useState('');
+  const router = useRouter();
 
 
 
@@ -24,8 +28,25 @@ export default function ServiceProviderSignup() {
   ];
 
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+    console.log("Service Area: " + form.get("service-area"))
+    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/signup/company',{
+        email : form.get("email"),
+        name : form.get("company"),
+        service_type : form.get("service-area"),
+        password : form.get("password")
+    });
+    console.log("Something happened")
+    const data = await response.data;
+    if(data.Status == 200)
+    {
+      sessionStorage.setItem('pid',data.pid)
+      sessionStorage.setItem('name',data.name)
+      sessionStorage.setItem('service_type',data.service_type)
+      router.push("/dashboard")
+    }
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
   };
@@ -47,7 +68,7 @@ export default function ServiceProviderSignup() {
           name="company"
           autoComplete="new-company"
           placeholder="Company Name"
-          value={email} onChange={(e) => setEmail(e.target.value)}
+
         />
 
 
@@ -78,7 +99,6 @@ export default function ServiceProviderSignup() {
           name="service-area"
           autoComplete="new-service-area"
           menuTrigger={"input"}
-          onChange={(event) => setServiceArea(event.target.value)}
         >
           {(serviceArea) => <AutocompleteItem key={serviceArea.id}>{serviceArea.name}</AutocompleteItem>}
         </Autocomplete>
@@ -97,7 +117,21 @@ export default function ServiceProviderSignup() {
           name="email"
           autoComplete="new-email"
           placeholder="example@company.com"
-          value={email} onChange={(e) => setEmail(e.target.value)}
+        />
+
+<Input
+          variant={"bordered"}
+          fullWidth
+          label="Create password"
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+            label: "font-semibold text-medium mt-[-1px]"
+          }}
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          placeholder="create secure password"
         />
 
 

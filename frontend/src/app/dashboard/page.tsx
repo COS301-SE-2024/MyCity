@@ -8,6 +8,8 @@ import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 export default function Home() {
 
+    const name = sessionStorage.getItem("fistname")
+    console.log(name)
     const handleTabChange = (key: Key) => {
         const index = Number(key);
     };
@@ -20,7 +22,7 @@ export default function Home() {
                 Dashboard
             </h1>
             <h2 className="text-3xl font-bold mt-2 ml-2 text-blue-700">
-                Jane Doe
+                {name}
             </h2>
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
 
