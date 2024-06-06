@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import EditCitizenProfile from '@/components/EditProfile/UserProfile';
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarWhite from "@/components/Navbar/NavbarWhite";
 
 export default function CitizenProfile() {
   //     const [initialData, setInitialData] = useState({
@@ -55,7 +55,7 @@ export default function CitizenProfile() {
 
   return (
     <div>
-      <Navbar />
+      <NavbarWhite />
       <main className="h-screen flex justify-center p-20">
         <div className="flex flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12">
           <span className="text-[2.5em] font-bold">{"Update User Profile."}</span>

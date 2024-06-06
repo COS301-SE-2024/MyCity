@@ -1,13 +1,13 @@
 'use client'
 
-import React, { Key, useState } from "react";
+import NavbarWhite from "@/components/Navbar/NavbarWhite";
+import React, { Key } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
-import NavbarWhite from "@/components/Navbar/NavbarWhite";
 
-export default function CitizenDashboard() {
+export default function GuestDashboard() {
 
     const handleTabChange = (key: Key) => {
         const index = Number(key);
@@ -20,10 +20,10 @@ export default function CitizenDashboard() {
             <main>
 
                 <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">
-                    Dashboard
+                    Live Activity
                 </h1>
                 <h2 className="text-3xl font-bold mt-2 ml-2 text-blue-700">
-                    Jane Doe
+                    Guest
                 </h2>
                 <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
 
@@ -46,13 +46,6 @@ export default function CitizenDashboard() {
                             </h1>
                             <h1 className="text-l mb-4 ml-2">
                                 Based on your proximity to the issue.
-                            </h1>
-                            <FaultCardContainer />
-                            <h1 className="text-2xl font-bold mt-2 ml-2">
-                                Watchlist
-                            </h1>
-                            <h1 className="text-l mb-4 ml-2">
-                                All of the issues you have added to your watchlist.
                             </h1>
                             <FaultCardContainer />
                         </Tab>

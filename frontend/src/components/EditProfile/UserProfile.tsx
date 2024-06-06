@@ -29,9 +29,9 @@ export default function CitizenSignup() {
     // cellphone: string;
     // municipality: string;
 
-    <div className="px-12</div>">
+    <div className="px-12 w-full">
       <ToastContainer />
-      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8 w-full">
 
         <div className='flex gap-x-2'>
           <Input
@@ -46,7 +46,7 @@ export default function CitizenSignup() {
             autoComplete="new-email"
             placeholder="example@mail.com"
             value={"chadmartin81"}
-            
+
           />
         </div>
 
@@ -64,14 +64,9 @@ export default function CitizenSignup() {
             type="input"
             autoComplete="new-email"
             placeholder="example@mail.com"
-            
+
             onChange={(event) => setEmail(event.target.value)}
           />
-          {/* <Link href="/"> */}
-          <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Email updated succesfully!")}>
-            Update
-          </div>
-          {/* </Link> */}
 
         </div>
 
@@ -87,15 +82,9 @@ export default function CitizenSignup() {
             type="input"
             autoComplete="new-email"
             placeholder="Chad"
-          
+
             onChange={(event) => setEmail(event.target.value)}
           />
-          {/* <Link href="/dashboard"> */}
-            <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Firstname updated succesfully!")}>
-              {/* <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4"> */}
-              Update
-            </div>
-          {/* </Link> */}
 
         </div>
 
@@ -112,14 +101,8 @@ export default function CitizenSignup() {
             type="input"
             autoComplete="new-email"
             placeholder="Surname"
-           
+
             onChange={(event) => setEmail(event.target.value)} />
-          {/* <Link href="/dashboard"> */}
-            <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Surname updated succesfully!")}>
-              {/* <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4"> */}
-              Update
-            </div>
-          {/* </Link> */}
 
         </div>
 
@@ -135,24 +118,19 @@ export default function CitizenSignup() {
             type="input"
             autoComplete="new-email"
             placeholder="Cellphone Number"
-          
+
             onChange={(event) => setEmail(event.target.value)} />
-          {/* <Link href="/dashboard"> */}
-            <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Cellphone number updated succesfully!")}>
-              {/* <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4"> */}
-              Update
-            </div>
-          {/* </Link> */}
 
         </div>
 
-        {/* <Link href="/dashboard">
-          <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
-            Submit
-          </div>
-        </Link> */}
-        {/* Social Media Sign Up Options */}
-        {/* Render different options based on userType */}
+        <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Email updated succesfully!")}>
+          Update
+        </div>
+
+        <Button type="submit" className="bg-blue-500">
+          Update
+        </Button>
+
       </form >
     </div >
   );
