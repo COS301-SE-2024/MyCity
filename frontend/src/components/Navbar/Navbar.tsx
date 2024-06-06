@@ -25,7 +25,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <Link href="/login">
+        <Link href="auth/login">
           <span className="bg-gray-500 flex items-center text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-600 transition duration-300 font-bold">
             Login <ArrowRight className="ms-2" size={18} />
           </span>

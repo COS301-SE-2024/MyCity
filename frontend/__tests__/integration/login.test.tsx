@@ -1,4 +1,4 @@
-import Login from "@/app/login/page";
+import Login from "@/app/auth/login/page";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("Login Page", () => {
