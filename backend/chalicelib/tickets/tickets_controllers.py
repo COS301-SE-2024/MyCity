@@ -1,6 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
-from chalice import BadRequestError, ConflictError
+from chalice import BadRequestError
 from chalicelib.utils import generate_id
 import uuid
 
