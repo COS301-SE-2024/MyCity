@@ -4,7 +4,7 @@ import React from 'react';
 
 import ReportFaultMap from '@/components/Faults/ReportFaultMap';
 import ReportFaultForm from '@/components/Faults/ReportFaultForm';
-import Navbar from '@/components/Navbar/nav';
+import Navbar from '@/components/Navbar/Navbar';
 
 export default function ReportFault() {
 
