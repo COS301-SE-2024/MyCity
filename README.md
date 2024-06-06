@@ -68,7 +68,7 @@
 # Documentation
 
 <p align="center">
-<a href="https://docs.google.com/document/d/14rKvx6jj_NwY2N7VSHivkXs2QrL1ifd2jE4sj98GxWM/edit?usp=sharing">System Requirements (SRS)</a><br>
+<a href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link">System Requirements (SRS)</a><br>
 <a href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing">System Architectural Design</a><br>
 <a href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing">Testing Guidelines</a><br>
 <a href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing">GitHub Strategy</a><br>
