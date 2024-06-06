@@ -123,11 +123,7 @@ export default function CitizenSignup() {
 
         </div>
 
-        <div className="border bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-2" onClick={() => toast("Email updated succesfully!")}>
-          Update
-        </div>
-
-        <Button type="submit" className="bg-blue-500">
+        <Button type="submit" className="m-auto bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
           Update
         </Button>
 

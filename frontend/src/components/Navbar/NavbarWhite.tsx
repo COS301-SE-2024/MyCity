@@ -28,21 +28,21 @@ export default function NavbarTwo() {
         <Link href="/about" className={isActive("/about") ? "text-blue-500 font-semibold" : "text-black hover:text-gray-600"}>
           <div className="flex flex-col gap-1 items-center">
             <Lightbulb size={25} />
-            <span className={isActive("/") ? "font-bold" : ""}>What is MyCity</span>
+            <span>What is MyCity</span>
           </div>
         </Link>
 
         <Link href="/how-it-works" className={isActive("/how-it-works") ? "text-blue-500 font-semibold" : "text-black hover:text-gray-600"}>
           <div className="flex flex-col gap-1 items-center">
             <Wrench size={25} />
-            <span className={isActive("/") ? "font-bold" : ""}>How it works</span>
+            <span>How it works</span>
           </div>
         </Link>
 
         <Link href="/dashboard/guest" className={isActive("/dashboard/guest") ? "text-blue-500 font-semibold" : "text-black hover:text-gray-600"}>
           <div className="flex flex-col gap-1 items-center">
             <Globe size={25} />
-            <span className={isActive("/") ? "font-bold" : ""}>Live Activity</span>
+            <span>Live Activity</span>
           </div>
         </Link>
 
