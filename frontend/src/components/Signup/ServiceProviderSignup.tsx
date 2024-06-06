@@ -7,10 +7,7 @@ import Link from 'next/link';
 
 
 export default function ServiceProviderSignup() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [companyname, setCompanyname] = useState('');
-  const [serviceArea, setServiceArea] = useState('');
+  
   const [servicetype, setServicetype] = useState('');
   const router = useRouter();
 
@@ -33,11 +30,13 @@ export default function ServiceProviderSignup() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+    console.log("Service Area: " + form.get("service-area"))
     const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/signup/company',{
-        email : email,
-        name : companyname,
-        service_type : servicetype,
-        password : password
+        email : form.get("email"),
+        name : form.get("company"),
+        service_type : form.get("service-area"),
+        password : form.get("password")
     });
     console.log("Something happened")
     const data = await response.data;
@@ -69,7 +68,7 @@ export default function ServiceProviderSignup() {
           name="company"
           autoComplete="new-company"
           placeholder="Company Name"
-          value={companyname} onChange={(e) => setCompanyname(e.target.value)}
+
         />
 
 
@@ -100,8 +99,6 @@ export default function ServiceProviderSignup() {
           name="service-area"
           autoComplete="new-service-area"
           menuTrigger={"input"}
-          onChange={(event) => setServiceArea(event.target.value)}
-          value = {servicetype}
         >
           {(serviceArea) => <AutocompleteItem key={serviceArea.id}>{serviceArea.name}</AutocompleteItem>}
         </Autocomplete>
@@ -120,7 +117,6 @@ export default function ServiceProviderSignup() {
           name="email"
           autoComplete="new-email"
           placeholder="example@company.com"
-          value={email} onChange={(e) => setEmail(e.target.value)}
         />
 
 <Input
@@ -136,7 +132,6 @@ export default function ServiceProviderSignup() {
           name="password"
           autoComplete="new-password"
           placeholder="create secure password"
-          value={password} onChange={(e) => setPassword(e.target.value)}
         />
 
 
