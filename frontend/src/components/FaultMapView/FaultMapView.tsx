@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 const mapPlaceholder = "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg"; 
@@ -7,7 +8,7 @@ const FaultMapView = () => {
           <div className="md:w-2/3 md:pr-4 flex-grow flex pl-2">
             {/* Placeholder for the map */}
             <div className="relative w-full rounded-lg shadow-md overflow-hidden">
-              <img src={mapPlaceholder} alt="Map Placeholder" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg" />
+              <Image src={mapPlaceholder} alt="Map Placeholder" className="absolute top-0 left-0 w-full h-full object-cover rounded-lg" />
               <div className="pt-[56.25%]"></div> {/* 16:9 Aspect Ratio */}
             </div>
           </div>
