@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import EditCitizenProfile from '@/components/EditProfile/UserProfile';
-import Navbar from '@/components/Navbar/nav';
+import Navbar from '@/components/Navbar/Navbar';
 
 const CitizenProfilePage: React.FC = () => {
 //     const [initialData, setInitialData] = useState({
