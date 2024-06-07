@@ -1,4 +1,4 @@
-import Signup from "@/app/signup/page";
+import Signup from "@/app/auth/signup/page";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("Signup Page", () => {

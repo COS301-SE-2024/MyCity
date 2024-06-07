@@ -4,7 +4,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Upload } from 'lucide-react';
-import Navbar from '../Navbar/Navbar';
+import NavbarBluish from '../Navbar/NavbarBluish';
 
 
 export default function CitizenSignup() {
@@ -31,7 +31,7 @@ export default function CitizenSignup() {
     {
       sessionStorage.setItem('fistname',String(firstname))
       sessionStorage.setItem('username',String(form.get("username")));
-      router.push("/dashboard")
+      router.push("/dashboard/citizen")
     }
     // Handle the submit action here
     // console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);

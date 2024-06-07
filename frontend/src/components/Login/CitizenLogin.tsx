@@ -9,12 +9,12 @@ export default function CitizenLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
-  const  handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/login/user',{
-        email : email,
-        username : "Dindoss",
-        password : password
+    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/login/user', {
+      email: email,
+      username: "Dindoss",
+      password: password
     });
     console.log("Something happened")
     // if ( !response.ok) {
@@ -23,14 +23,13 @@ export default function CitizenLogin() {
     const data = await response.data;
     console.log(data)
     console.log(data.Status)
-    if(data.Success)
-    {
-      sessionStorage.setItem('username',data.username)
-      sessionStorage.setItem('name',data.firstname)
-      router.push("/dashboard")
+    if (data.Success) {
+      sessionStorage.setItem('username', data.username)
+      sessionStorage.setItem('name', data.firstname)
+      router.push("/dashboard/citizen")
     }
-  
-    
+
+
     // Handle the submit action here
     // console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
   };
@@ -70,11 +69,9 @@ export default function CitizenLogin() {
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
-        <Link href="/dashboard" data-testid="submit-btn">
-          <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
-            Login
-          </div>
-        </Link>
+        <Button name="submit" data-testid="submit-btn" radius="full" className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-400 transition duration-300 text-center font-bold w-max mx-auto mt-4" type="submit">
+          Login
+        </Button>
 
       </form>
     </div>
