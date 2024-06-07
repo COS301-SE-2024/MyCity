@@ -31,7 +31,7 @@ export default function CitizenSignup() {
     {
       sessionStorage.setItem('fistname',String(firstname))
       sessionStorage.setItem('username',String(form.get("username")));
-      router.push("/dashboard")
+      router.push("/dashboard/citizen")
     }
     // Handle the submit action here
     // console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
