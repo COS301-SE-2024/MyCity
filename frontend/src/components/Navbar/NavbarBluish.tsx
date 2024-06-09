@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils';
 import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { ArrowRight, Building2, Lightbulb, Wrench, Globe } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function Navbar() {
+export default function NavbarBluish() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
 
@@ -12,7 +13,7 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
         <div className="text-white font-bold ms-2">
-          <img src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} />
+          <Image src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} />
         </div>
       </Link>
 

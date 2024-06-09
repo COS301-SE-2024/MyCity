@@ -1,7 +1,7 @@
 'use client'
 
 import NavbarWhite from "@/components/Navbar/NavbarWhite";
-import React, { Key, useState } from "react";
+import React, { Key } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
@@ -24,7 +24,7 @@ export default function ServiceProviderDashboard() {
                     Service Provider Dashboard
                 </h1>
                 <h2 className="text-3xl font-bold mt-2 ml-2 text-blue-700">
-                    Bob's Electronics
+                    Bob&apos;s Electronics
                 </h2>
 
                 <div className="hidden">
