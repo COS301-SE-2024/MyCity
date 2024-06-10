@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import ReportFaultMap from '@/components/Faults/ReportFaultMap';
-import ReportFaultForm from '@/components/Faults/ReportFaultForm';
+import ReportFaultMap from '@/components/CreateTicket/CreateTicketMap';
+import ReportFaultForm from '@/components/CreateTicket/CreateTicketForm';
 import NavbarWhite from "@/components/Navbar/NavbarWhite";
 
-export default function ReportFault() {
+export default function CreateTicket() {
 
     return (
         <div>
