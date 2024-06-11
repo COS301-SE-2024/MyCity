@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
-import NavbarWhite from '../Navbar/NavbarWhite';
+import NavbarUser from '../Navbar/NavbarUser';
 import { Baseline } from 'lucide-react';
 // import {toast} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -31,6 +31,7 @@ export default function CitizenSignup() {
     // municipality: string;
 
     <div className="px-12 w-full">
+    <NavbarUser />
       <ToastContainer />
       <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8 w-full">
 
