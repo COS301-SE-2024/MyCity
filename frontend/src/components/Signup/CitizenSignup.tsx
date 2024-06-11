@@ -4,7 +4,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Upload } from 'lucide-react';
-import NavbarBluish from '../Navbar/NavbarBluish';
+import NavbarBluish from '../Navbar/NavbarGuest';
 
 
 export default function CitizenSignup() {

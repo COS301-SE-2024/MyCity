@@ -1,52 +1,60 @@
-import { cn } from '@/lib/utils';
-import { Avatar, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
-import { ArrowRight, Building2, Lightbulb, Wrench, Globe } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { Building2, Lightbulb, Wrench, Globe } from 'lucide-react';
 
-export default function NavbarBluish() {
-  const pathname = usePathname();
-  const isActive = (href: string) => pathname === href;
-
+const Navbar = () => {
   return (
     <nav className="fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
-        <div className="text-white font-bold ms-2">
+        <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
           <Image src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} />
         </div>
       </Link>
 
       <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
-
-        <Link href="/" className={isActive("/") ? "text-blue-500 font-semibold" : "text-gray-300 hover:text-gray-400"}>
-          <div className="flex flex-col gap-1 items-center">
-            <Building2 size={25} />
-            <span>Welcome</span>
+        
+        <Link href="/" passHref>
+          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+            <div className="flex flex-col gap-1 items-center">
+              <Building2 size={25} />
+              <span>Welcome</span>
+            </div>
+          </div>
+        </Link>
+        
+        <Link href="/about" passHref>
+          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+            <div className="flex flex-col gap-1 items-center">
+              <Lightbulb size={25} />
+              <span>What is MyCity</span>
+            </div>
+          </div>
+        </Link>
+        
+        <Link href="/" passHref>
+          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+            <div className="flex flex-col gap-1 items-center">
+              <Wrench size={25} />
+              <span>How it works</span>
+            </div>
+          </div>
+        </Link>
+        
+        <Link href="/dashboard/guest" passHref>
+          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+            <div className="flex flex-col gap-1 items-center">
+              <Globe size={25} />
+              <span>Live Activity</span>
+            </div>
           </div>
         </Link>
 
-        <Link href="/about" className={isActive("/about") ? "text-bluesemi-500" : "text-gray-300 hover:text-gray-400"}>
-          <div className="flex flex-col gap-1 items-center">
-            <Lightbulb size={25} />
-            <span>What is MyCity</span>
-          </div>
-        </Link>
+      </div>
+    </nav>
+  );
+};
 
-        <Link href="/how-it-works" className={isActive("/how-it-works") ? "text-bluesemi-500" : "text-gray-300 hover:text-gray-400"}>
-          <div className="flex flex-col gap-1 items-center">
-            <Wrench size={25} />
-            <span>How it works</span>
-          </div>
-        </Link>
-
-        <Link href="/dashboard/guest" className={isActive("/dashboard/guest") ? "text-bluesemi-500" : "text-gray-300 hover:text-gray-400"}>
-          <div className="flex flex-col gap-1 items-center">
-            <Globe size={25} />
-            <span>Live Activity</span>
-          </div>
-        </Link>
-
+export default Navbar;
 
         {/* <Link href="auth/login">
           <div className="flex flex-col items-center gap-1">
@@ -87,7 +95,4 @@ export default function NavbarBluish() {
 
 
 
-      </div>
-    </nav >
-  );
-}
+    

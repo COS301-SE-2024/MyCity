@@ -5,7 +5,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
-import NavbarWhite from "@/components/Navbar/NavbarWhite";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 
 export default function CitizenDashboard() {
 
@@ -15,7 +15,7 @@ export default function CitizenDashboard() {
 
     return (
         <div>
-            <NavbarWhite />
+            <NavbarUser />
 
             <main>
 

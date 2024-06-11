@@ -1,8 +1,9 @@
 'use client'
 
-import NavbarBluish from "@/components/Navbar/NavbarBluish";
+
 import { Button } from "@nextui-org/react";
 import Link from 'next/link';
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Home() {
   return (<div style={{
@@ -10,6 +11,7 @@ export default function Home() {
     height: '100vh',
     overflow: 'hidden',  // Prevents content overflow
   }}>
+    <NavbarGuest />
     {/* Background image */}
     <div style={{
       position: 'absolute',
@@ -24,7 +26,7 @@ export default function Home() {
       zIndex: -1,  // Ensures the background is behind other content
     }}></div>
     {/* Content */}
-    <NavbarBluish />
+   
     <div className="h-[30vh] flex items-center justify-center" ></div>
     <div className='container mx-auto p-2 relative z-10'> {/* Ensure content is above the background */}
       <h1 className="text-4xl text-white font-bold mb-4">

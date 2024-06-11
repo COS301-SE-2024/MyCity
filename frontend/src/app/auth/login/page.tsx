@@ -4,7 +4,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 import CitizenLogin from "@/components/Login/CitizenLogin";
 import MunicipalityLogin from "@/components/Login/MunicipalityLogin";
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
-import NavbarWhite from "@/components/Navbar/NavbarWhite";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Login() {
     const formHeader: string = "Sign In.";
@@ -12,7 +12,7 @@ export default function Login() {
     return (
         <div>
 
-            <NavbarWhite />
+            <NavbarGuest />
 
             <main className="h-screen flex justify-center p-20">
 
