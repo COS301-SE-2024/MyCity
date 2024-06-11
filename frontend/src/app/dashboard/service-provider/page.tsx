@@ -1,6 +1,6 @@
 'use client'
 
-import NavbarWhite from "@/components/Navbar/NavbarWhite";
+
 import React, { Key } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
@@ -16,7 +16,7 @@ export default function ServiceProviderDashboard() {
     return (
         <div>
 
-            <NavbarWhite />
+            
 
             <main>
 

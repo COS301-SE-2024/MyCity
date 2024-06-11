@@ -1,6 +1,5 @@
 'use client'
 
-import NavbarWhite from "@/components/Navbar/NavbarWhite";
 import React, { Key, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
@@ -16,7 +15,7 @@ export default function MunicipalityDashboard() {
     return (
         <div>
 
-            <NavbarWhite />
+            
 
             <main>
 
