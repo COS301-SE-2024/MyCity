@@ -5,6 +5,7 @@ import { Input, Autocomplete, AutocompleteItem, Textarea, Checkbox } from '@next
 import { BadgeAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import axios from 'axios';
 
 interface ReportFaultFormProps extends React.HTMLAttributes<HTMLElement> {}
 
@@ -24,15 +25,14 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
-                const response = await fetch('/tickets/fault-types', {
-                    method: 'GET',
+                const response = await axios.get('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/fault-types', {
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
 
                 console.log('Response:', response);
-                const data = await response.json();
+                const data = await response.data;
                 console.log('Data from backend:', data);
 
                 setFaultTypes(data.map((item: any) => ({

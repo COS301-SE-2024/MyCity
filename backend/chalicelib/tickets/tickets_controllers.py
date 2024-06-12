@@ -86,7 +86,6 @@ def get_fault_types():
             for asset in assets
         ]
 
-        print("Processed fault types:", fault_types)  # Debug print
         return fault_types
 
     except ClientError as e:
