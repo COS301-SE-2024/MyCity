@@ -3,6 +3,7 @@ from chalice import Chalice, CORSConfig
 from chalicelib.auth.auth_routes import auth_routes
 from chalicelib.issues.issues_routes import issues_routes
 from chalicelib.tickets.tickets_routes import tickets_blueprint
+
 # from chalicelib.profiles.profiles_routes import profiles_blueprint
 
 app = Chalice(app_name="mycity")
