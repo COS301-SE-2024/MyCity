@@ -31,9 +31,7 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
                     },
                 });
 
-                console.log('Response:', response);
                 const data = await response.data;
-                console.log('Data from backend:', data);
 
                 setFaultTypes(data.map((item: any) => ({
                     name: item.asset_id,  // asset_id is used as the unique name
