@@ -1,10 +1,8 @@
 import boto3
 from botocore.exceptions import ClientError
-from chalice import BadRequestError
-from chalicelib.utils import generate_id
 import uuid
 
-dynamodb = boto3.resource("dynamodb", region_name="af-south-1")
+dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 users_table = dynamodb.Table("user")
 assets_table = dynamodb.Table("asset")
@@ -65,4 +63,33 @@ def create_ticket(ticket_data):
     except ClientError as e:
         raise BadRequestError(
             f"Failed to create ticket: {e.response['Error']['Message']}"
+        )
+
+
+def get_fault_types():
+    try:
+        response = assets_table.scan()
+        assets = response.get(
+            "Items", []
+        )  # Extracting the list of assets from the response
+        # Extracting required fields from each asset
+        fault_types = [
+            {
+                "asset_id": asset["asset_id"],
+                "assetIcon": asset.get(
+                    "assetIcon", ""
+                ),  # Providing a default value if assetIcon is missing
+                "multiplier": asset.get(
+                    "multiplier", 1
+                ),  # Providing a default value of 1 if multiplier is missing
+            }
+            for asset in assets
+        ]
+
+        print("Processed fault types:", fault_types)  # Debug print
+        return fault_types
+
+    except ClientError as e:
+        raise BadRequestError(
+            f"Failed to fetch fault types: {e.response['Error']['Message']}"
         )
