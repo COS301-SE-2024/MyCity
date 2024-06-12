@@ -5,56 +5,74 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Upload } from 'lucide-react';
 import NavbarBluish from '../Navbar/NavbarGuest';
-
+import { signUp,signIn } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 export default function CitizenSignup() {
-
   const router = useRouter();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
-    console.log("Username: " + form.get("username"))
-    console.log("email: " + form.get("email"))
-    const firstname = form.get("firstname")
-    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/signup/user',{
-        username : form.get("username"),
-        email : form.get("email"),
-        firstname : form.get("firstname"),
-        surname : form.get("surname"),
-        municipality : form.get("municipality"),
-        password : form.get("password")
-    });
-    console.log("Something happened")
-    const data = await response.data;
-    if(data.Status == 200)
-    {
-      sessionStorage.setItem('fistname',String(firstname))
-      sessionStorage.setItem('username',String(form.get("username")));
-      router.push("/dashboard/citizen")
+    console.log(form.get('firstname') + " Surname :" + form.get('surname'))
+    try {
+      const { isSignUpComplete, nextStep } = await signUp({
+        username: String(form.get('email')),
+        password: String(form.get('password')),
+        options: {
+          userAttributes: {
+            email: String(form.get('email')),
+            'given_name': String(form.get('firstname')),
+            'family_name': String(form.get('surname')),
+            'custom:municipality': String(form.get('municipality')),
+            'custom:user_role': "CITIZEN",
+          },
+        },
+      });
+
+      console.log(nextStep);
+      try{
+
+        if (isSignUpComplete) {
+          const response = await signIn({
+            'username' : String(form.get('email')),
+            'password' : String(form.get('password')),
+          })
+          const { username, userId, signInDetails } = await getCurrentUser();
+          console.log(signInDetails);
+          console.log(userId);
+          console.log(username);
+          const user_details = await fetchUserAttributes();
+          console.log(user_details['custom:user_role']);
+          sessionStorage.setItem('firstname', String(form.get('firstname')));
+          sessionStorage.setItem('email', String(form.get('email')));
+          router.push("/dashboard/citizen");
+        }
+      }
+      catch (error)
+      {
+        console.log("Fetch: " + error)
+      }
+    } catch (error) {
+      console.log("Error: " + error);
     }
-    // Handle the submit action here
-    // console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
   };
 
   return (
     <div className="px-12">
       <form data-testid="citizen-signup-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
-      
-      <div>
+        <div>
           <span className="font-semibold text-medium block mb-2">Add Profile Picture</span>
-
           <div className="flex justify-evenly items-center align-middle">
             <div className="rounded-2xl border border-black/15 border-dashed px-8 py-7 w-fit h-fit">
               <Upload className="text-blue-400" size={40} />
             </div>
-
             <span className="text-blue-400">Upload a file or drag and drop.</span>
-
           </div>
         </div>
 
-      <Input
+        <Input
           variant={"bordered"}
           fullWidth
           label={<span className="font-semibold text-medium block mb-[0.20em]">Username</span>}
@@ -66,7 +84,7 @@ export default function CitizenSignup() {
           name="username"
           autoComplete="Andinda-Allmighty"
           placeholder="Andinda"
-          />
+        />
 
         <Input
           variant={"bordered"}
@@ -80,9 +98,9 @@ export default function CitizenSignup() {
           name="email"
           autoComplete="new-email"
           placeholder="example@mail.com"
-          />
+        />
 
-          <Input
+        <Input
           variant={"bordered"}
           fullWidth
           label={<span className="font-semibold text-medium block mb-[0.20em]">Municipality</span>}
@@ -94,7 +112,7 @@ export default function CitizenSignup() {
           name="municipality"
           autoComplete="City of Tshwane Metropolitan"
           placeholder="City of Tshwane Metropolitan"
-          />
+        />
 
         <Input
           variant={"bordered"}
@@ -108,7 +126,7 @@ export default function CitizenSignup() {
           name="firstname"
           autoComplete="new-password"
           placeholder="Joe"
-           />
+        />
 
         <Input
           variant={"bordered"}
@@ -122,7 +140,7 @@ export default function CitizenSignup() {
           name="surname"
           autoComplete="new-password"
           placeholder="Bidden"
-           />
+        />
 
         <Input
           variant={"bordered"}
@@ -136,14 +154,11 @@ export default function CitizenSignup() {
           name="password"
           autoComplete="new-password"
           placeholder="Password"
-           />
+        />
 
         <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
-
-        {/* Social Media Sign Up Options */}
-        {/* Render different options based on userType */}
       </form>
     </div>
   );

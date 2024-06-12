@@ -4,6 +4,9 @@ import { Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
+import { signUp,signIn } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 
 export default function ServiceProviderSignup() {
@@ -45,7 +48,7 @@ export default function ServiceProviderSignup() {
       sessionStorage.setItem('pid',data.pid)
       sessionStorage.setItem('name',data.name)
       sessionStorage.setItem('service_type',data.service_type)
-      router.push("/dashboard")
+      router.push("/dashboard/service-provider")
     }
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);

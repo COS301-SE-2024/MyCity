@@ -1,8 +1,13 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2 } from 'lucide-react';
+import { signUp,signIn } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
+import { useRouter } from 'next/navigation';
 
 export default function MunicipalitySignup() {
+  const router = useRouter();
   const [province, setProvince] = useState('Gauteng');
   const [municipality, setMunicipality] = useState('');
   const [email, setEmail] = useState('');
@@ -19,27 +24,51 @@ export default function MunicipalitySignup() {
     name: string;
   };
 
-
-  const provinces: Province[] = [
-    { id: 0, name: "Gauteng" },
-    { id: 1, name: "KwaZulu-Natal" },
-    { id: 2, name: "Western Cape" },
-    { id: 3, name: "Eastern Cape" },
-    { id: 4, name: "Limpopo" },
-    { id: 5, name: "Mpumalanga" },
-    { id: 6, name: "Northen Cape" },
-    { id: 7, name: "North West" },
-    { id: 8, name: "Free State" }
-  ];
-
-  const municipalities: Municipality[] = [
-    { id: 0, name: "City of Ekurhuleni" },
-    { id: 1, name: "City of Johannesburg" },
-    { id: 2, name: "City of Tshwane" },
-  ];
-
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+    console.log(form.get('firstname') + " Surname :" + form.get('surname'))
+    try {
+      const { isSignUpComplete, nextStep } = await signUp({
+        username: String(form.get('email')),
+        password: String(form.get('password')),
+        options: {
+          userAttributes: {
+            email: String(form.get('email')),
+            'given_name': String(form.get('firstname')),
+            'family_name': String(form.get('surname')),
+            'custom:municipality': String(form.get('municipality')),
+            'custom:user_role': "MUNICIPALITY",
+          },
+        },
+      });
+
+      console.log(nextStep);
+      try{
+
+        if (isSignUpComplete) {
+          const response = await signIn({
+            'username' : String(form.get('email')),
+            'password' : String(form.get('password')),
+          })
+          const { username, userId, signInDetails } = await getCurrentUser();
+          console.log(signInDetails);
+          console.log(userId);
+          console.log(username);
+          const user_details = await fetchUserAttributes();
+          console.log(user_details['custom:user_role']);
+          sessionStorage.setItem('firstname', String(form.get('firstname')));
+          sessionStorage.setItem('email', String(form.get('email')));
+          router.push("/dashboard/municipality");
+        }
+      }
+      catch (error)
+      {
+        console.log("Fetch: " + error)
+      }
+    } catch (error) {
+      console.log("Error: " + error);
+    }
     // console.log(`Province: ${province}, Municipality: ${municipality}, Verification Code: ${verificationCode}`);
   };
 
@@ -48,65 +77,89 @@ export default function MunicipalitySignup() {
       <form data-testid="municipality-signup-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
 
-        <Autocomplete
-          label={<span className="font-semibold text-medium">Province</span>}
-          labelPlacement="outside"
-          placeholder="Gauteng"
-          defaultItems={provinces}
+      <Input
+          variant={"bordered"}
           fullWidth
-          disableSelectorIconRotation
-          isClearable={false}
-          size={"lg"}
-          type="text"
-          name="province"
-          autoComplete="new-province"
-          menuTrigger={"input"}
-          onChange={(event) => setProvince(event.target.value)}
-        >
-          {(province) => <AutocompleteItem key={province.id}>{province.name}</AutocompleteItem>}
-        </Autocomplete>
-
-
-        <Autocomplete
-          label={<span className="font-semibold text-medium">Select Your Municipality</span>}
-          labelPlacement="outside"
-          placeholder="Municipality"
-          fullWidth
-          defaultItems={municipalities}
-          disableSelectorIconRotation
-          isClearable={false}
-          menuTrigger={"input"}
-          size={"lg"}
-          type="text"
-          name="municipality"
-          autoComplete="new-municipality"
-          onChange={(event) => setMunicipality(event.target.value)}
-        >
-          {(municipality) =>
-            <AutocompleteItem key={municipality.id} textValue={municipality.name}>
-              <div className="flex gap-2 items-center">
-                <Building2 className="flex-shrink-0 text-blue-700" size={18} />
-                <span className="text-small">{municipality.name}</span>
-              </div>
-            </AutocompleteItem>}
-        </Autocomplete>
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Username</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="username"
+          name="username"
+          autoComplete="Andinda-Allmighty"
+          placeholder="Andinda"
+        />
 
         <Input
           variant={"bordered"}
           fullWidth
-          label="Email"
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Email</span>}
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
-            label: "font-semibold text-medium mt-[-1px]"
           }}
           type="email"
           name="email"
           autoComplete="new-email"
-          placeholder="example@gov.com"
-          value={email} onChange={(e) => setEmail(e.target.value)}
+          placeholder="example@mail.com"
         />
 
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Municipality</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="municipality"
+          name="municipality"
+          autoComplete="City of Tshwane Metropolitan"
+          placeholder="City of Tshwane Metropolitan"
+        />
+
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={<span className="font-semibold text-medium block mb-[0.20em]">First Name</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="firstname"
+          name="firstname"
+          autoComplete="new-password"
+          placeholder="Joe"
+        />
+
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Surname</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="surname"
+          name="surname"
+          autoComplete="new-password"
+          placeholder="Bidden"
+        />
+
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Create Password</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          placeholder="Password"
+        />
 
         <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit

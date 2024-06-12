@@ -3,6 +3,9 @@ import { Input, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
+import { signIn } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 
 export default function CitizenLogin() {
@@ -11,23 +14,26 @@ export default function CitizenLogin() {
   const router = useRouter();
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/login/user', {
-      email: email,
-      username: "Dindoss",
-      password: password
-    });
-    console.log("Something happened")
     // if ( !response.ok) {
     //   throw new Error(`HTTP error! status: ${response.status}`);
     // }
-    const data = await response.data;
-    console.log(data)
-    console.log(data.Status)
-    if (data.Success) {
-      sessionStorage.setItem('username', data.username)
-      sessionStorage.setItem('name', data.firstname)
-      router.push("/dashboard/citizen")
-    }
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+    const response = await signIn({
+      'username' : String(form.get('email')),
+      'password' : String(form.get('password')),
+    })
+
+    const { username, userId, signInDetails } = await getCurrentUser();
+    const user_details = await fetchUserAttributes();
+    sessionStorage.setItem('firstname', String(user_details['given_name']));
+    sessionStorage.setItem('email', String(user_details['family_name']));
+
+  
+    // if (data.Success) {
+    //   sessionStorage.setItem('username', data.username)
+    //   sessionStorage.setItem('name', data.firstname)
+    //   router.push("/dashboard/citizen")
+    // }
 
 
     // Handle the submit action here
