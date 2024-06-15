@@ -51,14 +51,7 @@ export default function MunicipalitySignup() {
             'username' : String(form.get('email')),
             'password' : String(form.get('password')),
           })
-          const { username, userId, signInDetails } = await getCurrentUser();
-          console.log(signInDetails);
-          console.log(userId);
-          console.log(username);
-          const user_details = await fetchUserAttributes();
-          console.log(user_details['custom:user_role']);
-          sessionStorage.setItem('firstname', String(form.get('firstname')));
-          sessionStorage.setItem('email', String(form.get('email')));
+          // const { username, userId, signInDetails } = await getCurrentUser();
           router.push("/dashboard/municipality");
         }
       }
