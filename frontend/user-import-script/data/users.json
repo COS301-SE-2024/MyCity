@@ -1,0 +1,11 @@
+[
+    {
+        "email": "johndoe@example.com",
+        "password": "Password@123",
+        "given_name": "John",
+        "family_name": "Doritos",
+        "picture": "https://i.imgur.com/xKEKm62.png",
+        "user_role": "CITIZEN",
+        "municipality": "UP"
+    }
+]
