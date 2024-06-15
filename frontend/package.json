@@ -13,9 +13,11 @@
     "import-users": "tsx user-import-script/import-users.ts"
   },
   "dependencies": {
+    "@aws-amplify/adapter-nextjs": "^1.2.4",
     "@googlemaps/js-api-loader": "^1.16.6",
     "@nextui-org/react": "^2.4.1",
     "@nextui-org/system": "^2.2.1",
+    "aws-amplify": "^6.3.6",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.6",
     "lucide-react": "^0.383.0",
