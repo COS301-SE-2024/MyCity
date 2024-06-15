@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Upload } from 'lucide-react';
 import NavbarBluish from '../Navbar/NavbarGuest';
-import { signUp,signIn } from 'aws-amplify/auth';
+import { signUp,signIn,signOut } from 'aws-amplify/auth';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 
@@ -15,6 +15,7 @@ export default function CitizenSignup() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
+    await signOut()
     console.log(form.get('firstname') + " Surname :" + form.get('surname'))
     try {
       const { isSignUpComplete, nextStep } = await signUp({

@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2, CircleHelp } from 'lucide-react';
-import { signIn } from 'aws-amplify/auth';
+import { signIn,signOut } from 'aws-amplify/auth';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 
@@ -26,6 +26,7 @@ export default function MunicipalityLogin() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
+    await signOut()
     const response = await signIn({
       'username' : String(form.get('email')),
       'password' : String(form.get('password')),

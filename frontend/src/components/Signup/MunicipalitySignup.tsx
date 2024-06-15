@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2 } from 'lucide-react';
-import { signUp,signIn } from 'aws-amplify/auth';
+import { signUp,signIn,signOut } from 'aws-amplify/auth';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
@@ -27,6 +27,7 @@ export default function MunicipalitySignup() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
+    await signOut()
     console.log(form.get('firstname') + " Surname :" + form.get('surname'))
     try {
       const { isSignUpComplete, nextStep } = await signUp({

@@ -3,7 +3,7 @@ import { Input, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
-import { signIn } from 'aws-amplify/auth';
+import { signIn,signOut } from 'aws-amplify/auth';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 
@@ -18,6 +18,7 @@ export default function CitizenLogin() {
     //   throw new Error(`HTTP error! status: ${response.status}`);
     // }
     const form = new FormData(event.currentTarget as HTMLFormElement);
+    await signOut()
     const response = await signIn({
       'username' : String(form.get('email')),
       'password' : String(form.get('password')),
