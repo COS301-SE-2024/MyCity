@@ -17,7 +17,7 @@ type User = {
   password: string;
   given_name: string;
   family_name: string;
-  picture:string;
+  picture: string;
   user_role: "CITIZEN" | "MUNICIPALITY" | "PRIVATE-COMPANY";
   municipality?: string;
   auth_code?: string;
@@ -26,7 +26,7 @@ type User = {
 type ErrorLog = {
   index: number;
   email: string;
-  error: any;
+  error: Error;
 };
 
 type Result = {
@@ -81,13 +81,13 @@ const importUsers = async (users: User[]) => {
       else {
         console.log(`${count}.  (${user.user_role}): signup failed.`);
 
-        logError(errorList, user, count, "signup not complete");
+        logError(errorList, user, count, { name: "UserConfirmationError", message: "signup not complete." });
       }
 
     }
-    catch (error) {
+    catch (e) {
       console.log(`${count}. (${user.user_role}): signup failed.`);
-
+      const error = e as Error;
       logError(errorList, user, count, error);
     }
 
@@ -98,8 +98,8 @@ const importUsers = async (users: User[]) => {
   return { results, errorList };
 };
 
-const logError = (list: ErrorLog[], user: User, count: number, error: any) => {
-  const signupError: ErrorLog = { email: user.email, index: count, error: error };
+const logError = (list: ErrorLog[], user: User, count: number, error: Error) => {
+  const signupError: ErrorLog = { email: user.email, index: count, error: { name: error.name, message: error.message } };
   list.push(signupError);
 };
 
@@ -112,7 +112,7 @@ const signupCitizen = async (user: User) => {
         email: user.email,
         given_name: user.given_name,
         family_name: user.family_name,
-        picture:user.picture,
+        picture: user.picture,
         "custom:user_role": user.user_role,
         "custom:municipality": user.municipality
       },
@@ -131,10 +131,9 @@ const signupMunicipalityEmployee = async (user: User) => {
         email: user.email,
         given_name: user.given_name,
         family_name: user.family_name,
-        picture:user.picture,
-        "custom:user_role": user.user_role,
+        picture: user.picture,
         "custom:municipality": user.municipality,
-        "auth_code": user.auth_code
+        "custom:auth_code": user.auth_code
       },
     }
   });
@@ -151,9 +150,9 @@ const signupPrivateCompanyEmployee = async (user: User) => {
         email: user.email,
         given_name: user.given_name,
         family_name: user.family_name,
-        picture:user.picture,
+        picture: user.picture,
         "custom:user_role": user.user_role,
-        "auth_code": user.auth_code
+        "custom:auth_code": user.auth_code
       },
     }
   });
