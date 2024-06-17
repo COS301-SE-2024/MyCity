@@ -3,10 +3,11 @@ import promptFunction from 'prompt-sync';
 import { Amplify } from 'aws-amplify';
 import { signUp } from "aws-amplify/auth";
 
-import dotenv from "dotenv";
 
 import fs from 'fs';
 import * as path from 'path';
+
+import dotenv from "dotenv";
 
 const envPath = path.join(__dirname, "..", ".env.local");
 dotenv.config({ path: envPath });
@@ -195,11 +196,23 @@ const requestConfirmation = async () => {
   const { results, errorList } = await importUsers(users);
 
   if (errorList.length > 0) {
+
+    const destDir = path.join(__dirname, `logs`);
+    if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true });
+    }
+
     const dest = path.join(__dirname, `logs/${filename}.json`);
     fs.writeFileSync(dest, JSON.stringify(errorList), "utf-8");
   }
 
   if (results.length > 0) {
+
+    const destDir = path.join(__dirname, `results`);
+    if (!fs.existsSync(destDir)) {
+        fs.mkdirSync(destDir, { recursive: true });
+    }
+
     const dest = path.join(__dirname, `results/${filename}.json`);
     fs.writeFileSync(dest, JSON.stringify(results), "utf-8");
   }

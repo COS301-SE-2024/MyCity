@@ -10,7 +10,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
-    "import-users": "tsx user-import-script/import-users.ts"
+    "import-users": "tsx user-import-script/import-users.ts",
+    "get-all-users": "tsx user-import-script/get-all-users.ts"
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.2.4",
@@ -27,6 +28,7 @@
     "react-toastify": "^10.0.5"
   },
   "devDependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.598.0",
     "@playwright/test": "^1.44.1",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.7",
