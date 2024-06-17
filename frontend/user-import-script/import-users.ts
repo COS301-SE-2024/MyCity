@@ -86,9 +86,12 @@ const importUsers = async (users: User[]) => {
 
     }
     catch (e) {
-      console.log(`${count}. (${user.user_role}): signup failed.`);
       const error = e as Error;
-      logError(errorList, user, count, error);
+
+      if (error.name != "UsernameExistsException") {
+        console.log(`${count}. (${user.user_role}): signup failed.`);
+        logError(errorList, user, count, error);
+      }
     }
 
     count++;
