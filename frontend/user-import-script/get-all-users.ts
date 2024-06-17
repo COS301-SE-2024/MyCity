@@ -1,5 +1,5 @@
 import promptFunction from 'prompt-sync';
-import { CognitoIdentityProviderClient, ListUsersCommand, ListUsersCommandInput } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderClient, ListUsersCommand, ListUsersCommandInput, UserType } from "@aws-sdk/client-cognito-identity-provider";
 
 import fs from 'fs';
 import * as path from 'path';
@@ -10,18 +10,33 @@ const envPath = path.join(__dirname, "..", ".env.local");
 dotenv.config({ path: envPath });
 
 const getAllUsers = async () => {
-    const client = new CognitoIdentityProviderClient();
-    const input: ListUsersCommandInput = {
-        UserPoolId: String(process.env.NEXT_PUBLIC_USER_POOL_ID),
-        AttributesToGet: [
-            "sub",
-            "email",
-        ]
-    };
+    let paginationToken = undefined;
+    let userArray: UserType[] = [];
 
-    console.log("processing...\n");
-    const command = new ListUsersCommand(input);
-    const response = await client.send(command);
+    do {
+        const client = new CognitoIdentityProviderClient();
+        const input: ListUsersCommandInput = {
+            UserPoolId: String(process.env.NEXT_PUBLIC_USER_POOL_ID),
+            AttributesToGet: [
+                "sub",
+                "email",
+            ],
+            PaginationToken: paginationToken
+        };
+
+        console.log("processing...\n");
+        const command = new ListUsersCommand(input);
+        const response = await client.send(command);
+
+        paginationToken = response.PaginationToken;
+
+        if (response.Users) {
+            const mergedArray = userArray.concat(response.Users);
+            userArray = mergedArray;
+        }
+
+
+    } while (paginationToken);
 
     const destDir = path.join(__dirname, `user-pool`);
     if (!fs.existsSync(destDir)) {
@@ -29,7 +44,7 @@ const getAllUsers = async () => {
     }
 
     const dest = path.join(__dirname, `user-pool/data.json`);
-    fs.writeFileSync(dest, JSON.stringify(response.Users), "utf-8");
+    fs.writeFileSync(dest, JSON.stringify(userArray), "utf-8");
 
     console.log(`Success...\nDestination file: ${dest}`)
 };
