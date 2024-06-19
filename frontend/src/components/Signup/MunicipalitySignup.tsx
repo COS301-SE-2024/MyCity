@@ -77,10 +77,10 @@ export default function MunicipalitySignup() {
           classNames={{
             inputWrapper: "h-[3em]",
           }}
-          type="username"
+          type="text"
           name="username"
-          autoComplete="Andinda-Allmighty"
-          placeholder="Andinda"
+          autoComplete="new-username"
+          placeholder="janedoe"
         />
 
         <Input
@@ -105,9 +105,9 @@ export default function MunicipalitySignup() {
           classNames={{
             inputWrapper: "h-[3em]",
           }}
-          type="municipality"
+          type="text"
           name="municipality"
-          autoComplete="City of Tshwane Metropolitan"
+          autoComplete="new-municipality"
           placeholder="City of Tshwane Metropolitan"
         />
 
@@ -119,10 +119,10 @@ export default function MunicipalitySignup() {
           classNames={{
             inputWrapper: "h-[3em]",
           }}
-          type="firstname"
+          type="text"
           name="firstname"
-          autoComplete="new-password"
-          placeholder="Joe"
+          autoComplete="new-firstname"
+          placeholder="Jane"
         />
 
         <Input
@@ -133,10 +133,10 @@ export default function MunicipalitySignup() {
           classNames={{
             inputWrapper: "h-[3em]",
           }}
-          type="surname"
+          type="text"
           name="surname"
-          autoComplete="new-password"
-          placeholder="Bidden"
+          autoComplete="new-surname"
+          placeholder="Doe"
         />
 
         <Input
