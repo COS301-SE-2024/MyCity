@@ -15,20 +15,17 @@ export default function CitizenLogin() {
   const router = useRouter();
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    // if ( !response.ok) {
-    //   throw new Error(`HTTP error! status: ${response.status}`);
-    // }
     const form = new FormData(event.currentTarget as HTMLFormElement);
-    await signOut()
-    const response = await signIn({
-      'username': String(form.get('email')),
-      'password': String(form.get('password')),
-    })
 
-    const { username, userId, signInDetails } = await getCurrentUser();
-    const user_details = await fetchUserAttributes();
-    sessionStorage.setItem('firstname', String(user_details['given_name']));
-    sessionStorage.setItem('email', String(user_details['family_name']));
+    const {isSignedIn} = await signIn({
+      username: String(form.get('email')),
+      password: String(form.get('password')),
+    });
+
+    // const { username, userId, signInDetails } = await getCurrentUser();
+    // const user_details = await fetchUserAttributes();
+    // sessionStorage.setItem('firstname', String(user_details['given_name']));
+    // sessionStorage.setItem('email', String(user_details['family_name']));
 
 
     // if (data.Success) {

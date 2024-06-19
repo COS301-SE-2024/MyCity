@@ -5,9 +5,10 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Upload } from 'lucide-react';
 import NavbarBluish from '../Navbar/NavbarGuest';
-import { signUp,signIn,signOut } from 'aws-amplify/auth';
+import { signUp, signIn, signOut, SignUpOutput, autoSignIn } from 'aws-amplify/auth';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { fetchUserAttributes } from 'aws-amplify/auth';
+import { UserRole } from '@/app/types/user.types';
 
 export default function CitizenSignup() {
   const router = useRouter();
@@ -15,50 +16,57 @@ export default function CitizenSignup() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
-    await signOut()
-    console.log(form.get('firstname') + " Surname :" + form.get('surname'))
+
     try {
-      const { isSignUpComplete, nextStep } = await signUp({
+      const { nextStep } = await signUp({
         username: String(form.get('email')),
         password: String(form.get('password')),
         options: {
           userAttributes: {
             email: String(form.get('email')),
-            'given_name': String(form.get('firstname')),
-            'family_name': String(form.get('surname')),
+            given_name: String(form.get('firstname')),
+            family_name: String(form.get('surname')),
             'custom:municipality': String(form.get('municipality')),
-            'custom:user_role': "CITIZEN",
+            'custom:user_role': UserRole.CITIZEN,
           },
+          autoSignIn: true
         },
       });
 
-      console.log(nextStep);
-      try{
+      handleSignUpStep(nextStep);
 
-        if (isSignUpComplete) {
-          const response = await signIn({
-            'username' : String(form.get('email')),
-            'password' : String(form.get('password')),
-          })
-          const { username, userId, signInDetails } = await getCurrentUser();
-          console.log(signInDetails);
-          console.log(userId);
-          console.log(username);
-          const user_details = await fetchUserAttributes();
-          console.log(user_details['custom:user_role']);
-          sessionStorage.setItem('firstname', String(form.get('firstname')));
-          sessionStorage.setItem('email', String(form.get('email')));
-          router.push("/dashboard/citizen");
-        }
-      }
-      catch (error)
-      {
-        console.log("Fetch: " + error)
-      }
+      // try{
+
+      //   if (isSignUpComplete) {
+      //     const { username, userId, signInDetails } = await getCurrentUser();
+      //     const user_details = await fetchUserAttributes();
+      //   }
+      // }
+      // catch (error)
+      // {
+      //   console.log("Fetch: " + error)
+      // }
     } catch (error) {
       console.log("Error: " + error);
     }
   };
+
+
+
+  const handleSignUpStep = async(step: SignUpOutput["nextStep"]) => {
+    switch (step.signUpStep) {
+      case "CONFIRM_SIGN_UP":
+      // Redirect end-user to confirm-sign up screen.
+
+      case "COMPLETE_AUTO_SIGN_IN":
+        const { isSignedIn } = await autoSignIn();
+
+        if (isSignedIn) {
+          //redirect to citizen dashboard
+          console.log("signup successful, you are now logged in.");
+        }
+    };
+  }
 
   return (
     <div className="px-12">

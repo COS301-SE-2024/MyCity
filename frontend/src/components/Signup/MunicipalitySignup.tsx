@@ -1,18 +1,14 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2 } from 'lucide-react';
-import { signUp,signIn,signOut } from 'aws-amplify/auth';
+import { signUp,signIn,signOut, SignUpOutput, autoSignIn } from 'aws-amplify/auth';
 import { getCurrentUser } from 'aws-amplify/auth';
 import { fetchUserAttributes } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
+import { UserRole } from '@/app/types/user.types';
 
 export default function MunicipalitySignup() {
   const router = useRouter();
-  const [province, setProvince] = useState('Gauteng');
-  const [municipality, setMunicipality] = useState('');
-  const [email, setEmail] = useState('');
-  // const [verificationCode, setVerificationCode] = useState('123456');
-  // const [showCode, setShowCode] = useState(false);
 
   type Province = {
     id: number | string;
@@ -27,44 +23,46 @@ export default function MunicipalitySignup() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
-    await signOut()
-    console.log(form.get('firstname') + " Surname :" + form.get('surname'))
+
     try {
-      const { isSignUpComplete, nextStep } = await signUp({
+      const {  nextStep } = await signUp({
         username: String(form.get('email')),
         password: String(form.get('password')),
         options: {
           userAttributes: {
             email: String(form.get('email')),
-            'given_name': String(form.get('firstname')),
-            'family_name': String(form.get('surname')),
+            given_name: String(form.get('firstname')),
+            family_name: String(form.get('surname')),
             'custom:municipality': String(form.get('municipality')),
-            'custom:user_role': "MUNICIPALITY",
+            'custom:user_role': UserRole.MUNICIPALITY,
           },
         },
       });
 
-      console.log(nextStep);
-      try{
+      handleSignUpStep(nextStep);
 
-        if (isSignUpComplete) {
-          const response = await signIn({
-            'username' : String(form.get('email')),
-            'password' : String(form.get('password')),
-          })
-          // const { username, userId, signInDetails } = await getCurrentUser();
-          router.push("/dashboard/municipality");
-        }
-      }
-      catch (error)
-      {
-        console.log("Fetch: " + error)
-      }
+
     } catch (error) {
       console.log("Error: " + error);
     }
-    // console.log(`Province: ${province}, Municipality: ${municipality}, Verification Code: ${verificationCode}`);
+
   };
+
+
+  const handleSignUpStep = async(step: SignUpOutput["nextStep"]) => {
+    switch (step.signUpStep) {
+      case "CONFIRM_SIGN_UP":
+      // Redirect end-user to confirm-sign up screen.
+
+      case "COMPLETE_AUTO_SIGN_IN":
+        const { isSignedIn } = await autoSignIn();
+
+        if (isSignedIn) {
+          //redirect to municipality dashboard
+          console.log("signup successful, you are now logged in.");
+        }
+    };
+  }
 
   return (
     <div className="px-12">

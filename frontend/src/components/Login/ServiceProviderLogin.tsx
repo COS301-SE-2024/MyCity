@@ -29,14 +29,14 @@ export default function ServiceProviderLogin() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
-    await signOut()
-    const response = await signIn({
-      'username' : String(form.get('email')),
-      'password' : String(form.get('password')),
-    })
 
-    const { username, userId, signInDetails } = await getCurrentUser();
-    const user_details = await fetchUserAttributes();
+    const {isSignedIn} = await signIn({
+      username : String(form.get('email')),
+      password : String(form.get('password')),
+    });
+
+    // const { username, userId, signInDetails } = await getCurrentUser();
+    // const user_details = await fetchUserAttributes();
 
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
