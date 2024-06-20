@@ -4,14 +4,54 @@ import React, { useState } from "react";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
-import DeleteAccount from "@/components/Settings/citizen/DeleteAccount";
 
-
-type SubPage = "ChangeAccountInfo" | "ChangePassword" | "DeleteAccount" | null; 
+type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [muteNotifications, setMuteNotifications] = useState(false);
+  const [locationAccess, setLocationAccess] = useState(false);
+  const [twoFactorAuth, setTwoFactorAuth] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [largerFont, setLargerFont] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode((prevState) => !prevState);
+  };
+
+  const toggleLargerFont = () => {
+    setLargerFont((prevState) => !prevState);
+  };
+
+  const toggleLocationAccess = () => {
+    setLocationAccess((prevState) => !prevState);
+  };
+
+  const toggleTwoFactorAuth = () => {
+    setTwoFactorAuth((prevState) => !prevState);
+  }
+
+  const toggleEmailNotifications = () => {
+    setEmailNotifications((prevState) => !prevState);
+  };
+
+  const toggleMuteNotifications = () => {
+    setMuteNotifications((prevState) => !prevState);
+  };
+
+  const handleDeleteAccount = () => {
+    // Handle the delete account logic here
+    // For demonstration purposes, I'm just logging a message
+    console.log("Deleting account...");
+    setShowConfirmation(false);
+  };
+
+  const openConfirmation = () => {
+    setShowConfirmation(true);
+  };
 
   const renderSubPageContent = () => {
     switch (subPage) {
@@ -19,8 +59,6 @@ const Settings = () => {
         return <ChangeAccountInfo onBack={() => setSubPage(null)} />;
       case "ChangePassword":
         return <ChangePassword onBack={() => setSubPage(null)} />;
-      case "DeleteAccount":
-        return <DeleteAccount onBack={() => setSubPage(null)} />;
       default:
         return (
           <div className="space-y-4">
@@ -72,13 +110,11 @@ const Settings = () => {
                 </svg>
                 <span className="text-lg font-semibold">Change Password</span>
               </div>
-              <p className="text-gray-600">
-                Change your password at any time.
-              </p>
+              <p className="text-gray-600">Change your password at any time.</p>
             </button>
             <button
               className="w-full text-left hover:bg-gray-100 p-2 rounded text-red-600"
-              onClick={() => setSubPage("DeleteAccount")}
+              onClick={openConfirmation}
             >
               <div className="flex items-center">
                 <svg
@@ -101,6 +137,32 @@ const Settings = () => {
                 Remove your account from MyCity's system.
               </p>
             </button>
+            {showConfirmation && (
+              <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
+                <div className="bg-white p-4 rounded">
+                  <p>
+                    Are you sure you want to delete your account? This action
+                    cannot be undone.
+                  </p>
+                  <div className="mt-4 flex justify-center">
+                    {/* Button to confirm deletion */}
+                    <button
+                      className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded mr-6"
+                      onClick={handleDeleteAccount}
+                    >
+                      Delete
+                    </button>
+                    {/* Button to cancel */}
+                    <button
+                      className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
+                      onClick={() => setShowConfirmation(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
     }
@@ -119,16 +181,47 @@ const Settings = () => {
       case "Notifications":
         return (
           <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
+            <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span>Enable Email Notifications</span>
-                <input type="checkbox" className="form-checkbox" />
+
+              {/* Enable Email Notifications */}
+              <div className="flex items-center justify-between p-2 rounded">
+                <span className="text-lg font-semibold">
+                  Enable Email Notifications
+                </span>
+                <div
+                  className={`relative w-12 h-6 rounded-full ${
+                    emailNotifications ? "bg-green-400" : "bg-gray-400"
+                  }`}
+                  onClick={toggleEmailNotifications}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                      emailNotifications ? "translate-x-6" : "translate-x-0"
+                    } transition-transform`}
+                  ></div>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span>Mute Notifications</span>
-                <input type="checkbox" className="form-checkbox" />
+
+              {/* Mute Notifications */}
+              <div className="flex items-center justify-between mt-4 p-2 rounded">
+                <span className="text-lg font-semibold">
+                  Mute Notifications
+                </span>
+                <div
+                  className={`relative w-12 h-6 rounded-full ${
+                    muteNotifications ? "bg-green-400" : "bg-gray-400"
+                  }`}
+                  onClick={toggleMuteNotifications}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                      muteNotifications ? "translate-x-6" : "translate-x-0"
+                    } transition-transform`}
+                  ></div>
+                </div>
               </div>
+
             </div>
           </div>
         );
@@ -137,13 +230,42 @@ const Settings = () => {
           <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span>Enable Location Access</span>
-                <input type="checkbox" className="form-checkbox" />
+              {/* Enable Location Access */}
+              <div className="flex items-center justify-between p-2 rounded">
+                <span className="text-lg font-semibold">
+                  Enable Location Access
+                </span>
+                <div
+                  className={`relative w-12 h-6 rounded-full ${
+                    locationAccess ? "bg-green-400" : "bg-gray-400"
+                  }`}
+                  onClick={toggleLocationAccess}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                      locationAccess ? "translate-x-6" : "translate-x-0"
+                    } transition-transform`}
+                  ></div>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span>Two Factor Authentication</span>
-                <input type="checkbox" className="form-checkbox" />
+
+              {/* Two-Factor Authentication */}
+              <div className="flex items-center justify-between mt-4 p-2 rounded">
+                <span className="text-lg font-semibold">
+                  Two-Factor Authentication
+                </span>
+                <div
+                  className={`relative w-12 h-6 rounded-full ${
+                    twoFactorAuth ? "bg-green-400" : "bg-gray-400"
+                  }`}
+                  onClick={toggleTwoFactorAuth}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                      twoFactorAuth ? "translate-x-6" : "translate-x-0"
+                    } transition-transform`}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
@@ -153,13 +275,42 @@ const Settings = () => {
           <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span>Dark Mode</span>
-                <input type="checkbox" className="form-checkbox" />
+              {/* Dark Mode */}
+              <div className="flex items-center justify-between p-2 rounded">
+                <span className="text-lg font-semibold">
+                  Dark Mode
+                </span>
+                <div
+                  className={`relative w-12 h-6 rounded-full ${
+                    darkMode ? "bg-green-400" : "bg-gray-400"
+                  }`}
+                  onClick={toggleDarkMode}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                      darkMode ? "translate-x-6" : "translate-x-0"
+                    } transition-transform`}
+                  ></div>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span>Larger Font</span>
-                <input type="checkbox" className="form-checkbox" />
+
+              {/* Larger Font */}
+              <div className="flex items-center justify-between mt-4 p-2 rounded">
+                <span className="text-lg font-semibold">
+                  Larger Font
+                </span>
+                <div
+                  className={`relative w-12 h-6 rounded-full ${
+                    largerFont ? "bg-green-400" : "bg-gray-400"
+                  }`}
+                  onClick={toggleLargerFont}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                      largerFont ? "translate-x-6" : "translate-x-0"
+                    } transition-transform`}
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
