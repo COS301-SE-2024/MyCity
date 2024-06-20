@@ -52,7 +52,7 @@ export default function MunicipalityLogin() {
           fullWidth
           label={
             <span className="font-semibold text-medium block mb-[0.20em]">
-              Municipality Email <span className="text-blue-500">*</span>
+              Email<span className="text-blue-500">*</span>
             </span>
           }
           labelPlacement={"outside"}

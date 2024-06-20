@@ -48,7 +48,7 @@ export default function CitizenLogin() {
           fullWidth
           label={
             <span className="font-semibold text-medium block mb-[0.20em]">
-              Email <span className="text-blue-500">*</span>
+              Email<span className="text-blue-500">*</span>
             </span>
           }
           labelPlacement={"outside"}
