@@ -12,7 +12,7 @@ export default function CitizenDashboard() {
     const handleTabChange = (key: Key) => {
         const index = Number(key);
     };
-    const name = sessionStorage.getItem('firstname')
+    const name = "Jane";
 
     return (
         <div>
