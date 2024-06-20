@@ -3,10 +3,19 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("ServiceProviderLogin", () => {
 
-    it("renders an email input", () => {
+    /*it("renders an email input", () => {
         render(<ServiceProviderLogin />);
         const emailInput = screen.getByLabelText("Email");
 
+        expect(emailInput).toBeInTheDocument();
+        expect(emailInput).toHaveAttribute("type", "email");
+    });*/
+
+    it("renders an email input", () => {
+        render(<ServiceProviderLogin />);
+        // Use getByPlaceholderText if the placeholder is unique
+        const emailInput = screen.getByPlaceholderText("example@mail.com");
+    
         expect(emailInput).toBeInTheDocument();
         expect(emailInput).toHaveAttribute("type", "email");
     });
