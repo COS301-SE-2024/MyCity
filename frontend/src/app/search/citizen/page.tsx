@@ -41,7 +41,7 @@ export default function CreateTicket() {
   const handleFilterChange = (filter: 'myLocation' | 'serviceProviders' | 'municipalities') => {
     setSelectedFilter(filter);
     setIsFilterOpen(false); // Close the filter dropdown after selection
-    setSearchTerm(''); // Clear the search term when changing filters
+    //setSearchTerm(''); // Clear the search term when changing filters
     setSearchResults([]); // Clear previous search results
   };
 
@@ -129,7 +129,13 @@ export default function CreateTicket() {
                   </div>
                 )}
               </form>
-              <span className="text-sm text-gray-500 mt-2"> search results</span>
+              <span className="text-sm text-gray-500 mt-2">
+                Filtering by: {
+                  selectedFilter === 'myLocation' ? 'Current Municipality' :
+                  selectedFilter === 'municipalities' ? 'Municipality Tickets' :
+                  'Company'
+                }
+              </span>
             </div>
     
             <SearchTicket />
