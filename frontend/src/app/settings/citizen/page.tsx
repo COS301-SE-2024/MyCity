@@ -86,7 +86,7 @@ const Settings = () => {
                 </span>
               </div>
               <p className="text-gray-600">
-                See and change your account's information.
+                See and change your account&apos;s information.
               </p>
             </button>
             <button
@@ -134,7 +134,7 @@ const Settings = () => {
                 <span className="text-lg font-semibold">Delete Account</span>
               </div>
               <p className="text-gray-600">
-                Remove your account from MyCity's system.
+                Remove your account from MyCity&apos;s system.
               </p>
             </button>
             {showConfirmation && (
