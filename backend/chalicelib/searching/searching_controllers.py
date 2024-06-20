@@ -31,51 +31,71 @@ def validate_search_term(search_term):
 def search_tickets(user_municipality, search_term):
     search_term = validate_search_term(search_term)
     try:
-        response = tickets_table.scan(
-            FilterExpression="(contains(#description, :search_term) OR contains(#asset_id, :search_term)) AND #municipality = :user_municipality",
-            ExpressionAttributeNames={
-                "#description": "description",
-                "#asset_id": "asset_id",
-                "#municipality": "municipality",
-            },
-            ExpressionAttributeValues={
-                ":search_term": search_term,
-                ":user_municipality": user_municipality,
-            },
-        )
-        return response.get("Items", [])
+        response = tickets_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if (
+                user_municipality.lower() in item.get("municipality_id", "").lower()
+                and (
+                    search_term.lower() in item.get("description", "").lower()
+                    or search_term.lower() in item.get("asset_id", "").lower()
+                )
+            )
+        ]
+        return filtered_items
     except ClientError as e:
         raise BadRequestError(
-            f"Failed to search tickets: {e.response['Error']['Message']}"
+            f"Failed to search tickets for user area: {e.response['Error']['Message']}"
         )
 
 
 def search_municipalities(search_term):
     search_term = validate_search_term(search_term)
     try:
-        response = municipalities_table.scan(
-            FilterExpression="contains(#municipality_id, :search_term)",
-            ExpressionAttributeNames={"#municipality_id": "municipality_id"},
-            ExpressionAttributeValues={":search_term": search_term},
-        )
-        return response.get("Items", [])
+        response = municipalities_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if search_term.lower() in item.get("municipality_id", "").lower()
+        ]
+        return filtered_items
     except ClientError as e:
         raise BadRequestError(
             f"Failed to search municipalities: {e.response['Error']['Message']}"
         )
 
 
+def search_alt_municipality_tickets(municipality_name):
+    # municipality_name = validate_search_term(municipality_name)
+    try:
+        response = tickets_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if municipality_name.lower() in item.get("municipality_id", "").lower()
+        ]
+        return filtered_items
+    except ClientError as e:
+        raise BadRequestError(
+            f"Failed to search municipalities' tickets: {e.response['Error']['Message']}"
+        )
+
+
 def search_service_providers(search_term):
     search_term = validate_search_term(search_term)
     try:
-        response = companies_table.scan(
-            FilterExpression="contains(#name, :search_term)",
-            ExpressionAttributeNames={
-                "#name": "name",
-            },
-            ExpressionAttributeValues={":search_term": search_term},
-        )
-        return response.get("Items", [])
+        response = companies_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if search_term.lower() in item.get("name", "").lower()
+        ]
+        return filtered_items
     except ClientError as e:
         raise BadRequestError(
             f"Failed to search service providers: {e.response['Error']['Message']}"

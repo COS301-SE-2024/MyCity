@@ -1,12 +1,40 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import NavbarUser from '@/components/Navbar/NavbarUser';
 import SearchTicket from '@/components/Search/SearchTicket';
 import SearchMunicipality from '@/components/Search/SearchMunicipality';
 import SearchSP from '@/components/Search/SearchSP';
+import axios from 'axios';
 
 export default function CreateTicket() {
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]); // Define the type according to your API response
+  const [selectedFilter, setSelectedFilter] = useState<'myLocation' | 'serviceProviders' | 'municipalities'>('myLocation');
+
+  const handleSearch = async () => {
+    try {
+      let response = { data: [] }; // Initialize with an empty array or appropriate default value
+      switch (selectedFilter) {
+        case 'myLocation':
+          response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(searchTerm)}`);
+          break;
+        case 'serviceProviders':
+          response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-providers?q=${encodeURIComponent(searchTerm)}`);
+          break;
+        case 'municipalities':
+          response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(searchTerm)}`);
+          break;
+        default:
+          break;
+      }
+      setSearchResults(response.data); // Assuming your API returns an array of search results
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };  
+
 
     return (
         <div>

@@ -4,6 +4,7 @@ from chalicelib.searching.searching_controllers import (
     search_municipalities,
     search_service_providers,
     get_user_municipality,
+    search_alt_municipality_tickets,
 )
 
 searching_blueprint = Blueprint(__name__)
@@ -15,11 +16,7 @@ def search_tickets_route():
     search_term = request.query_params.get("q")
     if not search_term:
         raise BadRequestError("Search term is required")
-
-    # Fetch user's municipality (assuming it's part of the request context)
     user_municipality = get_user_municipality(request.to_dict())
-
-    # Call search_tickets with user's municipality
     return search_tickets(user_municipality, search_term)
 
 
@@ -29,9 +26,16 @@ def search_municipalities_route():
     search_term = request.query_params.get("q")
     if not search_term:
         raise BadRequestError("Search term is required")
-
-    # Call search_municipalities
     return search_municipalities(search_term)
+
+
+@searching_blueprint.route("/municipality-tickets", methods=["GET"])
+def search_municipality_tickets_route():
+    request = searching_blueprint.current_request
+    municipality_name = request.query_params.get("q")
+    if not municipality_name:
+        raise BadRequestError("Municipality name is required")
+    return search_alt_municipality_tickets(municipality_name)
 
 
 @searching_blueprint.route("/service-provider", methods=["GET"])
@@ -40,6 +44,4 @@ def search_service_providers_route():
     search_term = request.query_params.get("q")
     if not search_term:
         raise BadRequestError("Search term is required")
-
-    # Call search_service_providers
     return search_service_providers(search_term)
