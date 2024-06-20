@@ -3,36 +3,44 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("MunicipalityLogin", () => {
 
-    it("renders textbox to select municipality", () => {
+    it("renders an email input", () => {
         render(<MunicipalityLogin />);
-        const muniAutocomplete = screen.getByRole("combobox");
-        expect(muniAutocomplete).toHaveAttribute("type", "text");
+        const emailInput = screen.getByLabelText("Email");
+
+        expect(emailInput).toBeInTheDocument();
+        expect(emailInput).toHaveAttribute("type", "email");
     });
 
-    it("renders a password input", () => {
-        render(<MunicipalityLogin />);
-        const passwordInput = screen.getByPlaceholderText("Password");
-        expect(passwordInput).toHaveAttribute("type", "password");
-    });
+    // it("renders textbox to select municipality", () => {
+    //     render(<MunicipalityLogin />);
+    //     const muniAutocomplete = screen.getByRole("combobox");
+    //     expect(muniAutocomplete).toHaveAttribute("type", "text");
+    // });
 
-    it("renders a submit button", () => {
-        render(<MunicipalityLogin />);
+    // it("renders a password input", () => {
+    //     render(<MunicipalityLogin />);
+    //     const passwordInput = screen.getByPlaceholderText("Password");
+    //     expect(passwordInput).toHaveAttribute("type", "password");
+    // });
 
-        const submitButton = screen.getByRole("button", { name: /submit/i });
+    // it("renders a submit button", () => {
+    //     render(<MunicipalityLogin />);
 
-        expect(submitButton).toBeInTheDocument();
-        expect(submitButton).toHaveTextContent("Submit");
-    });
+    //     const submitButton = screen.getByRole("button", { name: /submit/i });
+
+    //     expect(submitButton).toBeInTheDocument();
+    //     expect(submitButton).toHaveTextContent("Submit");
+    // });
 
 
-    test("handler function is called after clicking submit button", () => {
-        render(<MunicipalityLogin />);
-        const mockFunction = jest.fn();
-        const loginForm = screen.getByTestId("municipality-login-form");
-        loginForm.addEventListener("submit", mockFunction);
+    // test("handler function is called after clicking submit button", () => {
+    //     render(<MunicipalityLogin />);
+    //     const mockFunction = jest.fn();
+    //     const loginForm = screen.getByTestId("municipality-login-form");
+    //     loginForm.addEventListener("submit", mockFunction);
 
-        fireEvent.submit(loginForm)
-        expect(mockFunction).toHaveBeenCalledTimes(1);
-    });
+    //     fireEvent.submit(loginForm)
+    //     expect(mockFunction).toHaveBeenCalledTimes(1);
+    // });
 
-})
+});

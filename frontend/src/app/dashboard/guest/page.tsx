@@ -1,6 +1,5 @@
 'use client'
-
-import NavbarWhite from "@/components/Navbar/NavbarWhite";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 import React, { Key } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
@@ -15,7 +14,7 @@ export default function GuestDashboard() {
 
     return (
         <div>
-            <NavbarWhite />
+            <NavbarGuest />
 
             <main>
 
