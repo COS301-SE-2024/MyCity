@@ -10,7 +10,7 @@ from chalicelib.searching.searching_controllers import (
 searching_blueprint = Blueprint(__name__)
 
 
-@searching_blueprint.route("/issues", methods=["GET"])
+@searching_blueprint.route("/issues", methods=["GET"], cors=True)
 def search_tickets_route():
     request = searching_blueprint.current_request
     search_term = request.query_params.get("q")
@@ -20,7 +20,7 @@ def search_tickets_route():
     return search_tickets(user_municipality, search_term)
 
 
-@searching_blueprint.route("/municipality", methods=["GET"])
+@searching_blueprint.route("/municipality", methods=["GET"], cors=True)
 def search_municipalities_route():
     request = searching_blueprint.current_request
     search_term = request.query_params.get("q")
@@ -29,7 +29,7 @@ def search_municipalities_route():
     return search_municipalities(search_term)
 
 
-@searching_blueprint.route("/municipality-tickets", methods=["GET"])
+@searching_blueprint.route("/municipality-tickets", methods=["GET"], cors=True)
 def search_municipality_tickets_route():
     request = searching_blueprint.current_request
     municipality_name = request.query_params.get("q")
@@ -38,7 +38,7 @@ def search_municipality_tickets_route():
     return search_alt_municipality_tickets(municipality_name)
 
 
-@searching_blueprint.route("/service-provider", methods=["GET"])
+@searching_blueprint.route("/service-provider", methods=["GET"], cors=True)
 def search_service_providers_route():
     request = searching_blueprint.current_request
     search_term = request.query_params.get("q")

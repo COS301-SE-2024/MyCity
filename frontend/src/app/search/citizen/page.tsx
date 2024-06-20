@@ -15,19 +15,36 @@ export default function CreateTicket() {
   const [selectedFilter, setSelectedFilter] = useState<'myLocation' | 'serviceProviders' | 'municipalities'>('myLocation');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+  const [hasSearched, setHasSearched] = useState(false);  // New state to track if a search has been initiated
 
   const handleSearch = async () => {
     try {
+      setHasSearched(true);  // Set hasSearched to true when a search is initiated
       let response = { data: [] }; // Initialize with an empty array or appropriate default value
       switch (selectedFilter) {
         case 'myLocation':
           response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(searchTerm)}`);
+          /*response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(searchTerm)}`, {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          });*/
           break;
         case 'serviceProviders':
-          response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-providers?q=${encodeURIComponent(searchTerm)}`);
+          response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-provider?q=${encodeURIComponent(searchTerm)}`);
+          /*response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-providers?q=${encodeURIComponent(searchTerm)}`, {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          });*/
           break;
         case 'municipalities':
           response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(searchTerm)}`);
+          /*response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(searchTerm)}`, {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          });*/
           break;
         default:
           break;
@@ -43,6 +60,7 @@ export default function CreateTicket() {
     setIsFilterOpen(false); // Close the filter dropdown after selection
     //setSearchTerm(''); // Clear the search term when changing filters
     setSearchResults([]); // Clear previous search results
+    setHasSearched(false);  // Reset hasSearched when filter changes
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,9 +156,12 @@ export default function CreateTicket() {
               </span>
             </div>
     
-            <SearchTicket />
-            <SearchMunicipality />
-            <SearchSP />
+            {hasSearched && (
+              <>
+                {selectedFilter === 'serviceProviders' && <SearchSP serviceProviders={searchResults} />}
+              </>
+            )}
+
           </main>
         </div>
       );
