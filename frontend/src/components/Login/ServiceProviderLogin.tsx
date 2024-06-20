@@ -2,12 +2,16 @@ import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { CircleHelp } from 'lucide-react';
+import { signIn,signOut } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 
 export default function ServiceProviderLogin() {
   // const [email, setEmail] = useState('');
-  const [company, setCompany] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [company, setCompany] = useState('');
 
   type Company = {
     id: number | string;
@@ -22,8 +26,18 @@ export default function ServiceProviderLogin() {
   ];
 
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+
+    const {isSignedIn} = await signIn({
+      username : String(form.get('email')),
+      password : String(form.get('password')),
+    });
+
+    // const { username, userId, signInDetails } = await getCurrentUser();
+    // const user_details = await fetchUserAttributes();
+
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
   };
@@ -32,28 +46,24 @@ export default function ServiceProviderLogin() {
     <div className="px-12">
       <form data-testid="service-provider-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
-        <Autocomplete
-          label={<span className="font-semibold text-medium">Company Name</span>}
-          labelPlacement="outside"
-          placeholder="e.g Plumbing"
-          defaultItems={companies}
+      <Input
+          variant={"bordered"}
           fullWidth
-          disableSelectorIconRotation
-          isClearable={false}
-          size={"lg"}
-          type="text"
-          name="company"
-          autoComplete="new-company"
-          menuTrigger={"input"}
-          onChange={(event) => setCompany(event.target.value)}
-        >
-          {(company) => <AutocompleteItem key={company.id}>{company.name}</AutocompleteItem>}
-        </Autocomplete>
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Email</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="email"
+          name="email"
+          autoComplete="new-email"
+          placeholder="example@mail.com"
+          value={email} onChange={(event) => setEmail(event.target.value)} />
 
         <Input
           variant={"bordered"}
           fullWidth
-          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">Comapny Password<CircleHelp className="ml-2.5 text-blue-500" size={20} /></span>}
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Password</span>}
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
@@ -61,7 +71,7 @@ export default function ServiceProviderLogin() {
           type="password"
           name="password"
           autoComplete="new-password"
-          placeholder="Company Password"
+          placeholder="Password"
           value={password}
           onChange={(event) => setPassword(event.target.value)} />
 

@@ -1,6 +1,9 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
 import { Building2, CircleHelp } from 'lucide-react';
+import { signIn,signOut } from 'aws-amplify/auth';
+import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes } from 'aws-amplify/auth';
 
 
 export default function MunicipalityLogin() {
@@ -20,8 +23,17 @@ export default function MunicipalityLogin() {
     { id: 2, name: "City of Tshwane" },
   ];
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+  
+    const {isSignedIn} = await signIn({
+      username : String(form.get('email')),
+      password : String(form.get('password')),
+    })
+
+    // const { username, userId, signInDetails } = await getCurrentUser();
+    // const user_details = await fetchUserAttributes();
     // console.log(`Province: ${province}, Municipality: ${municipality}, Verification Code: ${verificationCode}`);
   };
 
@@ -29,34 +41,24 @@ export default function MunicipalityLogin() {
     <div className="px-12">
       <form data-testid="municipality-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
-        <Autocomplete
-          label={<span className="font-semibold text-medium">Select Your Municipality</span>}
-          labelPlacement="outside"
-          placeholder="Municipality"
+      <Input
+          variant={"bordered"}
           fullWidth
-          defaultItems={municipalities}
-          disableSelectorIconRotation
-          isClearable={false}
-          type="text"
-          name="municipality"
-          autoComplete="new-municipality"
-          menuTrigger={"input"}
-          size={"lg"}
-          onChange={(event) => setMunicipality(event.target.value)}
-        >
-          {(municipality) =>
-            <AutocompleteItem key={municipality.id} textValue={municipality.name}>
-              <div className="flex gap-2 items-center">
-                <Building2 className="flex-shrink-0 text-blue-700" size={18} />
-                <span className="text-small">{municipality.name}</span>
-              </div>
-            </AutocompleteItem>}
-        </Autocomplete>
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Email</span>}
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="email"
+          name="email"
+          autoComplete="new-email"
+          placeholder="example@mail.com"
+           />
 
         <Input
           variant={"bordered"}
           fullWidth
-          label={<span className="font-semibold text-medium mb-[0.20em] flex items-center align-middle">MuniCode<sup>TM</sup> <CircleHelp className="ml-2.5 text-blue-500" size={20} /></span>}
+          label={<span className="font-semibold text-medium block mb-[0.20em]">Password</span>}
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",

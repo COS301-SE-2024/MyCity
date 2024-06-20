@@ -3,11 +3,10 @@ import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react
 import { Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import Link from 'next/link';
 
 
 export default function ServiceProviderSignup() {
-  
+
   const [servicetype, setServicetype] = useState('');
   const router = useRouter();
 
@@ -30,23 +29,22 @@ export default function ServiceProviderSignup() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget as HTMLFormElement);
-    console.log("Service Area: " + form.get("service-area"))
-    const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/signup/company',{
-        email : form.get("email"),
-        name : form.get("company"),
-        service_type : form.get("service-area"),
-        password : form.get("password")
-    });
-    console.log("Something happened")
-    const data = await response.data;
-    if(data.Status == 200)
-    {
-      sessionStorage.setItem('pid',data.pid)
-      sessionStorage.setItem('name',data.name)
-      sessionStorage.setItem('service_type',data.service_type)
-      router.push("/dashboard")
-    }
+    // const form = new FormData(event.currentTarget as HTMLFormElement);
+    // console.log("Service Area: " + form.get("service-area"))
+    // const response = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/auth/signup/company', {
+    //   email: form.get("email"),
+    //   name: form.get("company"),
+    //   service_type: form.get("service-area"),
+    //   password: form.get("password")
+    // });
+    // console.log("Something happened")
+    // const data = await response.data;
+    // if (data.Status == 200) {
+    //   sessionStorage.setItem('pid', data.pid)
+    //   sessionStorage.setItem('name', data.name)
+    //   sessionStorage.setItem('service_type', data.service_type)
+    //   router.push("/dashboard/service-provider")
+    // }
     // Handle the submit action here
     // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
   };
@@ -119,7 +117,7 @@ export default function ServiceProviderSignup() {
           placeholder="example@company.com"
         />
 
-<Input
+        <Input
           variant={"bordered"}
           fullWidth
           label="Create password"
