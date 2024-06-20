@@ -49,7 +49,11 @@ export default function ServiceProviderLogin() {
       <Input
           variant={"bordered"}
           fullWidth
-          label={<span className="font-semibold text-medium block mb-[0.20em]">Email</span>}
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              Service Provider Email <span className="text-blue-500">*</span>
+            </span>
+          }
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
@@ -58,12 +62,18 @@ export default function ServiceProviderLogin() {
           name="email"
           autoComplete="new-email"
           placeholder="example@mail.com"
-          value={email} onChange={(event) => setEmail(event.target.value)} />
+          required
+          value={email} onChange={(event) => setEmail(event.target.value)} 
+          />
 
         <Input
           variant={"bordered"}
           fullWidth
-          label={<span className="font-semibold text-medium block mb-[0.20em]">Password</span>}
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              Service Provider Password <span className="text-blue-500">*</span>
+            </span>
+          }
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
@@ -73,6 +83,7 @@ export default function ServiceProviderLogin() {
           autoComplete="new-password"
           placeholder="Password"
           value={password}
+          required
           onChange={(event) => setPassword(event.target.value)} />
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
