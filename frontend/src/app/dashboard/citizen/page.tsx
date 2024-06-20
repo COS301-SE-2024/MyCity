@@ -12,6 +12,7 @@ export default function CitizenDashboard() {
     const handleTabChange = (key: Key) => {
         const index = Number(key);
     };
+    const name = sessionStorage.getItem('firstname')
 
     return (
         <div>
@@ -23,7 +24,7 @@ export default function CitizenDashboard() {
                     Dashboard
                 </h1>
                 <h2 className="text-3xl font-bold mt-2 ml-2 text-blue-700">
-                    Jane Doe
+                    {name}
                 </h2>
                 <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
 
