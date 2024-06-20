@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
+import Image from "next/image";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
@@ -119,7 +120,7 @@ const Settings = () => {
               <div className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-black mr-2 text-red-600"
+                  className="h-6 w-6 mr-2 text-red-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -328,9 +329,11 @@ const Settings = () => {
         <div className="flex">
           <div className="w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
-              <img
+              <Image
                 src="/profile.png"
                 alt="Profile"
+                width={12}
+                height={12}
                 className="w-12 h-12 rounded-full mr-4"
               />
               <div>
