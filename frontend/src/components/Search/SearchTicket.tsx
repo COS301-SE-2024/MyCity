@@ -1,48 +1,68 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { FaArrowUp, FaEye } from 'react-icons/fa';
 
-const SearchTicket = () => {
+interface Ticket {
+  //not the only components of a ticket (merely the one we are using)
+  ticket_id: string;
+  asset_id: string;
+  dateOpened: string;
+  municipality_id: string;
+  state: string;
+  upvotes: number;
+  viewCount: number;
+}
+
+interface SearchTicketProps {
+  tickets: Ticket[];
+}
+
+const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
+  if (!tickets || tickets.length === 0) {
+    return <div>No tickets found.</div>;
+  }
+
   return (
-    <div className="grid grid-cols-6 gap-4 bg-white rounded-md shadow-md p-4">
-      {/* First Field */}
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-500">Ticket</span>
-        <span className="text-gray-800">SA0284</span>
-      </div>
+    <div className="space-y-4">
+      {tickets.map((ticket: Ticket, index: number) => (
+        <div key={index} className="grid grid-cols-6 gap-4 bg-white rounded-md shadow-md p-4">
+          {/* First Field - Ticket */}
+          <div className="flex flex-col items-center">
+            <span className="text-s text-black-500">Ticket</span>
+          </div>
 
-      {/* Second Field */}
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-500">Urgent</span>
-        <AlertTriangle size={40} color='red'/>
-      </div>
+          {/* Second Field - Urgent */}
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-gray-500">Urgent</span>
+            <AlertTriangle size={40} color='red' />
+          </div>
 
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-500">Created by</span>
-        <span className="text-gray-800">Kyle Marshall</span>
-      </div>
+          {/* Third Field - Asset Type */}
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-gray-500">Asset Type</span>
+            <span className="text-gray-800">{ticket.asset_id}</span>
+          </div>
 
-      {/* Third Field */}
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-500">Unassigned</span>
-        <span className="text-gray-800">Status</span>
-      </div>
+          {/* Fourth Field - Date Opened */}
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-gray-500">Date Opened</span>
+            <span className="text-gray-800">{new Date(ticket.dateOpened).toLocaleDateString()}</span>
+          </div>
 
-      {/* Fourth Field */}
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-500">Fault Type</span>
-        <span className="text-gray-800">Leaking Sewerage</span>
-      </div>
+          {/* Fifth Field - Municipality */}
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-gray-500">Municipality</span>
+            <span className="text-gray-800">{ticket.municipality_id}</span>
+          </div>
 
-      {/* Fifth Field */}
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-500">Address</span>
-        <span className="text-gray-800">312 Rupert Street...</span>
-      </div>
+          {/* Sixth Field - State */}
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-gray-500">State</span>
+            <span className="text-gray-800">{ticket.state}</span>
+          </div>
 
-      {/* Sixth Field */}
-      <div className="flex flex-col items-center">
-        {/* Add content for the sixth field if necessary */}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };
