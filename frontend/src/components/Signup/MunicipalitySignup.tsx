@@ -16,7 +16,8 @@ import {
 import { getCurrentUser } from "aws-amplify/auth";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
-import { UserRole } from "@/app/types/user.types";
+import { UserRole } from "@/types/user.types";
+import { handleSignUp } from "@/lib/cognitoActions";
 
 export default function MunicipalitySignup() {
   const router = useRouter();
@@ -36,40 +37,14 @@ export default function MunicipalitySignup() {
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
     try {
-      const { nextStep } = await signUp({
-        username: String(form.get("email")),
-        password: String(form.get("password")),
-        options: {
-          userAttributes: {
-            email: String(form.get("email")),
-            given_name: String(form.get("firstname")),
-            family_name: String(form.get("surname")),
-            "custom:municipality": String(form.get("municipality")),
-            "custom:user_role": UserRole.MUNICIPALITY,
-          },
-        },
-      });
-
-      handleSignUpStep(nextStep);
-    } catch (error) {
+      handleSignUp(form, UserRole.MUNICIPALITY);
+    }
+    catch (error) {
       console.log("Error: " + error);
     }
+
   };
 
-  const handleSignUpStep = async (step: SignUpOutput["nextStep"]) => {
-    switch (step.signUpStep) {
-      case "CONFIRM_SIGN_UP":
-      // Redirect end-user to confirm-sign up screen.
-
-      case "COMPLETE_AUTO_SIGN_IN":
-        const { isSignedIn } = await autoSignIn();
-
-        if (isSignedIn) {
-          //redirect to municipality dashboard
-          console.log("signup successful, you are now logged in.");
-        }
-    }
-  };
 
   return (
     <div className="px-12">

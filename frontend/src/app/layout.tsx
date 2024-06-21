@@ -4,6 +4,7 @@ import "./globals.scss";
 import { NextUIProvider } from "@nextui-org/react";
 import ConfigureAmplifyClientSide from "../config/amplify-cognito-config";
 import * as React from "react";
+import { UserProfileProvider } from "@/context/UserProfileContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +22,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextUIProvider>
-          <ConfigureAmplifyClientSide/>
-          {children}
+          <ConfigureAmplifyClientSide />
+          <UserProfileProvider>
+            {children}
+          </UserProfileProvider>
         </NextUIProvider>
       </body>
     </html>
