@@ -1,7 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
 import uuid
-from chalicelib.tickets.geolocation import getLatLong
 from math import radians, cos, sin, asin, sqrt
 
 dynamodb = boto3.resource("dynamodb")
@@ -21,7 +20,8 @@ def create_ticket(ticket_data):
         required_fields = [
             "asset",
             "description",
-            "address",
+            "latitude",
+            "longitude"
             "user_id",
         ]
         for field in required_fields:
@@ -50,7 +50,10 @@ def create_ticket(ticket_data):
 
         # Generate ticket ID
         ticket_id = generate_id()
-        location = getLatLong(ticket_data['address'])
+        location = {
+            "latitude" : ticket_data['latitude'],
+            "longitude" : ticket_data['longitude'],
+        }
         municipality_id = findMunicipality(location)
 
 
