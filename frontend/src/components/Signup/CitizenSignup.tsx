@@ -1,76 +1,24 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent } from "react";
 import { Input, Button } from "@nextui-org/react";
-import Link from "next/link";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { Upload } from "lucide-react";
-import NavbarBluish from "../Navbar/NavbarGuest";
-import {
-  signUp,
-  signIn,
-  signOut,
-  SignUpOutput,
-  autoSignIn,
-} from "aws-amplify/auth";
-import { getCurrentUser } from "aws-amplify/auth";
-import { fetchUserAttributes } from "aws-amplify/auth";
-import { UserRole } from "@/app/types/user.types";
+import { UserRole } from "@/types/user.types";
+import { handleSignUp } from "@/lib/cognitoActions";
 
 export default function CitizenSignup() {
-  const router = useRouter();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
     try {
-      const { nextStep } = await signUp({
-        username: String(form.get("email")),
-        password: String(form.get("password")),
-        options: {
-          userAttributes: {
-            email: String(form.get("email")),
-            given_name: String(form.get("firstname")),
-            family_name: String(form.get("surname")),
-            "custom:municipality": String(form.get("municipality")),
-            "custom:user_role": UserRole.CITIZEN,
-          },
-          autoSignIn: true,
-        },
-      });
-
-      handleSignUpStep(nextStep);
-
-      // try{
-
-      //   if (isSignUpComplete) {
-      //     const { username, userId, signInDetails } = await getCurrentUser();
-      //     const user_details = await fetchUserAttributes();
-      //   }
-      // }
-      // catch (error)
-      // {
-      //   console.log("Fetch: " + error)
-      // }
-    } catch (error) {
+      handleSignUp(form, UserRole.CITIZEN);
+    }
+    catch (error) {
       console.log("Error: " + error);
     }
+
   };
 
-  const handleSignUpStep = async (step: SignUpOutput["nextStep"]) => {
-    switch (step.signUpStep) {
-      case "CONFIRM_SIGN_UP":
-      // Redirect end-user to confirm-sign up screen.
 
-      case "COMPLETE_AUTO_SIGN_IN":
-        const { isSignedIn } = await autoSignIn();
-
-        if (isSignedIn) {
-          //redirect to citizen dashboard
-          console.log("signup successful, you are now logged in.");
-        }
-    }
-  };
 
   return (
     <div className="px-12">

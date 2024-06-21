@@ -1,43 +1,32 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent } from "react";
 import Link from "next/link";
-import {
-  Input,
-  Button,
-  Autocomplete,
-  AutocompleteItem,
-} from "@nextui-org/react";
-import { Building2, CircleHelp } from "lucide-react";
-import { signIn, signOut } from "aws-amplify/auth";
-import { getCurrentUser } from "aws-amplify/auth";
-import { fetchUserAttributes } from "aws-amplify/auth";
+import { Input, Button, } from "@nextui-org/react";
+import { UserRole } from "@/types/user.types";
+import { handleSignIn } from "@/lib/cognitoActions";
+import { redirect, useRouter } from 'next/navigation';
 
 export default function MunicipalityLogin() {
-  const [municipality, setMunicipality] = useState("");
-  const [password, setPassword] = useState("");
-
-  type Municipality = {
-    id: number | string;
-    name: string;
-  };
-
-  const municipalities: Municipality[] = [
-    { id: 0, name: "City of Ekurhuleni" },
-    { id: 1, name: "City of Johannesburg" },
-    { id: 2, name: "City of Tshwane" },
-  ];
+  const router = useRouter();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
-    const { isSignedIn } = await signIn({
-      username: String(form.get("email")),
-      password: String(form.get("password")),
-    });
+    try {
+      const {isSignedIn} = await handleSignIn(form, UserRole.MUNICIPALITY);
 
-    // const { username, userId, signInDetails } = await getCurrentUser();
-    // const user_details = await fetchUserAttributes();
-    // console.log(`Province: ${province}, Municipality: ${municipality}, Verification Code: ${verificationCode}`);
+      if (isSignedIn) {
+        // redirect("/dashboard/municipality");
+        router.push("/dashboard/municipality");
+      }
+      else {
+        throw "Something happened and we could not sign you in.";
+      }
+    }
+    catch (error) {
+      console.log("Error: " + error);
+    }
+
   };
 
   return (
@@ -82,9 +71,7 @@ export default function MunicipalityLogin() {
           name="password"
           autoComplete="new-password"
           placeholder="Password"
-          value={password}
           required
-          onChange={(event) => setPassword(event.target.value)}
         />
 
         <Link

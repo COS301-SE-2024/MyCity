@@ -1,52 +1,40 @@
-import React, { FormEvent, useState } from 'react';
-import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
+import React, { FormEvent } from 'react';
+import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
-import { CircleHelp } from 'lucide-react';
-import { signIn,signOut } from 'aws-amplify/auth';
-import { getCurrentUser } from 'aws-amplify/auth';
-import { fetchUserAttributes } from 'aws-amplify/auth';
+import { UserRole } from '@/types/user.types';
+import { handleSignIn } from '@/lib/cognitoActions';
+import { redirect, useRouter } from 'next/navigation';
 
 
 export default function ServiceProviderLogin() {
-  // const [email, setEmail] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [company, setCompany] = useState('');
-
-  type Company = {
-    id: number | string;
-    name: string;
-  };
-
-
-  const companies: Company[] = [
-    { id: 0, name: "Bob's Electronics" },
-    { id: 1, name: "West Coast Saviours" },
-    { id: 2, name: "Aubrey's Angels" },
-  ];
-
-
+  const router = useRouter();
+  
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
-    const {isSignedIn} = await signIn({
-      username : String(form.get('email')),
-      password : String(form.get('password')),
-    });
+    try {
+      const { isSignedIn } = await handleSignIn(form, UserRole.PRIVATE_COMPANY);
 
-    // const { username, userId, signInDetails } = await getCurrentUser();
-    // const user_details = await fetchUserAttributes();
+      if (isSignedIn) {
+        // redirect("/dashboard/service-provider");
+        router.push("/dashboard/service-provider");
+      }
+      else {
+        throw "Something happened and we could not sign you in.";
+      }
+    }
+    catch (error) {
+      console.log("Error: " + error);
+    }
 
-    // Handle the submit action here
-    // console.log(`User Type: Organization, Email: ${email}, Password: ${password}`);
   };
 
   return (
     <div className="px-12">
       <form data-testid="service-provider-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
-      <Input
+        <Input
           variant={"bordered"}
           fullWidth
           label={
@@ -63,8 +51,7 @@ export default function ServiceProviderLogin() {
           autoComplete="new-email"
           placeholder="example@mail.com"
           required
-          value={email} onChange={(event) => setEmail(event.target.value)} 
-          />
+        />
 
         <Input
           variant={"bordered"}
@@ -82,9 +69,7 @@ export default function ServiceProviderLogin() {
           name="password"
           autoComplete="new-password"
           placeholder="Password"
-          value={password}
-          required
-          onChange={(event) => setPassword(event.target.value)} />
+          required />
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
