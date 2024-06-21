@@ -53,84 +53,122 @@ export default function ServiceProviderSignup() {
     <div className="px-12">
       <form data-testid="service-provider-signup-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
 
-        <Input
+      <Input
           variant={"bordered"}
           fullWidth
-          label="Registered Company Name"
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              First Name <span className="text-blue-500">*</span>
+            </span>
+          }
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
-            label: "font-semibold text-medium mt-[-1px]"
           }}
           type="text"
-          name="company"
-          autoComplete="new-company"
-          placeholder="Company Name"
-
+          name="firstname"
+          autoComplete="new-firstname"
+          placeholder="Jane"
+          required
         />
-
-
-        <div>
-          <span className="font-semibold text-medium block mb-2">Add Company Branding</span>
-
-          <div className="flex justify-evenly items-center align-middle">
-            <div className="rounded-2xl border border-black/15 border-dashed px-8 py-7 w-fit h-fit">
-              <Upload className="text-blue-400" size={40} />
-            </div>
-
-            <span className="text-blue-400">Upload a file or drag and drop.</span>
-
-          </div>
-        </div>
-
-
-        <Autocomplete
-          label={<span className="font-semibold text-medium">Service Area</span>}
-          labelPlacement="outside"
-          placeholder="e.g Plumbing"
-          defaultItems={serviceAreas}
-          fullWidth
-          disableSelectorIconRotation
-          isClearable={false}
-          size={"lg"}
-          type="text"
-          name="service-area"
-          autoComplete="new-service-area"
-          menuTrigger={"input"}
-        >
-          {(serviceArea) => <AutocompleteItem key={serviceArea.id}>{serviceArea.name}</AutocompleteItem>}
-        </Autocomplete>
-
 
         <Input
           variant={"bordered"}
           fullWidth
-          label="Email"
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              Last Name <span className="text-blue-500">*</span>
+            </span>
+          }
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
-            label: "font-semibold text-medium mt-[-1px]"
+          }}
+          type="text"
+          name="surname"
+          autoComplete="new-surname"
+          placeholder="Doe"
+          required
+        />
+
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              Email<span className="text-blue-500">*</span>
+            </span>
+          }
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
           }}
           type="email"
           name="email"
           autoComplete="new-email"
-          placeholder="example@company.com"
+          placeholder="example@mail.com"
+          required
         />
 
         <Input
           variant={"bordered"}
           fullWidth
-          label="Create password"
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              Create Password <span className="text-blue-500">*</span>
+            </span>
+          }
           labelPlacement={"outside"}
           classNames={{
             inputWrapper: "h-[3em]",
-            label: "font-semibold text-medium mt-[-1px]"
           }}
           type="password"
           name="password"
           autoComplete="new-password"
-          placeholder="create secure password"
+          placeholder="Password"
+          required
         />
+
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              Confirm Password <span className="text-blue-500">*</span>
+            </span>
+          }
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          placeholder="Password"
+          required
+        />
+
+        <Input
+          variant={"bordered"}
+          fullWidth
+          label={
+            <span className="font-semibold text-medium block mb-[0.20em]">
+              AuthCode <span className="text-blue-500">*</span>
+            </span>
+          }
+          labelPlacement={"outside"}
+          classNames={{
+            inputWrapper: "h-[3em]",
+          }}
+          type="text"
+          name="authcode"
+          autoComplete="new-authcode"
+          placeholder="AuthCode"
+          required
+        />
+
+
+        
 
 
         <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
