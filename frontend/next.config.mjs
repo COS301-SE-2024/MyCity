@@ -4,13 +4,16 @@ const nextConfig = {
     output: "export",
 
     env: {
-        GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+        GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        USER_POOL_ID: process.env.NEXT_PUBLIC_USER_POOL_ID,
+        USER_POOL_CLIENT_ID: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID
+
     },
 
     images: {
         unoptimized: true
     },
-    trailingSlash:true
+    trailingSlash: true
 };
 
 export default nextConfig;
