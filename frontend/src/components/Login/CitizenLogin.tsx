@@ -1,42 +1,35 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent } from 'react';
 import { Input, Button } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
-import { signIn,signOut } from 'aws-amplify/auth';
-import { getCurrentUser } from 'aws-amplify/auth';
-import { fetchUserAttributes } from 'aws-amplify/auth';
 import { FcGoogle } from 'react-icons/fc';
+import { handleSignIn } from '@/lib/cognitoActions';
+import { UserRole } from '@/types/user.types';
+import { redirect, useRouter } from 'next/navigation';
 
 
 export default function CitizenLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const router = useRouter();
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
-    const {isSignedIn} = await signIn({
-      username: String(form.get('email')),
-      password: String(form.get('password')),
-    });
+    try {
+      const { isSignedIn } = await handleSignIn(form, UserRole.CITIZEN);
 
-    // const { username, userId, signInDetails } = await getCurrentUser();
-    // const user_details = await fetchUserAttributes();
-    // sessionStorage.setItem('firstname', String(user_details['given_name']));
-    // sessionStorage.setItem('email', String(user_details['family_name']));
+      if (isSignedIn) {
+        // redirect("/dashboard/citizen");
+        router.push("/dashboard/citizen");
+      }
+      else {
+        throw "Something happened and we could not sign you in.";
+      }
 
+    }
+    catch (error) {
+      console.log("Error: " + error);
+    }
 
-    // if (data.Success) {
-    //   sessionStorage.setItem('username', data.username)
-    //   sessionStorage.setItem('name', data.firstname)
-    //   router.push("/dashboard/citizen")
-    // }
-
-
-    // Handle the submit action here
-    // console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
   };
 
   return (
@@ -59,8 +52,7 @@ export default function CitizenLogin() {
           name="email"
           autoComplete="new-email"
           placeholder="example@mail.com"
-          required
-          value={email} onChange={(event) => setEmail(event.target.value)} />
+          required />
 
         <Input
           variant={"bordered"}
@@ -78,9 +70,7 @@ export default function CitizenLogin() {
           name="password"
           autoComplete="new-password"
           placeholder="Password"
-          value={password}
-          required
-          onChange={(event) => setPassword(event.target.value)} />
+          required />
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1rem]">Forgot password?</Link>
 
