@@ -26,7 +26,6 @@ export default function CitizenDashboard() {
         const index = Number(key);
     };
 
-
     return (
         <div>
             <NavbarUser />

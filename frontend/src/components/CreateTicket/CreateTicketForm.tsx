@@ -6,6 +6,7 @@ import { BadgeAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import axios from 'axios';
+import Image from 'next/image';
 
 interface ReportFaultFormProps extends React.HTMLAttributes<HTMLElement> {}
 
@@ -75,7 +76,7 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
                             {(faultType) => (
                                 <AutocompleteItem key={faultType.name} textValue={faultType.name}>
                                     <div className="flex gap-2 items-center">
-                                        <img src={faultType.icon} alt={faultType.name} className="flex-shrink-0 w-6 h-6" />
+                                        <Image src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
                                         <span className="text-small">{faultType.name}</span>
                                     </div>
                                 </AutocompleteItem>
