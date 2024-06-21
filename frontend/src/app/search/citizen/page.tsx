@@ -16,6 +16,7 @@ export default function CreateTicket() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
   const [hasSearched, setHasSearched] = useState(false);  // New state to track if a search has been initiated
+  const [municipalityTickets, setMunicipalityTickets] = useState<any[]>([]);
 
   const handleSearch = async () => {
     try {
@@ -24,11 +25,6 @@ export default function CreateTicket() {
       switch (selectedFilter) {
         case 'myLocation':
           response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(searchTerm)}`);
-          /*response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(searchTerm)}`, {
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-          });*/
           break;
         case 'serviceProviders':
           response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-provider?q=${encodeURIComponent(searchTerm)}`);
@@ -40,11 +36,13 @@ export default function CreateTicket() {
           break;
         case 'municipalities':
           response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(searchTerm)}`);
-          /*response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(searchTerm)}`, {
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-          });*/
+          const municipalityIds = response.data.map((municipality: any) => municipality.municipality_id);
+          const ticketsPromises = municipalityIds.map((municipalityId: string) => 
+            axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality-tickets?q=${encodeURIComponent(municipalityId)}`)
+          );
+          const ticketsResponses = await Promise.all(ticketsPromises);
+          const allTickets = ticketsResponses.flatMap(response => response.data);
+          setMunicipalityTickets(allTickets);
           break;
         default:
           break;
@@ -61,6 +59,7 @@ export default function CreateTicket() {
     //setSearchTerm(''); // Clear the search term when changing filters
     setSearchResults([]); // Clear previous search results
     setHasSearched(false);  // Reset hasSearched when filter changes
+    setMunicipalityTickets([]);
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,6 +158,12 @@ export default function CreateTicket() {
             {hasSearched && (
               <>
                 {selectedFilter === 'serviceProviders' && <SearchSP serviceProviders={searchResults} />}
+                {selectedFilter === 'municipalities' && (
+                  <>
+                    <SearchMunicipality municipalities={searchResults} />
+                    <SearchTicket tickets={municipalityTickets} />
+                  </>
+                )}
               </>
             )}
 
