@@ -28,8 +28,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
         <div key={index} className="grid grid-cols-6 gap-4 bg-white rounded-md shadow-md p-4">
           {/* First Field - Ticket */}
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">Ticket</span>
-            <span className="text-gray-800">{ticket.ticket_id}</span>
+            <span className="text-s text-black-500">Ticket</span>
           </div>
 
           {/* Second Field - Urgent */}
@@ -62,23 +61,6 @@ const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
             <span className="text-gray-800">{ticket.state}</span>
           </div>
 
-          {/* Seventh Field - Upvotes */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">Upvotes</span>
-            <div className="flex items-center">
-              <FaArrowUp />
-              <span className="ml-1">{ticket.upvotes}</span>
-            </div>
-          </div>
-
-          {/* Eighth Field - View Count */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">View Count</span>
-            <div className="flex items-center">
-              <FaEye />
-              <span className="ml-1">{ticket.viewCount}</span>
-            </div>
-          </div>
         </div>
       ))}
     </div>

@@ -25,7 +25,6 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities 
           {/* Municipality text */}
           <div className="flex flex-col items-center">
             <span className="text-s text-black-500">Municipality</span>
-            <span className="text-gray-800">{municipality.municipality_id}</span>
           </div>
 
           {/* User Circle Icon */}
@@ -36,7 +35,7 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities 
           {/* Municipality Name */}
           <div className="flex flex-col items-center">
             <span className="text-xs text-gray-500">Name</span>
-            <span className="text-gray-800">{municipality.name}</span>
+            <span className="text-gray-800">{municipality.municipality_id}</span>
           </div>
 
           {/* Province */}
