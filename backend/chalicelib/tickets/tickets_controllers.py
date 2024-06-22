@@ -8,7 +8,7 @@ from decimal import Decimal
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
-municipality_table = dynamodb.Table('municipalities')
+municipality_table = dynamodb.Table("municipalities")
 
 
 def generate_id():
@@ -28,12 +28,13 @@ def create_ticket(ticket_data):
         for field in required_fields:
             if field not in ticket_data:
                 error_response = {
-                'Error': {
-                    'Code': 'IncorrectFields',
-                    'Message': f"Missing required field: {field}"
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
                 }
-            }
                 raise ClientError(error_response,"InvalideFields")
+
 
         # Ensure user exists
 
@@ -42,9 +43,9 @@ def create_ticket(ticket_data):
         asset_response = assets_table.get_item(Key={"asset_id": asset_id})
         if "Item" not in asset_response:
             error_response = {
-                'Error': {
-                    'Code': 'ResourceNotFoundException',
-                    'Message': f'Asset with ID {asset_id} does not exist'
+                "Error": {
+                    "Code": "ResourceNotFoundException",
+                    "Message": f"Asset with ID {asset_id} does not exist",
                 }
             }
             raise ClientError(error_response,"NoItems")
@@ -54,12 +55,13 @@ def create_ticket(ticket_data):
         location = {
             "latitude" : Decimal(str(ticket_data['latitude'])),
             "longitude" : Decimal(str(ticket_data['longitude'])),
+            "latitude": ticket_data["latitude"],
+            "longitude": ticket_data["longitude"],
         }
         municipality_id = findMunicipality(location)
         current_datetime = datetime.now()
 
         formatted_datetime = current_datetime.strftime('%Y-%m-%dT%H:%M:%S')
-
 
 
         # Create the ticket item
@@ -70,10 +72,11 @@ def create_ticket(ticket_data):
             "dateOpened" : formatted_datetime,
             "description": ticket_data["description"],
             "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
-            "latitude": location['latitude'],
+            "latitude": location["latitude"],
             "longitude": location["longitude"],
             'municipality_id' : municipality_id,
             "username" : ticket_data["username"],
+
             "state": ticket_data["state"],  # do not hard code, want to extend in future
             "upvotes": 0,
             "viewcount": 0,
@@ -84,11 +87,8 @@ def create_ticket(ticket_data):
         return {"message": "Ticket created successfully", "ticket_id": ticket_id}
 
     except ClientError as e:
-        error_message = e.response['Error']['Message']
-        return {
-           'Status' : 'FAILED',
-           'Error' : error_message
-        }
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
 
 
 def get_fault_types():
@@ -114,12 +114,8 @@ def get_fault_types():
         return fault_types
 
     except ClientError as e:
-       error_message = e.response['Error']['Message']
-       return {
-           'Status' : 'FAILED',
-           'Error' : error_message
-       }
-
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
 
 
 def findMunicipality(location):
@@ -129,8 +125,8 @@ def findMunicipality(location):
     count = 0
     data = response['Items']
     closestdistance = 10000000
-    municipality = ''
-    if(len(data) > 0):
+    municipality = ""
+    if len(data) > 0:
         for x in data:
             if count < 2:
                 print(x['municipality_id'])
@@ -141,14 +137,11 @@ def findMunicipality(location):
             dlong = long2-longitude
             a = sin(dlat / 2)**2 + cos(latitude) * cos(lat2) * sin(dlong / 2)**2
             r_earth = 6371
-            distance = 2*r_earth*asin(sqrt(a))
+            distance = 2 * r_earth * asin(sqrt(a))
             if distance < closestdistance:
                 closestdistance = distance
-                municipality = x['municipality_id']
-        
+                municipality = x["municipality_id"]
+
         return municipality
-    else :
-        return 'No data was produced'
-
-
-
+    else:
+        return "No data was produced"
