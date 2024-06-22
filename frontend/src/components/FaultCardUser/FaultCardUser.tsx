@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { FaArrowUp, FaEye, FaCommentAlt } from 'react-icons/fa';
 
-interface FaultCardUserProps {
+interface CardData {
     title: string;
     address: string;
     arrowCount: number;
     commentCount: number;
     viewCount: number;
+    ticketNumber: string;
+    description: string;
+    image: string;
+    createdBy: string;
+}
+
+interface FaultCardUserProps extends CardData {
+    onClick?: () => void;  // Make onClick optional
 }
 
 function formatNumber(num: number): string {
@@ -16,19 +24,22 @@ function formatNumber(num: number): string {
     return num.toString();
 }
 
-const FaultCardUser: React.FC<FaultCardUserProps> = ({ title, address, arrowCount, commentCount, viewCount }) => {
-    // Example state for dynamic colors on icons
+const FaultCardUser: React.FC<FaultCardUserProps> = ({
+    title, address, arrowCount, commentCount, viewCount, ticketNumber, description, image, createdBy, onClick
+}) => {
     const [arrowColor, setArrowColor] = useState('black');
     const [commentColor, setCommentColor] = useState('black');
     const [eyeColor, setEyeColor] = useState('black');
 
-    // Example click handlers to toggle icon colors
     const handleArrowClick = () => setArrowColor(arrowColor === 'black' ? 'blue' : 'black');
     const handleCommentClick = () => setCommentColor(commentColor === 'black' ? 'blue' : 'black');
     const handleEyeClick = () => setEyeColor(eyeColor === 'black' ? 'blue' : 'black');
 
     return (
-        <div className="w-80 h-48 bg-white rounded-lg shadow-md overflow-hidden m-2">
+        <div
+            className="w-80 h-48 bg-white cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
+            onClick={onClick}
+        >
             <div className="px-6 py-4">
                 <div className="font-bold text-xl mb-2">{title}</div>
                 <p className="text-gray-700 text-base">{address}</p>
