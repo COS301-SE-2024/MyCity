@@ -55,8 +55,7 @@ def create_ticket(ticket_data):
         location = {
             "latitude" : Decimal(str(ticket_data['latitude'])),
             "longitude" : Decimal(str(ticket_data['longitude'])),
-            "latitude": ticket_data["latitude"],
-            "longitude": ticket_data["longitude"],
+            
         }
         municipality_id = findMunicipality(location)
         current_datetime = datetime.now()
