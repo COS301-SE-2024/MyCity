@@ -33,8 +33,7 @@ def create_ticket(ticket_data):
                         "Message": f"Missing required field: {field}",
                     }
                 }
-                raise ClientError(error_response,"InvalideFields")
-
+                raise ClientError(error_response, "InvalideFields")
 
         # Ensure user exists
 
@@ -48,34 +47,31 @@ def create_ticket(ticket_data):
                     "Message": f"Asset with ID {asset_id} does not exist",
                 }
             }
-            raise ClientError(error_response,"NoItems")
+            raise ClientError(error_response, "NoItems")
 
         # Generate ticket ID
         ticket_id = generate_id()
         location = {
-            "latitude" : Decimal(str(ticket_data['latitude'])),
-            "longitude" : Decimal(str(ticket_data['longitude'])),
-            
+            "latitude": Decimal(str(ticket_data["latitude"])),
+            "longitude": Decimal(str(ticket_data["longitude"])),
         }
         municipality_id = findMunicipality(location)
         current_datetime = datetime.now()
 
-        formatted_datetime = current_datetime.strftime('%Y-%m-%dT%H:%M:%S')
-
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
 
         # Create the ticket item
         ticket_item = {
             "ticket_id": ticket_id,
             "asset_id": asset_id,
             "dateClosed": "<empty>",
-            "dateOpened" : formatted_datetime,
+            "dateOpened": formatted_datetime,
             "description": ticket_data["description"],
             "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
             "latitude": location["latitude"],
             "longitude": location["longitude"],
-            'municipality_id' : municipality_id,
-            "username" : ticket_data["username"],
-
+            "municipality_id": municipality_id,
+            "username": ticket_data["username"],
             "state": ticket_data["state"],  # do not hard code, want to extend in future
             "upvotes": 0,
             "viewcount": 0,
@@ -93,19 +89,13 @@ def create_ticket(ticket_data):
 def get_fault_types():
     try:
         response = assets_table.scan()
-        assets = response.get(
-            "Items", []
-        )  # Extracting the list of assets from the response
+        assets = response.get("Items", [])  # Extracting the list of assets from the response
         # Extracting required fields from each asset
         fault_types = [
             {
                 "asset_id": asset["asset_id"],
-                "assetIcon": asset.get(
-                    "assetIcon", ""
-                ),  # Providing a default value if assetIcon is missing
-                "multiplier": asset.get(
-                    "multiplier", 1
-                ),  # Providing a default value of 1 if multiplier is missing
+                "assetIcon": asset.get("assetIcon", ""),  # Providing a default value if assetIcon is missing
+                "multiplier": asset.get("multiplier", 1),  # Providing a default value of 1 if multiplier is missing
             }
             for asset in assets
         ]
@@ -118,23 +108,25 @@ def get_fault_types():
 
 
 def findMunicipality(location):
-    response = municipality_table.scan(ProjectionExpression = 'latitude,longitude,municipality_id')
-    latitude = radians(float(location['latitude']))
-    longitude = radians(float(location['latitude']))
+    response = municipality_table.scan(
+        ProjectionExpression="latitude,longitude,municipality_id"
+    )
+    latitude = radians(float(location["latitude"]))
+    longitude = radians(float(location["latitude"]))
     count = 0
-    data = response['Items']
+    data = response["Items"]
     closestdistance = 10000000
     municipality = ""
     if len(data) > 0:
         for x in data:
             if count < 2:
-                print(x['municipality_id'])
+                print(x["municipality_id"])
                 count = count + 1
-            lat2 = float(x['latitude'])
-            long2 = float(x['longitude'])
-            dlat = lat2-latitude
-            dlong = long2-longitude
-            a = sin(dlat / 2)**2 + cos(latitude) * cos(lat2) * sin(dlong / 2)**2
+            lat2 = float(x["latitude"])
+            long2 = float(x["longitude"])
+            dlat = lat2 - latitude
+            dlong = long2 - longitude
+            a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2
             r_earth = 6371
             distance = 2 * r_earth * asin(sqrt(a))
             if distance < closestdistance:
