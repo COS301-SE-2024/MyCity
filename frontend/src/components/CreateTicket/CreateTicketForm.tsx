@@ -25,7 +25,7 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 
 
 export default function CreateTicketForm({ className, useMapboxProp }: Props) {
-    const { panToCurrentLocation } = useMapboxProp();
+    const { selectedAddress } = useMapboxProp();
 
 
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
@@ -52,7 +52,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             }
         }
 
-        fetchFaultTypes();
+        // fetchFaultTypes();
     }, []);
 
 
@@ -61,14 +61,20 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
         const form = new FormData(event.currentTarget as HTMLFormElement);
 
+        //coordinates
+        const latitude = selectedAddress?.lat;
+        const longitude = selectedAddress?.lng;
 
-    };
+        //form data
+        const selectedFault = form.get("fault-type");
+        const faultDescription = form.get("fault-description");
 
-
-    const handleCheckboxChange = (isSelected: boolean) => {
-        if (isSelected) {
-            panToCurrentLocation();
+        if (!selectedFault) {
+            console.log("Fault type is required!!");
         }
+
+
+        //**** make request to create ticket below ****
     };
 
 
@@ -118,26 +124,23 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                         />
 
                         <div>
-                            {/* <span className="font-semibold text-medium">Address <sup className="text-blue-500">*</sup></span> */}
+
                             <span className="font-semibold text-sm">Selected Address:</span>
 
                             <div className="flex flex-col gap-y-0.5 text-xs ps-2">
-                                <span>42 Jane Street</span>
-                                <span>Hatfield</span>
-                                <span>Pretoria</span>
-                                <span>Gauteng</span>
+
+                                <span>{selectedAddress?.street?.name}</span>
+                                {/* <span>Hatfield</span> */}
+                                <span>{selectedAddress?.county}</span>
+                                <span>{selectedAddress?.city}</span>
+                                <span>{selectedAddress?.administrative}</span>
+
                             </div>
 
                         </div>
 
 
-                        <div className="m-auto flex items-center">
-                            <span className="text-medium font-semibold">Use current location as Fault Location? </span>
-                            <Checkbox className="ms-2.5" size={"lg"} radius="sm" onValueChange={handleCheckboxChange}></Checkbox>
-                        </div>
-
-
-                        <Button type="submit" className="m-auto bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
+                        <Button type="submit" disabled={!selectedAddress} className="m-auto bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
                             Submit
                         </Button>
 

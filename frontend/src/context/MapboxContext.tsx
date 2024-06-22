@@ -1,12 +1,14 @@
 'use client'
 
-import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
-import mapboxgl, { Map, Marker } from 'mapbox-gl';
+import { MutableRefObject, ReactNode, createContext, useContext, useRef, useState } from 'react';
+import mapboxgl, { LngLat, Map, Marker } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import placekit, { PKResult } from '@placekit/client-js';
 
 export interface MapboxContextProps {
     map: MutableRefObject<mapboxgl.Map | null>;
-    dropPin: () => void;
+    selectedAddress: PKResult | null;
+    dropPin: (shouldDrop: boolean, pkResult?: PKResult) => void;
     panMapTo: (lng: number | undefined, lat: number | undefined) => void;
     panToCurrentLocation: () => void;
     initialiseMap: (mapContainerRef: React.RefObject<HTMLDivElement>) => MutableRefObject<mapboxgl.Map | null>;
@@ -16,10 +18,16 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 const MapboxContext = createContext<MapboxContextProps | undefined>(undefined);
 
 
+const apiKey = String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY);
+
+const pk = placekit(apiKey);
+
+
 export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     // const [map, setMap] = useState<Map | null>(null);
     const map = useRef<Map | null>(null);
-    let currentMarker: Marker | null = null;
+    const currentMarker = useRef<Marker | null>(null);
+    const [selectedAddress, setSelectedAddress] = useState<PKResult | null>(null);
 
     // At low zooms, complete a revolution every two minutes.
     const secondsPerRevolution = 240;
@@ -60,50 +68,31 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             container: mapContainerRef.current!,
             // style: 'mapbox://styles/mapbox/streets-v12', // style URL
             center: [28.23142, -25.75442],
-            zoom: 14,
-            // projection: { name: "globe" }
+            zoom: 1,
+            projection: { name: "globe" }
         });
 
 
-        // const marker: Marker = new Marker({ anchor: "bottom" })
-        //     .setLngLat([28.23142, -25.75442])
-        //     .addTo(map.current!);
-
-        // Set an event listener
-        map.current!.on('click', (event) => {
-            if (currentMarker) {
-                currentMarker.remove();
-            }
-
-            const marker: Marker = new Marker({ anchor: "bottom" })
-                .setLngLat(event.lngLat)
-                .setDraggable(true)
-                .addTo(map.current!);
-
-            currentMarker = marker;
+         map.current.on("style.load", (event) => {
+             map.current!.setFog({}); // Set the default atmosphere style
         });
 
-        // newMap.on("style.load", (event) => {
-        //     newMap.setFog({}); // Set the default atmosphere style
-        // });
+        // Pause spinning on interaction
+         map.current!.on("mousedown", (event) => {
+            userInteracting = true;
+        });
 
-        // // Pause spinning on interaction
-        // newMap.on("mousedown", (event) => {
-        //     userInteracting = true;
-        //     handleMouseDown(event);
-        // });
+         map.current.on("dragstart", () => {
+            userInteracting = true;
+        });
 
-        // newMap.on("dragstart", () => {
-        //     userInteracting = true;
-        // });
-
-        // // When animation is complete, start spinning if there is no ongoing interaction
-        // newMap.on("moveend", () => {
-        //     spinGlobe(newMap);
-        // });
+        // When animation is complete, start spinning if there is no ongoing interaction
+         map.current!.on("moveend", () => {
+            spinGlobe( map.current!);
+        });
 
 
-        // spinGlobe(newMap);
+        spinGlobe( map.current!);
 
 
         return map;
@@ -138,24 +127,66 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
 
-    const dropPin = () => {
-        if (currentMarker) {
-            currentMarker.remove();
+    const dropPin = async (shouldDrop: boolean, pkResult?: PKResult) => {
+        if (!currentMarker.current) {
+            const marker: Marker = new Marker({ anchor: "bottom" })
+                .setLngLat(map.current!.getCenter())
+            // .setDraggable(true)
+            // .addTo(map.current!);
+
+            currentMarker.current = marker;
         }
 
-        const marker: Marker = new Marker({ anchor: "bottom" })
-            .setLngLat(map.current!.getCenter())
-            .setDraggable(true)
-            .addTo(map.current!);
 
-        currentMarker = marker;
+        if (shouldDrop) {
+            currentMarker.current.remove();
 
-        // const marker: Marker = new Marker({ anchor: "bottom" })
-        //     .setLngLat(map.current!.getCenter())
-        //     .setDraggable(true)
-        //     .addTo(map.current!);
+            //if pk result is missing, make a request to get address of current location
+            if (!pkResult) {
+                //place marker on center of map
+                currentMarker.current.setLngLat(map.current!.getCenter())
+                    .addTo(map.current!);
 
-        // currentMarker = marker;
+                const mapCenter = map.current!.getCenter();
+                const response = await pk.reverse({
+                    coordinates: `${mapCenter.lat},${mapCenter.lng}`,
+                    countries: ["za"],
+                    maxResults: 1,
+                    types: ["street", "county", "townhall", "city"],
+                    language: "en"
+                });
+
+                if (response.resultsCount > 0) {
+                    console.log(response.results[0]);
+                    setSelectedAddress(response.results[0]);
+                }
+            }
+
+            //otherwise save pkResult
+            else {
+                //place marker on pkresult coordinates
+                if (pkResult.lng && pkResult.lat) {
+                    currentMarker.current.setLngLat([pkResult.lng, pkResult.lat])
+                        .addTo(map.current!);
+                }
+
+                setSelectedAddress(pkResult);
+            }
+        }
+        else {
+            //remove marker and address
+            currentMarker.current.remove();
+            setSelectedAddress(null);
+        }
+
+
+
+
+
+    };
+
+    const getSelectedAddress = () => {
+        return selectedAddress;
     };
 
 
@@ -170,7 +201,7 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
     return (
-        <MapboxContext.Provider value={{ map, dropPin, panMapTo, panToCurrentLocation, initialiseMap }}>
+        <MapboxContext.Provider value={{ map, dropPin, panMapTo, selectedAddress, panToCurrentLocation, initialiseMap }}>
             {children}
         </MapboxContext.Provider>
     );
