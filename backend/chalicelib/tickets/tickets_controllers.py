@@ -7,7 +7,7 @@ dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 users_table = dynamodb.Table("user")
 assets_table = dynamodb.Table("asset")
-municipality_table = dynamodb.Table('municipalities')
+municipality_table = dynamodb.Table("municipalities")
 
 
 def generate_id():
@@ -21,17 +21,16 @@ def create_ticket(ticket_data):
             "asset",
             "description",
             "latitude",
-            "longitude"
-            "user_id",
+            "longitude" "user_id",
         ]
         for field in required_fields:
             if field not in ticket_data:
                 error_response = {
-                'Error': {
-                    'Code': 'IncorrectFields',
-                    'Message': f"Missing required field: {field}"
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
                 }
-            }
                 raise ClientError(error_response)
 
         # Ensure user exists
@@ -41,9 +40,9 @@ def create_ticket(ticket_data):
         asset_response = assets_table.get_item(Key={"asset_id": asset_id})
         if "Item" not in asset_response:
             error_response = {
-                'Error': {
-                    'Code': 'ResourceNotFoundException',
-                    'Message': f'Asset with ID {asset_id} does not exist'
+                "Error": {
+                    "Code": "ResourceNotFoundException",
+                    "Message": f"Asset with ID {asset_id} does not exist",
                 }
             }
             raise ClientError(error_response)
@@ -51,22 +50,21 @@ def create_ticket(ticket_data):
         # Generate ticket ID
         ticket_id = generate_id()
         location = {
-            "latitude" : ticket_data['latitude'],
-            "longitude" : ticket_data['longitude'],
+            "latitude": ticket_data["latitude"],
+            "longitude": ticket_data["longitude"],
         }
         municipality_id = findMunicipality(location)
-
 
         # Create the ticket item
         ticket_item = {
             "ticket_id": ticket_id,
             "asset": asset_id,
             "discription": ticket_data["description"],
-            "user_id" : ticket_data['user_id'],
+            "user_id": ticket_data["user_id"],
             "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
-            "latitude": location['latitude'],
+            "latitude": location["latitude"],
             "longitude": location["longitude"],
-            'municipality_id' : municipality_id,
+            "municipality_id": municipality_id,
             "state": ticket_data["state"],  # do not hard code, want to extend in future
             "upvotes": 0,
             "viewcount": 0,
@@ -77,11 +75,8 @@ def create_ticket(ticket_data):
         return {"message": "Ticket created successfully", "ticket_id": ticket_id}
 
     except ClientError as e:
-        error_message = e.response['Error']['Message']
-        return {
-           'Status' : 'FAILED',
-           'Error' : error_message
-        }
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
 
 
 def get_fault_types():
@@ -107,37 +102,32 @@ def get_fault_types():
         return fault_types
 
     except ClientError as e:
-       error_message = e.response['Error']['Message']
-       return {
-           'Status' : 'FAILED',
-           'Error' : error_message
-       }
-
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
 
 
 def findMunicipality(location):
-    response = municipality_table.scan(ProjectionExpression = 'latitude,longitude,municipality_id')
-    latitude = radians(location['latitude'])
-    longitude = radians(location['latitude'])
-    data = response['Items']
+    response = municipality_table.scan(
+        ProjectionExpression="latitude,longitude,municipality_id"
+    )
+    latitude = radians(location["latitude"])
+    longitude = radians(location["latitude"])
+    data = response["Items"]
     closestdistance = 10000000
-    municipality = ''
-    if(len(data) > 0):
+    municipality = ""
+    if len(data) > 0:
         for x in data:
-            lat2 = x['latitude']
-            long2 = x['longitude']
-            dlat = lat2-latitude
-            dlong = long2-longitude
-            a = sin(dlat / 2)**2 + cos(latitude) * cos(lat2) * sin(dlong / 2)**2
+            lat2 = x["latitude"]
+            long2 = x["longitude"]
+            dlat = lat2 - latitude
+            dlong = long2 - longitude
+            a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2
             r_earth = 6371
-            distance = 2*r_earth*asin(sqrt(a))
+            distance = 2 * r_earth * asin(sqrt(a))
             if distance < closestdistance:
                 closestdistance = distance
-                municipality = x['municipality_id']
-        
+                municipality = x["municipality_id"]
+
         return municipality
-    else :
-        return 'No data was produced'
-
-
-
+    else:
+        return "No data was produced"
