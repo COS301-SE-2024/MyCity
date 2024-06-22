@@ -14,7 +14,7 @@ const NavbarUser = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
+    <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
         <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
           <Image src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} />
