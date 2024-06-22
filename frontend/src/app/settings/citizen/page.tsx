@@ -4,10 +4,26 @@ import React, { useState } from "react";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
+import { useProfile } from "@/context/UserProfileContext";
+import { User } from "@/types/user.types";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
-const Settings = () => {
+
+
+async function getProfileData() {
+  const { getUserProfile } = useProfile();
+
+  const data = await getUserProfile();
+
+  return data.current;
+}
+
+
+
+export default async function Settings () {
+  const data = await getProfileData();
+
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -119,7 +135,7 @@ const Settings = () => {
               <div className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-black mr-2 text-red-600"
+                  className="h-6 w-6 mr-2 text-red-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -334,7 +350,7 @@ const Settings = () => {
                 className="w-12 h-12 rounded-full mr-4"
               />
               <div>
-                <p className="text-lg font-semibold">Kyle Marshall</p>
+                <p className="text-lg font-semibold">{data.given_name} {data.family_name}</p>
               </div>
             </div>
             <nav>
@@ -389,6 +405,4 @@ const Settings = () => {
       </main>
     </div>
   );
-};
-
-export default Settings;
+}

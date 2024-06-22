@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Input, Button, } from "@nextui-org/react";
 import { UserRole } from "@/types/user.types";
 import { handleSignIn } from "@/lib/cognitoActions";
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function MunicipalityLogin() {
   const router = useRouter();
@@ -16,8 +16,7 @@ export default function MunicipalityLogin() {
       const {isSignedIn} = await handleSignIn(form, UserRole.MUNICIPALITY);
 
       if (isSignedIn) {
-        // redirect("/dashboard/municipality");
-        router.push("/dashboard/municipality");
+        router.push("/dashboard");
       }
       else {
         throw "Something happened and we could not sign you in.";
