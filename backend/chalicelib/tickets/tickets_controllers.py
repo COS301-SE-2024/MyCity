@@ -89,13 +89,19 @@ def create_ticket(ticket_data):
 def get_fault_types():
     try:
         response = assets_table.scan()
-        assets = response.get("Items", [])  # Extracting the list of assets from the response
+        assets = response.get(
+            "Items", []
+        )  # Extracting the list of assets from the response
         # Extracting required fields from each asset
         fault_types = [
             {
                 "asset_id": asset["asset_id"],
-                "assetIcon": asset.get("assetIcon", ""),  # Providing a default value if assetIcon is missing
-                "multiplier": asset.get("multiplier", 1),  # Providing a default value of 1 if multiplier is missing
+                "assetIcon": asset.get(
+                    "assetIcon", ""
+                ),  # Providing a default value if assetIcon is missing
+                "multiplier": asset.get(
+                    "multiplier", 1
+                ),  # Providing a default value of 1 if multiplier is missing
             }
             for asset in assets
         ]
