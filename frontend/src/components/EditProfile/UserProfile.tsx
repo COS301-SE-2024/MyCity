@@ -8,7 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { UserData } from '@/types/user.types';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
-  data: UserData;
+  data: UserData | null;
 }
 
 

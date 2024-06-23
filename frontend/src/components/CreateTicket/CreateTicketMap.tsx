@@ -9,6 +9,7 @@ import '@placekit/autocomplete-js/dist/placekit-autocomplete.css';
 import { MapboxContextProps } from '@/context/MapboxContext';
 import { Locate, Pin, PinOff } from 'lucide-react';
 import { Button } from '@nextui-org/react';
+import useRunOnce from '@/hooks/useRunOnce';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
     useMapboxProp: () => MapboxContextProps;
@@ -20,7 +21,9 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const { map, initialiseMap, dropPin, panMapTo, panToCurrentLocation } = useMapboxProp();
 
-    const memoizedApiKey = useMemo(() => String(process.env.PLACEKIT_API_KEY), [String(process.env.PLACEKIT_API_KEY)]);
+    let pkApiKey = String(process.env.PLACEKIT_API_KEY);
+
+    const memoizedApiKey = useMemo(() => pkApiKey, [pkApiKey]);
     // const memoizedApiKey = "";
 
     const pkaOptions: PlaceKitOptions = {
@@ -42,16 +45,8 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
             dropPin(true, item);
             panMapTo(item.lng, item.lat);
         },
-        []
+        [dropPin, panMapTo]
     );
-
-
-
-    const loadMap = () => {
-        if (!map.current && mapContainer.current) {
-            initialiseMap(mapContainer);
-        }
-    };
 
 
     const onPinClick = () => {
@@ -66,9 +61,20 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
         }
     };
 
-    useEffect(() => {
-        loadMap();
-    }, [initialiseMap]);
+
+    const loadMap = () => {
+        if (!map.current && mapContainer.current) {
+            initialiseMap(mapContainer);
+        }
+    };
+
+    useRunOnce({
+        fn: () => {
+            loadMap();
+        },
+        sessionKey: "map"
+    }
+    );
 
 
     return (
@@ -79,17 +85,17 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
                     <Locate size={21} />
                 </Button>
 
-                {!isPinDropped && (
-                    <Button className="min-w-fit h-fit p-2 bg-white"  onClick={onPinClick}>
-                        <Pin size={21} />
-                    </Button>
-                )}
 
-                {isPinDropped && (
-                    <Button  className="min-w-fit h-fit p-2 bg-white" onClick={onPinClick}>
+                <Button className="min-w-fit h-fit p-2 bg-white" onClick={onPinClick}>
+                    {!isPinDropped && (
+                        <Pin size={21} />
+                    )}
+
+                    {isPinDropped && (
                         <PinOff size={21} />
-                    </Button>
-                )}
+                    )}
+                </Button>
+
             </div>
 
             <div className="absolute top-5 left-5 z-30 w-72">

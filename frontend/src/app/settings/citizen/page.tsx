@@ -6,26 +6,16 @@ import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { useProfile } from "@/context/UserProfileContext";
-// import { UserData } from "@/types/user.types";
 import Image from "next/image";
 import { User } from "lucide-react";
+import { UserData } from "@/types/user.types";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
 
-
-async function getProfileData() {
+export default function Settings() {
   const { getUserProfile } = useProfile();
-
-  const data = await getUserProfile();
-
-  return data.current;
-}
-
-
-
-export default async function Settings () {
-  const data = await getProfileData();
+  const [data, setData] = useState<UserData | null>(null);
 
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
@@ -43,7 +33,16 @@ export default async function Settings () {
 
   const router = useRouter();
 
+
   useEffect(() => {
+    const getProfileData = async () => {
+      const profile = await getUserProfile();
+
+      if (profile.current) {
+        setData(profile.current);
+      }
+    };
+
     const storedProfileImage = localStorage.getItem("profileImage");
     const storedFirstName = localStorage.getItem("firstName");
     const storedSurname = localStorage.getItem("surname");
@@ -51,7 +50,9 @@ export default async function Settings () {
     if (storedProfileImage) setProfileImage(storedProfileImage);
     if (storedFirstName) setFirstName(storedFirstName);
     if (storedSurname) setSurname(storedSurname);
-  }, []);
+
+    // getProfileData();
+  }, [getUserProfile]);
 
   const toggleDarkMode = () => {
     setDarkMode((prevState) => !prevState);
@@ -224,15 +225,13 @@ export default async function Settings () {
                   Enable Email Notifications
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    emailNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${emailNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleEmailNotifications}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      emailNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${emailNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -243,15 +242,13 @@ export default async function Settings () {
                   Mute Notifications
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    muteNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${muteNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleMuteNotifications}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      muteNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${muteNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -269,15 +266,13 @@ export default async function Settings () {
                   Enable Location Access
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    locationAccess ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${locationAccess ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleLocationAccess}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      locationAccess ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${locationAccess ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -288,15 +283,13 @@ export default async function Settings () {
                   Two-Factor Authentication
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    twoFactorAuth ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${twoFactorAuth ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleTwoFactorAuth}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      twoFactorAuth ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${twoFactorAuth ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -312,15 +305,13 @@ export default async function Settings () {
               <div className="flex items-center justify-between p-2 rounded">
                 <span className="text-lg font-semibold">Dark Mode</span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    darkMode ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${darkMode ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleDarkMode}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      darkMode ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${darkMode ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -329,15 +320,13 @@ export default async function Settings () {
               <div className="flex items-center justify-between mt-4 p-2 rounded">
                 <span className="text-lg font-semibold">Larger Font</span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    largerFont ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${largerFont ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleLargerFont}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      largerFont ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${largerFont ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -358,16 +347,18 @@ export default async function Settings () {
           <div className="w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
               {profileImage ? (
-                <img
+                <Image
                   src={profileImage}
                   alt="Profile"
+                  width={12}
+                  height={12}
                   className="w-12 h-12 rounded-full mr-4"
                 />
               ) : (
                 <User className="w-12 h-12 rounded-full mr-4" />
               )}
               <div>
-                <p className="text-lg font-semibold">{data.given_name} {data.family_name}</p>
+                <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p>
               </div>
             </div>
             <nav>

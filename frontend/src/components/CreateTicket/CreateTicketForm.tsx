@@ -9,28 +9,22 @@ import Image from 'next/image';
 import { useProfile } from '@/context/UserProfileContext';
 
 
-
-
 type FaultType = {
     name: string;
     icon: string;
     multiplier: number;
 };
 
-
-
 interface Props extends React.HTMLAttributes<HTMLElement> {
     useMapboxProp: () => MapboxContextProps;
 }
 
-
-
 export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     const { selectedAddress } = useMapboxProp();
-
-
+    const { getUserProfile } = useProfile();
+    
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
-
+    
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
@@ -39,7 +33,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                         'Content-Type': 'application/json',
                     },
                 });
-
+                
                 const data = await response.data;
 
                 setFaultTypes(data.map((item: any) => ({
@@ -53,7 +47,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             }
         }
 
-        // fetchFaultTypes();
+        fetchFaultTypes();
     }, []);
 
 
@@ -75,7 +69,6 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         }
 
         //3. currently logged in user data
-        const { getUserProfile } = useProfile();
         const userData = await getUserProfile();
 
         if (!userData.current) {

@@ -43,7 +43,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   };
 
   const initialData = getLocalStorageData();
-  
+
   const [currentArrowCount, setCurrentArrowCount] = useState(initialData?.arrowCount || arrowCount);
   const [currentCommentCount, setCurrentCommentCount] = useState(initialData?.commentCount || commentCount);
   const [currentViewCount, setCurrentViewCount] = useState(initialData?.viewCount || viewCount);
@@ -51,11 +51,11 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [commentColor, setCommentColor] = useState(initialData?.commentColor || "black");
   const [eyeColor, setEyeColor] = useState(initialData?.eyeColor || "black");
 
-  const saveToLocalStorage = (data: any) => {
-    localStorage.setItem(ticketNumber, JSON.stringify(data));
-  };
-
   useEffect(() => {
+    const saveToLocalStorage = (data: any) => {
+      localStorage.setItem(ticketNumber, JSON.stringify(data));
+    };
+
     const data = {
       arrowCount: currentArrowCount,
       commentCount: currentCommentCount,
@@ -64,8 +64,10 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       commentColor,
       eyeColor,
     };
+
     saveToLocalStorage(data);
-  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor]);
+
+  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor, ticketNumber]);
 
   const handleArrowClick = () => {
     if (arrowColor === "black") {
