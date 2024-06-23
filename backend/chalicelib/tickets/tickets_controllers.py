@@ -1,21 +1,43 @@
+from venv import logger
 import boto3
 from botocore.exceptions import ClientError
+from chalice import BadRequestError, Chalice, Response
 import uuid
+
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
 from decimal import Decimal
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
+import re
+import json
+import logging
+
 
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
+
+
 municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
 
 
+
 def generate_id():
     return str(uuid.uuid4())
+
+
+def format_response(status_code, body):
+    return Response(
+        body=json.dumps(body),
+        status_code=status_code,
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+            "Access-Control-Allow-Headers": "Authorization,Content-Type,X-Amz-Date,X-Amz-Security-Token,X-Api-Key",
+        },
+    )
 
 
 def create_ticket(ticket_data):
@@ -82,11 +104,14 @@ def create_ticket(ticket_data):
 
         # Put the ticket item into the tickets table
         tickets_table.put_item(Item=ticket_item)
-        return {"message": "Ticket created successfully", "ticket_id": ticket_id}
+        return format_response(
+            200, {"message": "Ticket created successfully", "ticket_id": ticket_id}
+        )
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
 
 
 def get_fault_types():
@@ -109,9 +134,10 @@ def get_fault_types():
             for asset in assets
         ]
 
-        return fault_types
+        return format_response(200, fault_types)
 
     except ClientError as e:
+
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
 
@@ -264,3 +290,28 @@ def get_watchlist(tickets_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
+
+def validate_ticket_id(ticket_id):
+    # Allow only UUID format to prevent injection attacks
+    if not re.match("^[a-fA-F0-9-]{36}$", ticket_id):
+        app.log.error("Invalid Ticket ID format")
+        raise BadRequestError("Invalid Ticket ID")
+    return ticket_id
+
+def view_ticket_data(ticket_id):
+    ticket_id = validate_ticket_id(ticket_id)
+    try:
+        response = tickets_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if ticket_id in item.get("ticket_id", "")
+        ]
+        return filtered_items
+    except ClientError as e:
+        raise BadRequestError(
+            f"Failed to get Ticket data: {e.response['Error']['Message']}"
+        )
+
