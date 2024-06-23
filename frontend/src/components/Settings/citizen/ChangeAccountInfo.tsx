@@ -9,8 +9,8 @@ type ChangeAccountInfoProps = {
 };
 
 const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
-  const [firstName, setFirstName] = useState(localStorage.getItem('firstName') || "Kyle");
-  const [surname, setSurname] = useState(localStorage.getItem('surname') || "Marshall");
+  const [firstName, setFirstName] = useState(localStorage.getItem('firstName') || "Jane");
+  const [surname, setSurname] = useState(localStorage.getItem('surname') || "Doe");
   const [profileImage, setProfileImage] = useState(localStorage.getItem('profileImage') || "");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -45,7 +45,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
   }, []);
 
   return (
-    <div className="w-full bg-white rounded-lg p-4">
+    <div className="w-full rounded-lg p-4">
       <button
         className="flex items-center mb-4 text-gray-600 hover:text-gray-900"
         onClick={onBack}
@@ -77,7 +77,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
           Email
           <Lock className="ml-2 h-4 w-4" />
         </p>
-        <p className="text-xl font-semibold">kyle@email.com</p>
+        <p className="text-xl font-semibold">janedoe@example.com</p>
       </div>
       <div className="mb-4 text-center">
         <p className="text-gray-600">First Name(s)</p>

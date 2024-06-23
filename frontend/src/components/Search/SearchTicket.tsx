@@ -18,14 +18,14 @@ interface SearchTicketProps {
 }
 
 const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
-  if (!tickets || tickets.length === 0) {
+  /*if (!tickets || tickets.length === 0) {
     return <div>No tickets found.</div>;
-  }
+  }*/
 
   return (
     <div className="space-y-4">
       {tickets.map((ticket: Ticket, index: number) => (
-        <div key={index} className="grid grid-cols-6 gap-4 bg-white rounded-md shadow-md p-4">
+        <div key={index} className="grid grid-cols-6 gap-4 bg-white bg-opacity-70 rounded-md shadow-md p-4">
           {/* First Field - Ticket */}
           <div className="flex flex-col items-center">
             <span className="text-s text-black-500">Ticket</span>
