@@ -9,7 +9,14 @@ const nextConfig = {
     },
 
     images: {
-        unoptimized: !process.env.PROD_ENV ? true : undefined
+        unoptimized: !process.env.PROD_ENV ? true : false,
+        remotePatterns: [
+            {
+              protocol: "https",
+              hostname: "i.imgur.com",
+              port: "",
+            },
+          ],
     },
 
     webpack(config) {
