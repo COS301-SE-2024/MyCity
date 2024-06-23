@@ -71,7 +71,7 @@ const NavbarUser = () => {
         <Link href="/settings/citizen" passHref>
           <div className="flex items-center gap-1 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             {profileImage ? (
-              <img src={profileImage} alt="User Profile" className="h-10 w-10 rounded-full" />
+              <Image src={profileImage} alt="User Profile" width={10} height={10} className="h-10 w-10 rounded-full" />
             ) : (
               <UserCircle size={40} />
             )}
