@@ -7,6 +7,7 @@ import { MutableRefObject, ReactNode, createContext, useContext, useRef } from '
 
 export interface UserProfileContextProps {
     getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
+    updateUserProfile: (data:UserData) => void;
 }
 
 
@@ -41,9 +42,16 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     };
 
 
+    const updateUserProfile = async (data:UserData) => {
+      if(data){
+        userProfile.current = data;
+      }
+    };
+
+
 
     return (
-        <UserProfileContext.Provider value={{ getUserProfile }}>
+        <UserProfileContext.Provider value={{ getUserProfile, updateUserProfile }}>
             {children}
         </UserProfileContext.Provider>
     );
