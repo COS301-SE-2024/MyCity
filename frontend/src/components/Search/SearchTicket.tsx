@@ -18,9 +18,9 @@ interface SearchTicketProps {
 }
 
 const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
-  if (!tickets || tickets.length === 0) {
+  /*if (!tickets || tickets.length === 0) {
     return <div>No tickets found.</div>;
-  }
+  }*/
 
   return (
     <div className="space-y-4">

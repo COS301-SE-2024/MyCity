@@ -123,30 +123,30 @@ export default function NavbarUser() {
           </div>
         </Link> */}
 
-        <Dropdown className="bg-blue-900">
+        <Dropdown className="bg-white">
           <DropdownTrigger className="cursor-pointer">
             <Avatar
               showFallback
               src={data?.picture}
               // src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
-              className="w-10 h-10 b-0 ring-offset-1 ring-offset-blue-300 ring-2 ring-blue-500"
+              className="w-10 h-10 b-0 ring-offset-1 ring-offset-black-300 ring-2 ring-black-500"
             />
           </DropdownTrigger>
 
-          <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-white">
-            <DropdownItem key="settings" className="h-9 hover:bg-blue-500 focus:bg-blue-500" textValue="Settings">
+          <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-black">
+            <DropdownItem key="settings" className="h-9 hover:bg-grey-500" textValue="Settings">
               <Link href="/settings/citizen" passHref>
                 <span className="text-sm">Settings</span>
               </Link>
             </DropdownItem>
 
-            <DropdownItem key="about" className="h-9 hover:bg-blue-500" textValue="About us">
+            <DropdownItem key="about" className="h-9 hover:bg-grey-500" textValue="About us">
               <Link href="/about" passHref>
                 <span className="text-sm">About us</span>
               </Link>
             </DropdownItem>
 
-            <DropdownItem key="logout" className="h-9 hover:bg-blue-500" textValue="Log out">
+            <DropdownItem key="logout" className="h-9 hover:bg-grey-500" textValue="Log out">
               <Link href="/" className="text-sm" passHref onClick={handleSignOut}>
                 <span className="text-danger text-sm">Log out</span>
               </Link>

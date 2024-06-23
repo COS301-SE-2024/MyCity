@@ -178,33 +178,54 @@ const FaultCardContainer: React.FC = () => {
       />
     ));
 
-  return (
-    <div className="flex flex-col items-center w-full bg-white rounded-lg shadow-md overflow-hidden m-2">
-      <div className="w-full overflow-x-auto custom-scrollbar" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-        <div className="flex justify-start">
-          <div className="flex mb-8 text-center flex-nowrap">
-            {/* Display multiple FaultCardUser components */}
-            {visibleItems}
+    return (
+      <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2">
+        <div
+          className="w-full overflow-x-auto custom-scrollbar"
+          style={{
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            scrollbarWidth: 'thin', // For Firefox
+            scrollbarColor: 'rgba(255, 255, 255, 0.5) transparent', // For Firefox
+          }}
+        >
+          <style jsx>{`
+            ::-webkit-scrollbar {
+              height: 6px; /* Make the scrollbar smaller */
+            }
+            ::-webkit-scrollbar-thumb {
+              background: rgba(255, 255, 255, 0.5); /* Color of the scrollbar */
+              border-radius: 3px; /* Roundness of the scrollbar */
+            }
+            ::-webkit-scrollbar-track {
+              background: transparent; /* Color of the track */
+            }
+          `}</style>
+          <div className="flex justify-start">
+            <div className="flex mb-8 text-center flex-nowrap">
+              {/* Display multiple FaultCardUser components */}
+              {visibleItems}
+            </div>
           </div>
         </div>
+        {showModal && selectedCard && (
+          <FaultCardUserView
+            show={showModal}
+            onClose={handleCloseModal}
+            title={selectedCard.title}
+            address={selectedCard.address}
+            arrowCount={selectedCard.arrowCount}
+            commentCount={selectedCard.commentCount}
+            viewCount={selectedCard.viewCount}
+            ticketNumber={selectedCard.ticketNumber}
+            description={selectedCard.description}
+            image={selectedCard.image}
+            createdBy={selectedCard.createdBy}
+          />
+        )}
       </div>
-      {showModal && selectedCard && (
-        <FaultCardUserView
-          show={showModal}
-          onClose={handleCloseModal}
-          title={selectedCard.title}
-          address={selectedCard.address}
-          arrowCount={selectedCard.arrowCount}
-          commentCount={selectedCard.commentCount}
-          viewCount={selectedCard.viewCount}
-          ticketNumber={selectedCard.ticketNumber}
-          description={selectedCard.description}
-          image={selectedCard.image}
-          createdBy={selectedCard.createdBy}
-        />
-      )}
-    </div>
-  );
+    );
+    
 };
 
 export default FaultCardContainer;
