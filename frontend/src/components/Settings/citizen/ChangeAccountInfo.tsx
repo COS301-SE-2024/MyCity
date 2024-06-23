@@ -3,12 +3,14 @@ import { ArrowLeft, Edit2, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image";
+import { UserData } from "@/types/user.types";
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
+  profileData: UserData | null;
 };
 
-const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
+const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileData }) => {
   const [firstName, setFirstName] = useState(localStorage.getItem('firstName') || "Kyle");
   const [surname, setSurname] = useState(localStorage.getItem('surname') || "Marshall");
   const [profileImage, setProfileImage] = useState(localStorage.getItem('profileImage') || "");
@@ -55,8 +57,8 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
       </button>
 
       <div className="mb-4 flex flex-col items-center justify-center">
-        {profileImage ? (
-          <img src={profileImage} alt="Profile" width={24} height={24}  className="h-24 w-24 rounded-full mb-2" />
+        {profileData?.picture ? (
+          <img src={profileData?.picture} alt="Profile" width={24} height={24} className="h-24 w-24 rounded-full mb-2" />
         ) : (
           <User className="h-24 w-24 rounded-full mb-2" />
         )}
@@ -77,14 +79,14 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
           Email
           <Lock className="ml-2 h-4 w-4" />
         </p>
-        <p className="text-xl font-semibold">kyle@email.com</p>
+        <p className="text-xl font-semibold">{profileData?.email}</p>
       </div>
       <div className="mb-4 text-center">
         <p className="text-gray-600">First Name(s)</p>
         <div className="text-xl font-semibold flex items-center justify-center">
           <input
             type="text"
-            value={firstName}
+            value={profileData?.given_name}
             onChange={(e) => setFirstName(e.target.value)}
             className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
           />
@@ -96,7 +98,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
         <div className="text-xl font-semibold flex items-center justify-center">
           <input
             type="text"
-            value={surname}
+            value={profileData?.given_name}
             onChange={(e) => setSurname(e.target.value)}
             className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
           />
@@ -108,7 +110,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
           Municipality
           <Lock className="ml-2 h-4 w-4" />
         </p>
-        <p className="text-xl font-semibold">City of Ekurhuleni Metropolitan Municipality</p>
+        <p className="text-xl font-semibold">{profileData?.}</p>
       </div>
       <div className="flex justify-center">
         <button

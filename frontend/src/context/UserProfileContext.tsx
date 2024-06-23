@@ -32,7 +32,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             given_name: userDetails.given_name,
             family_name: userDetails.family_name,
             picture: userDetails.picture,
-            user_role: userDetails["custom:user_role"] as UserRole
+            user_role: userDetails["custom:user_role"] as UserRole,
+            municipality: userDetails["custom:municipality"]
         };
 
 

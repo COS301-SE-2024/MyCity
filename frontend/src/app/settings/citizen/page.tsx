@@ -51,7 +51,8 @@ export default function Settings() {
           given_name: profile.current.given_name ? profile.current.given_name : storedFirstName,
           family_name: profile.current.family_name ? profile.current.family_name : storedSurname,
           picture: profile.current.picture ? profile.current.picture : storedProfileImage,
-          user_role: profile.current.user_role
+          user_role: profile.current.user_role,
+          municipality: profile.current.municipality
         };
 
         setData(updatedUserData);
@@ -104,10 +105,10 @@ export default function Settings() {
     setShowHelpMenu(!showHelpMenu);
   };
 
-  const renderSubPageContent = () => {
+  const renderSubPageContent = (profile: UserData | null) => {
     switch (subPage) {
       case "ChangeAccountInfo":
-        return <ChangeAccountInfo onBack={() => setSubPage(null)} />;
+        return <ChangeAccountInfo profileData={profile} onBack={() => setSubPage(null)} />;
       case "ChangePassword":
         return <ChangePassword onBack={() => setSubPage(null)} />;
       default:
@@ -225,7 +226,7 @@ export default function Settings() {
         return (
           <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
-            {renderSubPageContent()}
+            {renderSubPageContent(data)}
           </div>
         );
 
