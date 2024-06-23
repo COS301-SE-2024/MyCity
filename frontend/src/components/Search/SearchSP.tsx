@@ -24,7 +24,7 @@ const SearchSP: React.FC<SearchSPProps> = ({ serviceProviders }) => {
       {serviceProviders.map((sp: ServiceProvider, index: number) => (
         <div
           key={index}
-          className="grid grid-cols-6 items-center bg-white rounded-md shadow-md p-4 h-24 gap-4"
+          className="grid grid-cols-6 items-center bg-white bg-opacity-80 rounded-md shadow-md p-4 h-24 gap-4"
         >
           {/* Service Provider text */}
           <div className="col-span-1 flex flex-col items-center">
