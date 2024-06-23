@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { type NextRequest, NextResponse } from "next/server";
+
 import { authenticate } from "./utils/amplifyServerUtils";
 
 const SUFFIX_COOKIE_NAME = "mycity.net.za.userpathsuffix";
