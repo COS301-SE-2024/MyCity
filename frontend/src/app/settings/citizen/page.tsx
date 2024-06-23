@@ -223,7 +223,7 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent()}
           </div>
@@ -231,7 +231,7 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               {/* Enable Email Notifications */}
@@ -272,7 +272,7 @@ export default function Settings() {
         );
       case "SecurityPrivacy":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
               {/* Enable Location Access */}
@@ -313,7 +313,7 @@ export default function Settings() {
         );
       case "Accessibility":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               {/* Dark Mode */}
@@ -356,11 +356,27 @@ export default function Settings() {
   return (
     <div>
       <Navbar />
+      <div
+        style={{
+          position: "fixed", // Change position to 'fixed'
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
+          zIndex: -1, // Ensures the background is behind other content
+        }}
+      ></div>
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
-          <h1 className="text-4xl font-bold">Settings</h1>
+          <h1 className="text-4xl font-bold text-white text-opacity-80">Settings</h1>
           <HelpCircle
-            className="ml-2 text-gray-600 cursor-pointer"
+            className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             size={24}
             onClick={toggleHelpMenu}
           />
@@ -390,7 +406,7 @@ export default function Settings() {
         )}
 
         <div className="flex">
-          <div className="w-64 bg-white rounded-lg shadow-md p-4">
+          <div className="w-64 bg-white bg-opacity-70 rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
               {data?.picture ? (
                 <Image

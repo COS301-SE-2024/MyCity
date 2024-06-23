@@ -14,9 +14,9 @@ interface SearchMunicipalityProps {
 }
 
 const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities }) => {
-  if (!municipalities || municipalities.length === 0) {
+  /*if (!municipalities || municipalities.length === 0) {
     return <div>No municipalities found.</div>;
-  }
+  }*/
 
   return (
     <div className="space-y-4">

@@ -70,7 +70,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="w-full bg-white rounded-lg p-4">
+    <div className="w-full rounded-lg p-4">
       <button
         className="flex items-center mb-4 text-gray-600 hover:text-gray-900"
         onClick={onBack}
