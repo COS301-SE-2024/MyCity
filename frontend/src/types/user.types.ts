@@ -5,9 +5,10 @@ export enum UserRole {
 };
 
 export interface UserData {
-    email: string|undefined;
+    sub: string | undefined;
+    email: string | undefined;
     given_name: string | undefined;
     family_name: string | undefined;
     picture: string | undefined;
-    user_role: UserRole|undefined;
+    user_role: UserRole | undefined;
 }

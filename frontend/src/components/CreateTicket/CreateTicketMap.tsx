@@ -20,7 +20,7 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const { map, initialiseMap, dropPin, panMapTo, panToCurrentLocation } = useMapboxProp();
 
-    const memoizedApiKey = useMemo(() => String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY), [String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY)]);
+    const memoizedApiKey = useMemo(() => String(process.env.PLACEKIT_API_KEY), [String(process.env.PLACEKIT_API_KEY)]);
     // const memoizedApiKey = "";
 
     const pkaOptions: PlaceKitOptions = {
@@ -67,7 +67,7 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
     };
 
     useEffect(() => {
-        // loadMap();
+        loadMap();
     }, [initialiseMap]);
 
 
