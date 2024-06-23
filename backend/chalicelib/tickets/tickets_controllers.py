@@ -6,12 +6,17 @@ from datetime import datetime
 from decimal import Decimal
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
+# import requests
+import random
+
 
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
 municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
+ticketupdate_table = dynamodb.Table("ticket_updates")
+address = ['23 South Street,Hillvill', '25 Klerksdorp,Suikerbossie','5 1st Street,  Hillborrow']
 
 
 def generate_id():
@@ -198,6 +203,34 @@ def get_in_my_municipality(tickets_data):
         response = tickets_table.scan(FilterExpression=Attr("municipality_id").eq(tickets_data['municipality_id']))
         items = response["Items"]
         if len(items) > 0 :
+            for item in items:
+                response_item = ticketupdate_table.scan(FilterExpression=Attr("ticket_id").eq(item['ticket_id']))
+                item['commentcount'] = len(response_item['Items'])
+                item['address'] = random.shuffle(address)
+                  # Google Maps Geocoding API endpoint
+                # endpoint = "https://maps.googleapis.com/maps/api/geocode/json"
+
+                # # Parameters for the API request
+                # params = {
+                #     "latlng": f"{item['latitude']},{item['longitude']}",
+                #     "key": "AIzaSyAV-b1-1SoeSvcmAQcOoLSJdIvNDd8-Lxc"
+                # }
+
+                # try:
+                #     # Sending a GET request to the API
+                #     response = requests.get(endpoint, params=params)
+                #     data = response.json()
+
+                #     # Check if the response was successful
+                #     if response.status_code == 200:
+                #         # Extracting the formatted address from the response
+                #         if data["status"] == "OK" and len(data["results"]) > 0:
+                #             item['address'] = data["results"][0]["formatted_address"]
+                #         else:
+                #             item['address'] = 'Somewhere'
+
+                # except requests.exceptions.RequestException as e:
+                #     return f"Error: {e}"
             return items
         else :
             error_response = {
