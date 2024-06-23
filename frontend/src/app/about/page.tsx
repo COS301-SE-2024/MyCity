@@ -1,11 +1,11 @@
 'use client'
 
-import NavbarGuest from "@/components/Navbar/NavbarGuest";
+import Navbar from "@/components/Navbar/Navbar";
 
 export default function About() {
     return (
         <div>
-            <NavbarGuest />
+            <Navbar />
             <main>
                 <div className="flex items-center justify-center">
                     <span className="text-[4rem]">About MyCity...</span>

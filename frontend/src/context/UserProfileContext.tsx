@@ -6,7 +6,8 @@ import { MutableRefObject, ReactNode, createContext, useContext, useRef } from '
 
 
 export interface UserProfileContextProps {
-    getUserProfile: () => Promise<MutableRefObject<UserData>>;
+    getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
+    updateUserProfile: (data:UserData) => void;
 }
 
 
@@ -14,14 +15,7 @@ const UserProfileContext = createContext<UserProfileContextProps | undefined>(un
 
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const userProfile = useRef<UserData>({
-        sub: undefined,
-        email: undefined,
-        given_name: undefined,
-        family_name: undefined,
-        picture: undefined,
-        user_role: undefined
-    });
+    const userProfile = useRef<UserData | null>(null);
 
 
     const getUserProfile = async () => {
@@ -39,7 +33,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             given_name: userDetails.given_name,
             family_name: userDetails.family_name,
             picture: userDetails.picture,
-            user_role: userDetails["custom:user_role"] as UserRole
+            user_role: userDetails["custom:user_role"] as UserRole,
+            municipality: userDetails["custom:municipality"]
         };
 
 
@@ -47,20 +42,16 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     };
 
 
-
-
-    const handleLocationError = (browserHasGeolocation: boolean) => {
-        if (browserHasGeolocation) {
-            console.log("The geolocation service failed");
-        }
-        else {
-            console.log("Error: Browser does not support geolocation");
-        }
+    const updateUserProfile = async (data:UserData) => {
+      if(data){
+        userProfile.current = data;
+      }
     };
 
 
+
     return (
-        <UserProfileContext.Provider value={{ getUserProfile }}>
+        <UserProfileContext.Provider value={{ getUserProfile, updateUserProfile }}>
             {children}
         </UserProfileContext.Provider>
     );

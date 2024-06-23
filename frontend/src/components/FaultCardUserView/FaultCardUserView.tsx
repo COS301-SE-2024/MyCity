@@ -36,24 +36,27 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   image,
   createdBy,
 }) => {
-  // Initialize state with local storage values if they exist, otherwise use the provided props
+  // Retrieve state from local storage or initialize with default values
   const getLocalStorageData = () => {
-    const data = localStorage.getItem(ticketNumber);
-    return data ? JSON.parse(data) : null;
+    const data = localStorage.getItem(`ticket-${ticketNumber}`);
+    return data ? JSON.parse(data) : {
+      arrowCount,
+      commentCount,
+      viewCount,
+      arrowColor: "black",
+      commentColor: "black",
+      eyeColor: "black",
+    };
   };
 
   const initialData = getLocalStorageData();
-  
-  const [currentArrowCount, setCurrentArrowCount] = useState(initialData?.arrowCount || arrowCount);
-  const [currentCommentCount, setCurrentCommentCount] = useState(initialData?.commentCount || commentCount);
-  const [currentViewCount, setCurrentViewCount] = useState(initialData?.viewCount || viewCount);
-  const [arrowColor, setArrowColor] = useState(initialData?.arrowColor || "black");
-  const [commentColor, setCommentColor] = useState(initialData?.commentColor || "black");
-  const [eyeColor, setEyeColor] = useState(initialData?.eyeColor || "black");
 
-  const saveToLocalStorage = (data: any) => {
-    localStorage.setItem(ticketNumber, JSON.stringify(data));
-  };
+  const [currentArrowCount, setCurrentArrowCount] = useState(initialData.arrowCount);
+  const [currentCommentCount, setCurrentCommentCount] = useState(initialData.commentCount);
+  const [currentViewCount, setCurrentViewCount] = useState(initialData.viewCount);
+  const [arrowColor, setArrowColor] = useState(initialData.arrowColor);
+  const [commentColor, setCommentColor] = useState(initialData.commentColor);
+  const [eyeColor, setEyeColor] = useState(initialData.eyeColor);
 
   useEffect(() => {
     const data = {
@@ -64,38 +67,40 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       commentColor,
       eyeColor,
     };
-    saveToLocalStorage(data);
-  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor]);
+
+    localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
+  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor, ticketNumber]);
 
   const handleArrowClick = () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
-      setCurrentArrowCount(currentArrowCount + 1);
+      setCurrentArrowCount((prevCount: number) => prevCount + 1);
     } else {
       setArrowColor("black");
-      setCurrentArrowCount(currentArrowCount - 1);
+      setCurrentArrowCount((prevCount: number) => prevCount - 1);
     }
   };
-
+  
   const handleCommentClick = () => {
     if (commentColor === "black") {
       setCommentColor("blue");
-      setCurrentCommentCount(currentCommentCount + 1);
+      setCurrentCommentCount((prevCount: number) => prevCount + 1);
     } else {
       setCommentColor("black");
-      setCurrentCommentCount(currentCommentCount - 1);
+      setCurrentCommentCount((prevCount: number) => prevCount - 1);
     }
   };
-
+  
   const handleEyeClick = () => {
     if (eyeColor === "black") {
       setEyeColor("blue");
-      setCurrentViewCount(currentViewCount + 1);
+      setCurrentViewCount((prevCount: number) => prevCount + 1);
     } else {
       setEyeColor("black");
-      setCurrentViewCount(currentViewCount - 1);
+      setCurrentViewCount((prevCount: number) => prevCount - 1);
     }
   };
+  
 
   if (!show) return null;
 

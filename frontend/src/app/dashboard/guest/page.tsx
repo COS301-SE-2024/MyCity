@@ -1,5 +1,5 @@
 'use client'
-import NavbarGuest from "@/components/Navbar/NavbarGuest";
+import Navbar from "@/components/Navbar/Navbar";
 import React, { Key } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
@@ -14,7 +14,7 @@ export default function GuestDashboard() {
 
     return (
         <div>
-            <NavbarGuest />
+            <Navbar />
 
             <main>
 

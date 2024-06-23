@@ -9,28 +9,22 @@ import Image from 'next/image';
 import { useProfile } from '@/context/UserProfileContext';
 
 
-
-
 type FaultType = {
     name: string;
     icon: string;
     multiplier: number;
 };
 
-
-
 interface Props extends React.HTMLAttributes<HTMLElement> {
     useMapboxProp: () => MapboxContextProps;
 }
 
-
-
 export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     const { selectedAddress } = useMapboxProp();
-
-
+    const { getUserProfile } = useProfile();
+    
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
-
+    
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
@@ -39,7 +33,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                         'Content-Type': 'application/json',
                     },
                 });
-
+                
                 const data = await response.data;
 
                 setFaultTypes(data.map((item: any) => ({
@@ -53,7 +47,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             }
         }
 
-        // fetchFaultTypes();
+        fetchFaultTypes();
     }, []);
 
 
@@ -75,7 +69,6 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         }
 
         //3. currently logged in user data
-        const { getUserProfile } = useProfile();
         const userData = await getUserProfile();
 
         if (!userData.current) {
@@ -127,7 +120,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                             {(faultType) =>
                                 <AutocompleteItem key={faultType.name} textValue={faultType.name}>
                                     <div className="flex gap-2 items-center">
-                                        <Image src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
+                                        <img src={faultType.icon} alt={faultType.name} width={6} height={6}  className="flex-shrink-0 w-6 h-6" />
                                         <span className="text-small">{faultType.name}</span>
                                     </div>
                                 </AutocompleteItem>

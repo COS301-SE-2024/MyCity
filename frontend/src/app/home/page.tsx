@@ -1,9 +1,9 @@
 'use client'
 
 
+import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@nextui-org/react";
 import Link from 'next/link';
-import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Home() {
   return (<div style={{
@@ -11,7 +11,8 @@ export default function Home() {
     height: '100vh',
     overflow: 'hidden',  // Prevents content overflow
   }}>
-    <NavbarGuest />
+    <Navbar />
+    {/* <NavbarUser /> */}
     {/* Background image */}
     <div style={{
       position: 'absolute',
@@ -19,7 +20,7 @@ export default function Home() {
       left: 0,
       width: '100%',
       height: '100%',
-      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',

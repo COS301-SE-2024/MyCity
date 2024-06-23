@@ -14,14 +14,14 @@ interface SearchMunicipalityProps {
 }
 
 const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities }) => {
-  if (!municipalities || municipalities.length === 0) {
+  /*if (!municipalities || municipalities.length === 0) {
     return <div>No municipalities found.</div>;
-  }
+  }*/
 
   return (
     <div className="space-y-4">
       {municipalities.map((municipality: Municipality, index: number) => (
-        <div key={index} className="grid grid-cols-6 gap-4 bg-white rounded-md shadow-md p-4">
+        <div key={index} className="grid grid-cols-6 gap-4 bg-white bg-opacity-70 mb-4 rounded-md shadow-md p-4">
           {/* Municipality text */}
           <div className="flex flex-col items-center">
             <span className="text-s text-black-500">Municipality</span>

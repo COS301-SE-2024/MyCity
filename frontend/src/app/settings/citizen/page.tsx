@@ -2,34 +2,26 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import NavbarUser from "@/components/Navbar/NavbarUser";
+import Navbar from "@/components/Navbar/Navbar";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { useProfile } from "@/context/UserProfileContext";
-// import { UserData } from "@/types/user.types";
+import { User, HelpCircle, XCircle } from "lucide-react";
 import Image from "next/image";
-import { User } from "lucide-react";
+
+import { UserData } from "@/types/user.types";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
 
-
-async function getProfileData() {
+export default function Settings() {
   const { getUserProfile } = useProfile();
-
-  const data = await getUserProfile();
-
-  return data.current;
-}
-
-
-
-export default async function Settings () {
-  const data = await getProfileData();
+  const [data, setData] = useState<UserData | null>(null);
 
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showHelpMenu, setShowHelpMenu] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [muteNotifications, setMuteNotifications] = useState(false);
   const [locationAccess, setLocationAccess] = useState(false);
@@ -37,21 +29,44 @@ export default async function Settings () {
   const [darkMode, setDarkMode] = useState(false);
   const [largerFont, setLargerFont] = useState(false);
 
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [firstName, setFirstName] = useState<string>("");
-  const [surname, setSurname] = useState<string>(""); //change these to the demo user's name
+  // const [profileImage, setProfileImage] = useState<string | null>(null);
+  // const [firstName, setFirstName] = useState<string>("");
+  // const [surname, setSurname] = useState<string>("");
 
   const router = useRouter();
 
-  useEffect(() => {
-    const storedProfileImage = localStorage.getItem("profileImage");
-    const storedFirstName = localStorage.getItem("firstName");
-    const storedSurname = localStorage.getItem("surname");
 
-    if (storedProfileImage) setProfileImage(storedProfileImage);
-    if (storedFirstName) setFirstName(storedFirstName);
-    if (storedSurname) setSurname(storedSurname);
-  }, []);
+  useEffect(() => {
+    const getProfileData = async () => {
+      const profile = await getUserProfile();
+
+      if (profile.current) {
+        const storedProfileImage = localStorage.getItem("profileImage") ? localStorage.getItem("profileImage")! : undefined;
+        const storedFirstName = localStorage.getItem("firstName") ? localStorage.getItem("firstName")! : undefined;
+        const storedSurname = localStorage.getItem("surname") ? localStorage.getItem("surname")! : undefined;
+
+        const updatedUserData: UserData = {
+          sub: profile.current.sub,
+          email: profile.current.email,
+          given_name: profile.current.given_name ? profile.current.given_name : storedFirstName,
+          family_name: profile.current.family_name ? profile.current.family_name : storedSurname,
+          picture: profile.current.picture ? profile.current.picture : storedProfileImage,
+          user_role: profile.current.user_role,
+          municipality: profile.current.municipality
+        };
+
+        setData(updatedUserData);
+      }
+    };
+
+
+
+    // if (storedProfileImage) setProfileImage(storedProfileImage);
+    // if (storedFirstName) setFirstName(storedFirstName);
+    // if (storedSurname) setSurname(storedSurname);
+
+    getProfileData();
+  }, [getUserProfile]);
 
   const toggleDarkMode = () => {
     setDarkMode((prevState) => !prevState);
@@ -78,9 +93,7 @@ export default async function Settings () {
   };
 
   const handleDeleteAccount = () => {
-    // Clear local storage
     localStorage.clear();
-    // Redirect to home page
     router.push("/");
   };
 
@@ -88,10 +101,14 @@ export default async function Settings () {
     setShowConfirmation(true);
   };
 
-  const renderSubPageContent = () => {
+  const toggleHelpMenu = () => {
+    setShowHelpMenu(!showHelpMenu);
+  };
+
+  const renderSubPageContent = (profile: UserData | null) => {
     switch (subPage) {
       case "ChangeAccountInfo":
-        return <ChangeAccountInfo onBack={() => setSubPage(null)} />;
+        return <ChangeAccountInfo profileData={profile} onBack={() => setSubPage(null)} />;
       case "ChangePassword":
         return <ChangePassword onBack={() => setSubPage(null)} />;
       default:
@@ -207,15 +224,15 @@ export default async function Settings () {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
-            {renderSubPageContent()}
+            {renderSubPageContent(data)}
           </div>
         );
 
       case "Notifications":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               {/* Enable Email Notifications */}
@@ -224,15 +241,13 @@ export default async function Settings () {
                   Enable Email Notifications
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    emailNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${emailNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleEmailNotifications}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      emailNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${emailNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -243,15 +258,13 @@ export default async function Settings () {
                   Mute Notifications
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    muteNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${muteNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleMuteNotifications}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      muteNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${muteNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -260,7 +273,7 @@ export default async function Settings () {
         );
       case "SecurityPrivacy":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
               {/* Enable Location Access */}
@@ -269,15 +282,13 @@ export default async function Settings () {
                   Enable Location Access
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    locationAccess ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${locationAccess ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleLocationAccess}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      locationAccess ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${locationAccess ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -288,15 +299,13 @@ export default async function Settings () {
                   Two-Factor Authentication
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    twoFactorAuth ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${twoFactorAuth ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleTwoFactorAuth}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      twoFactorAuth ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${twoFactorAuth ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -305,22 +314,20 @@ export default async function Settings () {
         );
       case "Accessibility":
         return (
-          <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
+          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               {/* Dark Mode */}
               <div className="flex items-center justify-between p-2 rounded">
                 <span className="text-lg font-semibold">Dark Mode</span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    darkMode ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${darkMode ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleDarkMode}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      darkMode ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${darkMode ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -329,15 +336,13 @@ export default async function Settings () {
               <div className="flex items-center justify-between mt-4 p-2 rounded">
                 <span className="text-lg font-semibold">Larger Font</span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    largerFont ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${largerFont ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleLargerFont}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      largerFont ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${largerFont ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -350,24 +355,74 @@ export default async function Settings () {
   };
 
   return (
-    <div className="flex h-screen">
-      <NavbarUser />
-      <main className="flex-1 bg-gray-100 p-6">
-        <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">Settings</h1>
+    <div>
+      <Navbar />
+      <div
+        style={{
+          position: "fixed", // Change position to 'fixed'
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
+          zIndex: -1, // Ensures the background is behind other content
+        }}
+      ></div>
+      <main>
+        <div className="flex items-center mb-2 mt-2 ml-2">
+          <h1 className="text-4xl font-bold text-white text-opacity-80">Settings</h1>
+          <HelpCircle
+            className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+            size={24}
+            onClick={toggleHelpMenu}
+          />
+        </div>
+
+        {showHelpMenu && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
+              <button
+                className="absolute top-2 right-2 text-gray-700"
+                onClick={toggleHelpMenu}
+              >
+                <XCircle size={24} />
+              </button>
+              <h2 className="text-xl font-bold mb-4">Help Menu</h2>
+              <p>This settings page allows you to:</p>
+              <ul className="list-disc list-inside">
+                <li>Change your account information.</li>
+                <li>Change your password.</li>
+                <li>Manage notification settings.</li>
+                <li>Configure security and privacy options.</li>
+                <li>Adjust accessibility settings.</li>
+              </ul>
+              <p>Use the tabs on the left to navigate between different sections.</p>
+            </div>
+          </div>
+        )}
+
         <div className="flex">
-          <div className="w-64 bg-white rounded-lg shadow-md p-4">
+          <div className="w-64 bg-white bg-opacity-70 rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
-              {profileImage ? (
+              {data?.picture ? (
                 <img
-                  src={profileImage}
+                  src={data?.picture}
                   alt="Profile"
+                  width={12}
+                  height={12}
                   className="w-12 h-12 rounded-full mr-4"
                 />
               ) : (
                 <User className="w-12 h-12 rounded-full mr-4" />
               )}
               <div>
-                <p className="text-lg font-semibold">{data.given_name} {data.family_name}</p>
+                {/* <p className="text-lg font-semibold">{firstName} {surname}</p> */}
+                <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p>
               </div>
             </div>
             <nav>
