@@ -23,7 +23,6 @@ municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
 
 
-
 def generate_id():
     return str(uuid.uuid4())
 
@@ -111,7 +110,6 @@ def create_ticket(ticket_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-
 
 
 def get_fault_types():
@@ -299,19 +297,17 @@ def validate_ticket_id(ticket_id):
         raise BadRequestError("Invalid Ticket ID")
     return ticket_id
 
+
 def view_ticket_data(ticket_id):
     ticket_id = validate_ticket_id(ticket_id)
     try:
         response = tickets_table.scan()
         items = response.get("Items", [])
         filtered_items = [
-            item
-            for item in items
-            if ticket_id in item.get("ticket_id", "")
+            item for item in items if ticket_id in item.get("ticket_id", "")
         ]
         return filtered_items
     except ClientError as e:
         raise BadRequestError(
             f"Failed to get Ticket data: {e.response['Error']['Message']}"
         )
-
