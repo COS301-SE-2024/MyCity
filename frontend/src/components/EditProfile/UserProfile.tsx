@@ -5,10 +5,10 @@ import NavbarUser from '../Navbar/NavbarUser';
 import "react-toastify/dist/ReactToastify.css";
 import { Upload } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
-import { User } from '@/types/user.types';
+import { UserData } from '@/types/user.types';
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
-  data: User;
+  data: UserData;
 }
 
 

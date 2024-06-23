@@ -5,7 +5,7 @@ import EditCitizenProfile from '@/components/EditProfile/UserProfile';
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useProfile } from "@/context/UserProfileContext";
-import { User } from "@/types/user.types";
+import { UserData } from "@/types/user.types";
 
 
 export const getServerSideProps = (async () => {
@@ -16,7 +16,7 @@ export const getServerSideProps = (async () => {
   return {
     props: { profile }
   }
-}) satisfies GetServerSideProps<{ profile: User }>;
+}) satisfies GetServerSideProps<{ profile: UserData }>;
 
 
 export default function CitizenProfile({ profile }: InferGetServerSidePropsType<typeof getServerSideProps>) {

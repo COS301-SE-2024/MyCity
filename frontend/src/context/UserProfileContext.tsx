@@ -1,12 +1,12 @@
 'use client'
 
-import { User, UserRole } from '@/types/user.types';
+import { UserData, UserRole } from '@/types/user.types';
 import { fetchUserAttributes, getCurrentUser } from 'aws-amplify/auth';
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
 
 export interface UserProfileContextProps {
-    getUserProfile: () => Promise<MutableRefObject<User>>;
+    getUserProfile: () => Promise<MutableRefObject<UserData>>;
 }
 
 
@@ -14,7 +14,7 @@ const UserProfileContext = createContext<UserProfileContextProps | undefined>(un
 
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const userProfile = useRef<User>({
+    const userProfile = useRef<UserData>({
         email: undefined,
         given_name: undefined,
         family_name: undefined,

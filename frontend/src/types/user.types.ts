@@ -4,7 +4,7 @@ export enum UserRole {
     PRIVATE_COMPANY = "PRIVATE-COMPANY"
 };
 
-export interface User {
+export interface UserData {
     email: string|undefined;
     given_name: string | undefined;
     family_name: string | undefined;
