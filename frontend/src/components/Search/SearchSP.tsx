@@ -35,7 +35,7 @@ const SearchSP: React.FC<SearchSPProps> = ({ serviceProviders }) => {
           {/* Company Logo */}
           <div className="col-span-1 flex items-center justify-center">
             {sp.companyLogo ? (
-              <Image
+              <img
                 src={sp.companyLogo}
                 alt={`${sp.name} logo`}
                 width={64}
