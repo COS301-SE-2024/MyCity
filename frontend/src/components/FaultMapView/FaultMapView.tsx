@@ -8,7 +8,7 @@ const FaultMapView = () => {
       {/* Map Section */}
       <div className="md:w-1/2 lg:w-1/2 md:pr-4 flex-grow flex pl-2">
         <div className="relative w-full rounded-lg shadow-md overflow-hidden">
-          <Image 
+          <img 
             src={mapPlaceholder} 
             alt="Map Placeholder" 
             width={640} 

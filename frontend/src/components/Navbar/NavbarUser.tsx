@@ -5,7 +5,6 @@ import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-rea
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { useProfile } from '@/context/UserProfileContext';
 import { UserData } from '@/types/user.types';
-import { secret } from '@aws-amplify/backend';
 import { handleSignOut } from '@/lib/cognitoActions';
 
 export default function NavbarUser() {
@@ -51,7 +50,7 @@ export default function NavbarUser() {
     <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
         <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-          <Image src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} />
+          <img src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} className="w-50 h-50"/>
         </div>
       </Link>
 
