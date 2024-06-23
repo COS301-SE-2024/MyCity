@@ -9,7 +9,8 @@ const nextConfig = {
     },
 
     images: {
-        unoptimized: !process.env.PROD_ENV ? true : false,
+        // unoptimized: !process.env.PROD_ENV ? true : false,
+        unoptimized: true,
         remotePatterns: [
             {
               protocol: "https",
