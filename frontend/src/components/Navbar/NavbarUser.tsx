@@ -6,19 +6,18 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@
 import { useProfile } from '@/context/UserProfileContext';
 import { UserData } from '@/types/user.types';
 import { handleSignOut } from '@/lib/cognitoActions';
+import { useRouter } from 'next/navigation';
 
 export default function NavbarUser() {
-  // const [profileImage, setProfileImage] = useState<string | null>(null);
+  const router = useRouter();
   const [data, setData] = useState<UserData | null>(null);
   const { getUserProfile } = useProfile();
 
 
-  // useEffect(() => {
-  //   const storedProfileImage = localStorage.getItem('profileImage');
-  //   if (storedProfileImage) {
-  //     setProfileImage(storedProfileImage);
-  //   }
-  // }, []);
+  const onLogout = async () => {
+    await handleSignOut();
+    router.push("/dashboard/guest");
+  };
 
 
   useEffect(() => {
@@ -35,7 +34,8 @@ export default function NavbarUser() {
           given_name: userData.current.given_name,
           family_name: userData.current.family_name,
           picture: userData.current.picture ? userData.current.picture : storedProfileImage,
-          user_role: userData.current.user_role
+          user_role: userData.current.user_role,
+          municipality: userData.current.municipality
         };
 
         setData(updatedUserData);
@@ -50,7 +50,7 @@ export default function NavbarUser() {
     <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
         <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-          <img src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} className="w-50 h-50"/>
+          <img src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} className="w-50 h-50" />
         </div>
       </Link>
 
@@ -91,64 +91,27 @@ export default function NavbarUser() {
           </div>
         </Link>
 
-        {/* <Link href="/settings/citizen" passHref>
-          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
-            <div className="flex flex-col gap-1 items-center">
-              <Settings size={25} />
-              <span>Settings</span>
-            </div>
-          </div>
-        </Link> */}
-
-        {/* User profile picture */}
-        {/* <Link href="/settings/citizen" passHref>
-          <div className="flex items-center gap-1 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
-            {profileImage ? (
-              <Image src={profileImage} alt="User Profile" width={10} height={10} className="h-10 w-10 rounded-full" />
-            ) : (
-              <UserCircle size={40} />
-            )}
-          </div>
-        </Link> */}
-
-
-        {/* <Link href="/settings" passHref>
-          <div className="cursor-pointer transform hover:scale-102 transition-transform duration-200">
-            <Avatar
-              showFallback
-              src={data?.picture}
-              className="w-10 h-10 b-0 ring-offset-1 ring-offset-blue-300 ring-2 ring-blue-500"
-            />
-          </div>
-        </Link> */}
 
         <Dropdown className="bg-white">
           <DropdownTrigger className="cursor-pointer">
             <Avatar
               showFallback
               src={data?.picture}
-              // src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
               className="w-10 h-10 b-0 ring-offset-1 ring-offset-black-300 ring-2 ring-black-500"
             />
           </DropdownTrigger>
 
           <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-black">
-            <DropdownItem key="settings" className="h-9 hover:bg-grey-500" textValue="Settings">
-              <Link href="/settings/citizen" passHref>
+            <DropdownItem key="settings" href="/settings/citizen" role="link" className="h-9 hover:bg-grey-500" textValue="Settings">
                 <span className="text-sm">Settings</span>
-              </Link>
             </DropdownItem>
 
-            <DropdownItem key="about" className="h-9 hover:bg-grey-500" textValue="About us">
-              <Link href="/about" passHref>
+            <DropdownItem key="about" href="/about" role="link" className="h-9 hover:bg-grey-500" textValue="About us">
                 <span className="text-sm">About us</span>
-              </Link>
             </DropdownItem>
 
-            <DropdownItem key="logout" className="h-9 hover:bg-grey-500" textValue="Log out">
-              <Link href="/" className="text-sm" passHref onClick={handleSignOut}>
+            <DropdownItem key="logout" onClick={onLogout} role="button" className="h-9 hover:bg-grey-500" textValue="Log out">
                 <span className="text-danger text-sm">Log out</span>
-              </Link>
             </DropdownItem>
 
 

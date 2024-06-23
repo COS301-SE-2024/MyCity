@@ -11,4 +11,5 @@ export interface UserData {
     family_name: string | undefined;
     picture: string | undefined;
     user_role: UserRole | undefined;
+    municipality: string | undefined;
 }
