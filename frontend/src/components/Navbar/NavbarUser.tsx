@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-react';
-import { Avatar } from '@nextui-org/react';
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { useProfile } from '@/context/UserProfileContext';
 import { UserData } from '@/types/user.types';
 
@@ -91,20 +91,38 @@ export default function NavbarUser() {
         </Link> */}
 
 
-        <Link href="/settings/citizen" passHref>
-          <div className="flex items-center gap-1 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+        {/* <Link href="/settings" passHref>
+          <div className="cursor-pointer transform hover:scale-102 transition-transform duration-200">
             <Avatar
-              color="primary"
-              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              showFallback
+              src={data?.picture}
               className="w-10 h-10 b-0 ring-offset-1 ring-offset-blue-300 ring-2 ring-blue-500"
             />
-            {profileImage ? (
-              <Image src={profileImage} alt="User Profile" width={10} height={10} className="h-10 w-10 rounded-full" />
-            ) : (
-              <UserCircle size={40} />
-            )}
           </div>
-        </Link>
+        </Link> */}
+
+        <Dropdown className="bg-blue-900">
+          <DropdownTrigger className="cursor-pointer">
+            <Avatar
+              showFallback
+              src={data?.picture}
+              // src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              className="w-10 h-10 b-0 ring-offset-1 ring-offset-blue-300 ring-2 ring-blue-500"
+            />
+          </DropdownTrigger>
+
+          <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-white">
+            <DropdownItem key="new" className="h-9 hover:bg-blue-500 focus:bg-blue-500">
+              <span className="text-sm">Account</span>
+            </DropdownItem>
+            <DropdownItem key="edit" className="h-9 hover:bg-blue-500">
+              <span className="text-sm">About us</span>
+            </DropdownItem>
+            <DropdownItem key="delete" className="h-9 hover:bg-blue-500">
+              <span className="text-danger text-sm">Logout</span>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
 
 
       </div>

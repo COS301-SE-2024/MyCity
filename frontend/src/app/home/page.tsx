@@ -2,7 +2,6 @@
 
 
 import Navbar from "@/components/Navbar/Navbar";
-import NavbarUser from "@/components/Navbar/NavbarUser";
 import { Button } from "@nextui-org/react";
 import Link from 'next/link';
 
@@ -12,8 +11,8 @@ export default function Home() {
     height: '100vh',
     overflow: 'hidden',  // Prevents content overflow
   }}>
-    {/* <Navbar /> */}
-    <NavbarUser />
+    <Navbar />
+    {/* <NavbarUser /> */}
     {/* Background image */}
     <div style={{
       position: 'absolute',
