@@ -140,7 +140,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
           <div className="text-xl font-semibold flex items-center justify-center">
             <input
               type="text"
-              value={data?.given_name}
+              value={data?.family_name}
               name="family_name"
               className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
             />
