@@ -62,19 +62,31 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
     };
 
 
-    const loadMap = () => {
-        if (!map.current && mapContainer.current) {
-            initialiseMap(mapContainer);
-        }
-    };
+    // const loadMap = () => {
+    //     if (!map.current && mapContainer.current) {
+    //         initialiseMap(mapContainer);
+    //     }
+    // };
 
-    useRunOnce({
-        fn: () => {
-            loadMap();
-        },
-        sessionKey: "map"
-    }
-    );
+    // useRunOnce({
+    //     fn: () => {
+    //         loadMap();
+    //     },
+    //     sessionKey: "map"
+    // }
+    // );
+
+
+    useEffect(() => {
+        const loadMap = () => {
+            if (mapContainer.current) {
+                initialiseMap(mapContainer);
+            }
+        };
+
+        loadMap();
+
+    }, [initialiseMap]);
 
 
     return (

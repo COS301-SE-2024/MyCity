@@ -6,7 +6,7 @@ import { MutableRefObject, ReactNode, createContext, useContext, useRef } from '
 
 
 export interface UserProfileContextProps {
-    getUserProfile: () => Promise<MutableRefObject<UserData>>;
+    getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
 }
 
 
@@ -14,14 +14,7 @@ const UserProfileContext = createContext<UserProfileContextProps | undefined>(un
 
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const userProfile = useRef<UserData>({
-        sub: undefined,
-        email: undefined,
-        given_name: undefined,
-        family_name: undefined,
-        picture: undefined,
-        user_role: undefined
-    });
+    const userProfile = useRef<UserData | null>(null);
 
 
     const getUserProfile = async () => {
@@ -46,17 +39,6 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         return userProfile;
     };
 
-
-
-
-    const handleLocationError = (browserHasGeolocation: boolean) => {
-        if (browserHasGeolocation) {
-            console.log("The geolocation service failed");
-        }
-        else {
-            console.log("Error: Browser does not support geolocation");
-        }
-    };
 
 
     return (

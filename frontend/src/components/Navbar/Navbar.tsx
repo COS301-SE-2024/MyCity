@@ -1,4 +1,4 @@
-'use server'
+'use client'
 
 import { authenticateClient } from "@/lib/cognitoActions";
 import React, { useEffect, useState } from "react";

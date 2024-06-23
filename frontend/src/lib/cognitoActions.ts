@@ -15,7 +15,7 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
 }
 
 
-export async function handleSignOut(form: FormData, userRole: UserRole) {
+export async function handleSignOut() {
     removeUserPathSuffix();
     await signOut();
 }

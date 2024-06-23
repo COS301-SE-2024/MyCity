@@ -5,6 +5,8 @@ import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-rea
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { useProfile } from '@/context/UserProfileContext';
 import { UserData } from '@/types/user.types';
+import { secret } from '@aws-amplify/backend';
+import { handleSignOut } from '@/lib/cognitoActions';
 
 export default function NavbarUser() {
   // const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -12,18 +14,38 @@ export default function NavbarUser() {
   const { getUserProfile } = useProfile();
 
 
+  // useEffect(() => {
+  //   const storedProfileImage = localStorage.getItem('profileImage');
+  //   if (storedProfileImage) {
+  //     setProfileImage(storedProfileImage);
+  //   }
+  // }, []);
+
+
   useEffect(() => {
     const getProfileData = async () => {
       const userData = await getUserProfile();
 
       if (userData.current) {
-        setData(userData.current);
+
+        const storedProfileImage = localStorage.getItem('profileImage') ? localStorage.getItem('profileImage')! : undefined;
+
+        const updatedUserData: UserData = {
+          sub: userData.current.sub,
+          email: userData.current.email,
+          given_name: userData.current.given_name,
+          family_name: userData.current.family_name,
+          picture: userData.current.picture ? userData.current.picture : storedProfileImage,
+          user_role: userData.current.user_role
+        };
+
+        setData(updatedUserData);
       }
     };
 
     getProfileData();
 
-  }, []);
+  }, [getUserProfile]);
 
   return (
     <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
@@ -70,14 +92,14 @@ export default function NavbarUser() {
           </div>
         </Link>
 
-        <Link href="/settings/citizen" passHref>
+        {/* <Link href="/settings/citizen" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
               <Settings size={25} />
               <span>Settings</span>
             </div>
           </div>
-        </Link>
+        </Link> */}
 
         {/* User profile picture */}
         {/* <Link href="/settings/citizen" passHref>
@@ -112,20 +134,30 @@ export default function NavbarUser() {
           </DropdownTrigger>
 
           <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-white">
-            <DropdownItem key="new" className="h-9 hover:bg-blue-500 focus:bg-blue-500">
-              <span className="text-sm">Account</span>
+            <DropdownItem key="settings" className="h-9 hover:bg-blue-500 focus:bg-blue-500" textValue="Settings">
+              <Link href="/settings/citizen" passHref>
+                <span className="text-sm">Settings</span>
+              </Link>
             </DropdownItem>
-            <DropdownItem key="edit" className="h-9 hover:bg-blue-500">
-              <span className="text-sm">About us</span>
+
+            <DropdownItem key="about" className="h-9 hover:bg-blue-500" textValue="About us">
+              <Link href="/about" passHref>
+                <span className="text-sm">About us</span>
+              </Link>
             </DropdownItem>
-            <DropdownItem key="delete" className="h-9 hover:bg-blue-500">
-              <span className="text-danger text-sm">Logout</span>
+
+            <DropdownItem key="logout" className="h-9 hover:bg-blue-500" textValue="Log out">
+              <Link href="/" className="text-sm" passHref onClick={handleSignOut}>
+                <span className="text-danger text-sm">Log out</span>
+              </Link>
             </DropdownItem>
+
+
           </DropdownMenu>
         </Dropdown>
 
 
-      </div>
-    </nav>
+      </div >
+    </nav >
   );
 }
