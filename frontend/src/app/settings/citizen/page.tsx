@@ -1,23 +1,60 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
+import { useProfile } from "@/context/UserProfileContext";
+import { User, HelpCircle, XCircle } from "lucide-react";
 import Image from "next/image";
+
+import { UserData } from "@/types/user.types";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
-const Settings = () => {
+
+export default function Settings() {
+  const { getUserProfile } = useProfile();
+  const [data, setData] = useState<UserData | null>(null);
+
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showHelpMenu, setShowHelpMenu] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [muteNotifications, setMuteNotifications] = useState(false);
   const [locationAccess, setLocationAccess] = useState(false);
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [largerFont, setLargerFont] = useState(false);
+
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string>("");
+  const [surname, setSurname] = useState<string>("");
+
+  const router = useRouter();
+
+
+  useEffect(() => {
+    const getProfileData = async () => {
+      const profile = await getUserProfile();
+
+      if (profile.current) {
+        setData(profile.current);
+      }
+    };
+
+    const storedProfileImage = localStorage.getItem("profileImage");
+    const storedFirstName = localStorage.getItem("firstName");
+    const storedSurname = localStorage.getItem("surname");
+
+    if (storedProfileImage) setProfileImage(storedProfileImage);
+    if (storedFirstName) setFirstName(storedFirstName);
+    if (storedSurname) setSurname(storedSurname);
+
+    // getProfileData();
+  }, [getUserProfile]);
 
   const toggleDarkMode = () => {
     setDarkMode((prevState) => !prevState);
@@ -33,7 +70,7 @@ const Settings = () => {
 
   const toggleTwoFactorAuth = () => {
     setTwoFactorAuth((prevState) => !prevState);
-  }
+  };
 
   const toggleEmailNotifications = () => {
     setEmailNotifications((prevState) => !prevState);
@@ -44,14 +81,16 @@ const Settings = () => {
   };
 
   const handleDeleteAccount = () => {
-    // Handle the delete account logic here
-    // For demonstration purposes, I'm just logging a message
-    console.log("Deleting account...");
-    setShowConfirmation(false);
+    localStorage.clear();
+    router.push("/");
   };
 
   const openConfirmation = () => {
     setShowConfirmation(true);
+  };
+
+  const toggleHelpMenu = () => {
+    setShowHelpMenu(!showHelpMenu);
   };
 
   const renderSubPageContent = () => {
@@ -184,22 +223,19 @@ const Settings = () => {
           <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
-
               {/* Enable Email Notifications */}
               <div className="flex items-center justify-between p-2 rounded">
                 <span className="text-lg font-semibold">
                   Enable Email Notifications
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    emailNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${emailNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleEmailNotifications}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      emailNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${emailNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -210,19 +246,16 @@ const Settings = () => {
                   Mute Notifications
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    muteNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${muteNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleMuteNotifications}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      muteNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${muteNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
-
             </div>
           </div>
         );
@@ -237,15 +270,13 @@ const Settings = () => {
                   Enable Location Access
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    locationAccess ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${locationAccess ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleLocationAccess}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      locationAccess ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${locationAccess ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -256,15 +287,13 @@ const Settings = () => {
                   Two-Factor Authentication
                 </span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    twoFactorAuth ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${twoFactorAuth ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleTwoFactorAuth}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      twoFactorAuth ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${twoFactorAuth ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -278,38 +307,30 @@ const Settings = () => {
             <div className="space-y-4">
               {/* Dark Mode */}
               <div className="flex items-center justify-between p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Dark Mode
-                </span>
+                <span className="text-lg font-semibold">Dark Mode</span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    darkMode ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${darkMode ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleDarkMode}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      darkMode ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${darkMode ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
 
               {/* Larger Font */}
               <div className="flex items-center justify-between mt-4 p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Larger Font
-                </span>
+                <span className="text-lg font-semibold">Larger Font</span>
                 <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    largerFont ? "bg-green-400" : "bg-gray-400"
-                  }`}
+                  className={`relative w-12 h-6 rounded-full ${largerFont ? "bg-green-400" : "bg-gray-400"
+                    }`}
                   onClick={toggleLargerFont}
                 >
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      largerFont ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${largerFont ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                   ></div>
                 </div>
               </div>
@@ -322,22 +343,58 @@ const Settings = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div>
       <NavbarUser />
-      <main className="flex-1 bg-gray-100 p-6">
-        <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">Settings</h1>
+      <main>
+        <div className="flex items-center mb-2 mt-2 ml-2">
+        <h1 className="text-4xl font-bold">Settings</h1>
+          <HelpCircle
+            className="ml-2 text-gray-600 cursor-pointer"
+            size={24}
+            onClick={toggleHelpMenu}
+          />
+        </div>
+
+        {showHelpMenu && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
+              <button
+                className="absolute top-2 right-2 text-gray-700"
+                onClick={toggleHelpMenu}
+              >
+                <XCircle size={24} />
+              </button>
+              <h2 className="text-xl font-bold mb-4">Help Menu</h2>
+              <p>This settings page allows you to:</p>
+              <ul className="list-disc list-inside">
+                <li>Change your account information.</li>
+                <li>Change your password.</li>
+                <li>Manage notification settings.</li>
+                <li>Configure security and privacy options.</li>
+                <li>Adjust accessibility settings.</li>
+              </ul>
+              <p>Use the tabs on the left to navigate between different sections.</p>
+            </div>
+          </div>
+        )}
+
         <div className="flex">
           <div className="w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
-              <Image
-                src="/profile.png"
-                alt="Profile"
-                width={12}
-                height={12}
-                className="w-12 h-12 rounded-full mr-4"
-              />
+              {profileImage ? (
+                <Image
+                  src={profileImage}
+                  alt="Profile"
+                  width={12}
+                  height={12}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+              ) : (
+                <User className="w-12 h-12 rounded-full mr-4" />
+              )}
               <div>
-                <p className="text-lg font-semibold">Kyle Marshall</p>
+              <p className="text-lg font-semibold">{firstName} {surname}</p>
+                {/* <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p> */}
               </div>
             </div>
             <nav>
@@ -392,6 +449,4 @@ const Settings = () => {
       </main>
     </div>
   );
-};
-
-export default Settings;
+}

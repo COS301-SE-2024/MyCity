@@ -1,10 +1,20 @@
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-react';
 
 const NavbarUser = () => {
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedProfileImage = localStorage.getItem('profileImage');
+    if (storedProfileImage) {
+      setProfileImage(storedProfileImage);
+    }
+  }, []);
+
   return (
-    <nav className="fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
+    <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
         <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
           <Image src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} />
@@ -12,7 +22,6 @@ const NavbarUser = () => {
       </Link>
 
       <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
-        
         <Link href="/dashboard/citizen" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -58,18 +67,19 @@ const NavbarUser = () => {
           </div>
         </Link>
 
-        {/* Placeholder for user profile picture */}
+        {/* User profile picture */}
         <Link href="/settings/citizen" passHref>
           <div className="flex items-center gap-1 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
-            <UserCircle size={40} />
+            {profileImage ? (
+              <Image src={profileImage} alt="User Profile" width={10} height={10} className="h-10 w-10 rounded-full" />
+            ) : (
+              <UserCircle size={40} />
+            )}
           </div>
         </Link>
-
       </div>
     </nav>
   );
 };
 
 export default NavbarUser;
-
-

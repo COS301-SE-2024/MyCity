@@ -1,19 +1,33 @@
 import { UserRole } from "@/types/user.types";
 import { SignUpInput, SignUpOutput, autoSignIn, signIn, signOut, signUp } from "aws-amplify/auth";
+import { setUserPathSuffix, removeUserPathSuffix } from "./serverActions";
 
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
+    await setUserPathSuffix(userRole);
 
     const { isSignedIn } = await signIn({
         username: String(form.get("email")),
         password: String(form.get("password")),
     });
 
+    // if(isSignedIn){
+    //     console.log("before invocation");
+    //     await setUserPathSuffix(userRole);
+    //     console.log("after invocation");
+    // }
+
+    // const isSignedIn = true;
+
+    // console.log("before invocation");
+    // console.log("after invocation");
+
     return { isSignedIn };
 }
 
 
 export async function handleSignOut(form: FormData, userRole: UserRole) {
+    removeUserPathSuffix();
     await signOut();
 }
 

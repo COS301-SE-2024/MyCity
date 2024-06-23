@@ -3,18 +3,25 @@ import boto3
 from botocore.exceptions import ClientError
 from chalice import BadRequestError, Chalice, Response
 import uuid
+
+from math import radians, cos, sin, asin, sqrt
+from datetime import datetime
+from decimal import Decimal
+from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr
 import re
 import json
 import logging
 
+
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
-users_table = dynamodb.Table("user")
 assets_table = dynamodb.Table("asset")
-companies_table = dynamodb.Table("private_companies")
 
-app = Chalice(app_name="ticketing-system")
-app.log.setLevel(logging.DEBUG)
+
+municipality_table = dynamodb.Table("municipalities")
+watchlist_table = dynamodb.Table("watchlist")
+
 
 
 def generate_id():
@@ -39,42 +46,60 @@ def create_ticket(ticket_data):
         required_fields = [
             "asset",
             "description",
-            "location",
-            "province",
-            "state",
+            "latitude",
+            "longitude",
             "username",
         ]
         for field in required_fields:
             if field not in ticket_data:
-                raise BadRequestError(f"Missing required field: {field}")
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
 
         # Ensure user exists
-        username = ticket_data["username"]
-        user_response = users_table.get_item(Key={"username": username})
-        if "Item" not in user_response:
-            raise BadRequestError(f"User with username {username} does not exist")
 
         # Ensure asset exists
         asset_id = ticket_data["asset"]
         asset_response = assets_table.get_item(Key={"asset_id": asset_id})
         if "Item" not in asset_response:
-            raise BadRequestError(f"Asset with ID {asset_id} does not exist")
+            error_response = {
+                "Error": {
+                    "Code": "ResourceNotFoundException",
+                    "Message": f"Asset with ID {asset_id} does not exist",
+                }
+            }
+            raise ClientError(error_response, "NoItems")
 
         # Generate ticket ID
         ticket_id = generate_id()
+        location = {
+            "latitude": Decimal(str(ticket_data["latitude"])),
+            "longitude": Decimal(str(ticket_data["longitude"])),
+        }
+        municipality_id = findMunicipality(location)
+        current_datetime = datetime.now()
+
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
 
         # Create the ticket item
         ticket_item = {
             "ticket_id": ticket_id,
-            "asset": asset_id,
+            "asset_id": asset_id,
+            "dateClosed": "<empty>",
+            "dateOpened": formatted_datetime,
             "description": ticket_data["description"],
-            "image": ticket_data.get("image", None),
-            "location": ticket_data["location"],
-            "province": ticket_data["province"],
+            "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
+            "latitude": location["latitude"],
+            "longitude": location["longitude"],
+            "municipality_id": municipality_id,
+            "username": ticket_data["username"],
             "state": ticket_data["state"],  # do not hard code, want to extend in future
-            "upvotes": ticket_data.get("upvotes", 0),
-            "username": username,
-            "viewed": ticket_data.get("viewed", 0),
+            "upvotes": 0,
+            "viewcount": 0,
         }
 
         # Put the ticket item into the tickets table
@@ -84,14 +109,9 @@ def create_ticket(ticket_data):
         )
 
     except ClientError as e:
-        app.log.error(f"Failed to create ticket: {e.response['Error']['Message']}")
-        return format_response(
-            400,
-            {
-                "Code": "BadRequestError",
-                "Message": f"Failed to create ticket: {e.response['Error']['Message']}",
-            },
-        )
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
 
 
 def get_fault_types():
@@ -117,14 +137,159 @@ def get_fault_types():
         return format_response(200, fault_types)
 
     except ClientError as e:
-        app.log.error(f"Failed to fetch fault types: {e.response['Error']['Message']}")
-        return format_response(
-            400,
-            {
-                "Code": "BadRequestError",
-                "Message": f"Failed to fetch fault types: {e.response['Error']['Message']}",
-            },
+
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def findMunicipality(location):
+    response = municipality_table.scan(
+        ProjectionExpression="latitude,longitude,municipality_id"
+    )
+    latitude = radians(float(location["latitude"]))
+    longitude = radians(float(location["latitude"]))
+    count = 0
+    data = response["Items"]
+    closestdistance = 10000000
+    municipality = ""
+    if len(data) > 0:
+        for x in data:
+            if count < 2:
+                print(x["municipality_id"])
+                count = count + 1
+            lat2 = float(x["latitude"])
+            long2 = float(x["longitude"])
+            dlat = lat2 - latitude
+            dlong = long2 - longitude
+            a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2
+            r_earth = 6371
+            distance = 2 * r_earth * asin(sqrt(a))
+            if distance < closestdistance:
+                closestdistance = distance
+                municipality = x["municipality_id"]
+
+        return municipality
+    else:
+        return "No data was produced"
+
+
+def getMyTickets(tickets_data):
+    try:
+        required_fields = [
+            "username",
+        ]
+        for field in required_fields:
+            if field not in tickets_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+        response = tickets_table.scan(
+            FilterExpression=Attr("username").eq(tickets_data["username"])
         )
+        items = response["Items"]
+        if len(items) > 0:
+            return items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket",
+                }
+            }
+            raise ClientError(error_response, "NoTicket")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_in_my_municipality(tickets_data):
+    try:
+        required_fields = [
+            "municipality_id",
+        ]
+        for field in required_fields:
+            if field not in tickets_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+        response = tickets_table.scan(
+            FilterExpression=Attr("municipality_id").eq(tickets_data["municipality_id"])
+        )
+        items = response["Items"]
+        if len(items) > 0:
+            return items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket in municipality",
+                }
+            }
+            raise ClientError(error_response, "NoTicket")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_watchlist(tickets_data):
+    try:
+        collective = []
+        required_fields = [
+            "username",
+        ]
+        for field in required_fields:
+            if field not in tickets_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+        response = watchlist_table.scan(
+            FilterExpression=Attr("user_id").eq(tickets_data["username"])
+        )
+        items = response["Items"]
+        if len(items) > 0:
+            for item in items:
+                respitem = tickets_table.query(
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+                )
+                ticketsItems = respitem["Items"]
+                if len(ticketsItems) > 0:
+                    collective.append(ticketsItems)
+                else:
+                    error_response = {
+                        "Error": {
+                            "Code": "Inconsistency",
+                            "Message": "Inconsistency in ticket_id",
+                        }
+                    }
+                    raise ClientError(error_response, "Inconsistencies")
+
+            return collective
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoWatchlist",
+                    "Message": "Doesnt have a watchlist",
+                }
+            }
+            raise ClientError(error_response, "NoTicketsInWatchlist")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
 
 
 def validate_ticket_id(ticket_id):
@@ -133,55 +298,6 @@ def validate_ticket_id(ticket_id):
         app.log.error("Invalid Ticket ID format")
         raise BadRequestError("Invalid Ticket ID")
     return ticket_id
-
-
-# def view_ticket_data(ticket_id):
-#     ticket_id = validate_ticket_id(ticket_id)
-#     try:
-#         app.log.debug(f"Valid ticket ID: {ticket_id}")
-#         response = tickets_table.query(
-#             KeyConditionExpression="ticket_id = :id",
-#             ExpressionAttributeValues={
-#                 ":id": "829c6b6a-a29e-434f-9fd4-b4bb70f903cc",
-#             },
-#         )
-#         app.log.debug(f"Query response: {response}")
-#         print(response["ScannedCount"])
-#         return format_response(200, response["Items"])
-
-#     except ClientError as e:
-#         app.log.error(f"Failed to find ticket: {e.response['Error']['Message']}")
-#         return format_response(
-#             400,
-#             {
-#                 "Code": "BadRequestError",
-#                 "Message": f"Failed to find ticket: {e.response['Error']['Message']}",
-#             },
-#         )
-
-
-# def view_ticket_data(ticket_id):
-#     search_term = ("city")
-#     try:
-#         response = companies_table.scan()
-#         items = response.get("Items", [])
-#         filtered_items = [
-#             item
-#             for item in items
-#             if search_term.lower() in item.get("name", "").lower()
-#         ]
-#         return filtered_items
-#     except ClientError as e:
-#         raise BadRequestError(
-#             f"Failed to search service providers: {e.response['Error']['Message']}"
-#         )
-
-def validate_search_term(search_term):
-    # Allow only alphanumeric characters and spaces to prevent injection attacks
-    if not re.match("^[a-zA-Z0-9\s]*$", search_term):
-        raise BadRequestError("Invalid search term")
-    return search_term
-
 
 def view_ticket_data(ticket_id):
     ticket_id = validate_ticket_id(ticket_id)
@@ -198,3 +314,4 @@ def view_ticket_data(ticket_id):
         raise BadRequestError(
             f"Failed to get Ticket data: {e.response['Error']['Message']}"
         )
+
