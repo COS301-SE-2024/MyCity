@@ -1,7 +1,7 @@
 'use client'
 
 import { UserData, UserRole } from '@/types/user.types';
-import { fetchUserAttributes, getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes, getCurrentUser, updateUserAttributes } from 'aws-amplify/auth';
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
 
@@ -46,6 +46,13 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
       if(data){
         userProfile.current = data;
       }
+
+      await updateUserAttributes({
+        userAttributes: {
+          given_name: data.given_name,
+          family_name: data.family_name,
+        },
+      });
     };
 
 
