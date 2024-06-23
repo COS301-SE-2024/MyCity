@@ -206,7 +206,8 @@ def get_in_my_municipality(tickets_data):
             for item in items:
                 response_item = ticketupdate_table.scan(FilterExpression=Attr("ticket_id").eq(item['ticket_id']))
                 item['commentcount'] = len(response_item['Items'])
-                item['address'] = random.shuffle(address)
+                rdnint = random.randint(0,2)
+                item['address'] = address[rdnint]
                   # Google Maps Geocoding API endpoint
                 # endpoint = "https://maps.googleapis.com/maps/api/geocode/json"
 
@@ -269,6 +270,11 @@ def get_watchlist(tickets_data):
                 respitem = tickets_table.query(KeyConditionExpression=Key('ticket_id').eq(item['ticket_id']))
                 ticketsItems = respitem['Items']
                 if len(ticketsItems) > 0:
+                    for tckitem in ticketsItems:
+                        response_item = ticketupdate_table.scan(FilterExpression=Attr("ticket_id").eq(tckitem['ticket_id']))
+                        tckitem['commentcount'] = len(response_item['Items'])
+                        rdnint = random.randint(0,2)
+                        tckitem['address'] = address[rdnint]
                     collective.append(ticketsItems)
                 else :
                    error_response = {

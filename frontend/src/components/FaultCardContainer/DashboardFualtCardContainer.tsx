@@ -12,6 +12,8 @@ interface CardData {
   viewcount : number
   description: string;
   municipality_id: string;
+  address : string;
+  commentcount : number;
   createdBy: string;
 }
 
@@ -53,7 +55,7 @@ const DashboardFaultCardContainer: React.FC = () => {
         title={item.asset_id}
         address={item.address}
         arrowCount={item.upvote}
-        commentCount={item.commentCount}
+        commentCount={item.commentcount}
         viewCount={item.viewcount}
         description={item.description}
         image={item.imageURL}
@@ -79,7 +81,7 @@ const DashboardFaultCardContainer: React.FC = () => {
           title={selectedCard.asset_id}
           address={selectedCard.address}
           arrowCount={selectedCard.upvote}
-          commentCount={selectedCard.commentCount}
+          commentCount={selectedCard.commentcount}
           viewCount={selectedCard.viewcount}
           ticketNumber={selectedCard.asset_id}
           description={selectedCard.description}
