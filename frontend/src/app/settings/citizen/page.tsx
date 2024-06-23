@@ -6,8 +6,9 @@ import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { useProfile } from "@/context/UserProfileContext";
+import { User, HelpCircle, XCircle } from "lucide-react";
 import Image from "next/image";
-import { User } from "lucide-react";
+
 import { UserData } from "@/types/user.types";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
@@ -20,6 +21,7 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showHelpMenu, setShowHelpMenu] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [muteNotifications, setMuteNotifications] = useState(false);
   const [locationAccess, setLocationAccess] = useState(false);
@@ -29,7 +31,7 @@ export default function Settings() {
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string>("");
-  const [surname, setSurname] = useState<string>(""); //change these to the demo user's name
+  const [surname, setSurname] = useState<string>("");
 
   const router = useRouter();
 
@@ -79,14 +81,16 @@ export default function Settings() {
   };
 
   const handleDeleteAccount = () => {
-    // Clear local storage
     localStorage.clear();
-    // Redirect to home page
     router.push("/");
   };
 
   const openConfirmation = () => {
     setShowConfirmation(true);
+  };
+
+  const toggleHelpMenu = () => {
+    setShowHelpMenu(!showHelpMenu);
   };
 
   const renderSubPageContent = () => {
@@ -339,10 +343,41 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div>
       <NavbarUser />
-      <main className="flex-1 bg-gray-100 p-6">
-        <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">Settings</h1>
+      <main>
+        <div className="flex items-center mb-2 mt-2 ml-2">
+        <h1 className="text-4xl font-bold">Settings</h1>
+          <HelpCircle
+            className="ml-2 text-gray-600 cursor-pointer"
+            size={24}
+            onClick={toggleHelpMenu}
+          />
+        </div>
+
+        {showHelpMenu && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
+              <button
+                className="absolute top-2 right-2 text-gray-700"
+                onClick={toggleHelpMenu}
+              >
+                <XCircle size={24} />
+              </button>
+              <h2 className="text-xl font-bold mb-4">Help Menu</h2>
+              <p>This settings page allows you to:</p>
+              <ul className="list-disc list-inside">
+                <li>Change your account information.</li>
+                <li>Change your password.</li>
+                <li>Manage notification settings.</li>
+                <li>Configure security and privacy options.</li>
+                <li>Adjust accessibility settings.</li>
+              </ul>
+              <p>Use the tabs on the left to navigate between different sections.</p>
+            </div>
+          </div>
+        )}
+
         <div className="flex">
           <div className="w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">

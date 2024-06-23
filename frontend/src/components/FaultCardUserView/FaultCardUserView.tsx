@@ -51,11 +51,13 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [commentColor, setCommentColor] = useState(initialData?.commentColor || "black");
   const [eyeColor, setEyeColor] = useState(initialData?.eyeColor || "black");
 
+ 
+
   useEffect(() => {
     const saveToLocalStorage = (data: any) => {
-      localStorage.setItem(ticketNumber, JSON.stringify(data));
+      localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
     };
-
+  
     const data = {
       arrowCount: currentArrowCount,
       commentCount: currentCommentCount,
