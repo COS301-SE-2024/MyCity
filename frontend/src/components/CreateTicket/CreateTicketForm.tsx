@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { MapboxContextProps } from '@/context/MapboxContext';
 import axios from 'axios';
 import Image from 'next/image';
+import { useProfile } from '@/context/UserProfileContext';
 
 
 
@@ -56,22 +57,41 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     }, []);
 
 
-    const handleSubmit = (event: FormEvent) => {
+    const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
         const form = new FormData(event.currentTarget as HTMLFormElement);
 
-        //coordinates
+        //1. coordinates
         const latitude = selectedAddress?.lat;
         const longitude = selectedAddress?.lng;
 
-        //form data
+        //2. form data
         const selectedFault = form.get("fault-type");
         const faultDescription = form.get("fault-description");
 
         if (!selectedFault) {
             console.log("Fault type is required!!");
         }
+
+        //3. currently logged in user data
+        const { getUserProfile } = useProfile();
+        const userData = await getUserProfile();
+
+        if (!userData.current) {
+            console.log("please log in if you wish to create a ticket.")
+            return;
+        }
+
+        const userId = userData.current.sub;
+        const givenName = userData.current.given_name;
+        //can extract more user details as neeeded
+
+        //to visualize all the data
+        console.log("selected fault: ", selectedFault);
+        console.log("fault description: ", faultDescription);
+        console.log("user data: ", userData.current);
+        console.log("selected address: ", selectedAddress);
 
 
         //**** make request to create ticket below ****

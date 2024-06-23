@@ -15,6 +15,7 @@ const UserProfileContext = createContext<UserProfileContextProps | undefined>(un
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const userProfile = useRef<UserData>({
+        sub: undefined,
         email: undefined,
         given_name: undefined,
         family_name: undefined,
@@ -33,6 +34,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         const userDetails = await fetchUserAttributes();
 
         userProfile.current = {
+            sub: userDetails.sub,
             email: userDetails.email,
             given_name: userDetails.given_name,
             family_name: userDetails.family_name,
