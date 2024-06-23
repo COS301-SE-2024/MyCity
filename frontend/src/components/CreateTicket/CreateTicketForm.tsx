@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useState, useEffect, FormEvent } from 'react';
-import { Input, Autocomplete, AutocompleteItem, Textarea, Checkbox } from '@nextui-org/react';
-import { BadgeAlert } from 'lucide-react';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { AutocompleteItem, Textarea, Checkbox, Button, Autocomplete } from '@nextui-org/react';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { MapboxContextProps } from '@/context/MapboxContext';
 import axios from 'axios';
+import Image from 'next/image';
 
-interface ReportFaultFormProps extends React.HTMLAttributes<HTMLElement> {}
+
+
 
 type FaultType = {
     name: string;
@@ -15,12 +16,19 @@ type FaultType = {
     multiplier: number;
 };
 
-export default function ReportFaultForm({ className }: ReportFaultFormProps) {
-    const [faultType, setFaultType] = useState('');
+
+
+interface Props extends React.HTMLAttributes<HTMLElement> {
+    useMapboxProp: () => MapboxContextProps;
+}
+
+
+
+export default function CreateTicketForm({ className, useMapboxProp }: Props) {
+    const { selectedAddress } = useMapboxProp();
+
+
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
-    const [streetAddress, setStreetAddress] = useState('');
-    const [suburb, setSuburb] = useState('');
-    const [city, setCity] = useState('');
 
     useEffect(() => {
         async function fetchFaultTypes() {
@@ -44,102 +52,98 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
             }
         }
 
-        fetchFaultTypes();
+        // fetchFaultTypes();
     }, []);
+
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
-        // Handle form submission
+
+        const form = new FormData(event.currentTarget as HTMLFormElement);
+
+        //coordinates
+        const latitude = selectedAddress?.lat;
+        const longitude = selectedAddress?.lng;
+
+        //form data
+        const selectedFault = form.get("fault-type");
+        const faultDescription = form.get("fault-description");
+
+        if (!selectedFault) {
+            console.log("Fault type is required!!");
+        }
+
+
+        //**** make request to create ticket below ****
     };
+
+
 
     return (
         <div className={cn("", className)}>
+
             <div className="py-8 flex flex-col items-center justify-center">
-                <span className="text-[2.5em] font-bold">Create a Fault Ticket</span>
+
+                <span className="text-[2.2rem] font-bold">Create a Fault Ticket</span>
+
                 <div className="px-10 w-full">
+
                     <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+
                         <Autocomplete
-                            label={<span className="font-semibold text-medium">Fault type <sup className="text-blue-500">*</sup></span>}
+                            label={<span className="font-semibold text-sm">Fault type <sup className="text-blue-500">*</sup></span>}
                             labelPlacement="outside"
+                            name="fault-type"
                             placeholder="Fault Type"
                             fullWidth
-                            items={faultTypes}
+                            defaultItems={faultTypes}
                             disableSelectorIconRotation
                             isClearable={false}
                             menuTrigger={"input"}
                             size={"lg"}
                             type="text"
                             autoComplete="new-fault"
-                            onChange={(event) => setFaultType(event.target.value)}
                         >
-                            {(faultType) => (
+                            {(faultType) =>
                                 <AutocompleteItem key={faultType.name} textValue={faultType.name}>
                                     <div className="flex gap-2 items-center">
-                                        <img src={faultType.icon} alt={faultType.name} className="flex-shrink-0 w-6 h-6" />
+                                        <Image src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
                                         <span className="text-small">{faultType.name}</span>
                                     </div>
                                 </AutocompleteItem>
-                            )}
+                            }
                         </Autocomplete>
 
+
+
                         <Textarea
-                            label={<span className="font-semibold text-medium">Description</span>}
+                            label={<span className="font-semibold text-sm">Description</span>}
                             labelPlacement="outside"
+                            name="fault-description"
                             placeholder="Add Description..."
                         />
 
                         <div>
-                            <span className="font-semibold text-medium">Address <sup className="text-blue-500">*</sup></span>
-                            <div className="flex flex-col gap-y-5">
-                                <Input
-                                    variant={"bordered"}
-                                    fullWidth
-                                    classNames={{
-                                        inputWrapper: "h-[3em]",
-                                    }}
-                                    type="text"
-                                    autoComplete="new-address"
-                                    placeholder="Street Address"
-                                    value={streetAddress}
-                                    onChange={(e) => setStreetAddress(e.target.value)}
-                                />
-                                <Input
-                                    variant={"bordered"}
-                                    fullWidth
-                                    classNames={{
-                                        inputWrapper: "h-[3em]",
-                                    }}
-                                    type="text"
-                                    autoComplete="new-suburb"
-                                    placeholder="Suburb"
-                                    value={suburb}
-                                    onChange={(e) => setSuburb(e.target.value)}
-                                />
-                                <Input
-                                    variant={"bordered"}
-                                    fullWidth
-                                    classNames={{
-                                        inputWrapper: "h-[3em]",
-                                    }}
-                                    type="text"
-                                    autoComplete="new-city"
-                                    placeholder="City/Town"
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                />
+
+                            <span className="font-semibold text-sm">Selected Address:</span>
+
+                            <div className="flex flex-col gap-y-0.5 text-xs ps-2">
+
+                                <span>{selectedAddress?.street?.name}</span>
+                                {/* <span>Hatfield</span> */}
+                                <span>{selectedAddress?.county}</span>
+                                <span>{selectedAddress?.city}</span>
+                                <span>{selectedAddress?.administrative}</span>
+
                             </div>
+
                         </div>
 
-                        <div className="m-auto flex items-center">
-                            <span className="text-medium font-semibold">Use current location as Fault Location? </span>
-                            <Checkbox className="ms-2.5" size={"lg"} radius="sm"></Checkbox>
-                        </div>
 
-                        <Link href="/dashboard">
-                            <div className="bg-blue-500 text-white px-4 py-2 rounded-3xl cursor-pointer hover:bg-blue-200 transition duration-300 text-center font-bold w-max mx-auto mt-4">
-                                Submit
-                            </div>
-                        </Link>
+                        <Button type="submit" disabled={!selectedAddress} className="m-auto bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
+                            Submit
+                        </Button>
+
                     </form>
                 </div>
             </div>

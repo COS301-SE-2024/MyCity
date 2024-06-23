@@ -5,6 +5,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import ConfigureAmplifyClientSide from "../config/amplifyCognitoConfig";
 import * as React from "react";
 import { UserProfileProvider } from "@/context/UserProfileContext";
+import { MapboxProvider } from "@/context/MapboxContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,10 +25,12 @@ export default function RootLayout({
         <NextUIProvider>
           <ConfigureAmplifyClientSide />
           <UserProfileProvider>
-            {children}
+            <MapboxProvider>
+              {children}
+            </MapboxProvider>
           </UserProfileProvider>
         </NextUIProvider>
       </body>
-    </html>
+    </html >
   );
 }

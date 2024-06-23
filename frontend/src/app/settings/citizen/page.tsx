@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { useProfile } from "@/context/UserProfileContext";
-import { User } from "@/types/user.types";
+// import { UserData } from "@/types/user.types";
+import Image from "next/image";
+import { User } from "lucide-react";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
@@ -34,6 +37,22 @@ export default async function Settings () {
   const [darkMode, setDarkMode] = useState(false);
   const [largerFont, setLargerFont] = useState(false);
 
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string>("");
+  const [surname, setSurname] = useState<string>(""); //change these to the demo user's name
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedProfileImage = localStorage.getItem("profileImage");
+    const storedFirstName = localStorage.getItem("firstName");
+    const storedSurname = localStorage.getItem("surname");
+
+    if (storedProfileImage) setProfileImage(storedProfileImage);
+    if (storedFirstName) setFirstName(storedFirstName);
+    if (storedSurname) setSurname(storedSurname);
+  }, []);
+
   const toggleDarkMode = () => {
     setDarkMode((prevState) => !prevState);
   };
@@ -48,7 +67,7 @@ export default async function Settings () {
 
   const toggleTwoFactorAuth = () => {
     setTwoFactorAuth((prevState) => !prevState);
-  }
+  };
 
   const toggleEmailNotifications = () => {
     setEmailNotifications((prevState) => !prevState);
@@ -59,10 +78,10 @@ export default async function Settings () {
   };
 
   const handleDeleteAccount = () => {
-    // Handle the delete account logic here
-    // For demonstration purposes, I'm just logging a message
-    console.log("Deleting account...");
-    setShowConfirmation(false);
+    // Clear local storage
+    localStorage.clear();
+    // Redirect to home page
+    router.push("/");
   };
 
   const openConfirmation = () => {
@@ -199,7 +218,6 @@ export default async function Settings () {
           <div className="ml-6 w-full bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
-
               {/* Enable Email Notifications */}
               <div className="flex items-center justify-between p-2 rounded">
                 <span className="text-lg font-semibold">
@@ -237,7 +255,6 @@ export default async function Settings () {
                   ></div>
                 </div>
               </div>
-
             </div>
           </div>
         );
@@ -293,9 +310,7 @@ export default async function Settings () {
             <div className="space-y-4">
               {/* Dark Mode */}
               <div className="flex items-center justify-between p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Dark Mode
-                </span>
+                <span className="text-lg font-semibold">Dark Mode</span>
                 <div
                   className={`relative w-12 h-6 rounded-full ${
                     darkMode ? "bg-green-400" : "bg-gray-400"
@@ -312,9 +327,7 @@ export default async function Settings () {
 
               {/* Larger Font */}
               <div className="flex items-center justify-between mt-4 p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Larger Font
-                </span>
+                <span className="text-lg font-semibold">Larger Font</span>
                 <div
                   className={`relative w-12 h-6 rounded-full ${
                     largerFont ? "bg-green-400" : "bg-gray-400"
@@ -344,11 +357,15 @@ export default async function Settings () {
         <div className="flex">
           <div className="w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
-              <img
-                src="/profile.png"
-                alt="Profile"
-                className="w-12 h-12 rounded-full mr-4"
-              />
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+              ) : (
+                <User className="w-12 h-12 rounded-full mr-4" />
+              )}
               <div>
                 <p className="text-lg font-semibold">{data.given_name} {data.family_name}</p>
               </div>
