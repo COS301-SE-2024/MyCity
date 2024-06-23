@@ -5,12 +5,28 @@ import { useRouter } from "next/navigation";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
+import { useProfile } from "@/context/UserProfileContext";
+// import { UserData } from "@/types/user.types";
 import Image from "next/image";
 import { User } from "lucide-react";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
-const Settings = () => {
+
+
+async function getProfileData() {
+  const { getUserProfile } = useProfile();
+
+  const data = await getUserProfile();
+
+  return data.current;
+}
+
+
+
+export default async function Settings () {
+  const data = await getProfileData();
+
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -351,7 +367,7 @@ const Settings = () => {
                 <User className="w-12 h-12 rounded-full mr-4" />
               )}
               <div>
-                <p className="text-lg font-semibold">{`${firstName} ${surname}`}</p>
+                <p className="text-lg font-semibold">{data.given_name} {data.family_name}</p>
               </div>
             </div>
             <nav>
@@ -406,6 +422,4 @@ const Settings = () => {
       </main>
     </div>
   );
-};
-
-export default Settings;
+}

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.scss";
 import { NextUIProvider } from "@nextui-org/react";
-import ConfigureAmplifyClientSide from "../config/amplify-cognito-config";
+import ConfigureAmplifyClientSide from "../config/amplifyCognitoConfig";
 import * as React from "react";
 import { UserProfileProvider } from "@/context/UserProfileContext";
 import { MapboxProvider } from "@/context/MapboxContext";

@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { handleSignIn } from '@/lib/cognitoActions';
 import { UserRole } from '@/types/user.types';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 
 export default function CitizenLogin() {
   const router = useRouter();
+
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -18,8 +19,7 @@ export default function CitizenLogin() {
       const { isSignedIn } = await handleSignIn(form, UserRole.CITIZEN);
 
       if (isSignedIn) {
-        // redirect("/dashboard/citizen");
-        router.push("/dashboard/citizen");
+        router.push("/dashboard");
       }
       else {
         throw "Something happened and we could not sign you in.";
