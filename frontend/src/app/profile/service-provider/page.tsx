@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import EditCitizenProfile from '@/components/EditProfile/UserProfile';
 
 export default function ServiceProviderProfile() {
