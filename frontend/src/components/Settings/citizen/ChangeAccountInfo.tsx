@@ -13,6 +13,9 @@ type ChangeAccountInfoProps = {
 
 const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileData }) => {
   const [data, setData] = useState<UserData | null>(profileData);
+  const [firstname, setFirstname] = useState(profileData?.given_name);
+  const [surname, setSurname] = useState(profileData?.family_name);
+
   const { updateUserProfile } = useProfile();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -35,6 +38,8 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
 
         localStorage.setItem('profileImage', imageUrl);
         setData(updatedUserData);
+        setFirstname(updatedUserData.given_name);
+        setSurname(updatedUserData.family_name);
       };
       reader.readAsDataURL(e.target.files[0]);
     }
@@ -43,26 +48,26 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   const handleSaveChanges = (event: FormEvent) => {
     event.preventDefault();
 
-    const form = new FormData(event.currentTarget as HTMLFormElement);
+    // const form = new FormData(event.currentTarget as HTMLFormElement);
 
-    const firstName = form.get("given_name");
-    const surname = form.get("family_name");
+    // const firstName = form.get("given_name");
+    // const surname = form.get("family_name");
     // const profileImage = form.get("picture");
 
     let updatedUserData = data;
 
-    if (firstName) {
+    if (firstname) {
       if (updatedUserData) {
-        updatedUserData.given_name = firstName.toString();
+        updatedUserData.given_name = firstname;
       }
-      localStorage.setItem('firstName', firstName.toString());
+      localStorage.setItem('firstName', firstname);
     }
 
     if (surname) {
       if (updatedUserData) {
-        updatedUserData.family_name = surname.toString();
+        updatedUserData.family_name = surname;
       }
-      localStorage.setItem('surname', surname.toString());
+      localStorage.setItem('surname', surname);
     }
 
 
@@ -87,7 +92,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   // }, []);
 
   return (
-    <form action="">
+    <form onSubmit={handleSaveChanges}>
       <div className="w-full rounded-lg p-4">
         <button
           className="flex items-center mb-4 text-gray-600 hover:text-gray-900"
@@ -128,8 +133,9 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
           <div className="text-xl font-semibold flex items-center justify-center">
             <input
               type="text"
-              value={data?.given_name}
+              value={firstname}
               name="given_name"
+              onChange={(event)=>setFirstname(event.target.value)}
               className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
             />
             <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
@@ -140,8 +146,9 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
           <div className="text-xl font-semibold flex items-center justify-center">
             <input
               type="text"
-              value={data?.given_name}
+              value={surname}
               name="family_name"
+              onChange={(event)=>setSurname(event.target.value)}
               className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
             />
             <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
@@ -158,7 +165,6 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
           <button
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={handleSaveChanges}
           >
             Save Changes
           </button>

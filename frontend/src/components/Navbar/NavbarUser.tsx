@@ -16,7 +16,8 @@ export default function NavbarUser() {
 
   const onLogout = async () => {
     await handleSignOut();
-    router.push("/dashboard/guest");
+    router.push("/");
+    // router.push("/dashboard/guest");
   };
 
 
