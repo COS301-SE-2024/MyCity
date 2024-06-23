@@ -7,15 +7,33 @@ import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import { useProfile } from "@/context/UserProfileContext";
+import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
+import axios from "axios";
+
+
 
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
+  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]); 
+  const [dashWatchResults, setDashWatchResults] = useState<any[]>([]); 
 
   useEffect(() => {
-    return () => {
-      // Cleanup code here
+    const fetchData = async () => {
+      try {
+        const user_data = await userProfile.getUserProfile()
+        const user_id = user_data.current.sub
+        const rspwatchlist = await axios.post('https://api.example.com/data',{
+          username : user_id
+        });
+        setDashWatchResults(rspwatchlist.data)
+       
+      } catch (error) {
+        console.log(error)
+      }
     };
+
+    fetchData();
   }, []);
 
   const handleTabChange = (key: Key) => {
@@ -60,12 +78,12 @@ export default function CitizenDashboard() {
               <h1 className="text-center mb-4 ml-2">
                 Based on your proximity to the issue.
               </h1>
-              <FaultCardContainer />
+              <DashboardFaultCardContainer cardData={}/>
               <h1 className="text-2xl text-center font-bold mt-2 ml-2 text-center">Watchlist</h1>
               <h1 className="text-l text-center mb-4 ml-2">
                 All of the issues you have added to your watchlist.
               </h1>
-              <FaultCardContainer />
+              <DashboardFaultCardContainer cardData={} />
             </Tab>
 
             <Tab key={1} title="List">
