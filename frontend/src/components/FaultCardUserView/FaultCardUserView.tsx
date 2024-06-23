@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaTimes,
   FaArrowUp,
@@ -36,16 +36,66 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   image,
   createdBy,
 }) => {
-  const [arrowColor, setArrowColor] = useState("black");
-  const [commentColor, setCommentColor] = useState("black");
-  const [eyeColor, setEyeColor] = useState("black");
+  // Initialize state with local storage values if they exist, otherwise use the provided props
+  const getLocalStorageData = () => {
+    const data = localStorage.getItem(ticketNumber);
+    return data ? JSON.parse(data) : null;
+  };
 
-  const handleArrowClick = () =>
-    setArrowColor(arrowColor === "black" ? "blue" : "black");
-  const handleCommentClick = () =>
-    setCommentColor(commentColor === "black" ? "blue" : "black");
-  const handleEyeClick = () =>
-    setEyeColor(eyeColor === "black" ? "blue" : "black");
+  const initialData = getLocalStorageData();
+  
+  const [currentArrowCount, setCurrentArrowCount] = useState(initialData?.arrowCount || arrowCount);
+  const [currentCommentCount, setCurrentCommentCount] = useState(initialData?.commentCount || commentCount);
+  const [currentViewCount, setCurrentViewCount] = useState(initialData?.viewCount || viewCount);
+  const [arrowColor, setArrowColor] = useState(initialData?.arrowColor || "black");
+  const [commentColor, setCommentColor] = useState(initialData?.commentColor || "black");
+  const [eyeColor, setEyeColor] = useState(initialData?.eyeColor || "black");
+
+  const saveToLocalStorage = (data: any) => {
+    localStorage.setItem(ticketNumber, JSON.stringify(data));
+  };
+
+  useEffect(() => {
+    const data = {
+      arrowCount: currentArrowCount,
+      commentCount: currentCommentCount,
+      viewCount: currentViewCount,
+      arrowColor,
+      commentColor,
+      eyeColor,
+    };
+    saveToLocalStorage(data);
+  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor]);
+
+  const handleArrowClick = () => {
+    if (arrowColor === "black") {
+      setArrowColor("blue");
+      setCurrentArrowCount(currentArrowCount + 1);
+    } else {
+      setArrowColor("black");
+      setCurrentArrowCount(currentArrowCount - 1);
+    }
+  };
+
+  const handleCommentClick = () => {
+    if (commentColor === "black") {
+      setCommentColor("blue");
+      setCurrentCommentCount(currentCommentCount + 1);
+    } else {
+      setCommentColor("black");
+      setCurrentCommentCount(currentCommentCount - 1);
+    }
+  };
+
+  const handleEyeClick = () => {
+    if (eyeColor === "black") {
+      setEyeColor("blue");
+      setCurrentViewCount(currentViewCount + 1);
+    } else {
+      setEyeColor("black");
+      setCurrentViewCount(currentViewCount - 1);
+    }
+  };
 
   if (!show) return null;
 
@@ -101,7 +151,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               >
                 <FaArrowUp />
               </div>
-              <span className="mt-2 text-gray-700">{arrowCount}</span>
+              <span className="mt-2 text-gray-700">{currentArrowCount}</span>
             </div>
             <div className="flex flex-col items-center">
               <div
@@ -111,7 +161,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               >
                 <FaEye />
               </div>
-              <span className="mt-2 text-gray-700">{viewCount}</span>
+              <span className="mt-2 text-gray-700">{currentViewCount}</span>
             </div>
             <div className="flex flex-col items-center">
               <div
@@ -121,7 +171,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               >
                 <FaCommentAlt />
               </div>
-              <span className="mt-2 text-gray-700">{commentCount}</span>
+              <span className="mt-2 text-gray-700">{currentCommentCount}</span>
             </div>
           </div>
 
