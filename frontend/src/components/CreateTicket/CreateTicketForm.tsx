@@ -57,8 +57,8 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         const form = new FormData(event.currentTarget as HTMLFormElement);
 
         //1. coordinates
-        const latitude = selectedAddress?.lat;
-        const longitude = selectedAddress?.lng;
+        const faultlatitude = selectedAddress?.lat;
+        const faultlongitude = selectedAddress?.lng;
 
         //2. form data
         const selectedFault = form.get("fault-type");
@@ -88,6 +88,22 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
 
         //**** make request to create ticket below ****
+        try{
+
+            const response = await axios.post(' https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/create',{
+                asset : selectedFault,
+                description : faultDescription,
+                latitude : faultlatitude,
+                longitude : faultlongitude,
+                username : userId
+            })
+            const ifSuccess = response.data;
+            
+
+        }
+        catch (error){
+            console.error('Error Creating a ticket:', error);
+        }
     };
 
 
