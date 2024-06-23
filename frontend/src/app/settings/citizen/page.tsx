@@ -409,7 +409,7 @@ export default function Settings() {
           <div className="w-64 bg-white bg-opacity-70 rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
               {data?.picture ? (
-                <Image
+                <img
                   src={data?.picture}
                   alt="Profile"
                   width={12}
