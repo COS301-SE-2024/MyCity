@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 
@@ -30,6 +30,7 @@ const FaultCardContainer: React.FC = () => {
     setSelectedCard(null);
   };
 
+  // Placeholder card data for development, this will be replaced by an array of json objects of tickets from the database (see below)
   const cardData: CardData[] = [
     {
       title: "Pothole",
@@ -108,7 +109,45 @@ const FaultCardContainer: React.FC = () => {
       image: "https://via.placeholder.com/300x150",
       createdBy: "Steve Rogers"
     },
+    // Add more placeholder cards here if needed
   ];
+
+  // Function to map JSON object to CardData interface
+  // Essentially allows you to make one field in the JSON object
+  // Correspond to a specific field in the CardData interface so it seemlessly
+  // Works with the existing FaultCardUser component.
+
+  const mapJsonToCardData = (json: any): CardData => {
+    return {
+      title: json.faultname, //e.g if the json object has a field 'faultname' which we want to show on frontend where the current title shows
+      address: json.location,
+      arrowCount: json.upvotes,
+      commentCount: json.comments,
+      viewCount: json.views,
+      ticketNumber: json.ticket_id,
+      description: json.description,
+      image: json.image_url,
+      createdBy: json.reported_by,
+    };
+  };
+
+  // Backend engineers can replace this cardData array with their array from the database
+  const [dynamicCardData, setDynamicCardData] = useState<CardData[]>(cardData);
+
+   /* Uncomment and update the following useEffect to fetch data from the backend
+   useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/cards'); // Replace with the actual API endpoint
+        const data = await response.json();
+        const mappedData = data.map((item: any) => mapJsonToCardData(item)); //use our mapping function to make the json object compatible with the CardData interface
+        setDynamicCardData(mappedData);
+      } catch (error) {
+        console.error("Error fetching card data:", error);
+      }
+    }
+    fetchData();
+  }, []); */
 
   // Function to handle displaying the next set of items
   const showNextItems = () => {
@@ -121,7 +160,7 @@ const FaultCardContainer: React.FC = () => {
   };
 
   // Calculate which items to display based on startIndex and itemsPerPage
-  const visibleItems = cardData
+  const visibleItems = dynamicCardData
     .slice(startIndex, startIndex + itemsPerPage)
     .map((item, index) => (
       <FaultCardUser
@@ -141,14 +180,14 @@ const FaultCardContainer: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full bg-white rounded-lg shadow-md overflow-hidden m-2">
-    <div className="w-full overflow-x-auto custom-scrollbar" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-      <div className="flex justify-start">
-        <div className="flex mb-8 text-center flex-nowrap">
-          {/* Display multiple FaultCardUser components */}
-          {visibleItems}
+      <div className="w-full overflow-x-auto custom-scrollbar" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+        <div className="flex justify-start">
+          <div className="flex mb-8 text-center flex-nowrap">
+            {/* Display multiple FaultCardUser components */}
+            {visibleItems}
+          </div>
         </div>
       </div>
-    </div>
       {showModal && selectedCard && (
         <FaultCardUserView
           show={showModal}
