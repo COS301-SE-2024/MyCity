@@ -2,15 +2,27 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-react';
+import { Avatar } from '@nextui-org/react';
+import { useProfile } from '@/context/UserProfileContext';
+import { UserData } from '@/types/user.types';
 
-const NavbarUser = () => {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+export default function NavbarUser() {
+  // const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [data, setData] = useState<UserData | null>(null);
+  const { getUserProfile } = useProfile();
+
 
   useEffect(() => {
-    const storedProfileImage = localStorage.getItem('profileImage');
-    if (storedProfileImage) {
-      setProfileImage(storedProfileImage);
-    }
+    const getProfileData = async () => {
+      const userData = await getUserProfile();
+
+      if (userData.current) {
+        setData(userData.current);
+      }
+    };
+
+    getProfileData();
+
   }, []);
 
   return (
@@ -30,7 +42,7 @@ const NavbarUser = () => {
             </div>
           </div>
         </Link>
-        
+
         <Link href="/create-ticket" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -39,7 +51,7 @@ const NavbarUser = () => {
             </div>
           </div>
         </Link>
-        
+
         <Link href="/notifications/citizen" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -48,7 +60,7 @@ const NavbarUser = () => {
             </div>
           </div>
         </Link>
-        
+
         <Link href="/search/citizen" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -68,7 +80,7 @@ const NavbarUser = () => {
         </Link>
 
         {/* User profile picture */}
-        <Link href="/settings/citizen" passHref>
+        {/* <Link href="/settings/citizen" passHref>
           <div className="flex items-center gap-1 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             {profileImage ? (
               <Image src={profileImage} alt="User Profile" width={10} height={10} className="h-10 w-10 rounded-full" />
@@ -76,10 +88,26 @@ const NavbarUser = () => {
               <UserCircle size={40} />
             )}
           </div>
+        </Link> */}
+
+
+        <Link href="/settings/citizen" passHref>
+          <div className="flex items-center gap-1 text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+            <Avatar
+              color="primary"
+              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              className="w-10 h-10 b-0 ring-offset-1 ring-offset-blue-300 ring-2 ring-blue-500"
+            />
+            {profileImage ? (
+              <Image src={profileImage} alt="User Profile" width={10} height={10} className="h-10 w-10 rounded-full" />
+            ) : (
+              <UserCircle size={40} />
+            )}
+          </div>
         </Link>
+
+
       </div>
     </nav>
   );
-};
-
-export default NavbarUser;
+}

@@ -1,9 +1,10 @@
 'use client'
 
 
+import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import { Button } from "@nextui-org/react";
 import Link from 'next/link';
-import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Home() {
   return (<div style={{
@@ -11,7 +12,8 @@ export default function Home() {
     height: '100vh',
     overflow: 'hidden',  // Prevents content overflow
   }}>
-    <NavbarGuest />
+    {/* <Navbar /> */}
+    <NavbarUser />
     {/* Background image */}
     <div style={{
       position: 'absolute',

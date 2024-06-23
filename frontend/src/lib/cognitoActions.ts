@@ -1,5 +1,5 @@
 import { UserRole } from "@/types/user.types";
-import { SignUpInput, SignUpOutput, autoSignIn, signIn, signOut, signUp } from "aws-amplify/auth";
+import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signOut, signUp } from "aws-amplify/auth";
 import { setUserPathSuffix, removeUserPathSuffix } from "./serverActions";
 
 
@@ -10,17 +10,6 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
         username: String(form.get("email")),
         password: String(form.get("password")),
     });
-
-    // if(isSignedIn){
-    //     console.log("before invocation");
-    //     await setUserPathSuffix(userRole);
-    //     console.log("after invocation");
-    // }
-
-    // const isSignedIn = true;
-
-    // console.log("before invocation");
-    // console.log("after invocation");
 
     return { isSignedIn };
 }
@@ -78,4 +67,19 @@ const handleSignUpStep = async (step: SignUpOutput["nextStep"], userRole: UserRo
 
     const isSignedIn = false;
     return { isSignedIn };
+};
+
+
+export const authenticateClient = async () => {
+    try {
+        const session = await fetchAuthSession();
+        return (
+            session.tokens?.accessToken !== undefined &&
+            session.tokens?.idToken !== undefined
+        );
+
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 };

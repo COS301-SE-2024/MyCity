@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import NavbarUser from "@/components/Navbar/NavbarUser";
+import Navbar from "@/components/Navbar/Navbar";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { useProfile } from "@/context/UserProfileContext";
@@ -340,7 +340,7 @@ export default function Settings() {
 
   return (
     <div className="flex h-screen">
-      <NavbarUser />
+      <Navbar />
       <main className="flex-1 bg-gray-100 p-6">
         <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">Settings</h1>
         <div className="flex">

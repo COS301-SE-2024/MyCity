@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Building2, Lightbulb, Wrench, Globe } from 'lucide-react';
 
-const Navbar = () => {
+export default function NavbarGuest() {
   return (
     <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
       <Link href="/">
@@ -12,7 +12,7 @@ const Navbar = () => {
       </Link>
 
       <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
-        
+
         <Link href="/" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -21,7 +21,7 @@ const Navbar = () => {
             </div>
           </div>
         </Link>
-        
+
         <Link href="/about" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -30,7 +30,7 @@ const Navbar = () => {
             </div>
           </div>
         </Link>
-        
+
         <Link href="/" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -39,7 +39,7 @@ const Navbar = () => {
             </div>
           </div>
         </Link>
-        
+
         <Link href="/dashboard/guest" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
@@ -52,11 +52,8 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
-
-export default Navbar;
-
-        {/* <Link href="auth/login">
+}
+{/* <Link href="auth/login">
           <div className="flex flex-col items-center gap-1">
             <div className="flex flex-row items-center gap-1 rounded-3xl bg-blue-500 text-white px-4 py-2 w-fit">
               <span>Log In</span>
@@ -71,7 +68,7 @@ export default Navbar;
 
 
 
-        {/* <Dropdown>
+{/* <Dropdown>
           <DropdownTrigger className="cursor-pointer">
             <Avatar showFallback isBordered className="w-[3.2rem] h-[3.2rem]" src="https://i.pravatar.cc/150?u=a04258114e29026302d" />
 
@@ -95,4 +92,3 @@ export default Navbar;
 
 
 
-    
