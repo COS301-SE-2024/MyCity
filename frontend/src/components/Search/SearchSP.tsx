@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
+import Image from 'next/image';
 
 interface ServiceProvider {
   companyLogo?: string;
@@ -26,7 +27,7 @@ const SearchSP: React.FC<SearchSPProps> = ({ serviceProviders }) => {
           <div className="flex items-center w-1/4">
             <span className="text-sm font-medium text-black mr-3">Service Provider</span>
             {sp.companyLogo ? (
-              <img src={sp.companyLogo} alt={`${sp.name} logo`} className="w-16 h-16 object-cover rounded-full ml-40" />
+              <Image src={sp.companyLogo} alt={`${sp.name} logo`} width={16} height={16} className="w-16 h-16 object-cover rounded-full ml-40" />
             ) : (
               <div className="w-16 h-16 bg-gray-200 flex items-center justify-center text-gray-500 rounded-full ml-40">
                 No Logo

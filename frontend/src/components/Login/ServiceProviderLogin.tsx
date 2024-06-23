@@ -3,7 +3,7 @@ import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
 import { UserRole } from '@/types/user.types';
 import { handleSignIn } from '@/lib/cognitoActions';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 
 export default function ServiceProviderLogin() {
@@ -17,8 +17,7 @@ export default function ServiceProviderLogin() {
       const { isSignedIn } = await handleSignIn(form, UserRole.PRIVATE_COMPANY);
 
       if (isSignedIn) {
-        // redirect("/dashboard/service-provider");
-        router.push("/dashboard/service-provider");
+        router.push("/dashboard");
       }
       else {
         throw "Something happened and we could not sign you in.";

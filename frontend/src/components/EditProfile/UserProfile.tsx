@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
-import Link from 'next/link';
 import NavbarUser from '../Navbar/NavbarUser';
-import { Baseline } from 'lucide-react';
 
 import "react-toastify/dist/ReactToastify.css";
 import { Upload } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
+import { UserData } from '@/types/user.types';
+
+interface Props extends React.HTMLAttributes<HTMLElement> {
+  data: UserData | null;
+}
 
 
-export default function CitizenSignup() {
+export default function CitizenSignup({ data }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +23,7 @@ export default function CitizenSignup() {
     try {
       console.log(`User Type: Citizen, Email: ${email}, Password: ${password}`);
       toast.success("Profile updated successfully!");
-    } catch(error) {
+    } catch (error) {
       toast.error("Problem occured while updating the profile.");
     }
   };
@@ -41,7 +44,7 @@ export default function CitizenSignup() {
     // municipality: string;
 
     <div className="px-12 w-full">
-    <NavbarUser />
+      <NavbarUser />
       <ToastContainer />
       <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8 w-full">
 
