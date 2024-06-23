@@ -120,7 +120,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                             {(faultType) =>
                                 <AutocompleteItem key={faultType.name} textValue={faultType.name}>
                                     <div className="flex gap-2 items-center">
-                                        <Image src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
+                                        <img src={faultType.icon} alt={faultType.name} width={6} height={6}  className="flex-shrink-0 w-6 h-6" />
                                         <span className="text-small">{faultType.name}</span>
                                     </div>
                                 </AutocompleteItem>
