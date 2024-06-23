@@ -393,7 +393,8 @@ export default function Settings() {
                 <User className="w-12 h-12 rounded-full mr-4" />
               )}
               <div>
-                <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p>
+              <p className="text-lg font-semibold">{firstName} {surname}</p>
+                {/* <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p> */}
               </div>
             </div>
             <nav>
