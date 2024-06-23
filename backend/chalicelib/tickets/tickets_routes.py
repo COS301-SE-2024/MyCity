@@ -57,6 +57,7 @@ def get_my_watchlist():
     response = get_watchlist(ticket_data)
     return response
 
+
 def format_response(response):
     return Response(
         body=response["body"],
