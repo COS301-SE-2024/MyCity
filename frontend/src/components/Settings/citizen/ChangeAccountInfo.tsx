@@ -10,9 +10,9 @@ type ChangeAccountInfoProps = {
   profileData: UserData | null;
 };
 
-const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileData }) => {
-  const [firstName, setFirstName] = useState(localStorage.getItem('firstName') || "Kyle");
-  const [surname, setSurname] = useState(localStorage.getItem('surname') || "Marshall");
+const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack }) => {
+  const [firstName, setFirstName] = useState(localStorage.getItem('firstName') || "Jane");
+  const [surname, setSurname] = useState(localStorage.getItem('surname') || "Doe");
   const [profileImage, setProfileImage] = useState(localStorage.getItem('profileImage') || "");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -47,7 +47,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   }, []);
 
   return (
-    <div className="w-full bg-white rounded-lg p-4">
+    <div className="w-full rounded-lg p-4">
       <button
         className="flex items-center mb-4 text-gray-600 hover:text-gray-900"
         onClick={onBack}

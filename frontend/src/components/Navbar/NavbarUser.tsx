@@ -92,26 +92,26 @@ export default function NavbarUser() {
         </Link>
 
 
-        <Dropdown className="bg-blue-900">
+        <Dropdown className="bg-white">
           <DropdownTrigger className="cursor-pointer">
             <Avatar
               showFallback
               src={data?.picture}
-              className="w-10 h-10 b-0 ring-offset-1 ring-offset-blue-300 ring-2 ring-blue-500"
+              className="w-10 h-10 b-0 ring-offset-1 ring-offset-black-300 ring-2 ring-black-500"
             />
           </DropdownTrigger>
 
-          <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-white">
-            <DropdownItem key="settings" href="/settings/citizen" className="h-9 hover:bg-blue-500 focus:bg-blue-500" textValue="Settings">
-              <span className="text-sm">Settings</span>
+          <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-black">
+            <DropdownItem key="settings" href="/settings/citizen" role="link" className="h-9 hover:bg-grey-500" textValue="Settings">
+                <span className="text-sm">Settings</span>
             </DropdownItem>
 
-            <DropdownItem key="about" href="/about" className="h-9 hover:bg-blue-500" textValue="About us">
-              <span className="text-sm">About us</span>
+            <DropdownItem key="about" href="/about" role="link" className="h-9 hover:bg-grey-500" textValue="About us">
+                <span className="text-sm">About us</span>
             </DropdownItem>
 
-            <DropdownItem key="logout" onClick={onLogout} className="h-9 hover:bg-blue-500" textValue="Log out">
-              <span className="text-danger text-sm">Log out</span>
+            <DropdownItem key="logout" onClick={onLogout} role="button" className="h-9 hover:bg-grey-500" textValue="Log out">
+                <span className="text-danger text-sm">Log out</span>
             </DropdownItem>
 
 

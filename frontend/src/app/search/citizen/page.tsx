@@ -124,11 +124,27 @@ export default function CreateTicket() {
   return (
     <div>
       <Navbar/>
+      <div
+        style={{
+          position: "fixed", // Change position to 'fixed'
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
+          zIndex: -1, // Ensures the background is behind other content
+        }}
+      ></div>
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
-          <h1 className="text-4xl font-bold">Search</h1>
+          <h1 className="text-4xl font-bold text-white text-opacity-80">Search</h1>
           <button
-            className="ml-2 text-gray-500 hover:text-gray-700"
+                 className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             onClick={() => setIsHelpModalOpen(true)}
           >
             <HelpCircle size={24} />
@@ -169,7 +185,7 @@ export default function CreateTicket() {
         )}
 
         <div className="flex flex-col items-center mb-4">
-          <span className="text-xl text-gray-700 mb-2 font-bold">
+          <span className="text-xl text-gray-700 mb-2 font-bold text-white text-opacity-80">
             Search for anything...
           </span>
           <form
@@ -235,7 +251,7 @@ export default function CreateTicket() {
               </div>
             )}
           </form>
-          <span className="text-sm text-gray-500 mt-2">
+          <span className="text-sm text-white text-opacity-80 0 mt-2">
             Filtering by:{" "}
             {selectedFilter === "myLocation"
               ? "Current Municipality"
@@ -263,7 +279,7 @@ export default function CreateTicket() {
         )}
         {!loading && hasSearched && searchResults.length === 0 && (
           <div className="flex justify-center items-center mt-4">
-            <p className="text-gray-500 mt-16">
+            <p className="mt-16 text-white text-opacity-80">
               No results found. Please try a different search term.
             </p>
           </div>
