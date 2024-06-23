@@ -5,7 +5,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
-import NavbarUser from "@/components/Navbar/NavbarUser";
+import Navbar from "@/components/Navbar/Navbar";
 import { useProfile } from "@/context/UserProfileContext";
 import { FaQuestionCircle, FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
@@ -31,7 +31,7 @@ export default function CitizenDashboard() {
 
   return (
     <div>
-      <NavbarUser />
+      <Navbar />
 
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
@@ -97,7 +97,7 @@ export default function CitizenDashboard() {
                 Based on your proximity to the issue.
               </h1>
               <FaultCardContainer />
-              <h1 className="text-2xl text-center font-bold mt-2 ml-2 text-center">Watchlist</h1>
+              <h1 className="text-2xl text-center font-bold mt-2 ml-2">Watchlist</h1>
               <h1 className="text-l text-center mb-4 ml-2">
                 All of the issues you have added to your watchlist.
               </h1>

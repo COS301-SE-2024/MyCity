@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent, useRef } from "react";
-import NavbarUser from "@/components/Navbar/NavbarUser";
+import Navbar from "@/components/Navbar/Navbar";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
@@ -123,7 +123,7 @@ export default function CreateTicket() {
 
   return (
     <div>
-      <NavbarUser />
+      <Navbar/>
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold">Search</h1>

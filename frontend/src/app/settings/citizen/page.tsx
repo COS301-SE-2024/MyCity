@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import NavbarUser from "@/components/Navbar/NavbarUser";
+import Navbar from "@/components/Navbar/Navbar";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { useProfile } from "@/context/UserProfileContext";
@@ -29,9 +29,9 @@ export default function Settings() {
   const [darkMode, setDarkMode] = useState(false);
   const [largerFont, setLargerFont] = useState(false);
 
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [firstName, setFirstName] = useState<string>("");
-  const [surname, setSurname] = useState<string>("");
+  // const [profileImage, setProfileImage] = useState<string | null>(null);
+  // const [firstName, setFirstName] = useState<string>("");
+  // const [surname, setSurname] = useState<string>("");
 
   const router = useRouter();
 
@@ -41,19 +41,30 @@ export default function Settings() {
       const profile = await getUserProfile();
 
       if (profile.current) {
-        setData(profile.current);
+        const storedProfileImage = localStorage.getItem("profileImage") ? localStorage.getItem("profileImage")! : undefined;
+        const storedFirstName = localStorage.getItem("firstName") ? localStorage.getItem("firstName")! : undefined;
+        const storedSurname = localStorage.getItem("surname") ? localStorage.getItem("surname")! : undefined;
+
+        const updatedUserData: UserData = {
+          sub: profile.current.sub,
+          email: profile.current.email,
+          given_name: profile.current.given_name ? profile.current.given_name : storedFirstName,
+          family_name: profile.current.family_name ? profile.current.family_name : storedSurname,
+          picture: profile.current.picture ? profile.current.picture : storedProfileImage,
+          user_role: profile.current.user_role
+        };
+
+        setData(updatedUserData);
       }
     };
 
-    const storedProfileImage = localStorage.getItem("profileImage");
-    const storedFirstName = localStorage.getItem("firstName");
-    const storedSurname = localStorage.getItem("surname");
 
-    if (storedProfileImage) setProfileImage(storedProfileImage);
-    if (storedFirstName) setFirstName(storedFirstName);
-    if (storedSurname) setSurname(storedSurname);
 
-    // getProfileData();
+    // if (storedProfileImage) setProfileImage(storedProfileImage);
+    // if (storedFirstName) setFirstName(storedFirstName);
+    // if (storedSurname) setSurname(storedSurname);
+
+    getProfileData();
   }, [getUserProfile]);
 
   const toggleDarkMode = () => {
@@ -344,10 +355,10 @@ export default function Settings() {
 
   return (
     <div>
-      <NavbarUser />
+      <Navbar />
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
-        <h1 className="text-4xl font-bold">Settings</h1>
+          <h1 className="text-4xl font-bold">Settings</h1>
           <HelpCircle
             className="ml-2 text-gray-600 cursor-pointer"
             size={24}
@@ -381,9 +392,9 @@ export default function Settings() {
         <div className="flex">
           <div className="w-64 bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center mb-4">
-              {profileImage ? (
+              {data?.picture ? (
                 <Image
-                  src={profileImage}
+                  src={data?.picture}
                   alt="Profile"
                   width={12}
                   height={12}
@@ -393,8 +404,8 @@ export default function Settings() {
                 <User className="w-12 h-12 rounded-full mr-4" />
               )}
               <div>
-              <p className="text-lg font-semibold">{firstName} {surname}</p>
-                {/* <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p> */}
+                {/* <p className="text-lg font-semibold">{firstName} {surname}</p> */}
+                <p className="text-lg font-semibold">{data?.given_name} {data?.family_name}</p>
               </div>
             </div>
             <nav>
