@@ -43,7 +43,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
       setPasswordError("Incorrect old password");
     }
   };
-  
 
   const validatePassword = (password: string) => {
     const passwordRules = [
@@ -123,6 +122,17 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
           </div>
         </div>
       </Modal>
+
+      {!isOldPasswordVerified && !isModalOpen && (
+        <div className="flex justify-center mt-4">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 mt-4 rounded hover:bg-blue-600"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Enter Old Password
+          </button>
+        </div>
+      )}
 
       {isOldPasswordVerified && (
         <>

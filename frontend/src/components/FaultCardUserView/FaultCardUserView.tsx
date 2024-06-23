@@ -37,25 +37,20 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   createdBy,
 }) => {
   // Initialize state with local storage values if they exist, otherwise use the provided props
-  const getLocalStorageData = () => {
-    const data = localStorage.getItem(ticketNumber);
-    return data ? JSON.parse(data) : null;
-  };
+  const [currentArrowCount, setCurrentArrowCount] = useState(arrowCount);
+  const [currentCommentCount, setCurrentCommentCount] = useState(commentCount);
+  const [currentViewCount, setCurrentViewCount] = useState(viewCount);
+  const [arrowColor, setArrowColor] = useState('black');
+  const [commentColor, setCommentColor] = useState('black');
+  const [eyeColor, setEyeColor] = useState('black');
 
-  const initialData = getLocalStorageData();
   
-  const [currentArrowCount, setCurrentArrowCount] = useState(initialData?.arrowCount || arrowCount);
-  const [currentCommentCount, setCurrentCommentCount] = useState(initialData?.commentCount || commentCount);
-  const [currentViewCount, setCurrentViewCount] = useState(initialData?.viewCount || viewCount);
-  const [arrowColor, setArrowColor] = useState(initialData?.arrowColor || "black");
-  const [commentColor, setCommentColor] = useState(initialData?.commentColor || "black");
-  const [eyeColor, setEyeColor] = useState(initialData?.eyeColor || "black");
-
-  const saveToLocalStorage = (data: any) => {
-    localStorage.setItem(ticketNumber, JSON.stringify(data));
-  };
 
   useEffect(() => {
+    const saveToLocalStorage = (data: any) => {
+      localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
+    };
+  
     const data = {
       arrowCount: currentArrowCount,
       commentCount: currentCommentCount,
@@ -65,8 +60,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       eyeColor,
     };
     saveToLocalStorage(data);
-  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor]);
-
+  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor, ticketNumber]);
+  
   const handleArrowClick = () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
