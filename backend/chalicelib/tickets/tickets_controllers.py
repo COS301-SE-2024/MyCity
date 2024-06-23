@@ -146,8 +146,9 @@ def findMunicipality(location):
     else:
         return "No data was produced"
 
+
 def getMyTickets(tickets_data):
-    try: 
+    try:
         required_fields = [
             "username",
         ]
@@ -160,29 +161,28 @@ def getMyTickets(tickets_data):
                     }
                 }
                 raise ClientError(error_response, "InvalideFields")
-        response = tickets_table.scan(FilterExpression=Attr("username").eq(tickets_data['username']))
+        response = tickets_table.scan(
+            FilterExpression=Attr("username").eq(tickets_data["username"])
+        )
         items = response["Items"]
-        if len(items) > 0 :
+        if len(items) > 0:
             return items
-        else :
+        else:
             error_response = {
-                    "Error": {
-                        "Code": "NoTickets",
-                        "Message": "Doesnt have ticket",
-                    }
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket",
                 }
+            }
             raise ClientError(error_response, "NoTicket")
-        
-
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
 
 
 def get_in_my_municipality(tickets_data):
-    try: 
+    try:
         required_fields = [
             "municipality_id",
         ]
@@ -195,27 +195,28 @@ def get_in_my_municipality(tickets_data):
                     }
                 }
                 raise ClientError(error_response, "InvalideFields")
-        response = tickets_table.scan(FilterExpression=Attr("municipality_id").eq(tickets_data['municipality_id']))
+        response = tickets_table.scan(
+            FilterExpression=Attr("municipality_id").eq(tickets_data["municipality_id"])
+        )
         items = response["Items"]
-        if len(items) > 0 :
+        if len(items) > 0:
             return items
-        else :
+        else:
             error_response = {
-                    "Error": {
-                        "Code": "NoTickets",
-                        "Message": "Doesnt have ticket in municipality",
-                    }
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket in municipality",
                 }
+            }
             raise ClientError(error_response, "NoTicket")
-        
-
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
+
+
 def get_watchlist(tickets_data):
-    try: 
+    try:
         collective = []
         required_fields = [
             "username",
@@ -229,35 +230,36 @@ def get_watchlist(tickets_data):
                     }
                 }
                 raise ClientError(error_response, "InvalideFields")
-        response = watchlist_table.scan(FilterExpression=Attr("user_id").eq(tickets_data['username']))
+        response = watchlist_table.scan(
+            FilterExpression=Attr("user_id").eq(tickets_data["username"])
+        )
         items = response["Items"]
-        if len(items) > 0 :
+        if len(items) > 0:
             for item in items:
-                respitem = tickets_table.query(KeyConditionExpression=Key('ticket_id').eq(item['ticket_id']))
-                ticketsItems = respitem['Items']
+                respitem = tickets_table.query(
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+                )
+                ticketsItems = respitem["Items"]
                 if len(ticketsItems) > 0:
                     collective.append(ticketsItems)
-                else :
-                   error_response = {
+                else:
+                    error_response = {
                         "Error": {
                             "Code": "Inconsistency",
                             "Message": "Inconsistency in ticket_id",
                         }
                     }
-                   raise ClientError(error_response, "Inconsistencies")
+                    raise ClientError(error_response, "Inconsistencies")
 
-         
             return collective
-        else :
+        else:
             error_response = {
-                    "Error": {
-                        "Code": "NoWatchlist",
-                        "Message": "Doesnt have a watchlist",
-                    }
+                "Error": {
+                    "Code": "NoWatchlist",
+                    "Message": "Doesnt have a watchlist",
                 }
+            }
             raise ClientError(error_response, "NoTicketsInWatchlist")
-        
-
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
