@@ -1,12 +1,13 @@
 'use client'
 
 import { UserData, UserRole } from '@/types/user.types';
-import { fetchUserAttributes, getCurrentUser } from 'aws-amplify/auth';
+import { fetchUserAttributes, getCurrentUser, updateUserAttributes } from 'aws-amplify/auth';
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
 
 export interface UserProfileContextProps {
     getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
+    updateUserProfile: (data:UserData) => void;
 }
 
 
@@ -32,7 +33,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             given_name: userDetails.given_name,
             family_name: userDetails.family_name,
             picture: userDetails.picture,
-            user_role: userDetails["custom:user_role"] as UserRole
+            user_role: userDetails["custom:user_role"] as UserRole,
+            municipality: userDetails["custom:municipality"]
         };
 
 
@@ -40,9 +42,23 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     };
 
 
+    const updateUserProfile = async (data:UserData) => {
+      if(data){
+        userProfile.current = data;
+      }
+
+      await updateUserAttributes({
+        userAttributes: {
+          given_name: data.given_name,
+          family_name: data.family_name,
+        },
+      });
+    };
+
+
 
     return (
-        <UserProfileContext.Provider value={{ getUserProfile }}>
+        <UserProfileContext.Provider value={{ getUserProfile, updateUserProfile }}>
             {children}
         </UserProfileContext.Provider>
     );

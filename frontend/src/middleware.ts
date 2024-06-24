@@ -44,8 +44,12 @@ export async function middleware(request: NextRequest) {
   //2. IF USER IS NOT LOGGED IN
   else {
 
-    //2.1) and tries to access dashboard/profile/settings, redirect them to login page
-    if (startsWith("/dashboard") || startsWith("/profile") || startsWith("/settings")) {
+    // if (isOn("/dashboard")) {
+    //   return NextResponse.redirect(new URL("/dashboard/guest", request.nextUrl));
+    // }
+
+    //2.2) and tries to access user dashboard/profile/settings, redirect them to login page
+    if (isOn("/dashboard/citizen") || isOn("/dashboard/municipality") || startsWith("/profile") || startsWith("/settings")) {
       return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
     }
 
@@ -62,10 +66,10 @@ export const config = {
    * Match all request paths except for the ones starting with
    */
 
- 
+
   matcher: [
     "/((?!api|_next/static|_next/image|.*\\.png$).*)"],
-}; 
+};
 
 
 
@@ -128,8 +132,8 @@ export const config = {
   /*
    * Match all request paths except for the ones starting with
    */
-  /*
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+/*
+matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
 */
 

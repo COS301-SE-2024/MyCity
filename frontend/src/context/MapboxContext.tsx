@@ -152,7 +152,7 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     coordinates: `${mapCenter.lat},${mapCenter.lng}`,
                     countries: ["za"],
                     maxResults: 1,
-                    types: ["street", "county", "townhall", "city"],
+                    types: ["street"],
                     language: "en"
                 });
 
