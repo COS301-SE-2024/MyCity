@@ -25,7 +25,11 @@ assets_table = dynamodb.Table("asset")
 municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
 ticketupdate_table = dynamodb.Table("ticket_updates")
-address = ['23 South Street,Hillvill', '25 Klerksdorp,Suikerbossie','5 1st Street,  Hillborrow']
+address = [
+    "23 South Street,Hillvill",
+    "25 Klerksdorp,Suikerbossie",
+    "5 1st Street,  Hillborrow",
+]
 
 
 def generate_id():
@@ -228,12 +232,14 @@ def get_in_my_municipality(tickets_data):
             FilterExpression=Attr("municipality_id").eq(tickets_data["municipality_id"])
         )
         items = response["Items"]
-        if len(items) > 0 :
+        if len(items) > 0:
             for item in items:
-                response_item = ticketupdate_table.scan(FilterExpression=Attr("ticket_id").eq(item['ticket_id']))
-                item['commentcount'] = len(response_item['Items'])
-                rdnint = random.randint(0,2)
-                item['address'] = address[rdnint]
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                )
+                item["commentcount"] = len(response_item["Items"])
+                rdnint = random.randint(0, 2)
+                item["address"] = address[rdnint]
             return items
         else:
             error_response = {
@@ -276,10 +282,12 @@ def get_watchlist(tickets_data):
                 ticketsItems = respitem["Items"]
                 if len(ticketsItems) > 0:
                     for tckitem in ticketsItems:
-                        response_item = ticketupdate_table.scan(FilterExpression=Attr("ticket_id").eq(tckitem['ticket_id']))
-                        tckitem['commentcount'] = len(response_item['Items'])
-                        rdnint = random.randint(0,2)
-                        tckitem['address'] = address[rdnint]
+                        response_item = ticketupdate_table.scan(
+                            FilterExpression=Attr("ticket_id").eq(tckitem["ticket_id"])
+                        )
+                        tckitem["commentcount"] = len(response_item["Items"])
+                        rdnint = random.randint(0, 2)
+                        tckitem["address"] = address[rdnint]
                     collective.append(ticketsItems)
                 else:
                     error_response = {
