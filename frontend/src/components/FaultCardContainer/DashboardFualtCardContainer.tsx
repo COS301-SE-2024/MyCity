@@ -4,7 +4,7 @@ import DashboardFaultCardUser from "@/components/FaultCardUser/DashboardFaultCar
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
 interface CardData {
   dateClosed: string;
-  upvote : number;
+  upvotes : number;
   asset_id: string;
   state: string;
   dateOpened: string;
@@ -14,10 +14,14 @@ interface CardData {
   municipality_id: string;
   address : string;
   commentcount : number;
-  createdBy: string;
+  ticket_id : string;
 }
 
-const DashboardFaultCardContainer: React.FC = () => {
+interface CardComponentProps {
+  cardData: CardData[];
+}
+
+const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = [] }) => {
   const [startIndex, setStartIndex] = useState(0); // Index to track the starting point of displayed items
   const itemsPerPage = 7; // Number of items to display per page
   const [showModal, setShowModal] = useState(false);
@@ -33,28 +37,26 @@ const DashboardFaultCardContainer: React.FC = () => {
     setSelectedCard(null);
   };
 
-  const cardData: CardData[] = [
-  ];
 
   // Function to handle displaying the next set of items
   const showNextItems = () => {
-    setStartIndex((prevIndex) => prevIndex + itemsPerPage);
+    setStartIndex((prevIndex) => Math.min(prevIndex + itemsPerPage, cardData.length - itemsPerPage));
   };
 
   // Function to handle displaying the previous set of items
   const showPreviousItems = () => {
-    setStartIndex((prevIndex) => prevIndex - itemsPerPage);
+    setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
   };
 
   // Calculate which items to display based on startIndex and itemsPerPage
   const visibleItems = cardData
-    .slice(startIndex, startIndex + itemsPerPage)
+    .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
     .map((item, index) => (
       <DashboardFaultCardUser
-        key={startIndex + index}
+        key={item.ticket_id}
         title={item.asset_id}
         address={item.address}
-        arrowCount={item.upvote}
+        arrowCount={item.upvotes}
         commentCount={item.commentcount}
         viewCount={item.viewcount}
         description={item.description}
@@ -65,10 +67,30 @@ const DashboardFaultCardContainer: React.FC = () => {
     ));
 
   return (
-    <div className="flex flex-col items-center w-full bg-white rounded-lg shadow-md overflow-hidden m-2">
-    <div className="w-full overflow-x-auto custom-scrollbar" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-      <div className="flex justify-start">
-        <div className="flex mb-8 text-center flex-nowrap">
+    <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2">
+        <div
+          className="w-full overflow-x-auto custom-scrollbar"
+          style={{
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            scrollbarWidth: 'thin', // For Firefox
+            scrollbarColor: 'rgba(255, 255, 255, 0.5) transparent', // For Firefox
+          }}
+        >
+          <style jsx>{`
+            ::-webkit-scrollbar {
+              height: 6px; /* Make the scrollbar smaller */
+            }
+            ::-webkit-scrollbar-thumb {
+              background: rgba(255, 255, 255, 0.5); /* Color of the scrollbar */
+              border-radius: 3px; /* Roundness of the scrollbar */
+            }
+            ::-webkit-scrollbar-track {
+              background: transparent; /* Color of the track */
+            }
+          `}</style>
+          <div className="flex justify-start">
+            <div className="flex mb-8 text-center flex-nowrap">
           {/* Display multiple FaultCardUser components */}
           {visibleItems}
         </div>
@@ -80,13 +102,13 @@ const DashboardFaultCardContainer: React.FC = () => {
           onClose={handleCloseModal}
           title={selectedCard.asset_id}
           address={selectedCard.address}
-          arrowCount={selectedCard.upvote}
+          arrowCount={selectedCard.upvotes}
           commentCount={selectedCard.commentcount}
           viewCount={selectedCard.viewcount}
           ticketNumber={selectedCard.asset_id}
           description={selectedCard.description}
           image={selectedCard.imageURL}
-          createdBy={selectedCard.createdBy}
+          createdBy={selectedCard.dateOpened}
         />
       )}
     </div>

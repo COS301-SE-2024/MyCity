@@ -25,11 +25,21 @@ export default function CitizenDashboard() {
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile()
-        const user_id = user_data.current.sub
-        const rspwatchlist = await axios.post('https://api.example.com/data',{
+        const user_id = user_data.current?.sub
+        const rspwatchlist = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getwatchlist',{
           username : user_id
         });
-        setDashWatchResults(rspwatchlist.data)
+        const municipality = user_data.current?.municipality
+        const rspmunicipality = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getinarea',{
+          municipality_id : municipality
+        });
+        console.log(user_id)
+        console.log(rspmunicipality.data)
+        console.log(municipality)
+        console.log(rspwatchlist.data)
+        const flattenedWatchlist = rspwatchlist.data.flat();
+        setDashMuniResults(rspmunicipality.data)
+        setDashWatchResults(flattenedWatchlist)
        
       } catch (error) {
         console.log(error)
@@ -46,6 +56,9 @@ export default function CitizenDashboard() {
   const toggleHelpMenu = () => {
     setIsHelpOpen(!isHelpOpen);
   };
+
+  const hasStatusFieldMuni = dashMuniResults.some(item => item.Status !== undefined);
+  const hasStatusFieldWatch = dashWatchResults.some(item => item.Status !== undefined);
 
   return (
     <div>
@@ -136,14 +149,22 @@ export default function CitizenDashboard() {
               <h1 className="text-center text-white mb-4 ml-2">
                 Based on your proximity to the issue.
               </h1>
-              <FaultCardContainer />
+                  {hasStatusFieldMuni ? (
+                    <FaultCardContainer />
+                  ) : (
+                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+                  )}
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                 Watchlist
               </h1>
               <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
                 All of the issues you have added to your watchlist.
               </h1>
-              <DashboardFaultCardContainer cardData={} />
+              {hasStatusFieldWatch ? (
+                  <FaultCardContainer />
+                ) : (
+                  <DashboardFaultCardContainer cardData={dashWatchResults} />
+                  )}
             </Tab>
 
             <Tab key={1} title="List">
