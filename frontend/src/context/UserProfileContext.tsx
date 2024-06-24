@@ -7,7 +7,7 @@ import { MutableRefObject, ReactNode, createContext, useContext, useRef } from '
 
 export interface UserProfileContextProps {
     getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
-    updateUserProfile: (data:UserData) => void;
+    updateUserProfile: (data: UserData) => void;
 }
 
 
@@ -37,22 +37,29 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             municipality: userDetails["custom:municipality"]
         };
 
+        //for the picture, prefer what is in local storage (just for demo 2)
+        const pic = localStorage.getItem("profileImage");
+
+        if (pic) {
+            userProfile.current.picture = pic;
+        }
+
 
         return userProfile;
     };
 
 
-    const updateUserProfile = async (data:UserData) => {
-      if(data){
-        userProfile.current = data;
-      }
+    const updateUserProfile = async (data: UserData) => {
+        if (data) {
+            userProfile.current = data;
+        }
 
-      await updateUserAttributes({
-        userAttributes: {
-          given_name: data.given_name,
-          family_name: data.family_name,
-        },
-      });
+        await updateUserAttributes({
+            userAttributes: {
+                given_name: data.given_name,
+                family_name: data.family_name,
+            },
+        });
     };
 
 
