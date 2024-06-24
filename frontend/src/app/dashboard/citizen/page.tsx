@@ -9,16 +9,44 @@ import Navbar from "@/components/Navbar/Navbar";
 import { useProfile } from "@/context/UserProfileContext";
 import { FaQuestionCircle, FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
+import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
+import axios from "axios";
+
+
 
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]); 
+  const [dashWatchResults, setDashWatchResults] = useState<any[]>([]); 
 
   useEffect(() => {
-    return () => {
-      // Cleanup code here
+    const fetchData = async () => {
+      try {
+        const user_data = await userProfile.getUserProfile()
+        const user_id = user_data.current?.sub
+        const rspwatchlist = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getwatchlist',{
+          username : user_id
+        });
+        const municipality = user_data.current?.municipality
+        const rspmunicipality = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getinarea',{
+          municipality_id : municipality
+        });
+        console.log(user_id)
+        console.log(rspmunicipality.data)
+        console.log(municipality)
+        console.log(rspwatchlist.data)
+        const flattenedWatchlist = rspwatchlist.data.flat();
+        setDashMuniResults(rspmunicipality.data)
+        setDashWatchResults(flattenedWatchlist)
+       
+      } catch (error) {
+        console.log(error)
+      }
     };
+
+    fetchData();
   }, []);
 
   const handleTabChange = (key: Key) => {
@@ -28,6 +56,9 @@ export default function CitizenDashboard() {
   const toggleHelpMenu = () => {
     setIsHelpOpen(!isHelpOpen);
   };
+
+  const hasStatusFieldMuni = dashMuniResults.some(item => item.Status !== undefined);
+  const hasStatusFieldWatch = dashWatchResults.some(item => item.Status !== undefined);
 
   return (
     <div>
@@ -118,14 +149,22 @@ export default function CitizenDashboard() {
               <h1 className="text-center text-white mb-4 ml-2">
                 Based on your proximity to the issue.
               </h1>
-              <FaultCardContainer />
+                  {hasStatusFieldMuni ? (
+                    <FaultCardContainer />
+                  ) : (
+                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+                  )}
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                 Watchlist
               </h1>
               <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
                 All of the issues you have added to your watchlist.
               </h1>
-              <FaultCardContainer />
+              {hasStatusFieldWatch ? (
+                  <FaultCardContainer />
+                ) : (
+                  <DashboardFaultCardContainer cardData={dashWatchResults} />
+                  )}
             </Tab>
 
             <Tab key={1} title="List">
