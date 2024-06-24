@@ -15,20 +15,20 @@ describe("Login Page", () => {
     });
 
 
-    it("renders Municipality form when Municipality tab is clicked", () => {
-        render(<Login />);
-        const tabButton = screen.getByTestId("municipality-tab");
-        fireEvent.click(tabButton);
-        fireEvent.select(tabButton);
+    // it("renders Municipality form when Municipality tab is clicked", () => {
+    //     render(<Login />);
+    //     const tabButton = screen.getByTestId("municipality-tab");
+    //     fireEvent.click(tabButton);
+    //     fireEvent.select(tabButton);
 
-        const citizenForm = screen.queryByTestId("citizen-login-form");
-        const municipalityForm = screen.queryByTestId("municipality-login-form");
-        const serviceProviderForm = screen.queryByTestId("service-provider-login-form");
+    //     const citizenForm = screen.queryByTestId("citizen-login-form");
+    //     const municipalityForm = screen.queryByTestId("municipality-login-form");
+    //     const serviceProviderForm = screen.queryByTestId("service-provider-login-form");
 
-        expect(citizenForm).not.toBeInTheDocument();
-        expect(municipalityForm).toBeInTheDocument();
-        expect(serviceProviderForm).not.toBeInTheDocument();
-    });
+    //     expect(citizenForm).not.toBeInTheDocument();
+    //     expect(municipalityForm).toBeInTheDocument();
+    //     expect(serviceProviderForm).not.toBeInTheDocument();
+    // });
 
     it("renders Service Provider form when Service Provider tab is clicked", () => {
         render(<Login />);

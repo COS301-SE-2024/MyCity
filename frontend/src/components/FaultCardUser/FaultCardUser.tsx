@@ -35,26 +35,30 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
 }) => {
   return (
     <div
-  className="w-80 bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
+  className="w-80 h-auto bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
   onClick={onClick}
 >
-
-      <div className="w-full bg-gray-200">
-        {image ? (
-          <img src={image} alt={title} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500">
-            Image Placeholder
-          </div>
-        )}
+  <div className="w-full h-48 bg-gray-200 rounded-t-lg">
+    {image ? (
+      <img
+        src={image}
+        alt={title}
+        className="w-full h-full object-cover rounded-t-lg"
+      />
+    ) : (
+      <div className="w-full h-full flex items-center justify-center text-gray-500 rounded-t-lg">
+        Image Placeholder
       </div>
-      <div className="p-4 flex flex-col justify-center items-center">
-        <div className="text-center">
-          <div className="font-bold text-xl mb-2">{title}</div>
-          <p className="text-gray-700 text-base">{address}</p>
-        </div>
-      </div>
+    )}
+  </div>
+  <div className="p-4 flex flex-col justify-center items-center rounded-b-lg">
+    <div className="text-center">
+      <div className="font-bold text-xl mb-2">{title}</div>
+      <p className="text-gray-700 text-base">{address}</p>
     </div>
+  </div>
+</div>
+
   );
 };
 
