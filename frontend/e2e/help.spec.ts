@@ -4,21 +4,52 @@ test.describe("help menu", () => {
 
     test("user can access help menu on any page", async ({ page }) => {
         await page.goto("http://localhost:3000/");
+        await page.waitForTimeout(5000);
 
         // login
-        await page.getByText("Login").click();
+        await page.getByTestId("login-btn").click();
+
+        await page.waitForTimeout(5000);
 
         await page.getByLabel("Email").fill("janedoe@example.com");
         await page.getByLabel("Password").fill("Password@123");
 
-        // click on login button
-        await page.getByText("Login").click();
+        await page.waitForTimeout(5000);
 
-        // expects page url to not have changed
-        expect(page.url()).toEqual("http://localhost:3000/dashboard/citizen");
+        // click on login button
+        await page.getByTestId("submit-btn").click();
+
+        await page.waitForURL("http://localhost:3000/dashboard/citizen");
+
+        await page.waitForTimeout(5000);
+        page.getByTestId("open-help-menu").click();
+        expect(page.getByTestId("help")).toBeVisible();
+        
+        await page.waitForTimeout(5000);
+        page.getByTestId("close-help-menu").click();
+
+        await page.waitForTimeout(5000);
+
+        await page.goto("http://localhost:3000/search/citizen");
 
         page.getByTestId("open-help-menu").click();
+        expect(page.getByTestId("help")).toBeVisible();
+        await page.waitForTimeout(5000);
+        page.getByTestId("close-help-menu").click();
 
+        //try search
+        await page.getByText("Municipality Tickets");
+
+        await page.waitForTimeout(5000);
+
+        
+        await page.goto("http://localhost:3000/settings/citizen");
+        page.getByTestId("open-help-menu").click();
+        expect(page.getByTestId("help")).toBeVisible();
+        await page.waitForTimeout(5000);
+        page.getByTestId("close-help-menu").click();
+
+        await page.waitForTimeout(5000);
 
     });
 

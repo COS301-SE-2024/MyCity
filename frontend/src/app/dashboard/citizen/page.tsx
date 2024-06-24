@@ -60,7 +60,7 @@ export default function CitizenDashboard() {
         </div>
 
         {isHelpOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+          <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
                  data-testid="close-help-menu"

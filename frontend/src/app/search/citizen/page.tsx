@@ -123,7 +123,7 @@ export default function CreateTicket() {
 
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div
         style={{
           position: "fixed", // Change position to 'fixed'
@@ -144,19 +144,19 @@ export default function CreateTicket() {
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80">Search</h1>
           <button
-                 className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+            className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             onClick={() => setIsHelpModalOpen(true)}
           >
-            <HelpCircle size={24}    data-testid="open-help-menu" />
+            <HelpCircle size={24} data-testid="open-help-menu" />
           </button>
         </div>
 
         {isHelpModalOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+          <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
                 className="absolute top-2 right-2 text-gray-700"
-                   data-testid="close-help-menu"
+                data-testid="close-help-menu"
                 onClick={() => setIsHelpModalOpen(false)}
               >
                 <X size={24} />
@@ -186,7 +186,7 @@ export default function CreateTicket() {
         )}
 
         <div className="flex flex-col items-center mb-4">
-          <span className="text-xl text-gray-700 mb-2 font-bold text-white text-opacity-80">
+          <span className="text-xl text-gray-700 mb-2 font-bold text-opacity-80">
             Search for anything...
           </span>
           <form
@@ -196,6 +196,7 @@ export default function CreateTicket() {
             <div className="flex items-center">
               <div className="relative flex-grow">
                 <input
+                  data-testid="searchbox"
                   type="text"
                   className="w-full p-2 pr-20 border border-gray-300 rounded-md"
                   placeholder="Type to search..."
@@ -204,6 +205,7 @@ export default function CreateTicket() {
                   onKeyDown={handleKeyDown}
                 />
                 <button
+                data-testid="filter"
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -227,25 +229,24 @@ export default function CreateTicket() {
                   (filter) => (
                     <div
                       key={filter}
-                      className={`p-2 cursor-pointer ${
-                        selectedFilter === filter
-                          ? "bg-blue-500 text-white"
-                          : "hover:bg-gray-100"
-                      }`}
+                      className={`p-2 cursor-pointer ${selectedFilter === filter
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-100"
+                        }`}
                       onClick={() =>
                         handleFilterChange(
                           filter as
-                            | "myLocation"
-                            | "serviceProviders"
-                            | "municipalities"
+                          | "myLocation"
+                          | "serviceProviders"
+                          | "municipalities"
                         )
                       }
                     >
                       {filter === "myLocation"
                         ? "Current Municipality"
                         : filter === "municipalities"
-                        ? "Municipality Tickets"
-                        : "Company"}
+                          ? "Municipality Tickets"
+                          : "Company"}
                     </div>
                   )
                 )}
@@ -257,8 +258,8 @@ export default function CreateTicket() {
             {selectedFilter === "myLocation"
               ? "Current Municipality"
               : selectedFilter === "municipalities"
-              ? "Municipality Tickets"
-              : "Company"}
+                ? "Municipality Tickets"
+                : "Company"}
           </span>
         </div>
 
