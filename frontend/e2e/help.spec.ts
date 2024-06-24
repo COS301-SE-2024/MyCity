@@ -54,10 +54,10 @@ test.describe("help menu", () => {
         await page.goto("http://localhost:3000/settings/citizen");
         page.getByTestId("open-help-menu").click();
         expect(page.getByTestId("help")).toBeVisible();
-        await page.waitForTimeout(5000);
-        page.getByTestId("close-help-menu").click();
+        // await page.waitForTimeout(5000);
+        // page.getByTestId("close-help-menu").click();
 
-        await page.waitForTimeout(5000);
+        // await page.waitForTimeout(5000);
 
     });
 
