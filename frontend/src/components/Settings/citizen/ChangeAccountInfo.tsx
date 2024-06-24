@@ -45,14 +45,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
     }
   };
 
-  const handleSaveChanges = (event: FormEvent) => {
-    event.preventDefault();
-
-    // const form = new FormData(event.currentTarget as HTMLFormElement);
-
-    // const firstName = form.get("given_name");
-    // const surname = form.get("family_name");
-    // const profileImage = form.get("picture");
+  const handleSaveChanges = () => {
 
     let updatedUserData = data;
 
@@ -92,7 +85,6 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   // }, []);
 
   return (
-    <form onSubmit={handleSaveChanges}>
       <div className="w-full rounded-lg p-4">
         <button
           className="flex items-center mb-4 text-gray-600 hover:text-gray-900"
@@ -165,13 +157,14 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
           <button
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            onClick={handleSaveChanges}
           >
             Save Changes
           </button>
         </div>
         <ToastContainer />
       </div>
-    </form>
+
   );
 };
 
