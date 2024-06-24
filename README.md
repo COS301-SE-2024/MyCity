@@ -70,6 +70,7 @@
 <p align="center">
 <a href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link">System Requirements (SRS)</a><br>
 <a href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing">System Architectural Design</a><br>
+<a href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing">User Manual</a><br>
 <a href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing">Testing Guidelines</a><br>
 <a href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing">GitHub Strategy</a><br>
 <a href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing">Database Requirements and Overview</a><br>
