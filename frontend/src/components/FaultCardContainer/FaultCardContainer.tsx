@@ -39,7 +39,7 @@ const FaultCardContainer: React.FC = () => {
       commentCount: 4900,
       viewCount: 873,
       ticketNumber: "SA1029",
-      description: "There is a massive leakage... it’s flooding the streets and gardens.",
+      description: "There is a massive leakage... its flooding the streets and gardens.",
       image: "https://via.placeholder.com/300x150",
       createdBy: "Kyle Marshall"
     },
