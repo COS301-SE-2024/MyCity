@@ -24,7 +24,7 @@ test.describe("help menu", () => {
         await page.waitForTimeout(5000);
         page.getByTestId("open-help-menu").click();
         expect(page.getByTestId("help")).toBeVisible();
-        
+
         await page.waitForTimeout(5000);
         page.getByTestId("close-help-menu").click();
 
@@ -32,17 +32,25 @@ test.describe("help menu", () => {
 
         await page.goto("http://localhost:3000/search/citizen");
 
+
+
+        //try search
+        page.getByTestId("searchbox").fill("mak");
+        page.getByTestId("filter").click();
+        await page.waitForTimeout(1000);
+        await page.getByText(/Municipality Tickets/).click();
+        page.getByTestId("search-btn").click();
+
+        await page.waitForTimeout(10000);
+
         page.getByTestId("open-help-menu").click();
         expect(page.getByTestId("help")).toBeVisible();
         await page.waitForTimeout(5000);
         page.getByTestId("close-help-menu").click();
 
-        //try search
-        await page.getByText("Municipality Tickets");
+        // await page.waitForTimeout(5000);
 
-        await page.waitForTimeout(5000);
 
-        
         await page.goto("http://localhost:3000/settings/citizen");
         page.getByTestId("open-help-menu").click();
         expect(page.getByTestId("help")).toBeVisible();
