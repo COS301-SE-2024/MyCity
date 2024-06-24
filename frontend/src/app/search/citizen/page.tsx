@@ -147,7 +147,7 @@ export default function CreateTicket() {
                  className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             onClick={() => setIsHelpModalOpen(true)}
           >
-            <HelpCircle size={24} />
+            <HelpCircle size={24}    data-testid="open-help-menu" />
           </button>
         </div>
 
@@ -156,6 +156,7 @@ export default function CreateTicket() {
             <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
                 className="absolute top-2 right-2 text-gray-700"
+                   data-testid="close-help-menu"
                 onClick={() => setIsHelpModalOpen(false)}
               >
                 <X size={24} />

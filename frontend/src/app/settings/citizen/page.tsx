@@ -379,6 +379,7 @@ export default function Settings() {
           <HelpCircle
             className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             size={24}
+            data-testid="open-help-menu"
             onClick={toggleHelpMenu}
           />
         </div>
@@ -390,7 +391,7 @@ export default function Settings() {
                 className="absolute top-2 right-2 text-gray-700"
                 onClick={toggleHelpMenu}
               >
-                <XCircle size={24} />
+                <XCircle size={24}    data-testid="close-help-menu"/>
               </button>
               <h2 className="text-xl font-bold mb-4">Help Menu</h2>
               <p>This settings page allows you to:</p>
