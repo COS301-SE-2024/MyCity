@@ -234,30 +234,6 @@ def get_in_my_municipality(tickets_data):
                 item['commentcount'] = len(response_item['Items'])
                 rdnint = random.randint(0,2)
                 item['address'] = address[rdnint]
-                  # Google Maps Geocoding API endpoint
-                # endpoint = "https://maps.googleapis.com/maps/api/geocode/json"
-
-                # # Parameters for the API request
-                # params = {
-                #     "latlng": f"{item['latitude']},{item['longitude']}",
-                #     "key": "AIzaSyAV-b1-1SoeSvcmAQcOoLSJdIvNDd8-Lxc"
-                # }
-
-                # try:
-                #     # Sending a GET request to the API
-                #     response = requests.get(endpoint, params=params)
-                #     data = response.json()
-
-                #     # Check if the response was successful
-                #     if response.status_code == 200:
-                #         # Extracting the formatted address from the response
-                #         if data["status"] == "OK" and len(data["results"]) > 0:
-                #             item['address'] = data["results"][0]["formatted_address"]
-                #         else:
-                #             item['address'] = 'Somewhere'
-
-                # except requests.exceptions.RequestException as e:
-                #     return f"Error: {e}"
             return items
         else:
             error_response = {
