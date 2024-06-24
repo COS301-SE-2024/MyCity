@@ -20,7 +20,7 @@ export default function Navbar() {
         checkIfUserIsAuthenticated();
     }, []);
 
-    return (
+    /*return (
         <React.Fragment>
             {isAuthenticated && (
                 <NavbarUser />
@@ -30,5 +30,8 @@ export default function Navbar() {
                 <NavbarGuest />
             )}
         </React.Fragment>
+    );*/
+    return (
+        <NavbarUser />
     );
 }

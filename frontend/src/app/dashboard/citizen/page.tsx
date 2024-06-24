@@ -26,7 +26,7 @@ export default function CitizenDashboard() {
       try {
         const user_data = await userProfile.getUserProfile()
         const user_id = user_data.current?.sub
-        const rspwatchlist = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getwatchlist',{
+        const rspwatchlist = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=8f4cf09d-754e-4d71-96dc-952173fab07c',{
           username : user_id
         });
         const municipality = user_data.current?.municipality
@@ -140,15 +140,20 @@ export default function CitizenDashboard() {
                 </h1>
               </div>
               <div className="justify-center text-center">
-                <FaultCardContainer />
+                <FaultCardContainer/>
               </div>
 
               <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
                 Nearest to you
               </h1>
-              <h1 className="text-center text-white mb-4 ml-2">
-                Based on your proximity to the issue.
-              </h1>
+              <div className="w-full text-center">
+                <h1 className="text-l text-white text-opacity-80 mb-4">
+                  Based on your proximity to the issue.
+                </h1>
+              </div>
+              <div className="justify-center text-center">
+                <FaultCardContainer />
+              </div>
                   {hasStatusFieldMuni ? (
                     <FaultCardContainer />
                   ) : (
@@ -157,9 +162,14 @@ export default function CitizenDashboard() {
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                 Watchlist
               </h1>
-              <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
-                All of the issues you have added to your watchlist.
-              </h1>
+              <div className="w-full text-center">
+                <h1 className="text-l text-white text-opacity-80 mb-4">
+                  Based on your watchlist.
+                </h1>
+              </div>
+              <div className="justify-center text-center">
+                <FaultCardContainer />
+              </div>
               {hasStatusFieldWatch ? (
                   <FaultCardContainer />
                 ) : (

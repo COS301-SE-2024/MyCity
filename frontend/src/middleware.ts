@@ -1,4 +1,4 @@
-import { type NextRequest, NextResponse } from "next/server";
+/*import { type NextRequest, NextResponse } from "next/server";
 
 import { authenticate } from "./utils/amplifyServerUtils";
 
@@ -66,15 +66,15 @@ export const config = {
    * Match all request paths except for the ones starting with
    */
 
-
+/*
   matcher: [
     "/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
-
+*/
 
 
 //This is the code Kyle used to bypass the authentication middleware to access all frontend pages via the browser. 
-/*
+
 import { type NextRequest, NextResponse } from "next/server";
 import { authenticate } from "./utils/amplifyServerUtils";
 
@@ -132,8 +132,8 @@ export const config = {
   /*
    * Match all request paths except for the ones starting with
    */
-/*
+
 matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };
-*/
+
 
