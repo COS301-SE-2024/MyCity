@@ -220,14 +220,14 @@ def get_in_my_municipality(tickets_data):
             "municipality_id",
         ]
         for field in required_fields:
-            if tickets_data == None :
-               error_response = {
+            if tickets_data == None:
+                error_response = {
                     "Error": {
                         "Code": "Nothing",
                         "Message": f"No data has been sent",
                     }
                 }
-               raise ClientError(error_response, "NothingSent") 
+                raise ClientError(error_response, "NothingSent")
             if field not in tickets_data:
                 error_response = {
                     "Error": {
