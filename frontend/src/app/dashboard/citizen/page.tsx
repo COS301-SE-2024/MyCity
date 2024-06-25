@@ -38,8 +38,8 @@ export default function CitizenDashboard() {
         console.log(municipality)
         console.log(rspwatchlist.data)
         const flattenedWatchlist = rspwatchlist.data.flat();
-        setDashMuniResults(rspmunicipality.data)
-        setDashWatchResults(flattenedWatchlist)
+        setDashMuniResults(Array.isArray(rspwatchlist.data) ? rspwatchlist.data : []);
+        setDashWatchResults(Array.isArray(flattenedWatchlist) ? flattenedWatchlist : []);
        
       } catch (error) {
         console.log(error)
@@ -57,8 +57,8 @@ export default function CitizenDashboard() {
     setIsHelpOpen(!isHelpOpen);
   };
 
-  const hasStatusFieldMuni = dashMuniResults.some(item => item.Status !== undefined);
-  const hasStatusFieldWatch = dashWatchResults.some(item => item.Status !== undefined);
+  const hasStatusFieldMuni = Array.isArray(dashMuniResults) && dashMuniResults.some(item => item.Status !== undefined);
+  const hasStatusFieldWatch = Array.isArray(dashWatchResults) && dashWatchResults.some(item => item.Status !== undefined);
 
   return (
     <div>
@@ -140,7 +140,8 @@ export default function CitizenDashboard() {
                 </h1>
               </div>
               <div className="justify-center text-center">
-                <FaultCardContainer />
+              
+                    <DashboardFaultCardContainer cardData={dashMuniResults} />
               </div>
 
               <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
@@ -149,22 +150,17 @@ export default function CitizenDashboard() {
               <h1 className="text-center text-white mb-4 ml-2">
                 Based on your proximity to the issue.
               </h1>
-                  {hasStatusFieldMuni ? (
-                    <FaultCardContainer />
-                  ) : (
+                  
                     <DashboardFaultCardContainer cardData={dashMuniResults} />
-                  )}
+
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                 Watchlist
               </h1>
               <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
                 All of the issues you have added to your watchlist.
               </h1>
-              {hasStatusFieldWatch ? (
-                  <FaultCardContainer />
-                ) : (
+              
                   <DashboardFaultCardContainer cardData={dashWatchResults} />
-                  )}
             </Tab>
 
             <Tab key={1} title="List">
