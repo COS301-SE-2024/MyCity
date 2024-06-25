@@ -62,6 +62,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
         description={item.description}
         image={item.imageURL}
         createdBy={item.dateOpened}
+        ticketNumber={item.ticket_id}
         onClick={() => handleCardClick(item)}
       />
     ));
