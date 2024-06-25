@@ -36,10 +36,10 @@ export default function CitizenDashboard() {
         console.log(user_id)
         console.log(rspmunicipality.data)
         console.log(municipality)
-        console.log(rspwatchlist.data)
         const flattenedWatchlist = rspwatchlist.data.flat();
-        setDashMuniResults(Array.isArray(rspwatchlist.data) ? rspwatchlist.data : []);
-        setDashWatchResults(Array.isArray(flattenedWatchlist) ? flattenedWatchlist : []);
+        console.log(flattenedWatchlist)
+        setDashMuniResults(Array.isArray(rspmunicipality.data) ? rspmunicipality.data : []);
+        setDashWatchResults(flattenedWatchlist) ;
        
       } catch (error) {
         console.log(error)
