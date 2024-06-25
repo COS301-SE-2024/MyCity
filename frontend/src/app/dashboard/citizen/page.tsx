@@ -26,8 +26,8 @@ export default function CitizenDashboard() {
       try {
         const user_data = await userProfile.getUserProfile()
         const user_id = user_data.current?.sub
-        const rspwatchlist = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=8f4cf09d-754e-4d71-96dc-952173fab07c',{
-          username : user_id
+        const rspwatchlist = await axios.get('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=8f4cf09d-754e-4d71-96dc-952173fab07c',{
+          // username : user_id
         });
         const municipality = user_data.current?.municipality
         const rspmunicipality = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getinarea',{
