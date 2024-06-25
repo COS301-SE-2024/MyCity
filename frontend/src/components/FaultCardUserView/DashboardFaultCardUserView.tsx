@@ -36,31 +36,24 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   image,
   createdBy,
 }) => {
+  // Retrieve state from local storage or initialize with default values
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
-    return data
-      ? JSON.parse(data)
-      : {
-          arrowCount,
-          commentCount,
-          viewCount,
-          arrowColor: "black",
-          commentColor: "black",
-          eyeColor: "black",
-        };
+    return data ? JSON.parse(data) : {
+      arrowCount,
+      commentCount,
+      viewCount,
+      arrowColor: "black",
+      commentColor: "black",
+      eyeColor: "black",
+    };
   };
 
   const initialData = getLocalStorageData();
 
-  const [currentArrowCount, setCurrentArrowCount] = useState(
-    initialData.arrowCount
-  );
-  const [currentCommentCount, setCurrentCommentCount] = useState(
-    initialData.commentCount
-  );
-  const [currentViewCount, setCurrentViewCount] = useState(
-    initialData.viewCount
-  );
+  const [currentArrowCount, setCurrentArrowCount] = useState(initialData.arrowCount);
+  const [currentCommentCount, setCurrentCommentCount] = useState(initialData.commentCount);
+  const [currentViewCount, setCurrentViewCount] = useState(initialData.viewCount);
   const [arrowColor, setArrowColor] = useState(initialData.arrowColor);
   const [commentColor, setCommentColor] = useState(initialData.commentColor);
   const [eyeColor, setEyeColor] = useState(initialData.eyeColor);
@@ -76,15 +69,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     };
 
     localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
-  }, [
-    currentArrowCount,
-    currentCommentCount,
-    currentViewCount,
-    arrowColor,
-    commentColor,
-    eyeColor,
-    ticketNumber,
-  ]);
+  }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor, ticketNumber]);
 
   const handleArrowClick = () => {
     if (arrowColor === "black") {
@@ -122,9 +107,14 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const addressParts = address.split(",");
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-1/2 p-4 relative">
-        
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-2/3 xl:w-1/2 p-4 relative">
+        <button
+          className="absolute top-2 right-2 text-gray-700"
+          onClick={onClose}
+        >
+          <FaTimes size={24} />
+        </button>
         <div className="p-4">
           {/* Header Section */}
           <div className="flex justify-between items-center mb-4">
@@ -150,52 +140,61 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <p className="text-gray-700">{description}</p>
           </div>
 
-          {/* Image and Stats Section */}
-          <div className="flex justify-center items-center mb-4">
-            <div className="mb-4 text-center">
-              <img src={image} alt="Fault" className="rounded-lg w-72 h-54" />
+          {/* Image Section - hidden for now!
+          <div className="mb-4">
+            <img src={image} alt="Fault" className="rounded-lg" />
+          </div>
+          */}
+
+          {/* Stats Section */}
+          <div className="flex justify-around mb-4">
+            <div className="flex flex-col items-center">
+              <div
+                className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
+                style={{ color: arrowColor }}
+                onClick={handleArrowClick}
+              >
+                <FaArrowUp />
+              </div>
+              <span className="mt-2 text-gray-700">{currentArrowCount}</span>
             </div>
-            <div className="flex flex-col items-center ml-4">
-              <div className="flex flex-col items-center mb-4">
-                <div
-                  className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
-                  style={{ color: arrowColor }}
-                  onClick={handleArrowClick}
-                >
-                  <FaArrowUp />
-                </div>
-                <span className="mt-2 text-gray-700">{currentArrowCount}</span>
+            <div className="flex flex-col items-center">
+              <div
+                className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
+                style={{ color: eyeColor }}
+                onClick={handleEyeClick}
+              >
+                <FaEye />
               </div>
-              <div className="flex flex-col items-center mb-4">
-                <div
-                  className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
-                  style={{ color: eyeColor }}
-                  onClick={handleEyeClick}
-                >
-                  <FaEye />
-                </div>
-                <span className="mt-2 text-gray-700">{currentViewCount}</span>
+              <span className="mt-2 text-gray-700">{currentViewCount}</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div
+                className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
+                style={{ color: commentColor }}
+                onClick={handleCommentClick}
+              >
+                <FaCommentAlt />
               </div>
-              <div className="flex flex-col items-center mb-4">
-                <div
-                  className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
-                  style={{ color: commentColor }}
-                  onClick={handleCommentClick}
-                >
-                  <FaCommentAlt />
-                </div>
-                <span className="mt-2 text-gray-700">
-                  {currentCommentCount}
-                </span>
-              </div>
+              <span className="mt-2 text-gray-700">{currentCommentCount}</span>
             </div>
           </div>
 
           {/* Address and Created By Section */}
-          {/* Address Section */}
-          <div className="flex flex-col text-center items-center mb-4">
-            <h3 className="font-bold text-center text-lg">Address</h3>
-            <p className="text-gray-700">{addressParts.join(", ")}</p>
+          <div className="flex justify-between">
+            <div className="flex flex-col items-start">
+              <h3 className="font-bold text-lg">Address</h3>
+              {addressParts.map((part, index) => (
+                <p key={index} className="text-gray-700">
+                  {part.trim()}
+                </p>
+              ))}
+            </div>
+            <div className="flex flex-col items-center">
+              <h3 className="font-bold text-lg">Created By</h3>
+              <FaUser className="text-2xl mb-2" />
+              <p className="text-gray-700">{createdBy}</p>
+            </div>
           </div>
 
           {/* Back Button */}

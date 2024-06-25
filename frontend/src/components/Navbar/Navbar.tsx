@@ -31,4 +31,5 @@ export default function Navbar() {
             )}
         </React.Fragment>
     );
+    
 }
