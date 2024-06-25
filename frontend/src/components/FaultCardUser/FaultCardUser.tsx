@@ -35,36 +35,34 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
 }) => {
   return (
     <div
-  className="w-80 h-auto bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
-  onClick={onClick}
->
-
-
-      <div className="w-full bg-gray-200">
-        {image ? (
-          <img src={image} alt={title} className="w-[20rem] h-[10rem] object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500">
-            Image Placeholder
+      className="w-80 h-auto bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
+      onClick={onClick}
+    >
+        <div className="w-full bg-gray-200">
+          {image ? (
+            <img src={image} alt={title} className="w-[20rem] h-[10rem] object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-500">
+              Image Placeholder
+            </div>
+          )}
+        </div>
+        <div className="p-4 flex flex-col justify-center items-center">
+          <div className="text-center">
+            <div className="font-bold text-xl mb-2">{title}</div>
+            <p className="text-gray-700 text-base">{address}</p>
           </div>
-        )}
-      </div>
-      <div className="p-4 flex flex-col justify-center items-center">
-        <div className="text-center">
-          <div className="font-bold text-xl mb-2">{title}</div>
-          <p className="text-gray-700 text-base">{address}</p>
+
         </div>
 
-      </div>
-    )}
-  </div>
-  <div className="p-4 flex flex-col justify-center items-center rounded-b-lg">
-    <div className="text-center">
-      <div className="font-bold text-xl mb-2">{title}</div>
-      <p className="text-gray-700 text-base">{address}</p>
+        {/* <div className="p-4 flex flex-col justify-center items-center rounded-b-lg">
+          <div className="text-center">
+            <div className="font-bold text-xl mb-2">{title}</div>
+            <p className="text-gray-700 text-base">{address}</p>
+          </div>
+        </div> */}
+
     </div>
-  </div>
-</div>
 
   );
 };
