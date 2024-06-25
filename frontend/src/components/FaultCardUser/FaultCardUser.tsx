@@ -35,9 +35,10 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
 }) => {
   return (
     <div
-  className="w-80 bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
+  className="w-80 h-auto bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
   onClick={onClick}
 >
+
 
       <div className="w-full bg-gray-200">
         {image ? (
@@ -53,8 +54,18 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
           <div className="font-bold text-xl mb-2">{title}</div>
           <p className="text-gray-700 text-base">{address}</p>
         </div>
+
       </div>
+    )}
+  </div>
+  <div className="p-4 flex flex-col justify-center items-center rounded-b-lg">
+    <div className="text-center">
+      <div className="font-bold text-xl mb-2">{title}</div>
+      <p className="text-gray-700 text-base">{address}</p>
     </div>
+  </div>
+</div>
+
   );
 };
 
