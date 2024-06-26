@@ -46,7 +46,7 @@ export default function Home() {
           </Button>
         </Link>
 
-        <Link href="auth/login">
+        <Link href="auth/login" data-testid="login-btn">
           <Button className="bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
             Log In
           </Button>

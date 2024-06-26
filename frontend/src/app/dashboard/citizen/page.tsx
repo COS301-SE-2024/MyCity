@@ -83,6 +83,7 @@ export default function CitizenDashboard() {
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80 ">Dashboard</h1>
           <HelpCircle
+            data-testid="open-help-menu"
             className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             size={24}
             onClick={toggleHelpMenu}
@@ -90,9 +91,10 @@ export default function CitizenDashboard() {
         </div>
 
         {isHelpOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+          <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
+                 data-testid="close-help-menu"
                 className="absolute top-2 right-2 text-gray-700"
                 onClick={toggleHelpMenu}
               >
