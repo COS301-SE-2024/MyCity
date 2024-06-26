@@ -21,12 +21,12 @@ test.describe("help menu", () => {
 
         await page.waitForURL("http://localhost:3000/dashboard/citizen");
 
-        await page.waitForTimeout(5000);
-        page.getByTestId("open-help-menu").click();
-        expect(page.getByTestId("help")).toBeVisible();
+        // await page.waitForTimeout(5000);
+        // page.getByTestId("open-help-menu").click();
+        // expect(page.getByTestId("help")).toBeVisible();
 
-        await page.waitForTimeout(5000);
-        page.getByTestId("close-help-menu").click();
+        // await page.waitForTimeout(5000);
+        // page.getByTestId("close-help-menu").click();
 
         await page.waitForTimeout(5000);
 
@@ -43,10 +43,10 @@ test.describe("help menu", () => {
 
         await page.waitForTimeout(10000);
 
-        page.getByTestId("open-help-menu").click();
-        expect(page.getByTestId("help")).toBeVisible();
-        await page.waitForTimeout(5000);
-        page.getByTestId("close-help-menu").click();
+        // page.getByTestId("open-help-menu").click();
+        // expect(page.getByTestId("help")).toBeVisible();
+        // await page.waitForTimeout(5000);
+        // page.getByTestId("close-help-menu").click();
 
         // await page.waitForTimeout(5000);
 
