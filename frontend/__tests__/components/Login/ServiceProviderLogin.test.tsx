@@ -3,14 +3,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("ServiceProviderLogin", () => {
 
-    /*it("renders an email input", () => {
-        render(<ServiceProviderLogin />);
-        const emailInput = screen.getByLabelText("Email");
-
-        expect(emailInput).toBeInTheDocument();
-        expect(emailInput).toHaveAttribute("type", "email");
-    });*/
-
     it("renders an email input", () => {
         render(<ServiceProviderLogin />);
         // Use getByPlaceholderText if the placeholder is unique
@@ -20,42 +12,34 @@ describe("ServiceProviderLogin", () => {
         expect(emailInput).toHaveAttribute("type", "email");
     });
 
-    // it("renders a password input", () => {
-    //     render(<ServiceProviderLogin />);
-    //     const passwordInput = screen.getByLabelText("Password");
+    it("renders a password input", () => {
+        render(<ServiceProviderLogin />);
+        const passwordInput = screen.getByLabelText(/Service Provider Password/);
 
-    //     expect(passwordInput).toBeInTheDocument();
-    //     expect(passwordInput).toHaveAttribute("type", "password");
-    // });
-
-
-    // it("renders a forgot password link", () => {
-    //     render(<ServiceProviderLogin />);
-
-    //     const forgotPasswordLink = screen.getByRole("link");
-
-    //     expect(forgotPasswordLink).toBeInTheDocument();
-    //     expect(forgotPasswordLink).toHaveTextContent("Forgot password?");
-    // });
-
-    // it("renders a submit button", () => {
-    //     render(<ServiceProviderLogin />);
-
-    //     const submitButton = screen.getByRole("button", { name: /submit/i });
-
-    //     expect(submitButton).toBeInTheDocument();
-    //     expect(submitButton).toHaveTextContent("Submit");
-    // });
+        expect(passwordInput).toBeInTheDocument();
+        expect(passwordInput).toHaveAttribute("type", "password");
+    });
 
 
-    // test("handler function is called after clicking submit button", () => {
-    //     render(<ServiceProviderLogin />);
-    //     const mockFunction = jest.fn();
-    //     const loginForm = screen.getByTestId("service-provider-login-form");
-    //     loginForm.addEventListener("submit", mockFunction);
+    it("renders a submit button", () => {
+        render(<ServiceProviderLogin />);
 
-    //     fireEvent.submit(loginForm);
-    //     expect(mockFunction).toHaveBeenCalledTimes(1);
-    // });
+        const submitButton = screen.getByTestId("submit-btn")
+
+        expect(submitButton).toBeInTheDocument();
+
+        expect(submitButton).toHaveTextContent("Submit");
+    });
+
+
+    test("handler function is called after clicking submit button", () => {
+        render(<ServiceProviderLogin />);
+        const mockFunction = jest.fn();
+        const loginForm = screen.getByTestId("service-provider-login-form");
+        loginForm.addEventListener("submit", mockFunction);
+
+        fireEvent.submit(loginForm);
+        expect(mockFunction).toHaveBeenCalledTimes(1);
+    });
 
 });
