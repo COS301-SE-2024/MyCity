@@ -6,6 +6,7 @@ from chalicelib.tickets.tickets_controllers import (
     get_in_my_municipality,
     get_watchlist,
     view_ticket_data,
+    interact_ticket
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -68,3 +69,11 @@ def format_response(response):
             "Access-Control-Allow-Headers": "Authorization,Content-Type,X-Amz-Date,X-Amz-Security-Token,X-Api-Key",
         },
     )
+
+@tickets_blueprint.route("/interact", methods=["POST"], cors=True)
+def get_my_tickets():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = interact_ticket(ticket_data)
+    return response
+

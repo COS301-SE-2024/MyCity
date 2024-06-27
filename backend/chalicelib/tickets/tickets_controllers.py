@@ -334,3 +334,58 @@ def view_ticket_data(ticket_id):
         raise BadRequestError(
             f"Failed to get Ticket data: {e.response['Error']['Message']}"
         )
+
+def interact_ticket(ticket_data):
+    try:
+        required_fields = [
+            "type",
+            "ticket_id"
+        ]     
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+        interact_type = str(ticket_data['type'])
+        response = tickets_table.query(ProjectionExpression='upvotes,viewcount',KeyConditionExpression=Key('ticket_id').eq(ticket_data['ticket_id']))
+        items = response['Items']
+        if len(response['Items']) > 0 :
+            if interact_type.upper() == "UPVOTE":
+                for item in items:
+                    votes = Decimal(str(item['upvotes'])) + 1
+                    tickets_table.update_item(Key={'ticket_id' : ticket_data['ticket_id']},
+                                            UpdateExpression='SET upvotes = :votes',
+                                            ExpressionAttributeValues = {':votes': votes} )   
+                    return {'Status' : 'SUCCESFUL',
+                            'vote': votes}
+            elif interact_type.upper() == "VIEWED":
+                for item in items:
+                    views = Decimal(str(item['viewcount'])) + 1
+                    tickets_table.update_item(Key={'ticket_id' : ticket_data['ticket_id']},
+                                            UpdateExpression='SET viewcount = :views',
+                                            ExpressionAttributeValues = {':views': views} )
+                    return {'Status' : 'SUCCESFUL',
+                            'views': views}
+            elif interact_type.upper() == "UNVOTE":
+                for item in items:
+                    votes = Decimal(str(item['upvotes'])) - 1
+                    tickets_table.update_item(Key={'ticket_id' : ticket_data['ticket_id']},
+                                            UpdateExpression='SET upvotes = :votes',
+                                            ExpressionAttributeValues = {':votes': votes} )
+                    return {'Status' : 'SUCCESFUL',
+                            'vote': votes}
+        else :
+            error_response = {
+                    "Error": {
+                        "Code": "TicketDoesntExist",
+                        "Message": "Ticket doesnt exist",
+                    }
+                }
+            raise ClientError(error_response, "NonExistence")
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
