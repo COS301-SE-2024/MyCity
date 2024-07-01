@@ -11,14 +11,13 @@ const nextConfig = {
     swcMinify: true, // enable the SWC compiler for faster builds
 
     // images: {
-    //     unoptimized: !process.env.PROD_ENV ? true : false,
-    //     unoptimized: true,
+    //     unoptimized: process.env.NODE_ENV == "production" ? false : true,
     //     remotePatterns: [
     //         {
-    //           protocol: "https",
-    //           hostname: "i.imgur.com",
+    //             protocol: "https",
+    //             hostname: "i.imgur.com",
     //         },
-    //       ],
+    //     ],
     // },
 
     webpack(config) {
