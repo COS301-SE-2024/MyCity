@@ -8,16 +8,18 @@ const nextConfig = {
         PLACEKIT_API_KEY: process.env.NEXT_PUBLIC_PLACEKIT_API_KEY
     },
 
-    images: {
-        unoptimized: !process.env.PROD_ENV ? true : false,
-        unoptimized: true,
-        remotePatterns: [
-            {
-              protocol: "https",
-              hostname: "i.imgur.com",
-            },
-          ],
-    },
+    swcMinify: true, // enable the SWC compiler for faster builds
+
+    // images: {
+    //     unoptimized: !process.env.PROD_ENV ? true : false,
+    //     unoptimized: true,
+    //     remotePatterns: [
+    //         {
+    //           protocol: "https",
+    //           hostname: "i.imgur.com",
+    //         },
+    //       ],
+    // },
 
     webpack(config) {
         // Grab the existing rule that handles SVG imports
