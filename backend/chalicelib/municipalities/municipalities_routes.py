@@ -7,6 +7,7 @@ municipalities_blueprint = Blueprint(__name__)
 
 
 @municipalities_blueprint.route("/municipalities-list", methods=["GET"], cors=True)
+# Note that only the name of the municipality is being fetched
 def get_all_municipalities_list():
     municipalities_list = get_all_municipalities()
     return municipalities_list

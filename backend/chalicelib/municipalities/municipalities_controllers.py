@@ -24,6 +24,7 @@ def get_all_municipalities():
         response = municipalities_table.scan()
         municipalities = response.get("Items", [])
 
+        # Note that only the name of the municipality is being fetched
         municipalities_list = [
             {
                 "municipality_id": municipality["municipality_id"],
