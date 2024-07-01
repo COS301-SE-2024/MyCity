@@ -25,9 +25,9 @@ const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
   return (
     <div className="space-y-4">
       {tickets.map((ticket: Ticket, index: number) => (
-        <div key={index} className="grid grid-cols-6 gap-4 bg-white bg-opacity-70 rounded-md shadow-md p-4">
+        <div key={index} className="grid grid-cols-6 gap-4 bg-white bg-opacity-70 rounded-md mt-4 shadow-md p-4">
           {/* First Field - Ticket */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col justify-center items-center">
             <span className="text-s text-black-500">Ticket</span>
           </div>
 

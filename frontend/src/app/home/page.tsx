@@ -29,7 +29,7 @@ export default function Home() {
     {/* Content */}
    
     <div className="h-[30vh] flex items-center justify-center" ></div>
-    <div className='container mx-auto p-2 relative z-10'> {/* Ensure content is above the background */}
+    <div className='container mx-auto p-2 relative z-10 ml-16'> {/* Ensure content is above the background */}
       <h1 className="text-4xl text-white font-bold mb-4">
         Be the change in your city <br />
         with <span className="text-blue-200">MyCity.</span>

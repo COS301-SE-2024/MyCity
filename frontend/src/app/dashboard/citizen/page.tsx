@@ -1,5 +1,3 @@
-"use client";
-
 import React, { Key, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
@@ -12,8 +10,6 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import axios from "axios";
 
-
-
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
@@ -24,30 +20,29 @@ export default function CitizenDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user_data = await userProfile.getUserProfile()
-        const user_id = user_data.current?.sub
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.sub;
         const rspwatchlist = await axios.get('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=8f4cf09d-754e-4d71-96dc-952173fab07c',{
           // username : user_id
         });
-        const municipality = user_data.current?.municipality
+        const municipality = user_data.current?.municipality;
         const rspmunicipality = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getinarea',{
-          municipality_id : municipality
+          municipality_id: municipality
         });
-        console.log(user_id)
-        console.log(rspmunicipality.data)
-        console.log(municipality)
+        console.log(user_id);
+        console.log(rspmunicipality.data);
+        console.log(municipality);
         const flattenedWatchlist = rspwatchlist.data.flat();
-        console.log(flattenedWatchlist)
+        console.log(flattenedWatchlist);
         setDashMuniResults(Array.isArray(rspmunicipality.data) ? rspmunicipality.data : []);
-        setDashWatchResults(flattenedWatchlist) ;
-       
+        setDashWatchResults(flattenedWatchlist);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [userProfile]); // Add userProfile to the dependency array
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -82,13 +77,16 @@ export default function CitizenDashboard() {
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80 ">Dashboard</h1>
-          <HelpCircle
-            data-testid="open-help-menu"
-            className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
-            size={24}
-            onClick={toggleHelpMenu}
-          />
         </div>
+         {/* Persistent Help Icon */}
+      <div className="fixed bottom-4 right-4">
+        <HelpCircle
+          data-testid="open-help-menu"
+          className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+          size={24}
+          onClick={toggleHelpMenu}
+        />
+      </div>
 
         {isHelpOpen && (
           <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
