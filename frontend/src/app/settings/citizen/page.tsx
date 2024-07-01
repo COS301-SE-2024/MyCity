@@ -380,7 +380,7 @@ export default function Settings() {
             data-testid="open-help-menu"
             onClick={toggleHelpMenu}>
             <HelpCircle
-              className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+              className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
               size={24}
             />
           </button>
