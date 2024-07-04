@@ -4,11 +4,11 @@ import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContain
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 import Navbar from "@/components/Navbar/Navbar";
-import { useProfile } from "@/context/UserProfileContext";
 import { FaQuestionCircle, FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import axios from "axios";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function CitizenDashboard() {
   const user = useRef(null);

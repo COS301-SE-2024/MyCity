@@ -1,8 +1,8 @@
 'use client'
 
 import { UserData, UserRole } from '@/types/user.types';
-import { fetchUserAttributes, getCurrentUser, updateUserAttributes } from 'aws-amplify/auth';
-import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
+import { fetchUserAttributes, updateUserAttributes } from 'aws-amplify/auth';
+import { MutableRefObject, ReactNode, createContext, useRef } from 'react';
 
 
 export interface UserProfileContextProps {
@@ -14,9 +14,8 @@ export interface UserProfileContextProps {
 const UserProfileContext = createContext<UserProfileContextProps | undefined>(undefined);
 
 
-export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export function UserProfileProvider( { children }:{ children: ReactNode })  {
     const userProfile = useRef<UserData | null>(null);
-
 
     const getUserProfile = async () => {
         //if user profile data already cached, return it
@@ -71,10 +70,4 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
     );
 }
 
-export const useProfile = (): UserProfileContextProps => {
-    const context = useContext(UserProfileContext);
-    if (!context) {
-        throw new Error("useProfile must be used within a UserProfileProvider");
-    }
-    return context;
-};
+export default UserProfileContext;

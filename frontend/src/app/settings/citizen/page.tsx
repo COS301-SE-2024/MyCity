@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar/Navbar";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
-import { useProfile } from "@/context/UserProfileContext";
 import { User, HelpCircle, XCircle } from "lucide-react";
 import Image from "next/image";
 
 import { UserData } from "@/types/user.types";
+import { useProfile } from "@/hooks/useProfile";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 

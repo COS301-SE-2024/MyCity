@@ -1,8 +1,6 @@
 import React, { FormEvent, useState } from 'react';
-import { Input, Button, Autocomplete, AutocompleteItem } from '@nextui-org/react';
-import { Upload } from 'lucide-react';
+import { Input, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 
 
 export default function ServiceProviderSignup() {

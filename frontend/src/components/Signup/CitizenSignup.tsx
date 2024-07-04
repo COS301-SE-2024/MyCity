@@ -1,8 +1,8 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { Input, Button, Autocomplete, AutocompleteItem  } from "@nextui-org/react";
-import { UserRole } from "@/types/user.types";
-import { handleSignUp } from "@/lib/cognitoActions";
 import axios from "axios";
+import { UserRole } from "@/types/user.types";
+import { handleSignUp } from "@/services/auth.service";
 
 
 interface Municipality {

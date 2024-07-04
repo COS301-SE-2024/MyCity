@@ -5,19 +5,19 @@ const nextConfig = {
         USER_POOL_ID: process.env.NEXT_PUBLIC_USER_POOL_ID,
         USER_POOL_CLIENT_ID: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
         MAPBOX_ACCESS_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
-        PLACEKIT_API_KEY: process.env.NEXT_PUBLIC_PLACEKIT_API_KEY
+        PLACEKIT_API_KEY: process.env.NEXT_PUBLIC_PLACEKIT_API_KEY,
+        NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV
     },
 
-    images: {
-        unoptimized: !process.env.PROD_ENV ? true : false,
-        unoptimized: true,
-        remotePatterns: [
-            {
-              protocol: "https",
-              hostname: "i.imgur.com",
-            },
-          ],
-    },
+    // images: {
+    //     unoptimized: process.env.NODE_ENV != "production" ? true : false,
+    //     remotePatterns: [
+    //         {
+    //             protocol: "https",
+    //             hostname: "i.imgur.com",
+    //         },
+    //     ],
+    // },
 
     webpack(config) {
         // Grab the existing rule that handles SVG imports

@@ -1,23 +1,8 @@
-import React, { FormEvent, useState } from "react";
-import {
-  Input,
-  Button,
-  Autocomplete,
-  AutocompleteItem,
-} from "@nextui-org/react";
-import { Building2 } from "lucide-react";
-import {
-  signUp,
-  signIn,
-  signOut,
-  SignUpOutput,
-  autoSignIn,
-} from "aws-amplify/auth";
-import { getCurrentUser } from "aws-amplify/auth";
-import { fetchUserAttributes } from "aws-amplify/auth";
+import React, { FormEvent } from "react";
+import {Input,Button} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@/types/user.types";
-import { handleSignUp } from "@/lib/cognitoActions";
+import { handleSignUp } from "@/services/auth.service";
 
 export default function MunicipalitySignup() {
   const router = useRouter();

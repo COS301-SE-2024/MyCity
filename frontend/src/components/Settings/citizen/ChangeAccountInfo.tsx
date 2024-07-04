@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image";
 import { UserData } from "@/types/user.types";
-import { useProfile } from "@/context/UserProfileContext";
+import { useProfile } from "@/hooks/useProfile";
 
 type ChangeAccountInfoProps = {
   onBack: () => void;

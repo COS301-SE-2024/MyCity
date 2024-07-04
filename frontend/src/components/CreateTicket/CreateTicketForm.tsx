@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { MapboxContextProps } from '@/context/MapboxContext';
 import axios from 'axios';
 import Image from 'next/image';
-import { useProfile } from '@/context/UserProfileContext';
+import { useProfile } from "@/hooks/useProfile";
 
 
 type FaultType = {
