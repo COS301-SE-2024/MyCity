@@ -21,7 +21,7 @@ const FaultMapView = () => {
       
       {/* Key and Regional Summary Section */}
       <div className="md:w-1/2 lg:w-1/2 flex flex-col">
-        <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex-grow bg-white bg-opacity-70">
+        <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex-grow bg-opacity-70">
           <h2 className="text-lg font-bold mb-2">Key</h2>
           <div className="flex items-center mb-2">
             <div className="w-4 h-4 rounded-full bg-red-500 mr-2"></div>
@@ -44,7 +44,7 @@ const FaultMapView = () => {
             <span>Power Outage</span>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md flex-grow bg-white bg-opacity-70">
+        <div className="bg-white p-4 rounded-lg shadow-md flex-grow bg-opacity-70">
           <h2 className="text-lg font-bold mb-2">Regional Summary</h2>
           <p className="mb-2">Population: ~ 2 million</p>
           <p className="mb-2">Infrastructure faults: 154</p>

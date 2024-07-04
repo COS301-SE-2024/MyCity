@@ -217,7 +217,7 @@ export default function CreateTicket() {
         )}
 
         <div className="flex flex-col items-center mb-4">
-          <span className="text-xl text-white text-opacity-80 mb-2 font-bold text-opacity-80">
+          <span className="text-xl text-white text-opacity-80 mb-2 font-bold">
             Search for anything...
           </span>
           <form
