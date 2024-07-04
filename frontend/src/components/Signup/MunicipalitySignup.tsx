@@ -1,7 +1,7 @@
 import React, { FormEvent } from "react";
-import {Input,Button} from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { UserRole } from "@/types/user.types";
+import { UserRole } from "@/types/custom.types";
 import { handleSignUp } from "@/services/auth.service";
 
 export default function MunicipalitySignup() {

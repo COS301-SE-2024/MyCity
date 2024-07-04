@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { authenticate } from './utils/amplifyServerUtils';
-import { USER_PATH_SUFFIX_COOKIE_NAME } from './types/user.types';
+import { USER_PATH_SUFFIX_COOKIE_NAME } from './types/custom.types';
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -10,10 +10,23 @@ export async function middleware(request: NextRequest) {
   const isOn = (url: string) => path === url;
   const startsWith = (url: string) => path.startsWith(url);
 
+  //bypass middleware if not in production environment
   if (process.env.NODE_ENV != "production") {
-    //bypass middleware if not in production environment
+    if (isOn("/dashboard") || isOn("/profile") || isOn("/settings")) {
+      const cookie = request.cookies.get(USER_PATH_SUFFIX_COOKIE_NAME);
+      let userPathSuffix: string = "";
+
+      if (cookie) {
+        userPathSuffix = cookie.value;
+        return NextResponse.redirect(new URL(`${request.nextUrl.pathname}/${userPathSuffix}`, request.nextUrl));
+      }
+    }
+
     return response;
+
   }
+
+
 
   //1. IF USER IS LOGGED IN
   if (isAuthenticated) {

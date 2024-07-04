@@ -1,9 +1,10 @@
-import { UserRole } from '@/types/user.types';
+import { UserRole } from '@/types/custom.types';
+import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
 import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signOut, signUp } from 'aws-amplify/auth';
 
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
-    // await setUserPathSuffix(userRole);
+    await setUserPathSuffix(userRole);
 
     const { isSignedIn } = await signIn({
         username: String(form.get("email")),
@@ -15,7 +16,7 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
 
 
 export async function handleSignOut() {
-    // removeUserPathSuffix();
+    removeUserPathSuffix();
     await signOut();
 }
 

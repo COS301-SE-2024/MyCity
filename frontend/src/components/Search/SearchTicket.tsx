@@ -1,17 +1,6 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { FaArrowUp, FaEye } from 'react-icons/fa';
-
-interface Ticket {
-  //not the only components of a ticket (merely the one we are using)
-  ticket_id: string;
-  asset_id: string;
-  dateOpened: string;
-  municipality_id: string;
-  state: string;
-  upvotes: number;
-  viewCount: number;
-}
+import { Ticket } from '@/types/custom.types';
 
 interface SearchTicketProps {
   tickets: Ticket[];

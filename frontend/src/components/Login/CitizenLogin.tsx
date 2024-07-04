@@ -3,7 +3,7 @@ import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { useRouter } from 'next/navigation';
-import { UserRole } from '@/types/user.types';
+import { UserRole } from '@/types/custom.types';
 import { handleSignIn } from '@/services/auth.service';
 
 

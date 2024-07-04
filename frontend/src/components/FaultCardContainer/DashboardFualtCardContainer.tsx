@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
-import DashboardFaultCardUser from "@/components/FaultCardUser/DashboardFaultCardUser";
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
 interface CardData {
   dateClosed: string;

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-react';
+import { Home, PlusCircle, Bell, Search } from 'lucide-react';
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { useProfile } from '@/hooks/useProfile';
-import { UserData } from '@/types/user.types';
+import { UserData } from '@/types/custom.types';
 import { useRouter } from 'next/navigation';
 import { handleSignOut } from '@/services/auth.service';
 

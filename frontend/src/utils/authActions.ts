@@ -1,7 +1,7 @@
 'use server'
 
-import { USER_PATH_SUFFIX_COOKIE_NAME, UserRole } from '@/types/user.types';
-import { cookies, } from 'next/headers';
+import { USER_PATH_SUFFIX_COOKIE_NAME, UserRole } from '@/types/custom.types';
+import { cookies } from 'next/headers';
 
 export const setUserPathSuffix = async (userRole: UserRole) => {
     let suffix = "";

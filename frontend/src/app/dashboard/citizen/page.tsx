@@ -1,14 +1,15 @@
+'use client'
+
 import React, { Key, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
-import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 import Navbar from "@/components/Navbar/Navbar";
-import { FaQuestionCircle, FaTimes } from "react-icons/fa";
+import {  FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
-import axios from "axios";
 import { useProfile } from "@/hooks/useProfile";
+import { getTicket, getTicketsInMunicipality } from "@/services/tickets.service";
 
 export default function CitizenDashboard() {
   const user = useRef(null);
@@ -22,19 +23,16 @@ export default function CitizenDashboard() {
       try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.sub;
-        const rspwatchlist = await axios.get('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=8f4cf09d-754e-4d71-96dc-952173fab07c',{
-          // username : user_id
-        });
+        const mockTicketId = "8f4cf09d-754e-4d71-96dc-952173fab07c";
+        const rspwatchlist = await getTicket(mockTicketId);
         const municipality = user_data.current?.municipality;
-        const rspmunicipality = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getinarea',{
-          municipality_id: municipality
-        });
+        const rspmunicipality = await getTicketsInMunicipality(municipality);
         console.log(user_id);
-        console.log(rspmunicipality.data);
+        console.log(rspmunicipality);
         console.log(municipality);
-        const flattenedWatchlist = rspwatchlist.data.flat();
+        const flattenedWatchlist = rspwatchlist.flat();
         console.log(flattenedWatchlist);
-        setDashMuniResults(Array.isArray(rspmunicipality.data) ? rspmunicipality.data : []);
+        setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
         setDashWatchResults(flattenedWatchlist);
       } catch (error) {
         console.log(error);
@@ -151,8 +149,7 @@ export default function CitizenDashboard() {
               <h1 className="text-center text-white mb-4 ml-2">
                 Based on your proximity to the issue.
               </h1>
-                  
-
+      
                     <DashboardFaultCardContainer cardData={dashMuniResults} />
 
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">

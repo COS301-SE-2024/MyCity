@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Building2, Lightbulb, Wrench, Globe } from 'lucide-react';
 
 export default function NavbarGuest() {

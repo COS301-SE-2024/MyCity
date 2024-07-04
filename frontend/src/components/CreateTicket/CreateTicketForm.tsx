@@ -1,19 +1,13 @@
 'use client'
 
 import React, { FormEvent, useEffect, useState } from 'react';
-import { AutocompleteItem, Textarea, Checkbox, Button, Autocomplete } from '@nextui-org/react';
+import { AutocompleteItem, Textarea, Button, Autocomplete } from '@nextui-org/react';
 import { cn } from '@/lib/utils';
 import { MapboxContextProps } from '@/context/MapboxContext';
-import axios from 'axios';
-import Image from 'next/image';
 import { useProfile } from "@/hooks/useProfile";
+import { FaultType } from '@/types/custom.types';
+import { getFaultTypes } from '@/services/tickets.service';
 
-
-type FaultType = {
-    name: string;
-    icon: string;
-    multiplier: number;
-};
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
     useMapboxProp: () => MapboxContextProps;
@@ -22,25 +16,21 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     const { selectedAddress } = useMapboxProp();
     const { getUserProfile } = useProfile();
-    
+
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
-    
+
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
-                const response = await axios.get('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/fault-types', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                
-                const data = await response.data;
+                const data = await getFaultTypes();
 
-                setFaultTypes(data.map((item: any) => ({
-                    name: item.asset_id,  // asset_id is used as the unique name
-                    icon: item.assetIcon,
-                    multiplier: item.multiplier,
-                })));
+                // setFaultTypes(data.map((item: any) => ({
+                //     name: item.asset_id,  // asset_id is used as the unique name
+                //     icon: item.assetIcon,
+                //     multiplier: item.multiplier,
+                // })));
+
+                setFaultTypes(data);
 
             } catch (error) {
                 console.error('Error fetching fault types:', error);
@@ -120,7 +110,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                             {(faultType) =>
                                 <AutocompleteItem key={faultType.name} textValue={faultType.name}>
                                     <div className="flex gap-2 items-center">
-                                        <img src={faultType.icon} alt={faultType.name} width={6} height={6}  className="flex-shrink-0 w-6 h-6" />
+                                        <img src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
                                         <span className="text-small">{faultType.name}</span>
                                     </div>
                                 </AutocompleteItem>

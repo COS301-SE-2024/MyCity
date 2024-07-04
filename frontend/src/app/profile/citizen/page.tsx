@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import EditCitizenProfile from '@/components/EditProfile/UserProfile';
 import Navbar from "@/components/Navbar/Navbar";
-import { UserData } from "@/types/user.types";
+import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 
 

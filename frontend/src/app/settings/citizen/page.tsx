@@ -6,9 +6,8 @@ import Navbar from "@/components/Navbar/Navbar";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { User, HelpCircle, XCircle } from "lucide-react";
-import Image from "next/image";
 
-import { UserData } from "@/types/user.types";
+import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
