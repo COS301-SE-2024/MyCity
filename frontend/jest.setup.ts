@@ -17,7 +17,7 @@ jest.mock('./src/services/auth.service', () => ({
 }));
 
 jest.mock('./src/utils/authActions');
-jest.mock('./src/context/UserProfileContext', () => ({
+jest.mock('./src/hooks/useProfile', () => ({
     useProfile: () => { return { getUserProfile: jest.fn(() => { return { current: {} }; }) } },
 }));
 
