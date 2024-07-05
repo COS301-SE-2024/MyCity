@@ -29,7 +29,7 @@ export default function Home() {
     {/* Content */}
    
     <div className="h-[30vh] flex items-center justify-center" ></div>
-    <div className='container mx-auto p-2 relative z-10'> {/* Ensure content is above the background */}
+    <div className='container mx-auto p-2 relative z-10 ml-16'> {/* Ensure content is above the background */}
       <h1 className="text-4xl text-white font-bold mb-4">
         Be the change in your city <br />
         with <span className="text-blue-200">MyCity.</span>
@@ -46,7 +46,7 @@ export default function Home() {
           </Button>
         </Link>
 
-        <Link href="auth/login">
+        <Link href="auth/login" data-testid="login-btn">
           <Button className="bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
             Log In
           </Button>

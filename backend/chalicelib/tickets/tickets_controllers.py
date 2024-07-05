@@ -212,8 +212,10 @@ def getMyTickets(tickets_data):
 
 def get_in_my_municipality(tickets_data):
     try:
+
         if tickets_data == None :
             error_response = {
+
                     "Error": {
                         "Code": "IncorrectFields",
                         "Message": f"Missing required field: municipality",

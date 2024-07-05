@@ -52,7 +52,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
     .map((item, index) => (
-      <DashboardFaultCardUser
+      <FaultCardUser
         key={item.ticket_id}
         title={item.asset_id}
         address={item.address}
@@ -62,6 +62,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
         description={item.description}
         image={item.imageURL}
         createdBy={item.dateOpened}
+        ticketNumber={item.ticket_id}
         onClick={() => handleCardClick(item)}
       />
     ));

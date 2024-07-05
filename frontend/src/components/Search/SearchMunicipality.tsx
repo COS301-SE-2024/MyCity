@@ -23,7 +23,7 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities 
       {municipalities.map((municipality: Municipality, index: number) => (
         <div key={index} className="grid grid-cols-6 gap-4 bg-white bg-opacity-70 mb-4 rounded-md shadow-md p-4">
           {/* Municipality text */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col justify-center items-center">
             <span className="text-s text-black-500">Municipality</span>
           </div>
 
