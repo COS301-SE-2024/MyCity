@@ -1,18 +1,13 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { Input, Button, Autocomplete, AutocompleteItem  } from "@nextui-org/react";
-import { UserRole } from "@/types/user.types";
-import { handleSignUp } from "@/lib/cognitoActions";
-import axios from "axios";
-
-
-interface Municipality {
-  municipality_id: string;
-}
+import { Input, Button, Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { BasicMunicipality, UserRole } from "@/types/custom.types";
+import { handleSignUp } from "@/services/auth.service";
+import { getMunicipalityList } from "@/services/municipalities.service";
 
 
 export default function CitizenSignup() {
 
-  const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
+  const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
   const [selectedMunicipality, setSelectedMunicipality] = useState<string>("");
 
 
@@ -20,17 +15,12 @@ export default function CitizenSignup() {
     // Fetch the municipalities when the component mounts
     const fetchMunicipalities = async () => {
       try {
-        const response = await axios.get(
-          "https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/municipality/municipalities-list",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setMunicipalities(response.data);
-      } catch (error) {
-        console.log("Error fetching municipalities: ", error);
+
+        const data = await getMunicipalityList();
+        setMunicipalities(data);
+
+      } catch (error: any) {
+        console.log(error.message);
       }
     };
 

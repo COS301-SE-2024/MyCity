@@ -6,7 +6,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 
-jest.mock('./src/lib/cognitoActions', () => ({
+jest.mock('./src/services/auth.service', () => ({
     handleSignIn: jest.fn(() => { const isSignedIn = false; return { isSignedIn }; }),
     handleSignUp: jest.fn(() => { const isSignedIn = false; return { isSignedIn }; }),
     authenticateClient: jest.fn(() => { return false; }),
@@ -16,8 +16,8 @@ jest.mock('./src/lib/cognitoActions', () => ({
     // autoSignIn: jest.fn()
 }));
 
-jest.mock('./src/lib/serverActions');
-jest.mock('./src/context/UserProfileContext', () => ({
+jest.mock('./src/utils/authActions');
+jest.mock('./src/hooks/useProfile', () => ({
     useProfile: () => { return { getUserProfile: jest.fn(() => { return { current: {} }; }) } },
 }));
 

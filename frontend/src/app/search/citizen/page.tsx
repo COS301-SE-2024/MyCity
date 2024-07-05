@@ -5,11 +5,10 @@ import Navbar from "@/components/Navbar/Navbar";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
-import axios from "axios";
 import { FaFilter } from "react-icons/fa";
 import { HelpCircle, X } from "lucide-react";
-import Modal from "react-modal";
 import { ThreeDots } from "react-loader-spinner";
+import { searchIssue, searchMunicipality, searchMunicipalityTickets, searchServiceProvider } from "@/services/search.service";
 
 export default function CreateTicket() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,50 +33,29 @@ export default function CreateTicket() {
       setHasSearched(true);
       setLoading(true);
       const startTime = Date.now();
-      let response = { data: [] };
+      let data: any[] = [];
       let allTickets = [];
       switch (selectedFilter) {
         case "myLocation":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
+          data = await searchIssue(searchTerm);
           break;
         case "serviceProviders":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-provider?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
+          data = await searchServiceProvider(searchTerm);
           break;
         case "municipalities":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
+          data = await searchMunicipality(searchTerm);
           break;
         case "municipalityTickets":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
-          const municipalityIds = response.data.map(
+          data = await searchMunicipality(searchTerm);
+          const municipalityIds = data.map(
             (municipality: any) => municipality.municipality_id
           );
           const ticketsPromises = municipalityIds.map(
-            (municipalityId: string) =>
-              axios.get(
-                `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality-tickets?q=${encodeURIComponent(
-                  municipalityId
-                )}`
-              )
+            (municipalityId: string) => searchMunicipalityTickets(municipalityId)
           );
           const ticketsResponses = await Promise.all(ticketsPromises);
           allTickets = ticketsResponses.flatMap(
-            (response) => response.data
+            (response) => response
           );
           setMunicipalityTickets(allTickets);
           break;
@@ -86,8 +64,8 @@ export default function CreateTicket() {
       }
       const endTime = Date.now();
       setSearchTime((endTime - startTime) / 1000); // Time in seconds
-      setTotalResults(selectedFilter === "municipalityTickets" ? allTickets.length : response.data.length);
-      setSearchResults(selectedFilter === "municipalityTickets" ? allTickets : response.data);
+      setTotalResults(selectedFilter === "municipalityTickets" ? allTickets.length : data.length);
+      setSearchResults(selectedFilter === "municipalityTickets" ? allTickets : data);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
       setLoading(false);
@@ -217,7 +195,7 @@ export default function CreateTicket() {
         )}
 
         <div className="flex flex-col items-center mb-4">
-          <span className="text-xl text-white text-opacity-80 mb-2 font-bold text-opacity-80">
+          <span className="text-xl text-white text-opacity-80 mb-2 font-bold">
             Search for anything...
           </span>
           <form
@@ -261,28 +239,27 @@ export default function CreateTicket() {
                   (filter) => (
                     <div
                       key={filter}
-                      className={`p-2 cursor-pointer ${
-                        selectedFilter === filter
-                          ? "bg-blue-500 text-white"
-                          : "hover:bg-gray-100"
-                      }`}
+                      className={`p-2 cursor-pointer ${selectedFilter === filter
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-100"
+                        }`}
                       onClick={() =>
                         handleFilterChange(
                           filter as
-                            | "myLocation"
-                            | "municipalities"
-                            | "municipalityTickets"
-                            | "serviceProviders"
+                          | "myLocation"
+                          | "municipalities"
+                          | "municipalityTickets"
+                          | "serviceProviders"
                         )
                       }
                     >
                       {filter === "myLocation"
                         ? "Current Municipality"
                         : filter === "municipalities"
-                        ? "Municipalities"
-                        : filter === "municipalityTickets"
-                        ? "Municipality Tickets"
-                        : "Service Providers"}
+                          ? "Municipalities"
+                          : filter === "municipalityTickets"
+                            ? "Municipality Tickets"
+                            : "Service Providers"}
                     </div>
                   )
                 )}
@@ -294,10 +271,10 @@ export default function CreateTicket() {
             {selectedFilter === "myLocation"
               ? "Current Municipality"
               : selectedFilter === "municipalities"
-              ? "Municipalities"
-              : selectedFilter === "municipalityTickets"
-              ? "Municipality Tickets"
-              : "Service Providers"}
+                ? "Municipalities"
+                : selectedFilter === "municipalityTickets"
+                  ? "Municipality Tickets"
+                  : "Service Providers"}
           </span>
         </div>
 
@@ -346,11 +323,10 @@ export default function CreateTicket() {
                       <li key={index} className="mx-1">
                         <button
                           onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 rounded ${
-                            currentPage === index + 1
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-300"
-                          }`}
+                          className={`px-3 py-1 rounded ${currentPage === index + 1
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-300"
+                            }`}
                         >
                           {index + 1}
                         </button>

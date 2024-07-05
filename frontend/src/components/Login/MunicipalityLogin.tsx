@@ -1,9 +1,9 @@
 import React, { FormEvent } from "react";
 import Link from "next/link";
 import { Input, Button, } from "@nextui-org/react";
-import { UserRole } from "@/types/user.types";
-import { handleSignIn } from "@/lib/cognitoActions";
 import { useRouter } from 'next/navigation';
+import { UserRole } from "@/types/custom.types";
+import { handleSignIn } from "@/services/auth.service";
 
 export default function MunicipalityLogin() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function MunicipalityLogin() {
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
     try {
-      const {isSignedIn} = await handleSignIn(form, UserRole.MUNICIPALITY);
+      const { isSignedIn } = await handleSignIn(form, UserRole.MUNICIPALITY);
 
       if (isSignedIn) {
         router.push("/dashboard");

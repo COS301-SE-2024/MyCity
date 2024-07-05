@@ -1,13 +1,7 @@
 import React from 'react';
 import { UserCircle } from 'lucide-react';
+import { Municipality } from '@/types/custom.types';
 
-interface Municipality {
-  municipality_id: string;
-  name: string;
-  province: string;
-  email: string;
-  contactNumber: string;
-}
 
 interface SearchMunicipalityProps {
   municipalities: Municipality[];
