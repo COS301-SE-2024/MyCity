@@ -1,9 +1,9 @@
 'use client'
 
-import { authenticateClient } from "@/lib/cognitoActions";
 import React, { useEffect, useState } from "react";
 import NavbarUser from "./NavbarUser";
 import NavbarGuest from "./NavbarGuest";
+import { authenticateClient } from "@/services/auth.service";
 
 
 

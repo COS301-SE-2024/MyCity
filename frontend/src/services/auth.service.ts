@@ -1,6 +1,6 @@
-import { UserRole } from "@/types/user.types";
-import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signOut, signUp } from "aws-amplify/auth";
-import { setUserPathSuffix, removeUserPathSuffix } from "./serverActions";
+import { UserRole } from '@/types/custom.types';
+import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
+import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signOut, signUp } from 'aws-amplify/auth';
 
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {

@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import EditCitizenProfile from '@/components/EditProfile/UserProfile';
 import Navbar from "@/components/Navbar/Navbar";
-import { useProfile } from "@/context/UserProfileContext";
-import { UserData } from "@/types/user.types";
+import { UserData } from "@/types/custom.types";
+import { useProfile } from "@/hooks/useProfile";
 
 
 export default function CitizenProfile() {

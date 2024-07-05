@@ -1,9 +1,7 @@
 'use server'
 
-import { UserRole } from "@/types/user.types";
-import { cookies, } from "next/headers";
-
-const SUFFIX_COOKIE_NAME = "mycity.net.za.userpathsuffix";
+import { USER_PATH_SUFFIX_COOKIE_NAME, UserRole } from '@/types/custom.types';
+import { cookies } from 'next/headers';
 
 export const setUserPathSuffix = async (userRole: UserRole) => {
     let suffix = "";
@@ -22,7 +20,7 @@ export const setUserPathSuffix = async (userRole: UserRole) => {
     }
 
 
-    cookies().set(SUFFIX_COOKIE_NAME, suffix, { maxAge: 2592000, secure:true, sameSite:"lax" }); //30 days
+    cookies().set(USER_PATH_SUFFIX_COOKIE_NAME, suffix, { maxAge: 2592000, secure: true, sameSite: "lax" }); //30 days
 
     //wait for cookie to be set before continuing
     const cookieWaitMaxTries = 30; // which is ~ 3seconds
@@ -30,7 +28,7 @@ export const setUserPathSuffix = async (userRole: UserRole) => {
     return new Promise((resolve) => {
         const interval = setInterval(() => {
             if (count < cookieWaitMaxTries) {
-                if (cookies().get(SUFFIX_COOKIE_NAME)) {
+                if (cookies().get(USER_PATH_SUFFIX_COOKIE_NAME)) {
                     clearInterval(interval);
                     resolve(undefined);
                 }
@@ -42,5 +40,5 @@ export const setUserPathSuffix = async (userRole: UserRole) => {
 
 
 export const removeUserPathSuffix = async () => {
-    cookies().delete(SUFFIX_COOKIE_NAME);
+    cookies().delete(USER_PATH_SUFFIX_COOKIE_NAME);
 };

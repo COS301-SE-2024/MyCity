@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Home, PlusCircle, Bell, Search, Settings, UserCircle } from 'lucide-react';
+import { Home, PlusCircle, Bell, Search } from 'lucide-react';
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
-import { useProfile } from '@/context/UserProfileContext';
-import { UserData } from '@/types/user.types';
-import { handleSignOut } from '@/lib/cognitoActions';
+import { useProfile } from '@/hooks/useProfile';
+import { UserData } from '@/types/custom.types';
 import { useRouter } from 'next/navigation';
+import { handleSignOut } from '@/services/auth.service';
 
 export default function NavbarUser() {
   const router = useRouter();
@@ -94,7 +93,7 @@ export default function NavbarUser() {
 
 
         <Dropdown className="bg-white">
-          <DropdownTrigger className="cursor-pointer">
+          <DropdownTrigger className="cursor-pointer" data-testid="profile-dropdown-trigger">
             <Avatar
               showFallback
               src={data?.picture}
@@ -102,17 +101,17 @@ export default function NavbarUser() {
             />
           </DropdownTrigger>
 
-          <DropdownMenu aria-label="Menu Actions" className="px-0 py-2 gap-0 rounded-sm text-black">
+          <DropdownMenu aria-label="profile dropdown" className="px-0 py-2 gap-0 rounded-sm text-black">
             <DropdownItem key="settings" href="/settings/citizen" role="link" className="h-9 hover:bg-grey-500" textValue="Settings">
-                <span className="text-sm">Settings</span>
+              <span className="text-sm">Settings</span>
             </DropdownItem>
 
             <DropdownItem key="about" href="/about" role="link" className="h-9 hover:bg-grey-500" textValue="About us">
-                <span className="text-sm">About us</span>
+              <span className="text-sm">About us</span>
             </DropdownItem>
 
             <DropdownItem key="logout" onClick={onLogout} role="button" className="h-9 hover:bg-grey-500" textValue="Log out">
-                <span className="text-danger text-sm">Log out</span>
+              <span className="text-danger text-sm">Log out</span>
             </DropdownItem>
 
 

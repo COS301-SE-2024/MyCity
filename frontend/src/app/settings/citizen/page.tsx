@@ -5,11 +5,10 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar/Navbar";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
-import { useProfile } from "@/context/UserProfileContext";
 import { User, HelpCircle, XCircle } from "lucide-react";
-import Image from "next/image";
 
-import { UserData } from "@/types/user.types";
+import { UserData } from "@/types/custom.types";
+import { useProfile } from "@/hooks/useProfile";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
@@ -376,21 +375,24 @@ export default function Settings() {
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80">Settings</h1>
-          <HelpCircle
-            className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
-            size={24}
-            onClick={toggleHelpMenu}
-          />
+          <button
+            data-testid="open-help-menu"
+            onClick={toggleHelpMenu}>
+            <HelpCircle
+              className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+              size={24}
+            />
+          </button>
         </div>
 
         {showHelpMenu && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+          <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
                 className="absolute top-2 right-2 text-gray-700"
                 onClick={toggleHelpMenu}
               >
-                <XCircle size={24} />
+                <XCircle size={24} data-testid="close-help-menu" />
               </button>
               <h2 className="text-xl font-bold mb-4">Help Menu</h2>
               <p>This settings page allows you to:</p>

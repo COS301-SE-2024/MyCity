@@ -1,13 +1,37 @@
-import React, { FormEvent } from "react";
-import { Input, Button } from "@nextui-org/react";
-import { UserRole } from "@/types/user.types";
-import { handleSignUp } from "@/lib/cognitoActions";
+import React, { FormEvent, useEffect, useState } from "react";
+import { Input, Button, Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { BasicMunicipality, UserRole } from "@/types/custom.types";
+import { handleSignUp } from "@/services/auth.service";
+import { getMunicipalityList } from "@/services/municipalities.service";
+
 
 export default function CitizenSignup() {
+
+  const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
+  const [selectedMunicipality, setSelectedMunicipality] = useState<string>("");
+
+
+  useEffect(() => {
+    // Fetch the municipalities when the component mounts
+    const fetchMunicipalities = async () => {
+      try {
+
+        const data = await getMunicipalityList();
+        setMunicipalities(data);
+
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    };
+
+    fetchMunicipalities();
+  }, []);
+
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
+    form.set("municipality", selectedMunicipality); // Append selected municipality to the form data
 
     try {
       handleSignUp(form, UserRole.CITIZEN);
@@ -17,7 +41,6 @@ export default function CitizenSignup() {
     }
 
   };
-
 
 
   return (
@@ -84,24 +107,29 @@ export default function CitizenSignup() {
           required
         />
 
-        <Input
-          variant={"bordered"}
-          fullWidth
+        <Autocomplete
           label={
             <span className="font-semibold text-medium block mb-[0.20em]">
               Municipality <span className="text-blue-500">*</span>
             </span>
           }
-          labelPlacement={"outside"}
-          classNames={{
-            inputWrapper: "h-[3em]",
-          }}
-          type="text"
+          labelPlacement="outside"
           name="municipality"
-          autoComplete="new-municipality"
-          placeholder="City of Tshwane Metropolitan"
-          required
-        />
+          placeholder="Select a municipality"
+          fullWidth
+          defaultItems={municipalities}
+          disableSelectorIconRotation
+          isClearable={false}
+          menuTrigger={"input"}
+          size={"lg"}
+          onSelectionChange={(value) => setSelectedMunicipality(value as string)}
+        >
+          {(municipality) => (
+            <AutocompleteItem key={municipality.municipality_id} textValue={municipality.municipality_id}>
+              <span className="text-small">{municipality.municipality_id}</span>
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
 
         <Input
           variant={"bordered"}

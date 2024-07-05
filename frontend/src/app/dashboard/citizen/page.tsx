@@ -1,18 +1,15 @@
-"use client";
+'use client'
 
 import React, { Key, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
-import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 import Navbar from "@/components/Navbar/Navbar";
-import { useProfile } from "@/context/UserProfileContext";
-import { FaQuestionCircle, FaTimes } from "react-icons/fa";
+import {  FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
-import axios from "axios";
-
-
+import { useProfile } from "@/hooks/useProfile";
+import { getTicket, getTicketsInMunicipality } from "@/services/tickets.service";
 
 export default function CitizenDashboard() {
   const user = useRef(null);
@@ -24,30 +21,26 @@ export default function CitizenDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user_data = await userProfile.getUserProfile()
-        const user_id = user_data.current?.sub
-        const rspwatchlist = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=8f4cf09d-754e-4d71-96dc-952173fab07c',{
-          username : user_id
-        });
-        const municipality = user_data.current?.municipality
-        const rspmunicipality = await axios.post('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/getinarea',{
-          municipality_id : municipality
-        });
-        console.log(user_id)
-        console.log(rspmunicipality.data)
-        console.log(municipality)
-        console.log(rspwatchlist.data)
-        const flattenedWatchlist = rspwatchlist.data.flat();
-        setDashMuniResults(rspmunicipality.data)
-        setDashWatchResults(flattenedWatchlist)
-       
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.sub;
+        const mockTicketId = "8f4cf09d-754e-4d71-96dc-952173fab07c";
+        const rspwatchlist = await getTicket(mockTicketId);
+        const municipality = user_data.current?.municipality;
+        const rspmunicipality = await getTicketsInMunicipality(municipality);
+        console.log(user_id);
+        console.log(rspmunicipality);
+        console.log(municipality);
+        const flattenedWatchlist = rspwatchlist.flat();
+        console.log(flattenedWatchlist);
+        setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+        setDashWatchResults(flattenedWatchlist);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [userProfile]); // Add userProfile to the dependency array
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -57,8 +50,8 @@ export default function CitizenDashboard() {
     setIsHelpOpen(!isHelpOpen);
   };
 
-  const hasStatusFieldMuni = dashMuniResults.some(item => item.Status !== undefined);
-  const hasStatusFieldWatch = dashWatchResults.some(item => item.Status !== undefined);
+  const hasStatusFieldMuni = Array.isArray(dashMuniResults) && dashMuniResults.some(item => item.Status !== undefined);
+  const hasStatusFieldWatch = Array.isArray(dashWatchResults) && dashWatchResults.some(item => item.Status !== undefined);
 
   return (
     <div>
@@ -82,17 +75,22 @@ export default function CitizenDashboard() {
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80 ">Dashboard</h1>
-          <HelpCircle
-            className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
-            size={24}
-            onClick={toggleHelpMenu}
-          />
         </div>
+         {/* Persistent Help Icon */}
+      <div className="fixed bottom-4 right-4">
+        <HelpCircle
+          data-testid="open-help-menu"
+          className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+          size={24}
+          onClick={toggleHelpMenu}
+        />
+      </div>
 
         {isHelpOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+          <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
+                 data-testid="close-help-menu"
                 className="absolute top-2 right-2 text-gray-700"
                 onClick={toggleHelpMenu}
               >
@@ -140,41 +138,30 @@ export default function CitizenDashboard() {
                 </h1>
               </div>
               <div className="justify-center text-center">
-                <FaultCardContainer/>
+              
+                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+
               </div>
 
               <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
                 Nearest to you
               </h1>
-              <div className="w-full text-center">
-                <h1 className="text-l text-white text-opacity-80 mb-4">
-                  Based on your proximity to the issue.
-                </h1>
-              </div>
-              <div className="justify-center text-center">
-                <FaultCardContainer />
-              </div>
-                  {hasStatusFieldMuni ? (
-                    <FaultCardContainer />
-                  ) : (
+              <h1 className="text-center text-white mb-4 ml-2">
+                Based on your proximity to the issue.
+              </h1>
+      
                     <DashboardFaultCardContainer cardData={dashMuniResults} />
-                  )}
+
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                 Watchlist
               </h1>
-              <div className="w-full text-center">
-                <h1 className="text-l text-white text-opacity-80 mb-4">
-                  Based on your watchlist.
-                </h1>
-              </div>
-              <div className="justify-center text-center">
-                <FaultCardContainer />
-              </div>
-              {hasStatusFieldWatch ? (
-                  <FaultCardContainer />
-                ) : (
+
+              <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
+                All of the issues you have added to your watchlist.
+              </h1>
+              
+
                   <DashboardFaultCardContainer cardData={dashWatchResults} />
-                  )}
             </Tab>
 
             <Tab key={1} title="List">

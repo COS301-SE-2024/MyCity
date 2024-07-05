@@ -5,17 +5,16 @@ import Navbar from "@/components/Navbar/Navbar";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
-import axios from "axios";
 import { FaFilter } from "react-icons/fa";
 import { HelpCircle, X } from "lucide-react";
-import Modal from "react-modal";
 import { ThreeDots } from "react-loader-spinner";
+import { searchIssue, searchMunicipality, searchMunicipalityTickets, searchServiceProvider } from "@/services/search.service";
 
 export default function CreateTicket() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<
-    "myLocation" | "serviceProviders" | "municipalities"
+    "myLocation" | "serviceProviders" | "municipalities" | "municipalityTickets"
   >("myLocation");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
@@ -23,54 +22,52 @@ export default function CreateTicket() {
   const [municipalityTickets, setMunicipalityTickets] = useState<any[]>([]);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [resultsPerPage] = useState(10);
+  const [searchTime, setSearchTime] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  const [totalResults, setTotalResults] = useState(0);
 
   const handleSearch = async () => {
     try {
       setHasSearched(true);
       setLoading(true);
-      let response = { data: [] };
+      const startTime = Date.now();
+      let data: any[] = [];
+      let allTickets = [];
       switch (selectedFilter) {
         case "myLocation":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/issues?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
+          data = await searchIssue(searchTerm);
           break;
         case "serviceProviders":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/service-provider?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
+          data = await searchServiceProvider(searchTerm);
           break;
         case "municipalities":
-          response = await axios.get(
-            `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality?q=${encodeURIComponent(
-              searchTerm
-            )}`
-          );
-          const municipalityIds = response.data.map(
+          data = await searchMunicipality(searchTerm);
+          break;
+        case "municipalityTickets":
+          data = await searchMunicipality(searchTerm);
+          const municipalityIds = data.map(
             (municipality: any) => municipality.municipality_id
           );
           const ticketsPromises = municipalityIds.map(
-            (municipalityId: string) =>
-              axios.get(
-                `https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/search/municipality-tickets?q=${encodeURIComponent(
-                  municipalityId
-                )}`
-              )
+            (municipalityId: string) => searchMunicipalityTickets(municipalityId)
           );
           const ticketsResponses = await Promise.all(ticketsPromises);
-          const allTickets = ticketsResponses.flatMap(
-            (response) => response.data
+          allTickets = ticketsResponses.flatMap(
+            (response) => response
           );
           setMunicipalityTickets(allTickets);
           break;
         default:
           break;
       }
-      setSearchResults(response.data);
+      const endTime = Date.now();
+      setSearchTime((endTime - startTime) / 1000); // Time in seconds
+      setTotalResults(selectedFilter === "municipalityTickets" ? allTickets.length : data.length);
+      setSearchResults(selectedFilter === "municipalityTickets" ? allTickets : data);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
       setLoading(false);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -79,13 +76,14 @@ export default function CreateTicket() {
   };
 
   const handleFilterChange = (
-    filter: "myLocation" | "serviceProviders" | "municipalities"
+    filter: "myLocation" | "serviceProviders" | "municipalities" | "municipalityTickets"
   ) => {
     setSelectedFilter(filter);
     setIsFilterOpen(false);
     setSearchResults([]);
     setHasSearched(false);
     setMunicipalityTickets([]);
+    setCurrentPage(1); // Reset to the first page on filter change
   };
 
   const handleSearchInputChange = (
@@ -121,12 +119,18 @@ export default function CreateTicket() {
     };
   }, []);
 
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const indexOfLastResult = currentPage * resultsPerPage;
+  const indexOfFirstResult = indexOfLastResult - resultsPerPage;
+  const currentResults = searchResults.slice(indexOfFirstResult, indexOfLastResult);
+
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div
         style={{
-          position: "fixed", // Change position to 'fixed'
+          position: "fixed",
           top: 0,
           left: 0,
           width: "100%",
@@ -136,26 +140,32 @@ export default function CreateTicket() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-          zIndex: -1, // Ensures the background is behind other content
+          backgroundAttachment: "fixed",
+          zIndex: -1,
         }}
       ></div>
       <main>
         <div className="flex items-center mb-2 mt-2 ml-2">
-          <h1 className="text-4xl font-bold text-white text-opacity-80">Search</h1>
+          <h1 className="text-4xl font-bold text-white text-opacity-80">
+            Search
+          </h1>
           <button
-                 className="ml-2 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+            className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
             onClick={() => setIsHelpModalOpen(true)}
           >
-            <HelpCircle size={24} />
+            <HelpCircle size={24} data-testid="open-help-menu" />
           </button>
         </div>
 
         {isHelpModalOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+          <div
+            data-testid="help"
+            className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
+          >
             <div className="bg-white rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
                 className="absolute top-2 right-2 text-gray-700"
+                data-testid="close-help-menu"
                 onClick={() => setIsHelpModalOpen(false)}
               >
                 <X size={24} />
@@ -185,7 +195,7 @@ export default function CreateTicket() {
         )}
 
         <div className="flex flex-col items-center mb-4">
-          <span className="text-xl text-gray-700 mb-2 font-bold text-white text-opacity-80">
+          <span className="text-xl text-white text-opacity-80 mb-2 font-bold">
             Search for anything...
           </span>
           <form
@@ -195,6 +205,7 @@ export default function CreateTicket() {
             <div className="flex items-center">
               <div className="relative flex-grow">
                 <input
+                  data-testid="searchbox"
                   type="text"
                   className="w-full p-2 pr-20 border border-gray-300 rounded-md"
                   placeholder="Type to search..."
@@ -203,6 +214,7 @@ export default function CreateTicket() {
                   onKeyDown={handleKeyDown}
                 />
                 <button
+                  data-testid="filter"
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -211,6 +223,7 @@ export default function CreateTicket() {
                 </button>
               </div>
               <button
+                data-testid="search-btn"
                 type="submit"
                 className="ml-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
               >
@@ -222,29 +235,31 @@ export default function CreateTicket() {
                 ref={filterRef}
                 className="absolute right-0 mt-1 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10"
               >
-                {["myLocation", "municipalities", "serviceProviders"].map(
+                {["myLocation", "municipalities", "municipalityTickets", "serviceProviders"].map(
                   (filter) => (
                     <div
                       key={filter}
-                      className={`p-2 cursor-pointer ${
-                        selectedFilter === filter
-                          ? "bg-blue-500 text-white"
-                          : "hover:bg-gray-100"
-                      }`}
+                      className={`p-2 cursor-pointer ${selectedFilter === filter
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-100"
+                        }`}
                       onClick={() =>
                         handleFilterChange(
                           filter as
-                            | "myLocation"
-                            | "serviceProviders"
-                            | "municipalities"
+                          | "myLocation"
+                          | "municipalities"
+                          | "municipalityTickets"
+                          | "serviceProviders"
                         )
                       }
                     >
                       {filter === "myLocation"
                         ? "Current Municipality"
                         : filter === "municipalities"
-                        ? "Municipality Tickets"
-                        : "Company"}
+                          ? "Municipalities"
+                          : filter === "municipalityTickets"
+                            ? "Municipality Tickets"
+                            : "Service Providers"}
                     </div>
                   )
                 )}
@@ -256,20 +271,20 @@ export default function CreateTicket() {
             {selectedFilter === "myLocation"
               ? "Current Municipality"
               : selectedFilter === "municipalities"
-              ? "Municipality Tickets"
-              : "Company"}
+                ? "Municipalities"
+                : selectedFilter === "municipalityTickets"
+                  ? "Municipality Tickets"
+                  : "Service Providers"}
           </span>
         </div>
 
         {loading && (
           <div className="flex justify-center items-center mt-8">
-            {" "}
-            {/* Adjusted margin-top */}
             <ThreeDots
               height="40"
               width="80"
               radius="9"
-              color="#ADD8E6" // Changed to a lighter blue
+              color="#ADD8E6"
               ariaLabel="three-dots-loading"
               wrapperStyle={{}}
               wrapperClass=""
@@ -287,16 +302,48 @@ export default function CreateTicket() {
 
         {hasSearched && !loading && (
           <>
-            {selectedFilter === "serviceProviders" && (
-              <SearchSP serviceProviders={searchResults} />
-            )}
-            {selectedFilter === "municipalities" && (
-              <>
-                <SearchMunicipality municipalities={searchResults} />
-                <SearchTicket tickets={municipalityTickets} />
-              </>
-            )}
+            {currentResults.map((result, index) => {
+              if (selectedFilter === "serviceProviders") {
+                return <SearchSP key={index} serviceProviders={[result]} />;
+              }
+              if (selectedFilter === "municipalities") {
+                return <SearchMunicipality key={index} municipalities={[result]} />;
+              }
+              if (selectedFilter === "municipalityTickets") {
+                return <SearchTicket key={index} tickets={[result]} />;
+              }
+              return null;
+            })}
+            <div className="flex justify-center mt-4">
+              <nav>
+                <ul className="flex list-none p-0">
+                  {Array.from(
+                    { length: Math.ceil(searchResults.length / resultsPerPage) },
+                    (_, index) => (
+                      <li key={index} className="mx-1">
+                        <button
+                          onClick={() => paginate(index + 1)}
+                          className={`px-3 py-1 rounded ${currentPage === index + 1
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-300"
+                            }`}
+                        >
+                          {index + 1}
+                        </button>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </nav>
+            </div>
           </>
+        )}
+        {showToast && (
+          <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded shadow-lg">
+            <span>{totalResults} results found in </span>
+            <span className="text-blue-500">{searchTime.toFixed(2)}</span>
+            <span> seconds</span>
+          </div>
         )}
       </main>
     </div>

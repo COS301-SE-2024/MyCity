@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaTimes,
-  FaArrowUp,
-  FaCommentAlt,
-  FaEye,
-  FaExclamationTriangle,
-  FaTicketAlt,
-  FaUser,
-} from "react-icons/fa";
+import {FaArrowUp,FaCommentAlt,FaEye,FaExclamationTriangle,FaTicketAlt} from "react-icons/fa";
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -33,8 +25,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   viewCount,
   ticketNumber,
   description,
-  image,
-  createdBy,
+  image
 }) => {
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);

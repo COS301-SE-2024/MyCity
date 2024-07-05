@@ -1,14 +1,14 @@
 import React, { FormEvent } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import Link from 'next/link';
-import { UserRole } from '@/types/user.types';
-import { handleSignIn } from '@/lib/cognitoActions';
 import { useRouter } from 'next/navigation';
+import { UserRole } from '@/types/custom.types';
+import { handleSignIn } from '@/services/auth.service';
 
 
 export default function ServiceProviderLogin() {
   const router = useRouter();
-  
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget as HTMLFormElement);
@@ -72,7 +72,7 @@ export default function ServiceProviderLogin() {
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
-        <Button name="submit" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
+        <Button name="submit" data-testid="submit-btn" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
         {/* Social Media Sign Up Options */}

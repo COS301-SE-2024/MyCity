@@ -1,14 +1,6 @@
 import React from "react";
 import { Star } from "lucide-react";
-import Image from "next/image";
-
-interface ServiceProvider {
-  companyLogo?: string;
-  name: string;
-  contactNumber: string;
-  email: string;
-  qualityRating?: number;
-}
+import { ServiceProvider } from "@/types/custom.types";
 
 interface SearchSPProps {
   serviceProviders: ServiceProvider[];
@@ -24,7 +16,7 @@ const SearchSP: React.FC<SearchSPProps> = ({ serviceProviders }) => {
       {serviceProviders.map((sp: ServiceProvider, index: number) => (
         <div
           key={index}
-          className="grid grid-cols-6 items-center bg-white bg-opacity-80 rounded-md shadow-md p-4 h-24 gap-4"
+          className="grid grid-cols-6 items-center bg-white bg-opacity-80 rounded-md mt-4 shadow-md p-4 h-24 gap-4"
         >
           {/* Service Provider text */}
           <div className="col-span-1 flex flex-col items-center">
