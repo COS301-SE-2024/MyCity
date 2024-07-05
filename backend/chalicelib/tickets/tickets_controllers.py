@@ -182,20 +182,16 @@ def findMunicipality(location):
 
 def getMyTickets(tickets_data):
     try:
-        required_fields = [
-            "username",
-        ]
-        for field in required_fields:
-            if field not in tickets_data:
-                error_response = {
+        if tickets_data == None :
+            error_response = {
                     "Error": {
                         "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
+                        "Message": f"Missing required field: username",
                     }
                 }
-                raise ClientError(error_response, "InvalideFields")
+            raise ClientError(error_response, "InvalideFields")
         response = tickets_table.scan(
-            FilterExpression=Attr("username").eq(tickets_data["username"])
+            FilterExpression=Attr("username").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -216,20 +212,16 @@ def getMyTickets(tickets_data):
 
 def get_in_my_municipality(tickets_data):
     try:
-        required_fields = [
-            "municipality_id",
-        ]
-        for field in required_fields:
-            if field not in tickets_data:
-                error_response = {
+        if tickets_data == None :
+            error_response = {
                     "Error": {
                         "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
+                        "Message": f"Missing required field: municipality",
                     }
                 }
-                raise ClientError(error_response, "InvalideFields")
+            raise ClientError(error_response, "InvalideFields")
         response = tickets_table.scan(
-            FilterExpression=Attr("municipality_id").eq(tickets_data["municipality_id"])
+            FilterExpression=Attr("municipality_id").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -258,20 +250,16 @@ def get_in_my_municipality(tickets_data):
 def get_watchlist(tickets_data):
     try:
         collective = []
-        required_fields = [
-            "username",
-        ]
-        for field in required_fields:
-            if field not in tickets_data:
-                error_response = {
+        if tickets_data == None :
+            error_response = {
                     "Error": {
                         "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
+                        "Message": f"Missing required field: username",
                     }
                 }
-                raise ClientError(error_response, "InvalideFields")
+            raise ClientError(error_response, "InvalideFields")
         response = watchlist_table.scan(
-            FilterExpression=Attr("user_id").eq(tickets_data["username"])
+            FilterExpression=Attr("user_id").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:

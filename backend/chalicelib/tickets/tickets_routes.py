@@ -35,26 +35,26 @@ def get_fault_types_route():
     return fault_types
 
 
-@tickets_blueprint.route("/getmytickets", methods=["POST"], cors=True)
+@tickets_blueprint.route("/getmytickets", methods=["GET"], cors=True)
 def get_my_tickets():
     request = tickets_blueprint.current_request
-    ticket_data = request.json_body
+    ticket_data = request.query_params.get("username")
     response = getMyTickets(ticket_data)
     return response
 
 
-@tickets_blueprint.route("/getinarea", methods=["POST"], cors=True)
+@tickets_blueprint.route("/getinarea", methods=["GET"], cors=True)
 def get_in_area():
     request = tickets_blueprint.current_request
-    ticket_data = request.json_body
+    ticket_data = request.query_params.get("municipality")
     response = get_in_my_municipality(ticket_data)
     return response
 
 
-@tickets_blueprint.route("/getwatchlist", methods=["POST"], cors=True)
+@tickets_blueprint.route("/getwatchlist", methods=["GET"], cors=True)
 def get_my_watchlist():
     request = tickets_blueprint.current_request
-    ticket_data = request.json_body
+    ticket_data = request.query_params.get("username")
     response = get_watchlist(ticket_data)
     return response
 
