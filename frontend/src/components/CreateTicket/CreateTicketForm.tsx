@@ -7,6 +7,7 @@ import { MapboxContextProps } from '@/context/MapboxContext';
 import axios from 'axios';
 import Image from 'next/image';
 import { useProfile } from '@/context/UserProfileContext';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 type FaultType = {
@@ -88,12 +89,41 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
 
         //**** make request to create ticket below ****
+        const params_data = {
+            asset: selectedFault,
+            description : faultDescription,
+            latitude : latitude,
+            longitude : longitude,
+            username : userId,
+        }
+
+        try{
+            const apiurl = "https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/tickets/create"
+            const resp = await fetch(apiurl,{
+                method : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(params_data),
+            });
+            if(!resp.ok){
+                throw new Error(`HTTP! status: ${resp.status}`)
+            }
+            else {
+                toast.success("Ticket succesfully created");
+            }
+        } catch(error)
+        {
+            console.error('Error:', error);
+        }
+        
     };
 
 
 
     return (
         <div className={cn("", className)}>
+            <ToastContainer />
 
             <div className="py-8 flex flex-col items-center justify-center">
 
