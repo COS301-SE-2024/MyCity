@@ -29,7 +29,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
-                const response = await axios.get('https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/fault-types', {
+                const response = await axios.get('https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/fault-types', {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -98,7 +98,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         }
 
         try{
-            const apiurl = "https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/tickets/create"
+            const apiurl = "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/create"
             const resp = await fetch(apiurl,{
                 method : 'POST',
                 headers: {
