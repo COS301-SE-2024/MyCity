@@ -9,13 +9,13 @@
     {
       "name": "api_handler",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:af-south-1:637423247704:function:mycity-dev"
+      "lambda_arn": "arn:aws:lambda:eu-west-1:637423247704:function:mycity-dev"
     },
     {
       "name": "rest_api",
       "resource_type": "rest_api",
-      "rest_api_id": "f1ihjeakmg",
-      "rest_api_url": "https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/"
+      "rest_api_id": "dahex648v1",
+      "rest_api_url": "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/"
     }
   ],
   "schema_version": "2.0",
