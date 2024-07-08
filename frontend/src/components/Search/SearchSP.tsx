@@ -1,14 +1,6 @@
 import React from "react";
 import { Star } from "lucide-react";
-import Image from "next/image";
-
-interface ServiceProvider {
-  companyLogo?: string;
-  name: string;
-  contactNumber: string;
-  email: string;
-  qualityRating?: number;
-}
+import { ServiceProvider } from "@/types/custom.types";
 
 interface SearchSPProps {
   serviceProviders: ServiceProvider[];

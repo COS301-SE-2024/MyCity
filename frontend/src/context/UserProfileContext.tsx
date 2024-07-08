@@ -5,6 +5,7 @@ import { fetchUserAttributes, getCurrentUser, updateUserAttributes,fetchAuthSess
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
 
+
 export interface UserProfileContextProps {
     getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
     updateUserProfile: (data: UserData) => void;
@@ -13,10 +14,9 @@ export interface UserProfileContextProps {
 
 const UserProfileContext = createContext<UserProfileContextProps | undefined>(undefined);
 
-
-
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ children }) => {
     const userProfile = useRef<UserData | null>(null);
+
 
     const getUserProfile = async () => {
         //if user profile data already cached, return it
@@ -73,10 +73,4 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ c
     );
 }
 
-export const useProfile = (): UserProfileContextProps => {
-    const context = useContext(UserProfileContext);
-    if (!context) {
-        throw new Error("useProfile must be used within a UserProfileProvider");
-    }
-    return context;
-};
+export default UserProfileContext;

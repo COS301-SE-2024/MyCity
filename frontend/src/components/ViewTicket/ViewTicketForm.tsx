@@ -5,8 +5,8 @@ import { Input, Autocomplete, AutocompleteItem, Textarea, Checkbox } from '@next
 import { BadgeAlert, Ticket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import axios from 'axios';
 import Image from 'next/image';
+import { getTicket } from '@/services/tickets.service';
 
 interface ReportFaultFormProps extends React.HTMLAttributes<HTMLElement> {}
 
@@ -28,14 +28,9 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
 
         async function fetchticketdata() {
             try {
-                const response = await axios.get(`https://f1ihjeakmg.execute-api.af-south-1.amazonaws.com/api/tickets/view?ticket_id=${encodeURIComponent(ticket_id)}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const data = await getTicket(ticket_id);
 
-                console.log(response);
-                const data = await response.data;
+                console.log(data);
 
                 setTicketData(data.map((item: any) => ({
                     Upvotes: item.upvotes,  // asset_id is used as the unique name

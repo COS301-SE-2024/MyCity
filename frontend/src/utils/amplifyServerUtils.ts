@@ -1,6 +1,6 @@
-import { currentConfig } from "@/config/amplifyCognitoConfig";
-import { NextServer, createServerRunner } from "@aws-amplify/adapter-nextjs";
-import { fetchAuthSession } from "aws-amplify/auth/server";
+import { currentConfig } from '@/config/amplifyCognitoConfig';
+import { NextServer, createServerRunner } from '@aws-amplify/adapter-nextjs';
+import { fetchAuthSession } from 'aws-amplify/auth/server';
 
 
 export const { runWithAmplifyServerContext } = createServerRunner({

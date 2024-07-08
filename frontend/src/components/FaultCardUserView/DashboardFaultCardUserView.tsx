@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaTimes,
-  FaArrowUp,
-  FaCommentAlt,
-  FaEye,
-  FaExclamationTriangle,
-  FaTicketAlt,
-  FaUser,
-} from "react-icons/fa";
+import {FaTimes,FaArrowUp,FaCommentAlt,FaEye,FaExclamationTriangle,FaTicketAlt,FaUser,} from "react-icons/fa";
 
 interface FaultCardUserViewProps {
   show: boolean;

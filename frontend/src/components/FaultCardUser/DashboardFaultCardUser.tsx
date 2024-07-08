@@ -1,5 +1,4 @@
 import React from "react";
-import { FaArrowUp, FaEye, FaCommentAlt } from "react-icons/fa";
 
 interface CardData {
   title: string;
@@ -27,9 +26,6 @@ function formatNumber(num: number): string {
 const FaultCardUser: React.FC<FaultCardUserProps> = ({
   title,
   address,
-  arrowCount,
-  commentCount,
-  viewCount,
   image,
   onClick,
 }) => {
