@@ -36,7 +36,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ c
             picture: userDetails.picture,
             user_role: userDetails["custom:user_role"] as UserRole,
             municipality: userDetails["custom:municipality"],
-            session_token : session.tokens,
+            session_token : String(session.tokens?.idToken),
         };
 
         //for the picture, prefer what is in local storage (just for demo 2)

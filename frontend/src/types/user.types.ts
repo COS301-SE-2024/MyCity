@@ -15,5 +15,5 @@ export interface UserData {
     picture: string | undefined;
     user_role: UserRole | undefined;
     municipality: string | undefined;
-    session_token : AuthTokens | undefined;
+    session_token : string | undefined;
 }
