@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { FaultType } from "@/types/custom.types";
+import { json } from "stream/consumers";
 
 const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL)
 
@@ -127,4 +128,28 @@ export async function getFaultTypes(revalidate?: boolean) {
     } catch (error) {
         throw error;
     }
+}
+
+export async function CreatTicket( assett: string,descrip : string, lat : string, longi : string, usern : string) : Promise<boolean> {
+    const data = {
+        asset : assett,
+        description : descrip,
+        latitude : lat,
+        longitude : longi,
+        username : usern
+    }
+    const apiURL = baseURL + "/tickets/create"
+    const response = await fetch(apiURL,{
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body : JSON.stringify(data),
+    });
+
+    if(!response.ok)
+    {
+        return false;
+    }
+    else return true;
 }

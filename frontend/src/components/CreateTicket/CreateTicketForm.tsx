@@ -9,7 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from '@/types/custom.types';
-import { getFaultTypes } from '@/services/tickets.service';
+import { getFaultTypes, CreatTicket } from '@/services/tickets.service';
 
 
 
@@ -91,20 +91,12 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         }
 
         try{
-            const apiurl = "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/create"
-            const resp = await fetch(apiurl,{
-                method : 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(params_data),
-            });
-            if(!resp.ok){
-                throw new Error(`HTTP! status: ${resp.status}`)
-            }
-            else {
+            const isCreated = await CreatTicket(String(selectedFault),String(faultDescription),String(latitude),String(longitude),String(userId))
+            if( isCreated == true)
+            {
                 toast.success("Ticket succesfully created");
             }
+            else throw new Error(`HTTP! status: Error`)
         } catch(error)
         {
             console.error('Error:', error);
