@@ -1,7 +1,7 @@
 'use client'
 
 import { UserData, UserRole } from '@/types/user.types';
-import { fetchUserAttributes, getCurrentUser, updateUserAttributes } from 'aws-amplify/auth';
+import { fetchUserAttributes, getCurrentUser, updateUserAttributes,fetchAuthSession } from 'aws-amplify/auth';
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
 
@@ -14,16 +14,17 @@ export interface UserProfileContextProps {
 const UserProfileContext = createContext<UserProfileContextProps | undefined>(undefined);
 
 
-export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const userProfile = useRef<UserData | null>(null);
 
+export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ children }) => {
+    const userProfile = useRef<UserData | null>(null);
 
     const getUserProfile = async () => {
         //if user profile data already cached, return it
         if (userProfile.current) {
             return userProfile;
         }
-
+        const {signInDetails} = await getCurrentUser();
+        const session = await fetchAuthSession();
         //otherwise get current user profile details
         const userDetails = await fetchUserAttributes();
 
@@ -34,7 +35,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             family_name: userDetails.family_name,
             picture: userDetails.picture,
             user_role: userDetails["custom:user_role"] as UserRole,
-            municipality: userDetails["custom:municipality"]
+            municipality: userDetails["custom:municipality"],
+            session_token : session.tokens,
         };
 
         //for the picture, prefer what is in local storage (just for demo 2)
