@@ -1,6 +1,8 @@
 import { revalidateTag } from "next/cache";
 import { FaultType } from "@/types/custom.types";
 
+const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL)
+
 export async function getTicket(ticketId: string, revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("tickets-view"); //invalidate the cache
@@ -42,15 +44,13 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 
     try {
-        const response = await fetch("/api/tickets/getinarea",
+        const apiUrl = baseURL + "/api/tickets/getinarea?municipality="+ municipality
+        const response = await fetch(apiUrl,
             {
-                method: "POST",
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    municipality_id: municipality
-                })
             }
         );
 
