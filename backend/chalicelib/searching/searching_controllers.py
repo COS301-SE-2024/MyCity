@@ -23,7 +23,7 @@ def get_user_municipality(event):
 
 def validate_search_term(search_term):
     # Allow only alphanumeric characters and spaces to prevent injection attacks
-    if not re.match("^[a-zA-Z0-9\s]*$", search_term):
+    if not re.match("^[a-zA-Z0-9 ]*$", search_term):
         raise BadRequestError("Invalid search term")
     return search_term
 
