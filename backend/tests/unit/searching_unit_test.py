@@ -168,4 +168,3 @@ def test_search_tickets_valid(test_client):
         # Additional checks if necessary based on the structure of the response
     except BadRequestError as e:
         pytest.fail(f"BadRequestError was not expected: {str(e)}")
-
