@@ -10,6 +10,7 @@ from chalicelib.searching.searching_controllers import (
     search_alt_municipality_tickets,
     validate_search_term,
     BadRequestError,
+    search_tickets,
 )
 
 
@@ -155,3 +156,16 @@ def test_search_alt_municipality_tickets_valid(test_client):
         # Additional checks if necessary based on the structure of the response
     except BadRequestError as e:
         pytest.fail(f"BadRequestError was not expected: {str(e)}")
+
+
+# Search for tickets with a valid municipality name and valid search term
+def test_search_tickets_valid(test_client):
+    municipality_name = "Mafube Local"  # Example municipality name
+
+    try:
+        response = search_tickets(municipality_name, "water")
+        assert isinstance(response, list), "Response should be a list"
+        # Additional checks if necessary based on the structure of the response
+    except BadRequestError as e:
+        pytest.fail(f"BadRequestError was not expected: {str(e)}")
+
