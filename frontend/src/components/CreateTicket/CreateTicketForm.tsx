@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState,useRef } from 'react';
 import { AutocompleteItem, Textarea, Button, Autocomplete } from '@nextui-org/react';
 import { cn } from '@/lib/utils';
 import { MapboxContextProps } from '@/context/MapboxContext';
@@ -20,15 +20,13 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     const { selectedAddress } = useMapboxProp();
     const { getUserProfile } = useProfile();
-
+    const formRef = useRef<HTMLFormElement>(null);
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
 
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
                 const data = await getFaultTypes();
-                console.log("Data recieved: ")
-                console.log(data)
                 if (data && data.length > 0)
                 {
                     setFaultTypes(data);                    
@@ -54,10 +52,15 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     }, []);
 
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const user_data = await getUserProfile();
-        const form = new FormData(event.currentTarget as HTMLFormElement);
+        const formcovert = formRef.current; 
+        if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
+            console.error('Form is not recognized as HTMLFormElement');
+            return;
+        }
+        const form = new FormData(formcovert as HTMLFormElement);
 
         //1. coordinates
         const latitude = selectedAddress?.lat;
@@ -126,7 +129,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
                 <div className="px-10 w-full">
 
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+                    <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
                         {faultTypes.length > 0 ? (
                             <Autocomplete
                                 label={<span className="font-semibold text-sm">Fault type <sup className="text-blue-500">*</sup></span>}

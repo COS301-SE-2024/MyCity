@@ -143,7 +143,7 @@ export async function CreatTicket( sessiont : string, assett: string,descrip : s
     }
     const apiURL = baseURL + "/tickets/create"
     const response = await fetch(apiURL,{
-        method: "GET",
+        method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization" : sessiont || "",
