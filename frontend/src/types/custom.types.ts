@@ -22,8 +22,8 @@ export interface BasicMunicipality {
 }
 
 export interface FaultType {
-    name: string;
-    icon: string;
+    asset_id: string;
+    assetIcon: string;
     multiplier: number;
 }
 

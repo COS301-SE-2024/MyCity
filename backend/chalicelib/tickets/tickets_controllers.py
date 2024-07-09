@@ -35,10 +35,15 @@ address = [
 def generate_id():
     return str(uuid.uuid4())
 
+def convert_decimal_to_float(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
+
 
 def format_response(status_code, body):
     return Response(
-        body=json.dumps(body),
+        body=json.dumps(body,default=convert_decimal_to_float),
         status_code=status_code,
         headers={
             "Access-Control-Allow-Origin": "*",
@@ -141,7 +146,7 @@ def get_fault_types():
             for asset in assets
         ]
 
-        return format_response(200, fault_types)
+        return format_response(float(200), fault_types)
 
     except ClientError as e:
 

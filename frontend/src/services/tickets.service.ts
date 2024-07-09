@@ -1,6 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { FaultType } from "@/types/custom.types";
 import { json } from "stream/consumers";
+import { UserData, UserRole } from '@/types/user.types';
 
 const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL)
 
@@ -107,8 +108,10 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 
     try {
-        const response = await fetch("/api/tickets/fault-types",
+        const apiURL = baseURL + "/tickets/fault-types"
+        const response = await fetch(apiURL,
             {
+                method : "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -119,9 +122,9 @@ export async function getFaultTypes(revalidate?: boolean) {
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
-        const result = await response.json();
+        const result = await response.json()
 
-        const data = result.data as FaultType[];
+        const data = result as FaultType[];
 
         return data;
 
@@ -130,7 +133,7 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 }
 
-export async function CreatTicket( assett: string,descrip : string, lat : string, longi : string, usern : string) : Promise<boolean> {
+export async function CreatTicket( sessiont : string, assett: string,descrip : string, lat : string, longi : string, usern : string) : Promise<boolean> {
     const data = {
         asset : assett,
         description : descrip,
@@ -143,6 +146,7 @@ export async function CreatTicket( assett: string,descrip : string, lat : string
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Authorization" : sessiont || "",
         },
         body : JSON.stringify(data),
     });

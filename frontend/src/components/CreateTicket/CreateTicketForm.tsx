@@ -27,17 +27,26 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         async function fetchFaultTypes() {
             try {
                 const data = await getFaultTypes();
-
+                console.log("Data recieved: ")
+                console.log(data)
+                if (data && data.length > 0)
+                {
+                    setFaultTypes(data);                    
+                }
+                else {
+                    setFaultTypes([]);
+                } 
                 // setFaultTypes(data.map((item: any) => ({
                 //     name: item.asset_id,  // asset_id is used as the unique name
                 //     icon: item.assetIcon,
                 //     multiplier: item.multiplier,
                 // })));
 
-                setFaultTypes(data);
+
 
             } catch (error) {
                 console.error('Error fetching fault types:', error);
+                setFaultTypes([]);
             }
         }
 
@@ -47,7 +56,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-
+        const user_data = await getUserProfile();
         const form = new FormData(event.currentTarget as HTMLFormElement);
 
         //1. coordinates
@@ -91,7 +100,8 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         }
 
         try{
-            const isCreated = await CreatTicket(String(selectedFault),String(faultDescription),String(latitude),String(longitude),String(userId))
+            const sessiont = user_data.current?.session_token || ' '
+            const isCreated = await CreatTicket(sessiont,String(selectedFault),String(faultDescription),String(latitude),String(longitude),String(userId))
             if( isCreated == true)
             {
                 toast.success("Ticket succesfully created");
@@ -117,30 +127,33 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                 <div className="px-10 w-full">
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
-
-                        <Autocomplete
-                            label={<span className="font-semibold text-sm">Fault type <sup className="text-blue-500">*</sup></span>}
-                            labelPlacement="outside"
-                            name="fault-type"
-                            placeholder="Fault Type"
-                            fullWidth
-                            defaultItems={faultTypes}
-                            disableSelectorIconRotation
-                            isClearable={false}
-                            menuTrigger={"input"}
-                            size={"lg"}
-                            type="text"
-                            autoComplete="new-fault"
-                        >
-                            {(faultType) =>
-                                <AutocompleteItem key={faultType.name} textValue={faultType.name}>
-                                    <div className="flex gap-2 items-center">
-                                        <img src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
-                                        <span className="text-small">{faultType.name}</span>
-                                    </div>
-                                </AutocompleteItem>
-                            }
-                        </Autocomplete>
+                        {faultTypes.length > 0 ? (
+                            <Autocomplete
+                                label={<span className="font-semibold text-sm">Fault type <sup className="text-blue-500">*</sup></span>}
+                                labelPlacement="outside"
+                                name="fault-type"
+                                placeholder="Fault Type"
+                                fullWidth
+                                defaultItems={faultTypes}
+                                disableSelectorIconRotation
+                                isClearable={false}
+                                menuTrigger={"input"}
+                                size={"lg"}
+                                type="text"
+                                autoComplete="new-fault"
+                            >
+                                {(faultType) =>
+                                    <AutocompleteItem key={faultType.asset_id} textValue={faultType.asset_id}>
+                                        <div className="flex gap-2 items-center">
+                                            <img src={faultType.assetIcon} alt={faultType.asset_id} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
+                                            <span className="text-small">{faultType.asset_id}</span>
+                                        </div>
+                                    </AutocompleteItem>
+                                }
+                            </Autocomplete>
+                        ) : (
+                            <p>Loading fault types...</p>
+                        )}
 
 
 

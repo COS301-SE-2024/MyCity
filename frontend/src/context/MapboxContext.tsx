@@ -14,11 +14,11 @@ export interface MapboxContextProps {
     initialiseMap: (mapContainerRef: React.RefObject<HTMLDivElement>) => MutableRefObject<mapboxgl.Map | null>;
 }
 
-mapboxgl.accessToken = String(process.env.MAPBOX_ACCESS_TOKEN);
+mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 const MapboxContext = createContext<MapboxContextProps | undefined>(undefined);
 
 
-const apiKey = String(process.env.PLACEKIT_API_KEY);
+const apiKey = String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY);
 
 const pk = placekit(apiKey);
 
