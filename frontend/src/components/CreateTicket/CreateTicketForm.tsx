@@ -87,11 +87,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         //can extract more user details as neeeded
 
         //to visualize all the data
-        console.log("selected fault: ", selectedFault);
-        console.log("fault description: ", faultDescription);
-        console.log("user data: ", userData.current);
-        console.log("selected address: ", selectedAddress);
-
+       
 
         //**** make request to create ticket below ****
         const params_data = {
