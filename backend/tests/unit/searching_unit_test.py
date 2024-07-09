@@ -20,20 +20,19 @@ def test_client():
     with Client(app.app) as client:
         yield client
 
+
 # Test valid search terms
 def test_validate_search_term_valid():
-    valid_search_terms = [
-        "ValidTerm123",
-        "Another Valid Term",
-        "123 456"
-    ]
+    valid_search_terms = ["ValidTerm123", "Another Valid Term", "123 456", "Valid-term"]
 
     for term in valid_search_terms:
         try:
             result = validate_search_term(term)
             assert result == term, f"Expected {term}, but got {result}"
         except BadRequestError as e:
-            pytest.fail(f"Unexpected BadRequestError for valid search term {term}: {str(e)}")
+            pytest.fail(
+                f"Unexpected BadRequestError for valid search term {term}: {str(e)}"
+            )
 
 
 # Test invalid search terms
@@ -44,7 +43,7 @@ def test_validate_search_term_invalid():
         "Invalid@Term!",
         "Term\tWith\tTabs",
         "Invalid\nTerm\nWith\nNewlines",
-        "Term_With-Special_Chars"
+        "Term_With-Special_Chars",
     ]
 
     for term in invalid_search_terms:
@@ -88,5 +87,71 @@ def test_search_service_providers_valid(test_client):
                 assert (
                     search_term.lower() in item["name"].lower()
                 ), "Search term should be in the 'name' field"
+    except BadRequestError as e:
+        pytest.fail(f"BadRequestError was not expected: {str(e)}")
+
+
+# Search for a municipality with an invalid search term
+def test_search_municipalities_invalid_term(test_client):
+    search_term_invalid = "Select * "
+
+    with pytest.raises(BadRequestError):
+        search_municipalities(search_term_invalid)
+
+
+# Search for a municipality with an empty search term
+def test_search_municipalities_empty_term(test_client):
+    search_term_empty = ""
+
+    try:
+        response = search_municipalities(search_term_empty)
+        assert response, "Response should not be empty for an empty search term"
+    except BadRequestError as e:
+        pytest.fail(
+            f"BadRequestError was not expected for an empty search term: {str(e)}"
+        )
+
+
+# Search for Municipality with a valid searh term
+def test_search_municipalities_valid(test_client):
+    search_term = "Ma"
+
+    try:
+        response = search_municipalities(search_term)
+        assert isinstance(response, list), "Response should be a list"
+        # Additional checks if necessary based on the structure of the response
+    except BadRequestError as e:
+        pytest.fail(f"BadRequestError was not expected: {str(e)}")
+
+
+# Search for tickets with an invalid municipality passed into the function
+def test_search_alt_municipality_tickets_invalid_name(test_client):
+    municipality_name_invalid = "Invalid$Name"
+
+    with pytest.raises(BadRequestError):
+        search_alt_municipality_tickets(municipality_name_invalid)
+
+
+# Search for tickets with no municipality passed to the function
+def test_search_alt_municipality_tickets_empty_name(test_client):
+    municipality_name_empty = ""
+
+    try:
+        response = search_alt_municipality_tickets(municipality_name_empty)
+        assert response, "Response should not be empty for an empty search term"
+    except BadRequestError as e:
+        pytest.fail(
+            f"BadRequestError was not expected for an empty municipality name: {str(e)}"
+        )
+
+
+# Seaching for tickets with a valid municiplaity name passed into the function
+def test_search_alt_municipality_tickets_valid(test_client):
+    municipality_name = "Mafube Local"  # Example municipality name
+
+    try:
+        response = search_alt_municipality_tickets(municipality_name)
+        assert isinstance(response, list), "Response should be a list"
+        # Additional checks if necessary based on the structure of the response
     except BadRequestError as e:
         pytest.fail(f"BadRequestError was not expected: {str(e)}")
