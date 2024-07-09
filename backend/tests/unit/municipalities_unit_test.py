@@ -22,10 +22,6 @@ def test_get_municipalities_list(test_client):
     assert data == muni_list
 
 
-def test_one(test_client):
-    assert 1 == 1.7
-
-
 muni_list = [
     {"municipality_id": "Mafube Local"},
     {"municipality_id": "Pixley Ka Seme District"},
