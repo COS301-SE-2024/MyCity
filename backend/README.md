@@ -83,7 +83,7 @@ Run ```aws configure``` and provide the following values:
  $ aws configure
  AWS Access Key ID [*************xxxx]: <Your AWS Access Key ID>
  AWS Secret Access Key [**************xxxx]: <Your AWS Secret Access Key>
- Default region name: [us-west-2]: us-west-2
+ Default region name: [eu-west-1]: eu-west-1
 ```
 
 ### To Deploy

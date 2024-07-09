@@ -14,7 +14,6 @@ def test_client():
 def test_municipalities_list(test_client):
     response = test_client.http.get("/municipality/municipalities-list")
     assert response.json_body == muni_list
-    
 
 
 muni_list = [
