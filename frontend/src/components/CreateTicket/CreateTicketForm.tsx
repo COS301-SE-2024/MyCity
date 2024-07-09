@@ -82,7 +82,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             return;
         }
 
-        const userId = userData.current.sub;
+        const userId = userData.current.email;
         const givenName = userData.current.given_name;
         //can extract more user details as neeeded
 
@@ -100,6 +100,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             latitude : latitude,
             longitude : longitude,
             username : userId,
+            state : "OPEN"
         }
 
         try{
@@ -107,7 +108,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             const isCreated = await CreatTicket(sessiont,String(selectedFault),String(faultDescription),String(latitude),String(longitude),String(userId))
             if( isCreated == true)
             {
-                toast.success("Ticket succesfully created");
+                
             }
             else throw new Error(`HTTP! status: Error`)
         } catch(error)

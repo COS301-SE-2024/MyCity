@@ -61,6 +61,7 @@ def create_ticket(ticket_data):
             "description",
             "latitude",
             "longitude",
+            "state",
             "username",
         ]
         for field in required_fields:
@@ -117,9 +118,8 @@ def create_ticket(ticket_data):
 
         # Put the ticket item into the tickets table
         tickets_table.put_item(Item=ticket_item)
-        return format_response(
-            200, {"message": "Ticket created successfully", "ticket_id": ticket_id}
-        )
+        accresponse = {"message": "Ticket created successfully", "ticket_id": ticket_id}
+        return format_response(float(200), accresponse)
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -169,8 +169,10 @@ def findMunicipality(location):
             if count < 2:
                 print(x["municipality_id"])
                 count = count + 1
-            lat2 = float(x["latitude"])
-            long2 = float(x["longitude"])
+            lat_str = str(x['latitude']).strip("'")
+            long_str = str(x['longitude']).strip("'")
+            lat2 = float(lat_str)
+            long2 = float(long_str)
             dlat = lat2 - latitude
             dlong = long2 - longitude
             a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2

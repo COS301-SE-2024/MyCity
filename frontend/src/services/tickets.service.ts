@@ -139,7 +139,8 @@ export async function CreatTicket( sessiont : string, assett: string,descrip : s
         description : descrip,
         latitude : lat,
         longitude : longi,
-        username : usern
+        username : usern,
+        state : "OPEN"
     }
     const apiURL = baseURL + "/tickets/create"
     const response = await fetch(apiURL,{
