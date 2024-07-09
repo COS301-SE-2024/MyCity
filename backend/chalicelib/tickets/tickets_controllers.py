@@ -35,6 +35,7 @@ address = [
 def generate_id():
     return str(uuid.uuid4())
 
+
 def convert_decimal_to_float(obj):
     if isinstance(obj, Decimal):
         return float(obj)
@@ -43,7 +44,7 @@ def convert_decimal_to_float(obj):
 
 def format_response(status_code, body):
     return Response(
-        body=json.dumps(body,default=convert_decimal_to_float),
+        body=json.dumps(body, default=convert_decimal_to_float),
         status_code=status_code,
         headers={
             "Access-Control-Allow-Origin": "*",
@@ -169,8 +170,8 @@ def findMunicipality(location):
             if count < 2:
                 print(x["municipality_id"])
                 count = count + 1
-            lat_str = str(x['latitude']).strip("'")
-            long_str = str(x['longitude']).strip("'")
+            lat_str = str(x["latitude"]).strip("'")
+            long_str = str(x["longitude"]).strip("'")
             lat2 = float(lat_str)
             long2 = float(long_str)
             dlat = lat2 - latitude
