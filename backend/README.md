@@ -83,7 +83,7 @@ Run ```aws configure``` and provide the following values:
  $ aws configure
  AWS Access Key ID [*************xxxx]: <Your AWS Access Key ID>
  AWS Secret Access Key [**************xxxx]: <Your AWS Secret Access Key>
- Default region name: [us-west-2]: us-west-2
+ Default region name: [eu-west-1]: eu-west-1
 ```
 
 ### To Deploy
@@ -97,3 +97,25 @@ chalice deploy
 > Make sure the virtual environment is activated whenever you run any commands in the terminal while working in backend folder.
 >
 > Sounds like too much work? Luckily, some IDEs like VS Code can be configured to do this automatically for you.
+
+## Backend Testing
+#### Tools:
+1. Testing - AWS Chalice: https://aws.github.io/chalice/topics/testing.html#rest-apis
+2. Pytest: https://docs.pytest.org/en/stable/getting-started.html#get-started
+
+* Run all tests:
+   ```
+   pytest --no-header -v
+   ```
+* Run tests in a directory:
+   ```
+   pytest --no-header -v tests/unit/municipalities_unit.py
+   ```
+* Run tests by keyword expressions:
+   ```
+   pytest --no-header -v -k "my class and not method"
+   ```
+
+> [!Note]
+> The purposes of the "--no-header" and "-v" flags are to hide the header and to increase verbosity (show more details) respectively. They are not required, but increase the readability of the test results.
+  
