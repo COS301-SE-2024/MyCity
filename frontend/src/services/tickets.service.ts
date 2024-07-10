@@ -5,6 +5,40 @@ import { UserData, UserRole } from '@/types/user.types';
 
 const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL)
 
+export async function getMostUpvote( user_session : string, revalidate?: boolean) {
+    
+    // if (revalidate) {
+    //     revalidateTag("tickets-getinarea"); //invalidate the cache
+    // }
+
+    try {
+        const apiUrl = baseURL + "/api/tickets/getUpvotes";
+        const response = await fetch(apiUrl,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization" : user_session,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as any[];
+
+        return data;
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 export async function getWatchlistTickets(username: string,user_session : string, revalidate?: boolean) {
     // if (revalidate) {
     //     revalidateTag("username"); //invalidate the cache
@@ -95,8 +129,14 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
         }
+        
 
         const result = await response.json();
+
+        if(result.Status == "Failed")
+        {
+            throw new Error(`Error was : ${result.Error}`);
+        }
 
         const data = result.data as any[];
 

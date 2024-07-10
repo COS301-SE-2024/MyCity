@@ -390,3 +390,10 @@ def interact_ticket(ticket_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
+
+def getMostUpvoted():
+    response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+    items = response["Items"]
+    sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+    return sorted_items[:6]

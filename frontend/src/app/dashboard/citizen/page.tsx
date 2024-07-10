@@ -9,12 +9,13 @@ import {  FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
-import { getTicket, getTicketsInMunicipality } from "@/services/tickets.service";
+import { getTicket, getTicketsInMunicipality,getMostUpvote,getWatchlistTickets } from "@/services/tickets.service";
 
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]); 
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]); 
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]); 
 
@@ -23,15 +24,17 @@ export default function CitizenDashboard() {
       try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.email;
-        console.log(user_data.current?.session_token)
-        const rspwatchlist = await getTicket(String(user_id));
+        const user_session = String(user_data.current?.session_token)
+        console.log(user_session);
+        const rspmostupvotes = await getMostUpvote(user_session);
+        const rspwatchlist = await getWatchlistTickets(String(user_id), user_session);
         const municipality = user_data.current?.municipality;
-        const rspmunicipality = await getTicketsInMunicipality(municipality);
-        console.log(user_id);
+        const rspmunicipality = await getTicketsInMunicipality(municipality,user_session);
         console.log(rspmunicipality);
         console.log(municipality);
         const flattenedWatchlist = rspwatchlist.flat();
         console.log(flattenedWatchlist);
+        setMostUpvoteResults(Array.isArray(rspmostupvotes) ? rspmostupvotes : [])
         setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
         setDashWatchResults(flattenedWatchlist);
       } catch (error) {
@@ -139,7 +142,7 @@ export default function CitizenDashboard() {
               </div>
               <div className="justify-center text-center">
               
-                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+                    <DashboardFaultCardContainer cardData={dashMostUpvoteResults} />
 
               </div>
 
