@@ -24,7 +24,7 @@ def test_client():
 
 # Test valid search terms
 def test_validate_search_term_valid():
-    valid_search_terms = ["ValidTerm123", "Another Valid Term", "123 456", "Valid-term"]
+    valid_search_terms = ["ValidTerm", "Another Valid Term", "Valid-term"]
 
     for term in valid_search_terms:
         try:
@@ -40,6 +40,8 @@ def test_validate_search_term_valid():
 def test_validate_search_term_invalid():
     invalid_search_terms = [
         "Invalid$Term",
+        "InvalidTerm123",
+        "123-456",
         "Term*With-Symbols",
         "Invalid@Term!",
         "Term\tWith\tTabs",
