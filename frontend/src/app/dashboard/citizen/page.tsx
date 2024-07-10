@@ -22,10 +22,9 @@ export default function CitizenDashboard() {
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.sub;
+        const user_id = user_data.current?.email;
         console.log(user_data.current?.session_token)
-        const mockTicketId = "8f4cf09d-754e-4d71-96dc-952173fab07c";
-        const rspwatchlist = await getTicket(mockTicketId);
+        const rspwatchlist = await getTicket(String(user_id));
         const municipality = user_data.current?.municipality;
         const rspmunicipality = await getTicketsInMunicipality(municipality);
         console.log(user_id);

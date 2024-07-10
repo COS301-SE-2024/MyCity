@@ -5,16 +5,51 @@ import { UserData, UserRole } from '@/types/user.types';
 
 const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL)
 
-export async function getTicket(ticketId: string, revalidate?: boolean) {
+export async function getWatchlistTickets(username: string,user_session : string, revalidate?: boolean) {
+    // if (revalidate) {
+    //     revalidateTag("username"); //invalidate the cache
+    // }
+
+    try {
+        const apiURl = baseURL +  `/tickets/getwatchlist?username=${encodeURIComponent(username)}`;
+        const response = await fetch(apiURl,
+            {
+                method : "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization" : user_session
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as any[];
+
+        return data;
+
+    } catch (error) {
+        throw error;
+    }
+} 
+
+
+export async function getTicket(ticketId: string,user_session : string, revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("tickets-view"); //invalidate the cache
     }
 
     try {
-        const response = await fetch(`/api/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`,
+        const apiURl = baseURL +  `/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`;
+        const response = await fetch(apiURl,
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization" : user_session
                 },
             }
         );
@@ -36,7 +71,7 @@ export async function getTicket(ticketId: string, revalidate?: boolean) {
 
 
 // temporary function (request method must be changed to GET)
-export async function getTicketsInMunicipality(municipality: string | undefined, revalidate?: boolean) {
+export async function getTicketsInMunicipality(municipality: string | undefined, user_session : string, revalidate?: boolean) {
     if (!municipality) {
         throw new Error("Missing municipality");
     }
@@ -52,6 +87,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization" : user_session,
                 },
             }
         );
