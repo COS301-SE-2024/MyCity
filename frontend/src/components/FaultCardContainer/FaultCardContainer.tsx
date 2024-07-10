@@ -23,6 +23,7 @@ const FaultCardContainer: React.FC = () => {
 
 
   // Placeholder card data for development, this will be replaced by an array of json objects of tickets from the database (see below)
+  useEffect(() => {
   const cardData: CardData[] = [
     {
       title: "Pothole",
@@ -103,10 +104,8 @@ const FaultCardContainer: React.FC = () => {
     },
     // Add more placeholder cards here if needed
   ];
-  useEffect(() => {
-    const shuffledData = [...cardData].sort(() => Math.random() - 0.5);
-    setDynamicCardData(shuffledData);
-  }, []);
+  setDynamicCardData(cardData);
+}, []);
 
   const handleCardClick = (cardData: CardData) => {
     setSelectedCard(cardData);

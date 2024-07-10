@@ -13,10 +13,25 @@ export default function Login() {
         <div>
 
             <Navbar />
-
+            <div
+        style={{
+          position: "fixed", // Change position to 'fixed'
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
+          zIndex: -1, // Ensures the background is behind other content
+        }}
+      ></div>
             <main className="h-screen flex justify-center p-20">
 
-                <div className="flex flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12">
+                <div className="flex bg-white flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12">
 
                     <span className="text-[2.5em] font-bold">{formHeader}</span>
 
