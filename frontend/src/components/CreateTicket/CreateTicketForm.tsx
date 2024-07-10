@@ -1,12 +1,16 @@
 'use client'
 
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState,useRef } from 'react';
 import { AutocompleteItem, Textarea, Button, Autocomplete } from '@nextui-org/react';
 import { cn } from '@/lib/utils';
 import { MapboxContextProps } from '@/context/MapboxContext';
+
+import { toast, ToastContainer } from 'react-toastify';
+
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from '@/types/custom.types';
-import { getFaultTypes } from '@/services/tickets.service';
+import { getFaultTypes, CreatTicket } from '@/services/tickets.service';
+
 
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
@@ -16,24 +20,31 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     const { selectedAddress } = useMapboxProp();
     const { getUserProfile } = useProfile();
-
+    const formRef = useRef<HTMLFormElement>(null);
     const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
 
     useEffect(() => {
         async function fetchFaultTypes() {
             try {
                 const data = await getFaultTypes();
-
+                if (data && data.length > 0)
+                {
+                    setFaultTypes(data);                    
+                }
+                else {
+                    setFaultTypes([]);
+                } 
                 // setFaultTypes(data.map((item: any) => ({
                 //     name: item.asset_id,  // asset_id is used as the unique name
                 //     icon: item.assetIcon,
                 //     multiplier: item.multiplier,
                 // })));
 
-                setFaultTypes(data);
+
 
             } catch (error) {
                 console.error('Error fetching fault types:', error);
+                setFaultTypes([]);
             }
         }
 
@@ -41,10 +52,15 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     }, []);
 
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        const form = new FormData(event.currentTarget as HTMLFormElement);
+        const user_data = await getUserProfile();
+        const formcovert = formRef.current; 
+        if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
+            console.error('Form is not recognized as HTMLFormElement');
+            return;
+        }
+        const form = new FormData(formcovert as HTMLFormElement);
 
         //1. coordinates
         const latitude = selectedAddress?.lat;
@@ -66,24 +82,43 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             return;
         }
 
-        const userId = userData.current.sub;
+        const userId = userData.current.email;
         const givenName = userData.current.given_name;
         //can extract more user details as neeeded
 
         //to visualize all the data
-        console.log("selected fault: ", selectedFault);
-        console.log("fault description: ", faultDescription);
-        console.log("user data: ", userData.current);
-        console.log("selected address: ", selectedAddress);
-
+       
 
         //**** make request to create ticket below ****
+        const params_data = {
+            asset: selectedFault,
+            description : faultDescription,
+            latitude : latitude,
+            longitude : longitude,
+            username : userId,
+            state : "OPEN"
+        }
+
+        try{
+            const sessiont = user_data.current?.session_token || ' '
+            const isCreated = await CreatTicket(sessiont,String(selectedFault),String(faultDescription),String(latitude),String(longitude),String(userId))
+            if( isCreated == true)
+            {
+                
+            }
+            else throw new Error(`HTTP! status: Error`)
+        } catch(error)
+        {
+            console.error('Error:', error);
+        }
+        
     };
 
 
 
     return (
         <div className={cn("", className)}>
+            <ToastContainer />
 
             <div className="py-8 flex flex-col items-center justify-center">
 
@@ -91,31 +126,34 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
                 <div className="px-10 w-full">
 
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
-
-                        <Autocomplete
-                            label={<span className="font-semibold text-sm">Fault type <sup className="text-blue-500">*</sup></span>}
-                            labelPlacement="outside"
-                            name="fault-type"
-                            placeholder="Fault Type"
-                            fullWidth
-                            defaultItems={faultTypes}
-                            disableSelectorIconRotation
-                            isClearable={false}
-                            menuTrigger={"input"}
-                            size={"lg"}
-                            type="text"
-                            autoComplete="new-fault"
-                        >
-                            {(faultType) =>
-                                <AutocompleteItem key={faultType.name} textValue={faultType.name}>
-                                    <div className="flex gap-2 items-center">
-                                        <img src={faultType.icon} alt={faultType.name} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
-                                        <span className="text-small">{faultType.name}</span>
-                                    </div>
-                                </AutocompleteItem>
-                            }
-                        </Autocomplete>
+                    <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+                        {faultTypes.length > 0 ? (
+                            <Autocomplete
+                                label={<span className="font-semibold text-sm">Fault type <sup className="text-blue-500">*</sup></span>}
+                                labelPlacement="outside"
+                                name="fault-type"
+                                placeholder="Fault Type"
+                                fullWidth
+                                defaultItems={faultTypes}
+                                disableSelectorIconRotation
+                                isClearable={false}
+                                menuTrigger={"input"}
+                                size={"lg"}
+                                type="text"
+                                autoComplete="new-fault"
+                            >
+                                {(faultType) =>
+                                    <AutocompleteItem key={faultType.asset_id} textValue={faultType.asset_id}>
+                                        <div className="flex gap-2 items-center">
+                                            <img src={faultType.assetIcon} alt={faultType.asset_id} width={6} height={6} className="flex-shrink-0 w-6 h-6" />
+                                            <span className="text-small">{faultType.asset_id}</span>
+                                        </div>
+                                    </AutocompleteItem>
+                                }
+                            </Autocomplete>
+                        ) : (
+                            <p>Loading fault types...</p>
+                        )}
 
 
 

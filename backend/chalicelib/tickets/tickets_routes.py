@@ -17,7 +17,7 @@ def create_ticket_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
     response = create_ticket(ticket_data)
-    return format_response(response)
+    return response
 
 
 @tickets_blueprint.route("/view", methods=["GET"], cors=True)
