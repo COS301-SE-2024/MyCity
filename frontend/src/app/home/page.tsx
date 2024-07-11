@@ -41,7 +41,7 @@ export default function Home() {
 
       <div className="flex flex-row gap-12">
         <Link href="/auth/signup">
-          <Button className="bg-red-500 text-white px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
+          <Button className="bg-blue-500 text-white px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
             Get Started
           </Button>
         </Link>
