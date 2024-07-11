@@ -36,9 +36,15 @@ def generate_id():
     return str(uuid.uuid4())
 
 
+def convert_decimal_to_float(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
+
+
 def format_response(status_code, body):
     return Response(
-        body=json.dumps(body),
+        body=json.dumps(body, default=convert_decimal_to_float),
         status_code=status_code,
         headers={
             "Access-Control-Allow-Origin": "*",
@@ -56,6 +62,7 @@ def create_ticket(ticket_data):
             "description",
             "latitude",
             "longitude",
+            "state",
             "username",
         ]
         for field in required_fields:
@@ -112,9 +119,8 @@ def create_ticket(ticket_data):
 
         # Put the ticket item into the tickets table
         tickets_table.put_item(Item=ticket_item)
-        return format_response(
-            200, {"message": "Ticket created successfully", "ticket_id": ticket_id}
-        )
+        accresponse = {"message": "Ticket created successfully", "ticket_id": ticket_id}
+        return format_response(float(200), accresponse)
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -141,7 +147,7 @@ def get_fault_types():
             for asset in assets
         ]
 
-        return format_response(200, fault_types)
+        return format_response(float(200), fault_types)
 
     except ClientError as e:
 
@@ -164,8 +170,10 @@ def findMunicipality(location):
             if count < 2:
                 print(x["municipality_id"])
                 count = count + 1
-            lat2 = float(x["latitude"])
-            long2 = float(x["longitude"])
+            lat_str = str(x["latitude"]).strip("'")
+            long_str = str(x["longitude"]).strip("'")
+            lat2 = float(lat_str)
+            long2 = float(long_str)
             dlat = lat2 - latitude
             dlong = long2 - longitude
             a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2
@@ -182,20 +190,16 @@ def findMunicipality(location):
 
 def getMyTickets(tickets_data):
     try:
-        required_fields = [
-            "username",
-        ]
-        for field in required_fields:
-            if field not in tickets_data:
-                error_response = {
-                    "Error": {
-                        "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
-                    }
+        if tickets_data == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required field: username",
                 }
-                raise ClientError(error_response, "InvalideFields")
+            }
+            raise ClientError(error_response, "InvalideFields")
         response = tickets_table.scan(
-            FilterExpression=Attr("username").eq(tickets_data["username"])
+            FilterExpression=Attr("username").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -216,28 +220,17 @@ def getMyTickets(tickets_data):
 
 def get_in_my_municipality(tickets_data):
     try:
-        required_fields = [
-            "municipality_id",
-        ]
-        for field in required_fields:
-            if tickets_data == None:
-                error_response = {
-                    "Error": {
-                        "Code": "Nothing",
-                        "Message": f"No data has been sent",
-                    }
+
+        if tickets_data == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required field: municipality",
                 }
-                raise ClientError(error_response, "NothingSent")
-            if field not in tickets_data:
-                error_response = {
-                    "Error": {
-                        "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
-                    }
-                }
-                raise ClientError(error_response, "InvalideFields")
+            }
+            raise ClientError(error_response, "InvalideFields")
         response = tickets_table.scan(
-            FilterExpression=Attr("municipality_id").eq(tickets_data["municipality_id"])
+            FilterExpression=Attr("municipality_id").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -266,20 +259,16 @@ def get_in_my_municipality(tickets_data):
 def get_watchlist(tickets_data):
     try:
         collective = []
-        required_fields = [
-            "username",
-        ]
-        for field in required_fields:
-            if field not in tickets_data:
-                error_response = {
-                    "Error": {
-                        "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
-                    }
+        if tickets_data == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required field: username",
                 }
-                raise ClientError(error_response, "InvalideFields")
+            }
+            raise ClientError(error_response, "InvalideFields")
         response = watchlist_table.scan(
-            FilterExpression=Attr("user_id").eq(tickets_data["username"])
+            FilterExpression=Attr("user_id").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -342,3 +331,62 @@ def view_ticket_data(ticket_id):
         raise BadRequestError(
             f"Failed to get Ticket data: {e.response['Error']['Message']}"
         )
+
+
+def interact_ticket(ticket_data):
+    try:
+        required_fields = ["type", "ticket_id"]
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+        interact_type = str(ticket_data["type"])
+        response = tickets_table.query(
+            ProjectionExpression="upvotes,viewcount",
+            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"]),
+        )
+        items = response["Items"]
+        if len(response["Items"]) > 0:
+            if interact_type.upper() == "UPVOTE":
+                for item in items:
+                    votes = Decimal(str(item["upvotes"])) + 1
+                    tickets_table.update_item(
+                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        UpdateExpression="SET upvotes = :votes",
+                        ExpressionAttributeValues={":votes": votes},
+                    )
+                    return {"Status": "SUCCESFUL", "vote": votes}
+            elif interact_type.upper() == "VIEWED":
+                for item in items:
+                    views = Decimal(str(item["viewcount"])) + 1
+                    tickets_table.update_item(
+                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        UpdateExpression="SET viewcount = :views",
+                        ExpressionAttributeValues={":views": views},
+                    )
+                    return {"Status": "SUCCESFUL", "views": views}
+            elif interact_type.upper() == "UNVOTE":
+                for item in items:
+                    votes = Decimal(str(item["upvotes"])) - 1
+                    tickets_table.update_item(
+                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        UpdateExpression="SET upvotes = :votes",
+                        ExpressionAttributeValues={":votes": votes},
+                    )
+                    return {"Status": "SUCCESFUL", "vote": votes}
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExist",
+                    "Message": "Ticket doesnt exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
