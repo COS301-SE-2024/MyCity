@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     throw new Error("missing api base url");
   }
 
-  const endpointUrl = req.url.replace("http://localhost:3000", API_BASE_URL);
+  const endpointUrl = req.url.replace("http://localhost:3000/api", API_BASE_URL);
   const etag = params.slug.join("-");
 
   const res = await fetch(endpointUrl, {
@@ -29,8 +29,8 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     throw new Error("missing api base url");
   }
 
-  const endpointUrl = req.url.replace("http://localhost:3000", API_BASE_URL);
-  const etag = params.slug.join("-");
+  const endpointUrl = req.url.replace("http://localhost:3000/api", API_BASE_URL);
+  // const etag = params.slug.join("-");
 
   const requestBody = await req.json();
 
@@ -38,8 +38,8 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     method: "POST",
     headers: req.headers,
     body: JSON.stringify(requestBody),
-    next: { tags: [etag] },
-    cache: "force-cache"
+    // next: { tags: [etag] },
+    // cache: "force-cache"
   });
 
 
