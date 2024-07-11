@@ -3,7 +3,7 @@ import { FaultType } from "@/types/custom.types";
 import { json } from "stream/consumers";
 import { UserData, UserRole } from '@/types/user.types';
 
-const baseURL = String(process.env.NEXT_PUBLIC_API_BASE_URL)
+const baseURL = "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api"
 
 export async function getMostUpvote( user_session : string, revalidate?: boolean) {
     
@@ -12,7 +12,9 @@ export async function getMostUpvote( user_session : string, revalidate?: boolean
     // }
 
     try {
-        const apiUrl = baseURL + "/api/tickets/getUpvotes";
+        console.log(baseURL)
+        const apiUrl = `${baseURL}/tickets/getUpvotes`;
+        console.log("Heres the api url using: " + apiUrl)
         const response = await fetch(apiUrl,
             {
                 method: "GET",
@@ -29,7 +31,7 @@ export async function getMostUpvote( user_session : string, revalidate?: boolean
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result;
 
         return data;
 
@@ -45,8 +47,11 @@ export async function getWatchlistTickets(username: string,user_session : string
     // }
 
     try {
-        const apiURl = baseURL +  `/tickets/getwatchlist?username=${encodeURIComponent(username)}`;
-        const response = await fetch(apiURl,
+        const apiUrl = baseURL +  "/tickets/getwatchlist";
+        const searchparams ={"username": username};
+        const queryParams = new URLSearchParams(searchparams);
+        const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
+        const response = await fetch(urlWithParams,
             {
                 method : "GET",
                 headers: {
@@ -62,7 +67,7 @@ export async function getWatchlistTickets(username: string,user_session : string
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
 
@@ -94,7 +99,7 @@ export async function getTicket(ticketId: string,user_session : string, revalida
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
 
@@ -115,8 +120,11 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 
     try {
-        const apiUrl = baseURL + "/api/tickets/getinarea?municipality="+ municipality
-        const response = await fetch(apiUrl,
+        const apiUrl = baseURL + "/api/tickets/getinarea";
+        const searchparams ={"municipality": municipality};
+        const queryParams = new URLSearchParams(searchparams);
+        const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
+        const response = await fetch(urlWithParams,
             {
                 method: "GET",
                 headers: {

@@ -33,7 +33,7 @@ def view_ticket_route():
 @tickets_blueprint.route("/fault-types", methods=["GET"], cors=True)
 def get_fault_types_route():
     fault_types = get_fault_types()
-    return
+    return fault_types
 
 
 @tickets_blueprint.route("/getmytickets", methods=["GET"], cors=True)

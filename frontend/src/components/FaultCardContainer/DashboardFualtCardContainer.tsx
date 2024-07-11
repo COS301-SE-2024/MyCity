@@ -11,8 +11,7 @@ interface CardData {
   viewcount : number
   description: string;
   municipality_id: string;
-  address : string;
-  commentcount : number;
+  address : string ;
   ticket_id : string;
 }
 
@@ -56,7 +55,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
         title={item.asset_id}
         address={item.address}
         arrowCount={item.upvotes}
-        commentCount={item.commentcount}
+        commentCount={item.viewcount}
         viewCount={item.viewcount}
         description={item.description}
         image={item.imageURL}
