@@ -1,6 +1,6 @@
 'use client'
 
-import { UserData, UserRole } from '@/types/user.types';
+import { UserData, UserRole } from '@/types/custom.types';
 import { fetchUserAttributes, getCurrentUser, updateUserAttributes,fetchAuthSession } from 'aws-amplify/auth';
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
