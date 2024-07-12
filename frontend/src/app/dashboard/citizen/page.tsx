@@ -27,17 +27,15 @@ export default function CitizenDashboard() {
         const user_session = String(user_data.current?.session_token)
         console.log(user_session);
         const rspmostupvotes = await getMostUpvote(user_session);
-        console.log(rspmostupvotes);
         const rspwatchlist = await getWatchlistTickets(String(user_id), user_session);
         const municipality = user_data.current?.municipality;
         const rspmunicipality = await getTicketsInMunicipality(municipality,user_session);
-        console.log(rspmunicipality);
-        console.log(municipality);
         const flattenedWatchlist = rspwatchlist.flat();
         console.log(flattenedWatchlist);
         setMostUpvoteResults(Array.isArray(rspmostupvotes) ? rspmostupvotes : [])
         setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
         setDashWatchResults(flattenedWatchlist);
+        console.log(await dashMostUpvoteResults)
       } catch (error) {
         console.log(error);
       }

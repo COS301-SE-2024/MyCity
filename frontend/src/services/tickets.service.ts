@@ -1,20 +1,23 @@
 import { revalidateTag } from "next/cache";
 import { FaultType } from "@/types/custom.types";
 import { json } from "stream/consumers";
-import { UserData, UserRole } from '@/types/user.types';
+import placekit from "@placekit/client-js/lite";
 
-const baseURL = "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api"
+let pkApiKey = String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY);
+const pk = placekit(pkApiKey, {
+    countries: ["za"],
+    language: "en",
+    maxResults: 2,
+  });
+
 
 export async function getMostUpvote( user_session : string, revalidate?: boolean) {
     
     // if (revalidate) {
     //     revalidateTag("tickets-getinarea"); //invalidate the cache
     // }
-
     try {
-        console.log(baseURL)
-        const apiUrl = `${baseURL}/tickets/getUpvotes`;
-        console.log("Heres the api url using: " + apiUrl)
+        const apiUrl = "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
             {
                 method: "GET",
@@ -32,6 +35,19 @@ export async function getMostUpvote( user_session : string, revalidate?: boolean
         const result = await response.json();
 
         const data = result;
+        data.forEach((item: any) => {
+           const given_location = item.latitude + "," + item.longitude;
+           const cleaned_string = given_location.replace("'", "")
+           pk.reverse({
+            coordinates: cleaned_string,
+            countries: ["za"],
+            maxResults: 2,
+          }).then((res) => {
+            const address_results = res.results[0];
+            const addressed_used = address_results.name + ", " + address_results.administrative;
+            item['address'] = addressed_used; 
+          });
+        });
 
         return data;
 
@@ -47,7 +63,7 @@ export async function getWatchlistTickets(username: string,user_session : string
     // }
 
     try {
-        const apiUrl = baseURL +  "/tickets/getwatchlist";
+        const apiUrl ='https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getwatchlist';
         const searchparams ={"username": username};
         const queryParams = new URLSearchParams(searchparams);
         const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
@@ -83,8 +99,7 @@ export async function getTicket(ticketId: string,user_session : string, revalida
     }
 
     try {
-        const apiURl = baseURL +  `/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`;
-        const response = await fetch(apiURl,
+        const response = await fetch(`/api/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -120,10 +135,11 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 
     try {
-        const apiUrl = baseURL + "/api/tickets/getinarea";
+        const apiUrl ='https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getinarea';
         const searchparams ={"municipality": municipality};
         const queryParams = new URLSearchParams(searchparams);
         const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
+        console.log(urlWithParams)
         const response = await fetch(urlWithParams,
             {
                 method: "GET",
@@ -192,7 +208,7 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 
     try {
-        const apiURL = baseURL + "/tickets/fault-types"
+        const apiURL ='https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/fault-types'
         const response = await fetch(apiURL,
             {
                 method : "GET",
@@ -226,7 +242,7 @@ export async function CreatTicket( sessiont : string, assett: string,descrip : s
         username : usern,
         state : "OPEN"
     }
-    const apiURL = baseURL + "/tickets/create"
+    const apiURL ='https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/create';
     const response = await fetch(apiURL,{
         method: "POST",
         headers: {

@@ -396,4 +396,12 @@ def getMostUpvoted():
     response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
     items = response["Items"]
     sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
-    return sorted_items[:6]
+    top_items = sorted_items[:6]
+    if len(top_items) > 0:
+        for item in top_items:
+            response_item = ticketupdate_table.scan(
+                FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+            )
+            item["commentcount"] = len(response_item["Items"])
+        return top_items
+    return top_items
