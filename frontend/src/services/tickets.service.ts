@@ -83,7 +83,12 @@ export async function getWatchlistTickets(username: string,user_session : string
 
         const result = await response.json();
 
-        const data = result as any[];
+        if(result.Status)
+        {
+            return [];
+        }
+
+        const data = result;
 
         return data;
 
@@ -157,12 +162,12 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         const result = await response.json();
 
-        if(result.Status == "Failed")
+        if(result.Status)
         {
-            throw new Error(`Error was : ${result.Error}`);
+            return [];
         }
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
 

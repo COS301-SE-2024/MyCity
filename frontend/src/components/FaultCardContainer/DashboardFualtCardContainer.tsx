@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
-interface CardData {
+ interface CardData {
   dateClosed: string;
   upvotes : number;
+  ticket_id : string;
   asset_id: string;
   state: string;
   dateOpened: string;
@@ -13,7 +14,6 @@ interface CardData {
   municipality_id: string;
   commentcount : number
   address : string ;
-  ticket_id : string;
 }
 
 interface CardComponentProps {

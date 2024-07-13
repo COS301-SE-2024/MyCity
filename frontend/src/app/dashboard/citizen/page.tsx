@@ -30,19 +30,28 @@ export default function CitizenDashboard() {
         const rspwatchlist = await getWatchlistTickets(String(user_id), user_session);
         const municipality = user_data.current?.municipality;
         const rspmunicipality = await getTicketsInMunicipality(municipality,user_session);
-        const flattenedWatchlist = rspwatchlist.flat();
-        console.log(flattenedWatchlist);
-        setMostUpvoteResults(Array.isArray(rspmostupvotes) ? rspmostupvotes : [])
+        console.log(rspmostupvotes)
+        // const flattenedWatchlist = rspwatchlist.flat();
+        console.log(rspwatchlist);
+        setMostUpvoteResults(rspmostupvotes)
         setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-        setDashWatchResults(flattenedWatchlist);
-        console.log(await dashMostUpvoteResults)
+        if(rspwatchlist.length > 0)
+        {
+          setDashWatchResults(rspwatchlist);
+        }
+        else setDashWatchResults([]);
+        console.log( dashMostUpvoteResults)
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchData();
-  }, [userProfile]); // Add userProfile to the dependency array
+  }, []); // Add userProfile to the dependency array
+
+  useEffect(() => {
+    console.log(dashMostUpvoteResults);
+  }, [dashMostUpvoteResults]);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -167,7 +176,7 @@ export default function CitizenDashboard() {
             </Tab>
 
             <Tab key={1} title="List">
-              <FaultTable />
+              <FaultTable tableitems={dashMostUpvoteResults}/>
             </Tab>
 
             <Tab key={2} title="Map">
