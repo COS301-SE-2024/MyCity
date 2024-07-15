@@ -23,7 +23,7 @@ def get_user_municipality(event):
 
 def validate_search_term(search_term):
     # Allow only alphanumeric characters and spaces to prevent injection attacks
-    if not re.match("^[a-zA-Z0-9\s]*$", search_term):
+    if not re.match(r"^[a-zA-Z \-]*$", search_term):
         raise BadRequestError("Invalid search term")
     return search_term
 
@@ -69,7 +69,9 @@ def search_municipalities(search_term):
 
 
 def search_alt_municipality_tickets(municipality_name):
-    # municipality_name = validate_search_term(municipality_name)
+    municipality_name = validate_search_term(
+        municipality_name
+    )  # ensuring that garbage is not passed to the function
     try:
         response = tickets_table.scan()
         items = response.get("Items", [])

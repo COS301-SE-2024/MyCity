@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from "react";
-import Navbar from "@/components/Navbar/Navbar";
+//import Navbar from "@/components/Navbar/Navbar";
+import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
@@ -126,7 +127,7 @@ export default function CreateTicket() {
 
   return (
     <div>
-      <Navbar />
+      <NavbarMunicipality />
       <div
         style={{
           position: "fixed",

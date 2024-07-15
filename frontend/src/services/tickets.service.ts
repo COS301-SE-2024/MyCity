@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { FaultType } from "@/types/custom.types";
+
 import { json } from "stream/consumers";
 import placekit from "@placekit/client-js/lite";
 
@@ -9,6 +10,7 @@ const pk = placekit(pkApiKey, {
     language: "en",
     maxResults: 2,
   });
+
 
 
 export async function getMostUpvote( user_session : string, revalidate?: boolean) {
@@ -134,6 +136,7 @@ export async function getTicket(ticketId: string,user_session : string, revalida
 
 // temporary function (request method must be changed to GET)
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session : string, revalidate?: boolean) {
+
     if (!municipality) {
         throw new Error("Missing municipality");
     }
@@ -143,14 +146,15 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 
     try {
+
         const apiUrl ='https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getinarea';
         const searchparams ={"municipality": municipality};
         const queryParams = new URLSearchParams(searchparams);
         const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
         console.log(urlWithParams)
         const response = await fetch(urlWithParams,
+
             {
-                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization" : user_session,
@@ -182,47 +186,17 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 }
 
-//// will replace temporary function defined above once request method on api has been changed from POST to GET
-// export async function getTicketsInMunicipality(municipality:string, revalidate?: boolean) {
-//     if (revalidate) {
-//         revalidateTag("tickets-getinarea"); //invalidate the cache
-//     }
-
-//     try {
-//         const response = await fetch("/api/tickets/getinarea",
-//             {
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//             }
-//         );
-
-//         if (!response.ok) {
-//             throw new Error(`Error fetching: ${response.statusText}`);
-//         }
-
-//         const result = await response.json();
-
-//         const data = result.data as any[];
-
-//         return data;
-
-//     } catch (error) {
-//         throw error;
-//     }
-// }
-
-
 export async function getFaultTypes(revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("tickets-fault-types"); //invalidate the cache
     }
 
     try {
+
         const apiURL ='https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/fault-types'
+
         const response = await fetch(apiURL,
             {
-                method : "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -233,7 +207,7 @@ export async function getFaultTypes(revalidate?: boolean) {
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
-        const result = await response.json()
+        const result = await response.json();
 
         const data = result as FaultType[];
 
@@ -244,7 +218,7 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 }
 
-export async function CreatTicket( sessiont : string, assett: string,descrip : string, lat : string, longi : string, usern : string) : Promise<boolean> {
+export async function CreatTicket(sessiont: string, assett: string, descrip: string, lat: string, longi: string, usern: string): Promise<boolean> {
     const data = {
         asset : assett,
         description : descrip,
@@ -258,13 +232,12 @@ export async function CreatTicket( sessiont : string, assett: string,descrip : s
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization" : sessiont || "",
+            "Authorization": sessiont || "",
         },
-        body : JSON.stringify(data),
+        body: JSON.stringify(data),
     });
 
-    if(!response.ok)
-    {
+    if (!response.ok) {
         return false;
     }
     else return true;

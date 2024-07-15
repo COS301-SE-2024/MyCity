@@ -308,7 +308,7 @@ def get_watchlist(tickets_data):
 def validate_ticket_id(ticket_id):
     # Allow only UUID format to prevent injection attacks
     if not re.match("^[a-fA-F0-9-]{36}$", ticket_id):
-        app.log.error("Invalid Ticket ID format")
+        # app.log.error("Invalid Ticket ID format")
         raise BadRequestError("Invalid Ticket ID")
     return ticket_id
 
