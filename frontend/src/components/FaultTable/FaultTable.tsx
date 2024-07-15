@@ -3,7 +3,7 @@ import { FaArrowUp, FaEye, FaCommentAlt } from 'react-icons/fa';
 
 interface IncidentItems{
   asset_id : string,
-  ticket_id : string,
+  ticketnumber : string,
   address : string,
   upvotes : number,
   commentcount : number,
@@ -32,7 +32,7 @@ const IncidentTable: React.FC<IncidentItemsProps> = ({tableitems}: IncidentItems
           className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200"
         >
           <div className="col-span-1 flex justify-center text-red-500 font-bold">!</div>
-          <div className="col-span-1 flex justify-center font-bold">{item.ticket_id}</div>
+          <div className="col-span-1 flex justify-center font-bold">{item.ticketnumber}</div>
           <div className="col-span-1 flex justify-center">{item.asset_id}</div>
           <div className="col-span-1 flex justify-center text-center">
             <div className="flex flex-col items-center">

@@ -239,8 +239,6 @@ def get_in_my_municipality(tickets_data):
                     FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
-                rdnint = random.randint(0, 2)
-                item["address"] = address[rdnint]
             return items
         else:
             error_response = {
@@ -283,9 +281,6 @@ def get_watchlist(tickets_data):
                             FilterExpression=Attr("ticket_id").eq(tckitem["ticket_id"])
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
-                        rdnint = random.randint(0, 2)
-                        tckitem["address"] = address[rdnint]
-                    collective.append(ticketsItems)
                 else:
                     error_response = {
                         "Error": {
@@ -295,7 +290,7 @@ def get_watchlist(tickets_data):
                     }
                     raise ClientError(error_response, "Inconsistencies")
 
-            return collective
+            return ticketsItems
         else:
             error_response = {
                 "Error": {

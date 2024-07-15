@@ -29,7 +29,8 @@ export async function getMostUpvote( user_session : string, revalidate?: boolean
         );
 
         if (!response.ok) {
-            throw new Error(`Error fetching: ${response.statusText}`);
+            console.error(`Error fetching: ${response.statusText}`);
+            return []
         }
 
         const result = await response.json();
@@ -46,6 +47,7 @@ export async function getMostUpvote( user_session : string, revalidate?: boolean
             const address_results = res.results[0];
             const addressed_used = address_results.name + ", " + address_results.administrative;
             item['address'] = addressed_used; 
+            item['ticketnumber'] = CreateTicketNumber(item.municipality_id);
           });
         });
 
@@ -78,7 +80,8 @@ export async function getWatchlistTickets(username: string,user_session : string
         );
 
         if (!response.ok) {
-            throw new Error(`Error fetching: ${response.statusText}`);
+            console.error(`Error fetching: ${response.statusText}`);
+            return []
         }
 
         const result = await response.json();
@@ -87,7 +90,7 @@ export async function getWatchlistTickets(username: string,user_session : string
         {
             return [];
         }
-
+        Give_Address(result)
         const data = result;
 
         return data;
@@ -156,7 +159,8 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         );
 
         if (!response.ok) {
-            throw new Error(`Error fetching: ${response.statusText}`);
+            console.error(`Error fetching: ${response.statusText}`);
+            return []
         }
         
 
@@ -166,6 +170,8 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         {
             return [];
         }
+
+        Give_Address(result)
 
         const data = result as any[];
 
@@ -262,4 +268,40 @@ export async function CreatTicket( sessiont : string, assett: string,descrip : s
         return false;
     }
     else return true;
+}
+
+function CreateTicketNumber(municipality : string) : string{
+    let ticketnumber = municipality[0].toUpperCase();
+    for (let index = 0; index < 2; index++) {
+        let randint:number = Math.floor(Math.random() * municipality.length);
+        while(municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_")
+        {
+            console.log("inside loop")
+            randint = Math.floor(Math.random() * municipality.length);
+        }
+        ticketnumber += municipality[randint].toUpperCase();
+    }
+    for(let index = 0;index < 2;index++)
+    {
+        const randint = Math.floor(Math.random() * municipality.length)+1;
+        ticketnumber += String(randint);
+    }
+    return ticketnumber;
+}
+
+function Give_Address(data: any[]){
+    data.forEach((item: any) => {
+        const given_location = item.latitude + "," + item.longitude;
+        const cleaned_string = given_location.replace("'", "")
+        pk.reverse({
+         coordinates: cleaned_string,
+         countries: ["za"],
+         maxResults: 2,
+       }).then((res) => {
+         const address_results = res.results[0];
+         const addressed_used = address_results.name + ", " + address_results.administrative;
+         item['address'] = addressed_used; 
+         item['ticketnumber'] = CreateTicketNumber(item.municipality_id);
+       });
+     });
 }
