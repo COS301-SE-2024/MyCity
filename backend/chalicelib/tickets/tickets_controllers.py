@@ -261,12 +261,12 @@ def get_watchlist(tickets_data):
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",
-                    "Message": f"Missing required field: username",
+                    "Message": f"Missing required query: username",
                 }
             }
             raise ClientError(error_response, "InvalideFields")
         response = watchlist_table.scan(
-            FilterExpression=Attr("user_id").eq(tickets_data)
+            FilterExpression=Attr("user_id").eq(tickets_data.lower())
         )
         items = response["Items"]
         if len(items) > 0:
