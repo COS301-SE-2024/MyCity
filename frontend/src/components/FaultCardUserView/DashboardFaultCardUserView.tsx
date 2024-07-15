@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {FaTimes,FaArrowUp,FaCommentAlt,FaEye,FaExclamationTriangle,FaTicketAlt,FaUser,} from "react-icons/fa";
+import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt, FaUser, FaTimes } from "react-icons/fa";
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -13,6 +13,8 @@ interface FaultCardUserViewProps {
   description: string;
   image: string;
   createdBy: string;
+  status: string;
+  municipalityImage: string; // New field
 }
 
 const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
@@ -27,18 +29,21 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   description,
   image,
   createdBy,
+  status,
+  municipalityImage,
 }) => {
-  // Retrieve state from local storage or initialize with default values
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
-    return data ? JSON.parse(data) : {
-      arrowCount,
-      commentCount,
-      viewCount,
-      arrowColor: "black",
-      commentColor: "black",
-      eyeColor: "black",
-    };
+    return data
+      ? JSON.parse(data)
+      : {
+          arrowCount: arrowCount * 1000,
+          commentCount,
+          viewCount: viewCount * 1000,
+          arrowColor: "black",
+          commentColor: "black",
+          eyeColor: "black",
+        };
   };
 
   const initialData = getLocalStorageData();
@@ -66,142 +71,158 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const handleArrowClick = () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
-      setCurrentArrowCount((prevCount: number) => prevCount + 1);
+      setCurrentArrowCount((prevCount : any) => prevCount + 1);
     } else {
       setArrowColor("black");
-      setCurrentArrowCount((prevCount: number) => prevCount - 1);
+      setCurrentArrowCount((prevCount : any) => prevCount - 1);
     }
   };
-  
+
   const handleCommentClick = () => {
     if (commentColor === "black") {
       setCommentColor("blue");
-      setCurrentCommentCount((prevCount: number) => prevCount + 1);
+      setCurrentCommentCount((prevCount: any) => prevCount + 1);
     } else {
       setCommentColor("black");
-      setCurrentCommentCount((prevCount: number) => prevCount - 1);
+      setCurrentCommentCount((prevCount : any) => prevCount - 1);
     }
   };
-  
+
   const handleEyeClick = () => {
     if (eyeColor === "black") {
       setEyeColor("blue");
-      setCurrentViewCount((prevCount: number) => prevCount + 1);
+      setCurrentViewCount((prevCount : any) => prevCount + 1);
     } else {
       setEyeColor("black");
-      setCurrentViewCount((prevCount: number) => prevCount - 1);
+      setCurrentViewCount((prevCount : any) => prevCount - 1);
     }
   };
-  
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'k';
+    }
+    return num.toString();
+  };
+
+  const getStatusColor = () => {
+    switch (status) {
+      case 'Unaddressed':
+        return 'text-red-500';
+      case 'In Progress':
+        return 'text-yellow-500';
+      case 'Resolved':
+        return 'text-green-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
 
   if (!show) return null;
 
   const addressParts = address.split(",");
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-2/3 xl:w-1/2 p-4 relative">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
+      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
         <button
           className="absolute top-2 right-2 text-gray-700"
           onClick={onClose}
         >
           <FaTimes size={24} />
         </button>
-        <div className="p-4">
-          {/* Header Section */}
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center">
-              <FaTicketAlt className="mr-2 text-2xl" />
-              <h2 className="font-bold text-2xl">{`Ticket ${ticketNumber}`}</h2>
+        <div className="flex flex-col lg:flex-row w-full overflow-auto">
+          {/* Left Section */}
+          <div className="w-full lg:w-1/3 p-2 flex flex-col items-center">
+            <img src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
+            <div className={`flex items-center ${getStatusColor()}`}>
+              <FaExclamationTriangle size={20} />
+              <span className="ml-1">{status}</span>
             </div>
-            <div className="flex items-center text-red-500">
-              <FaExclamationTriangle size={24} />
-              <span className="ml-2">Unaddressed</span>
+            <div className="mt-4 mb-2 text-center">
+              <p className="text-gray-700 font-bold">{title}</p>
             </div>
-          </div>
-
-          {/* Fault Type Section */}
-          <div className="mb-4">
-            <h3 className="font-bold text-lg">Fault Type</h3>
-            <p className="text-gray-700">{title}</p>
-          </div>
-
-          {/* Description Section */}
-          <div className="mb-4">
-            <h3 className="font-bold text-lg">Description</h3>
-            <p className="text-gray-700">{description}</p>
-          </div>
-
-          {/* Image Section - hidden for now!
-          <div className="mb-4">
-            <img src={image} alt="Fault" className="rounded-lg" />
-          </div>
-          */}
-
-          {/* Stats Section */}
-          <div className="flex justify-around mb-4">
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
-                style={{ color: arrowColor }}
-                onClick={handleArrowClick}
-              >
-                <FaArrowUp />
+  
+            <div className="mb-2 text-center">
+              <p className="text-gray-700 text-sm">{description}</p>
+            </div>
+  
+            {image && (
+              <div className="mb-2 flex justify-center">
+                <img src={image} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
               </div>
-              <span className="mt-2 text-gray-700">{currentArrowCount}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
-                style={{ color: eyeColor }}
-                onClick={handleEyeClick}
-              >
-                <FaEye />
+            )}
+  
+            <div className="flex gap-8">
+              <div className="flex flex-col items-center">
+                <div
+                  className="text-lg cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
+                  style={{ color: arrowColor }}
+                  onClick={handleArrowClick}
+                >
+                  <FaArrowUp />
+                </div>
+                <span className="mt-1 text-gray-700">{formatNumber(currentArrowCount)}</span>
               </div>
-              <span className="mt-2 text-gray-700">{currentViewCount}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div
-                className="text-xl cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
-                style={{ color: commentColor }}
-                onClick={handleCommentClick}
-              >
-                <FaCommentAlt />
+              <div className="flex flex-col items-center">
+                <div
+                  className="text-lg cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
+                  style={{ color: eyeColor }}
+                  onClick={handleEyeClick}
+                >
+                  <FaEye />
+                </div>
+                <span className="mt-1 text-gray-700">{formatNumber(currentViewCount)}</span>
               </div>
-              <span className="mt-2 text-gray-700">{currentCommentCount}</span>
+              <div className="flex flex-col items-center">
+                <div
+                  className="text-lg cursor-pointer transition duration-300 ease-in-out transform hover:scale-110"
+                  style={{ color: commentColor }}
+                  onClick={handleCommentClick}
+                >
+                  <FaCommentAlt />
+                </div>
+                <span className="mt-1 text-gray-700">{formatNumber(currentCommentCount)}</span>
+              </div>
+            </div>
+  
+            <div className="flex justify-around mb-2 w-full">
+              <div className="flex flex-col items-center justify-center">
+                <h3 className="font-bold text-md">Address</h3>
+                {addressParts.map((part, index) => (
+                  <p key={index} className="text-gray-700 text-sm">
+                    {part.trim()}
+                  </p>
+                ))}
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <h3 className="font-bold text-md">Created By</h3>
+                <img src="https://via.placeholder.com/40" alt="Created By" className="rounded-full mb-1" />
+                <p className="text-gray-700 text-sm">{createdBy}</p>
+              </div>
+            </div>
+  
+            <div className="mt-2 flex justify-center">
+              <button
+                className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1"
+                onClick={onClose}
+              >
+                Back
+              </button>
             </div>
           </div>
-
-          {/* Address and Created By Section */}
-          <div className="flex justify-between">
-            <div className="flex flex-col items-start">
-              <h3 className="font-bold text-lg">Address</h3>
-              {addressParts.map((part, index) => (
-                <p key={index} className="text-gray-700">
-                  {part.trim()}
-                </p>
-              ))}
+          {/* Right Section (Map Placeholder) */}
+          <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center text-gray-500">
+              Map Placeholder
             </div>
-            <div className="flex flex-col items-center">
-              <h3 className="font-bold text-lg">Created By</h3>
-              <FaUser className="text-2xl mb-2" />
-              <p className="text-gray-700">{createdBy}</p>
-            </div>
-          </div>
-
-          {/* Back Button */}
-          <div className="mt-4 flex justify-center">
-            <button
-              className="bg-gray-200 text-gray-700 rounded-lg px-4 py-2"
-              onClick={onClose}
-            >
-              Back
-            </button>
           </div>
         </div>
       </div>
     </div>
   );
+  
+  
 };
 
 export default FaultCardUserView;
