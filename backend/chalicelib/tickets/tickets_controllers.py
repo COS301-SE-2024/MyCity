@@ -239,8 +239,6 @@ def get_in_my_municipality(tickets_data):
                     FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
-                rdnint = random.randint(0, 2)
-                item["address"] = address[rdnint]
             return items
         else:
             error_response = {
@@ -263,12 +261,12 @@ def get_watchlist(tickets_data):
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",
-                    "Message": f"Missing required field: username",
+                    "Message": f"Missing required query: username",
                 }
             }
             raise ClientError(error_response, "InvalideFields")
         response = watchlist_table.scan(
-            FilterExpression=Attr("user_id").eq(tickets_data)
+            FilterExpression=Attr("user_id").eq(tickets_data.lower())
         )
         items = response["Items"]
         if len(items) > 0:
@@ -283,9 +281,6 @@ def get_watchlist(tickets_data):
                             FilterExpression=Attr("ticket_id").eq(tckitem["ticket_id"])
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
-                        rdnint = random.randint(0, 2)
-                        tckitem["address"] = address[rdnint]
-                    collective.append(ticketsItems)
                 else:
                     error_response = {
                         "Error": {
@@ -295,7 +290,7 @@ def get_watchlist(tickets_data):
                     }
                     raise ClientError(error_response, "Inconsistencies")
 
-            return collective
+            return ticketsItems
         else:
             error_response = {
                 "Error": {
@@ -390,3 +385,18 @@ def interact_ticket(ticket_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
+
+def getMostUpvoted():
+    response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+    items = response["Items"]
+    sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+    top_items = sorted_items[:6]
+    if len(top_items) > 0:
+        for item in top_items:
+            response_item = ticketupdate_table.scan(
+                FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+            )
+            item["commentcount"] = len(response_item["Items"])
+        return top_items
+    return top_items

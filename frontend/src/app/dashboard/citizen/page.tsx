@@ -9,12 +9,13 @@ import {  FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
-import { getTicket, getTicketsInMunicipality } from "@/services/tickets.service";
+import { getTicket, getTicketsInMunicipality,getMostUpvote,getWatchlistTickets } from "@/services/tickets.service";
 
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]); 
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]); 
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]); 
 
@@ -22,26 +23,35 @@ export default function CitizenDashboard() {
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.sub;
-        console.log(user_data.current?.session_token)
-        const mockTicketId = "8f4cf09d-754e-4d71-96dc-952173fab07c";
-        const rspwatchlist = await getTicket(mockTicketId);
+        const user_id = user_data.current?.email;
+        const user_session = String(user_data.current?.session_token)
+        console.log(user_session);
+        const rspmostupvotes = await getMostUpvote(user_session);
+        const rspwatchlist = await getWatchlistTickets(String(user_id), user_session);
         const municipality = user_data.current?.municipality;
-        const rspmunicipality = await getTicketsInMunicipality(municipality);
-        console.log(user_id);
-        console.log(rspmunicipality);
-        console.log(municipality);
-        const flattenedWatchlist = rspwatchlist.flat();
-        console.log(flattenedWatchlist);
+        const rspmunicipality = await getTicketsInMunicipality(municipality,user_session);
+        console.log(rspmostupvotes)
+        // const flattenedWatchlist = rspwatchlist.flat();
+        console.log(rspwatchlist);
+        setMostUpvoteResults(rspmostupvotes)
         setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-        setDashWatchResults(flattenedWatchlist);
+        if(rspwatchlist.length > 0)
+        {
+          setDashWatchResults(rspwatchlist);
+        }
+        else setDashWatchResults([]);
+        console.log( dashMostUpvoteResults)
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchData();
-  }, [userProfile]); // Add userProfile to the dependency array
+  }, []); // Add userProfile to the dependency array
+
+  useEffect(() => {
+    console.log(dashMostUpvoteResults);
+  }, [dashMostUpvoteResults]);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -140,7 +150,7 @@ export default function CitizenDashboard() {
               </div>
               <div className="justify-center text-center">
               
-                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+                    <DashboardFaultCardContainer cardData={dashMostUpvoteResults} />
 
               </div>
 
@@ -166,7 +176,7 @@ export default function CitizenDashboard() {
             </Tab>
 
             <Tab key={1} title="List">
-              <FaultTable />
+              <FaultTable tableitems={dashMostUpvoteResults}/>
             </Tab>
 
             <Tab key={2} title="Map">

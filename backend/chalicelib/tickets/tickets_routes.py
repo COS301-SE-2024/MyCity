@@ -7,6 +7,7 @@ from chalicelib.tickets.tickets_controllers import (
     get_watchlist,
     view_ticket_data,
     interact_ticket,
+    getMostUpvoted,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -77,3 +78,9 @@ def get_my_tickets():
     ticket_data = request.json_body
     response = interact_ticket(ticket_data)
     return response
+
+
+@tickets_blueprint.route("/getUpvotes", methods=["GET"], cors=True)
+def get_Upvote_tickets():
+    tickets = getMostUpvoted()
+    return tickets
