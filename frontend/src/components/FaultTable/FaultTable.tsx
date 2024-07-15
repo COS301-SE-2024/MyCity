@@ -94,7 +94,7 @@ const IncidentTable = () => {
 
   return (
     <div className="text-white text-opacity-80 p-10">
-      <div className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 rounded-lg text-white text-opacity-80 font-bold">
+      <div className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 text-white text-opacity-80 font-bold border-b border-gray-200">
         <div className="col-span-1 flex justify-center">Ticket Number</div>
         <div className="col-span-1 flex justify-center">Fault Type</div>
         <div className="col-span-1 flex justify-center">Status</div>

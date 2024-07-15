@@ -70,7 +70,7 @@ export default function Dashboard() {
           </div>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg"
-            onClick={() => window.location.href='/create-ticket'}
+            onClick={() => window.location.href='/create-ticket/municipality'}
           >
             + New Ticket
           </button>
