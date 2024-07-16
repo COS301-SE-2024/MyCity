@@ -22,7 +22,6 @@ def create_tender(sender_data):
             "quote",
             "ticket_id",
             "duration",
-            "price"
         ]
 
         for field in required_fields:
@@ -35,11 +34,7 @@ def create_tender(sender_data):
                 }
                 raise ClientError(error_response, "InvalideFields")
         
-        response_company = companies_table.scan(
-            FilterExpression=Attr("authCode").eq(sender_data['authCode']),
-            ProjectionExpression="pid",
-        )
-        company_items = response_company['Items']
+        company_items = getCompanyID(sender_data['authCode'])
         if(len(company_items)<=0):    #To see that company does exist
             error_response = {
                     "Error": {
@@ -49,13 +44,13 @@ def create_tender(sender_data):
                 }
             raise ClientError(error_response, "CompanyDoesntExist") 
         
-        company_id = company_items['pid']
+        company_id = company_items[0]['pid']
         current_time = datetime.now()
         estimated_time = Decimal(sender_data['duration']) * 24
 
         # Format the time in the desired format
         submitted_time = current_time.strftime("%Y-%m-%dT%H:%M:%S")
-        quote = Decimal(sender_data['price'])
+        quote = Decimal(sender_data['quote'])
         tender_id = generate_id()
         tender_item = {
             "tender_id" : tender_id,
@@ -76,3 +71,61 @@ def create_tender(sender_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+    
+def inreview(sender_data):
+    try:
+        company_items = getCompanyID(sender_data['authCode'])
+        if(len(company_items)<=0):    #To see that company does exist
+            error_response = {
+                    "Error": {
+                        "Code": "CompanyDoesntExist",
+                        "Message": "Company Does not Exist",
+                    }
+                }
+            raise ClientError(error_response, "CompanyDoesntExist") 
+        
+        company_id = company_items[0]['pid']
+        print("Companyid: " + company_id)
+        response_tender = tenders_table.scan(
+            FilterExpression=Attr("company_id").eq(company_id),
+            ProjectionExpression="tender_id",
+        )
+        tender_items = response_tender['Items']
+        print(tender_items)
+        if(len(tender_items)<=0):    #To see that company does exist
+            error_response = {
+                    "Error": {
+                        "Code": "TenderDoesntExist",
+                        "Message": "Tender Does not Exist",
+                    }
+                }
+            raise ClientError(error_response, "TenderDoesntExist") 
+        tender_id = tender_items[0]['tender_id']
+        
+        current_time = datetime.now()
+        reviewed_time = current_time.strftime("%Y-%m-%dT%H:%M:%S")
+        response = tenders_table.update_item(Key={"tender_id": tender_id},
+                                             UpdateExpression="set #status=:r, datetimereviewed=:p",
+                                             ExpressionAttributeNames={"#status": "status"},
+                                             ExpressionAttributeValues={":r": "under review",":p":reviewed_time})
+        if(response['ResponseMetadata']):
+            return {"Status" : "Success", "Message": response}
+        else :
+            error_response = {
+                    "Error": {
+                        "Code": "UpdateError",
+                        "Message": "Error occured trying to update",
+                    }
+                }
+            raise ClientError(error_response, "UpdateError") 
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+    
+
+def getCompanyID(authcode):
+    response_company = companies_table.scan(
+            FilterExpression=Attr("authCode").eq(authcode),
+            ProjectionExpression="pid",
+        )
+    return response_company['Items']
