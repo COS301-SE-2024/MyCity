@@ -1,12 +1,30 @@
 'use client'
 import Navbar from "@/components/Navbar/Navbar";
-import React, { Key } from "react";
+import React, { Key,useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
+import { getMostUpvote } from "@/services/tickets.service";
 
 export default function GuestDashboard() {
+    const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const rspmostupvotes = await getMostUpvote('');
+            
+            console.log(rspmostupvotes)
+            // const flattenedWatchlist = rspwatchlist.flat();
+            setMostUpvoteResults(rspmostupvotes)
+          } catch (error) {
+            console.log(error);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     const handleTabChange = (key: Key) => {
         const index = Number(key);
@@ -50,7 +68,7 @@ export default function GuestDashboard() {
                         </Tab>
 
                         <Tab key={1} title="List" >
-                            <FaultTable />
+                            <FaultTable tableitems={dashMostUpvoteResults} />
                         </Tab>
 
                         <Tab key={2} title="Map" >
