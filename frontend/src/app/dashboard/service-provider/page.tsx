@@ -62,7 +62,7 @@ export default function ServiceProviderDashboard() {
                             </Tab>
 
                             <Tab key={1} title="List" >
-                                <FaultTable />
+                                <FaultTable tableitems={[]} />
                             </Tab>
 
                             <Tab key={2} title="Map" >
