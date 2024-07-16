@@ -74,6 +74,19 @@ def create_tender(sender_data):
     
 def inreview(sender_data):
     try:
+        required_fields = [
+            "authCode",
+        ]
+
+        for field in required_fields:
+            if field not in sender_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
         company_items = getCompanyID(sender_data['authCode'])
         if(len(company_items)<=0):    #To see that company does exist
             error_response = {
@@ -104,10 +117,10 @@ def inreview(sender_data):
         
         current_time = datetime.now()
         reviewed_time = current_time.strftime("%Y-%m-%dT%H:%M:%S")
-        response = tenders_table.update_item(Key={"tender_id": tender_id},
-                                             UpdateExpression="set #status=:r, datetimereviewed=:p",
-                                             ExpressionAttributeNames={"#status": "status"},
-                                             ExpressionAttributeValues={":r": "under review",":p":reviewed_time})
+        updateExp = "set #status=:r, datetimereviewed=:p"
+        expattrName = {"#status": "status"}
+        expattrValue = {":r": "under review",":p":reviewed_time}
+        response = updateTenderTable(tender_id,updateExp,expattrName,expattrValue)
         if(response['ResponseMetadata']):
             return {"Status" : "Success", "Message": response}
         else :
@@ -122,6 +135,45 @@ def inreview(sender_data):
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
     
+def accept_tender(sender_data):
+    try:
+        required_fields = [
+            "company_name",
+        ]
+
+        for field in required_fields:
+            if field not in sender_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+            
+        company_id = getCompanIDFromName(sender_data['company_name'])
+        response_tender = tenders_table.scan(
+            FilterExpression=Attr("company_id").eq(company_id),
+            ProjectionExpression="tender_id",
+        )
+        tender_items = response_tender['Items']
+        print(tender_items)
+        if(len(tender_items)<=0):    #To see that company does exist
+            error_response = {
+                    "Error": {
+                        "Code": "TenderDoesntExist",
+                        "Message": "Tender Does not Exist",
+                    }
+                }
+            raise ClientError(error_response, "TenderDoesntExist") 
+        tender_id = tender_items[0]['tender_id']
+        
+
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message} 
+    
 
 def getCompanyID(authcode):
     response_company = companies_table.scan(
@@ -129,3 +181,22 @@ def getCompanyID(authcode):
             ProjectionExpression="pid",
         )
     return response_company['Items']
+
+def getCompanIDFromName(company_name):
+    response = companies_table.scan(ProjectionExpression="pid,name")
+    response_items = response['Items']
+    company_id = ""
+    for item in response_items:
+        if(company_name.lower() == item['name'].lower()):
+            company_id = item['pid']
+    return company_id
+
+def updateTenderTable(tender_id,update_expression,expression_attribute_names,expression_attribute_values):
+    response = tenders_table.update_item(
+        Key={"tender_id" : tender_id},
+        UpdateExpression=update_expression,
+        ExpressionAttributeNames=expression_attribute_names,
+        ExpressionAttributeValues=expression_attribute_values
+    )
+
+    return response
