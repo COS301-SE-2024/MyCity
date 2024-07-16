@@ -5,6 +5,7 @@ from chalicelib.issues.issues_routes import issues_routes
 from chalicelib.tickets.tickets_routes import tickets_blueprint
 from chalicelib.searching.searching_routes import searching_blueprint
 from chalicelib.municipalities.municipalities_routes import municipalities_blueprint
+from chalicelib.
 
 app = Chalice(app_name="mycity")
 cors_config = CORSConfig(
