@@ -167,7 +167,20 @@ def accept_tender(sender_data):
                 }
             raise ClientError(error_response, "TenderDoesntExist") 
         tender_id = tender_items[0]['tender_id']
-        
+        updateExp = "set #status=:r"
+        expattrName = {"#status": "status"}
+        expattrValue = {":r": "accepted"}
+        response = updateTenderTable(tender_id,updateExp,expattrName,expattrValue)
+        if(response['ResponseMetadata']):
+            return {"Status" : "Success", "Message": response}
+        else :
+            error_response = {
+                    "Error": {
+                        "Code": "UpdateError",
+                        "Message": "Error occured trying to update",
+                    }
+                }
+            raise ClientError(error_response, "UpdateError")
 
 
     except ClientError as e:
