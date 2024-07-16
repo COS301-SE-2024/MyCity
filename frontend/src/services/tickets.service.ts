@@ -13,7 +13,7 @@ const pk = placekit(pkApiKey, {
 
 
 
-export async function getMostUpvote( user_session : string, revalidate?: boolean) {
+export async function getMostUpvote( user_session : string , revalidate?: boolean) {
     
     // if (revalidate) {
     //     revalidateTag("tickets-getinarea"); //invalidate the cache
