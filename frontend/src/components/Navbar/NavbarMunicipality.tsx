@@ -60,7 +60,7 @@ export default function NavbarMunicipality() {
           </div>
         </Link>
 
-        <Link href="/create-ticket" passHref> {/*same for each user type I believe*/}
+        <Link href="/create-ticket/municipality" passHref> {/*same for each user type I believe*/}
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
               <PlusCircle size={25} />
