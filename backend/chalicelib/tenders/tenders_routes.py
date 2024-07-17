@@ -1,7 +1,8 @@
 from chalice import Blueprint, BadRequestError, Response
 from chalicelib.tenders.tenders_controllers import(
     inreview,
-    create_tender
+    create_tender,
+    accept_tender
 )
 
 tenders_blueprint = Blueprint(__name__)
@@ -18,4 +19,11 @@ def in_review() :
     request = tenders_blueprint.current_request
     sender_data = request.json_body
     response = inreview(sender_data)
+    return response
+
+@tenders_blueprint.route("/accept", methods=["POST"], cors=True)
+def accepting_tenders() :
+    request = tenders_blueprint.current_request
+    sender_data = request.json_body
+    response = accept_tender(sender_data)
     return response
