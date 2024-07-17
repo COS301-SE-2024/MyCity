@@ -47,7 +47,7 @@ export default function CitizenDashboard() {
     };
 
     fetchData();
-  }, []); // Add userProfile to the dependency array
+  }, [dashMostUpvoteResults, userProfile]); // Add userProfile to the dependency array
 
   useEffect(() => {
     console.log(dashMostUpvoteResults);
@@ -176,7 +176,8 @@ export default function CitizenDashboard() {
             </Tab>
 
             <Tab key={1} title="List">
-              <FaultTable tableitems={dashMostUpvoteResults}/>
+              {/*<FaultTable tableitems={dashMostUpvoteResults}/>*/}
+              <FaultTable />
             </Tab>
 
             <Tab key={2} title="Map">
