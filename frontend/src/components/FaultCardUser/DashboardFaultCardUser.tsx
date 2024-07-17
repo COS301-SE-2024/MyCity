@@ -10,6 +10,7 @@ interface CardData {
   description: string;
   image: string;
   createdBy: string;
+  status: string; // New field
 }
 
 interface FaultCardUserProps extends CardData {
@@ -31,10 +32,9 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
 }) => {
   return (
     <div
-  className="w-80 bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
-  onClick={onClick}
->
-
+      className="w-80 bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105"
+      onClick={onClick}
+    >
       <div className="w-full bg-gray-200">
         {image ? (
           <img src={image} alt={title} className="w-full h-full object-cover" />
@@ -55,3 +55,4 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
 };
 
 export default FaultCardUser;
+
