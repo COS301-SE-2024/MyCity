@@ -21,7 +21,7 @@ interface Incident {
 const IncidentTable = () => {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
 
-  const incidents = [
+  const incidents: Incident[] = [
     {
       ticketNumber: 'SA0245',
       faultType: 'Leaking Sewerage',
@@ -84,7 +84,7 @@ const IncidentTable = () => {
     },
   ];
 
-  const handleRowClick = (incident : any) => {
+  const handleRowClick = (incident: Incident) => {
     setSelectedIncident(incident);
   };
 
@@ -101,7 +101,7 @@ const IncidentTable = () => {
         <div className="col-span-1 flex justify-center">Upvotes</div>
         <div className="col-span-1 flex justify-center">Address</div>
       </div>
-      {tableitems.map((item, index) => (
+      {incidents.map((incident, index) => (
         <div
           key={index}
           className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
@@ -141,6 +141,8 @@ const IncidentTable = () => {
 };
 
 export default IncidentTable;
+
+//Previous version of this in development
 
 /*import React from 'react';
 import { FaArrowUp, FaEye, FaCommentAlt } from 'react-icons/fa';
