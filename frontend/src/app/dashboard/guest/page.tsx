@@ -68,7 +68,7 @@ export default function GuestDashboard() {
                         </Tab>
 
                         <Tab key={1} title="List" >
-                            <FaultTable tableitems={dashMostUpvoteResults} />
+                            <FaultTable />
                         </Tab>
 
                         <Tab key={2} title="Map" >
