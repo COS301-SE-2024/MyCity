@@ -24,33 +24,6 @@ companies = dynamodb.Table("private_companies")
 def signup_company():
     request = auth_routes.current_request
     data = request.json_body
-    hashed_pass = hashPassword(data.get("password"))
-    pid = str(uuid.uuid1())
-    try:
-        if DoesEmailExist(data.get("email"), True):
-            return {
-                "Status": 400,
-                "Error": "Email Exists",
-                "message": "Email already exists",
-            }
-        companies.put_item(
-            Item={
-                "pid": pid,
-                "email": data.get("email"),
-                "name": data.get("name"),
-                "password": hashed_pass,
-                "quality_rating": 0,
-                "service_type": data.get("service_type"),
-            }
-        )
-        return {
-            "Status": 200,
-            "pid": pid,
-            "name": data.get("name"),
-            "service_type": data.get("service_type"),
-        }
-    except Exception as e:
-        return {"Status": 400, "message": str(e), "password": hashed_pass}
 
 
 # signup for municipality
@@ -100,30 +73,3 @@ def DoesMunicipalityExist(data):
     else:
         return False
 
-
-def hashPassword(password):
-    md5 = hashlib.md5()
-    md5.update(password.encode("utf-8"))
-    hashed_password = hashed_password = md5.hexdigest()
-    return hashed_password
-
-
-def verify_password(user_password, db_password):
-    provided_password = hashPassword(user_password)
-    return provided_password == db_password
-
-
-def CreateMuniCode(name):
-    firstletter = name[0]
-    k = 0
-    redo = True
-    municode = firstletter
-    while k < 2 and redo:
-        randint = random.randint(0, len(name) - 1)
-        if name[randint] != " " and name[randint] != "-":
-            municode = municode + name[randint]
-            k += 1
-    for i in range(3):
-        rands = random.randint(0, 9)
-        municode += rands
-    return municode
