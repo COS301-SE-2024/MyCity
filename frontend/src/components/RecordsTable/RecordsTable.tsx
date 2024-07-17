@@ -20,7 +20,7 @@ const records: RecordType[] = [
   // Add more records as needed for demonstration
   { id: 'SA0299', faultType: 'Water Leakage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
   { id: 'SA0300', faultType: 'Electricity Outage', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
-  { id: 'SA0301', faultType: 'Road Damage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
+  { id: 'SA0301', faultType: 'Road Damage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street BAAAAAAAAAAAA', urgency: 'medium' },
   { id: 'SA0302', faultType: 'Tree Fall', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
   { id: 'SA0303', faultType: 'Street Light', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
   { id: 'SA0304', faultType: 'Blocked Drain', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
@@ -58,14 +58,13 @@ export default function RecordsTable() {
   return (
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black">
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+        <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
           <div className="col-span-1">Urgency</div>
           <div className="col-span-1">Ticket Number</div>
           <div className="col-span-1">Fault Type</div>
           <div className="col-span-1">Status</div>
           <div className="col-span-1">Created By</div>
           <div className="col-span-1">Address</div>
-          <div className="col-span-1">Actions</div>
         </div>
       </div>
       <div className="min-w-full">
@@ -93,4 +92,3 @@ export default function RecordsTable() {
     </div>
   );
 }
-
