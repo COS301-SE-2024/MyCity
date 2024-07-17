@@ -6,6 +6,7 @@ import { BadgeAlert, Ticket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useProfile } from "@/hooks/useProfile";
 import { getTicket } from '@/services/tickets.service';
 
 interface ReportFaultFormProps extends React.HTMLAttributes<HTMLElement> {}
@@ -18,7 +19,7 @@ type ticket = {
 
 export default function ReportFaultForm({ className }: ReportFaultFormProps) {
     const [faultType, setFaultType] = useState('');
-
+    const userProfile = useProfile();
     const [ticketdata, setTicketData] = useState<ticket[]>([]);
     const [streetAddress, setStreetAddress] = useState('');
     const [suburb, setSuburb] = useState('');
@@ -28,7 +29,9 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
 
         async function fetchticketdata() {
             try {
-                const data = await getTicket(ticket_id);
+                const user_data = await userProfile.getUserProfile();
+                const user_session = String(user_data.current?.session_token)
+                const data = await getTicket(ticket_id,user_session);
 
                 console.log(data);
 
