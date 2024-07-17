@@ -72,4 +72,3 @@ def DoesMunicipalityExist(data):
         return True
     else:
         return False
-
