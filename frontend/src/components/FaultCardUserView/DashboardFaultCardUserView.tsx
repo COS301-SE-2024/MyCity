@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt, FaUser, FaTimes } from "react-icons/fa";
+import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
+import { AlertCircle } from 'lucide-react';
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -14,8 +15,15 @@ interface FaultCardUserViewProps {
   image: string;
   createdBy: string;
   status: string;
-  municipalityImage: string; // New field
+  municipalityImage: string;
+  urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
+
+const urgencyMapping = {
+  high: { icon: <AlertCircle className="text-red-500" />, label: 'Urgent' },
+  medium: { icon: <AlertCircle className="text-yellow-500" />, label: 'Moderate' },
+  low: { icon: <AlertCircle className="text-green-500" />, label: 'Not Urgent' }
+};
 
 const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   show,
@@ -31,6 +39,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   createdBy,
   status,
   municipalityImage,
+  urgency
 }) => {
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -71,10 +80,10 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const handleArrowClick = () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
-      setCurrentArrowCount((prevCount : any) => prevCount + 1);
+      setCurrentArrowCount((prevCount: any) => prevCount + 1);
     } else {
       setArrowColor("black");
-      setCurrentArrowCount((prevCount : any) => prevCount - 1);
+      setCurrentArrowCount((prevCount: any) => prevCount - 1);
     }
   };
 
@@ -84,17 +93,17 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       setCurrentCommentCount((prevCount: any) => prevCount + 1);
     } else {
       setCommentColor("black");
-      setCurrentCommentCount((prevCount : any) => prevCount - 1);
+      setCurrentCommentCount((prevCount: any) => prevCount - 1);
     }
   };
 
   const handleEyeClick = () => {
     if (eyeColor === "black") {
       setEyeColor("blue");
-      setCurrentViewCount((prevCount : any) => prevCount + 1);
+      setCurrentViewCount((prevCount: any) => prevCount + 1);
     } else {
       setEyeColor("black");
-      setCurrentViewCount((prevCount : any) => prevCount - 1);
+      setCurrentViewCount((prevCount: any) => prevCount - 1);
     }
   };
 
@@ -110,7 +119,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       case 'Unaddressed':
         return 'text-red-500';
       case 'In Progress':
-        return 'text-yellow-500';
+        return 'text-blue-500';
       case 'Resolved':
         return 'text-green-500';
       default:
@@ -133,26 +142,30 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
         </button>
         <div className="flex flex-col lg:flex-row w-full overflow-auto">
           {/* Left Section */}
-          <div className="w-full lg:w-1/3 p-2 flex flex-col items-center">
-            <img src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
-            <div className={`flex items-center ${getStatusColor()}`}>
-              <FaExclamationTriangle size={20} />
-              <span className="ml-1">{status}</span>
+          <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
+            <div className="absolute top-2 left-2">
+              {urgencyMapping[urgency].icon}
             </div>
-            <div className="mt-4 mb-2 text-center">
+            <img src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
+            <div className="flex items-center justify-center mb-2">
+              <div className={`flex items-center ${getStatusColor()} border-2 rounded-full px-2 py-1`}>
+                <span className="ml-1">{status}</span>
+              </div>
+            </div>
+            <div className="mt-2 mb-2 text-center">
               <p className="text-gray-700 font-bold">{title}</p>
             </div>
-  
+
             <div className="mb-2 text-center">
               <p className="text-gray-700 text-sm">{description}</p>
             </div>
-  
+
             {image && (
               <div className="mb-2 flex justify-center">
                 <img src={image} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
               </div>
             )}
-  
+
             <div className="flex gap-8">
               <div className="flex flex-col items-center">
                 <div
@@ -185,7 +198,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 <span className="mt-1 text-gray-700">{formatNumber(currentCommentCount)}</span>
               </div>
             </div>
-  
+
             <div className="flex justify-around mb-2 w-full">
               <div className="flex flex-col items-center justify-center">
                 <h3 className="font-bold text-md">Address</h3>
@@ -201,10 +214,10 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 <p className="text-gray-700 text-sm">{createdBy}</p>
               </div>
             </div>
-  
+
             <div className="mt-2 flex justify-center">
               <button
-                className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1"
+                className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
                 onClick={onClose}
               >
                 Back
@@ -221,8 +234,6 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       </div>
     </div>
   );
-  
-  
 };
 
 export default FaultCardUserView;
