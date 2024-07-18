@@ -83,29 +83,25 @@ def create_tender(sender_data):
         tenders_table.put_item(Item=tender_item)
         contract_id = generate_id()
         contract_item = {
-            "contract_id" : contract_id,
-            "completedatetime" : "<empty>",
-            "contractdatetime" : submitted_time,
-            "finalCost" : quote,
-            "finalDuration" : "",
-            "paymentdatetime" : submitted_time,
-            "startdatetime" : submitted_time,
-            "status" : "in progress",
-            "tender_id" : tender_id,
+            "contract_id": contract_id,
+            "completedatetime": "<empty>",
+            "contractdatetime": submitted_time,
+            "finalCost": quote,
+            "finalDuration": "",
+            "paymentdatetime": submitted_time,
+            "startdatetime": submitted_time,
+            "status": "in progress",
+            "tender_id": tender_id,
         }
 
         contract_table.put_item(Item=contract_item)
-
-
-
-
 
         accresponse = {
             "Status": "Success",
             "message": "Tender & Contract created successfully",
             "tender_id": tender_id,
-            "contract_id" : contract_id,
-        } 
+            "contract_id": contract_id,
+        }
         return accresponse
 
     except ClientError as e:
