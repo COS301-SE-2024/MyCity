@@ -102,7 +102,7 @@ def create_tender(sender_data):
 
         accresponse = {
             "Status": "Success",
-            "message": "Tender created successfully",
+            "message": "Tender & Contract created successfully",
             "tender_id": tender_id,
             "contract_id" : contract_id,
         } 
