@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { useRouter } from 'next/navigation';
 import { UserRole } from '@/types/custom.types';
-import { handleSignIn } from '@/services/auth.service';
+import { handleGoogleSignIn, handleSignIn } from '@/services/auth.service';
 
 
 export default function CitizenLogin() {
@@ -30,6 +30,10 @@ export default function CitizenLogin() {
       console.log("Error: " + error);
     }
 
+  };
+
+  const googleButtonOnClick = async () => {
+    await handleGoogleSignIn();
   };
 
   return (
@@ -74,11 +78,6 @@ export default function CitizenLogin() {
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1rem]">Forgot password?</Link>
 
-        {/* <Button name="submit" data-testid="submit-btn" radius="full" className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-400 transition duration-300 text-center font-bold w-max mx-auto mt-4" type="submit">
-          Login
-        </Button> */}
-
-
         <div className="flex flex-col items-center justify-center px-16">
 
           <Button fullWidth name="submit" data-testid="submit-btn" radius="md" className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-400 transition duration-300 text-center font-semibold" type="submit">
@@ -91,7 +90,7 @@ export default function CitizenLogin() {
             <hr className="flex-grow border-t border-gray-300" />
           </div>
 
-          <Button fullWidth name="gogle-submit" data-testid="google-login-btn" radius="md" className=" text-gray-800 px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold">
+          <Button onClick={googleButtonOnClick} fullWidth name="gogle-submit" data-testid="google-login-btn" radius="md" className=" text-gray-800 px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold">
             <FcGoogle size={20} />
             <span>Continue with Google</span>
           </Button>

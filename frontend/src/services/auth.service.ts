@@ -1,6 +1,6 @@
 import { UserRole } from '@/types/custom.types';
 import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
-import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signOut, signUp } from 'aws-amplify/auth';
+import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signInWithRedirect, signOut, signUp } from 'aws-amplify/auth';
 
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
@@ -12,6 +12,12 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
     });
 
     return { isSignedIn };
+}
+
+export async function handleGoogleSignIn() {
+    await signInWithRedirect({
+        provider: "Google"
+    });
 }
 
 
