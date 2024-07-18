@@ -11,7 +11,22 @@ Amplify.configure({
       userPoolClientId: String(process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID),
       // REQUIRED only for Federated Authentication - Amazon Cognito Identity Pool ID
       // identityPoolId: 'XX-XXXX-X:XXXXXXXX-XXXX-1234-abcd-1234567890ab',
-    }
+      loginWith: {
+        oauth: {
+          domain: 'mycity.auth.eu-west-1.amazoncognito.com',
+          scopes: [
+            'email',
+            'openid',
+            'profile',
+            'aws.cognito.signin.user.admin'
+          ],
+          redirectSignIn: ['http://localhost:3000'],
+          redirectSignOut: ['http://localhost:3000'],
+          responseType: 'token'
+        }
+      }
+    },
+    
   }
 },
   {
