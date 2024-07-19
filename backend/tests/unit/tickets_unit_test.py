@@ -53,27 +53,31 @@ def test_get_fault_types(test_client):
 
 # Test getting the user's tickets
 
+
 # Testing fetching the tickets for the user's municipality
 def test_users_municipality():
     response = get_in_my_municipality("Stellenbosch Local")
     assert len(response) > 1, "Response list should not be empty"
 
+
 def test_invalid_user_municipality():
     response = get_in_my_municipality("Stellenbosch Lol")
     response_two = get_in_my_municipality("")
-    assert response['Status'] == "FAILED"
-    assert response_two['Status'] == "FAILED"
+    assert response["Status"] == "FAILED"
+    assert response_two["Status"] == "FAILED"
+
 
 # Test getting tickets that are on the user's watch list
 def test_users_watchlist():
     response = get_watchlist("michael.hernandez@gmail.com")
     assert len(response) > 1, "Response list should not be empty"
 
+
 def test_invalid_user_municipality():
     response = get_watchlist("Stellenbosch Lol")
     response_two = get_watchlist("")
-    assert response['Status'] == "FAILED"
-    assert response_two['Status'] == "FAILED"
+    assert response["Status"] == "FAILED"
+    assert response_two["Status"] == "FAILED"
 
 
 # Tests for fetching/viewing of a single ticket's data
