@@ -106,7 +106,7 @@ def create_ticket(ticket_data):
             ticket_municipality = split_address[2].replace("Municipality", "")
         else:
             ticket_municipality = split_address[1]
-            
+
         municipality_id = ticket_municipality.strip()
 
         current_datetime = datetime.now()
