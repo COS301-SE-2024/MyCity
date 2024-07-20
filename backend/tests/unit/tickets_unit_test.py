@@ -67,7 +67,7 @@ def test_invalid_user_municipality():
 # Test getting tickets that are on the user's watch list
 def test_users_watchlist():
     response = get_watchlist("michael.hernandez@gmail.com")
-    assert len(response) > 1, "Response list should not be empty"
+    assert len(response) > 0, "Response list should not be empty"
 
 def test_invalid_user_municipality():
     response = get_watchlist("Stellenbosch Lol")
