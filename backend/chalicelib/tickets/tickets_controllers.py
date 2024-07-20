@@ -409,23 +409,23 @@ def getMostUpvoted():
         getUserprofile(top_items)
         return top_items
 
+
 def getUserprofile(ticket_data):
     user_image = ""
     index = 0
-    try: 
+    try:
         for username in ticket_data:
 
             user_response = cognito_cient.admin_get_user(
-                UserPoolId=user_poolid,
-                Username=username['username']
+                UserPoolId=user_poolid, Username=username["username"]
             )
-            for attr in user_response['UserAttributes']:
-                if(attr['Name'] == 'picture'):
-                    user_image=attr['Value']
-            username['user_picture'] = user_image
-            username['municipality_picture'] = ""
+            for attr in user_response["UserAttributes"]:
+                if attr["Name"] == "picture":
+                    user_image = attr["Value"]
+            username["user_picture"] = user_image
+            username["municipality_picture"] = ""
 
-    except cognito_cient.exceptions.UserNotFoundException :
+    except cognito_cient.exceptions.UserNotFoundException:
         print(f"User {username['username']} not found.")
         return "username not found"
         # for item in user_list:
@@ -445,6 +445,7 @@ def getUserprofile(ticket_data):
         #                          ProjectionExpression="upvotes,viewcount")
 
     # return json.dumps(user_list, cls=DateTimeEncoder)
+
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
