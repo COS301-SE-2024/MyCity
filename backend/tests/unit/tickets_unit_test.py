@@ -98,3 +98,4 @@ def test_validate_ticket_id_invalid():
     for ticket_id in invalid_ticket_ids:
         with pytest.raises(BadRequestError):
             validate_ticket_id(ticket_id)
+

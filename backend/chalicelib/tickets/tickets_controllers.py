@@ -3,6 +3,8 @@ import boto3
 from botocore.exceptions import ClientError
 from chalice import BadRequestError, Chalice, Response
 import uuid
+from dotenv import load_dotenv
+import os
 
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
@@ -20,8 +22,13 @@ import random
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
-
-
+cognito_cient = boto3.client("cognito-idp")
+load_dotenv()
+user_poolid = os.getenv("USER_POOL_ID")
+# users_response = cognito_cient.list_users(
+#     UserPoolId=user_poolid
+# )
+# user_list = users_response.get('Users', [])
 municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
 ticketupdate_table = dynamodb.Table("ticket_updates")
@@ -239,6 +246,7 @@ def get_in_my_municipality(tickets_data):
                     FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
+            getUserprofile(items)
             return items
         else:
             error_response = {
@@ -289,7 +297,7 @@ def get_watchlist(tickets_data):
                         }
                     }
                     raise ClientError(error_response, "Inconsistencies")
-
+            getUserprofile(ticketsItems)
             return ticketsItems
         else:
             error_response = {
@@ -398,5 +406,48 @@ def getMostUpvoted():
                 FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
             )
             item["commentcount"] = len(response_item["Items"])
+        getUserprofile(top_items)
         return top_items
-    return top_items
+
+def getUserprofile(ticket_data):
+    user_image = ""
+    index = 0
+    try: 
+        for username in ticket_data:
+
+            user_response = cognito_cient.admin_get_user(
+                UserPoolId=user_poolid,
+                Username=username['username']
+            )
+            for attr in user_response['UserAttributes']:
+                if(attr['Name'] == 'picture'):
+                    user_image=attr['Value']
+            username['user_picture'] = user_image
+            username['municipality_picture'] = ""
+
+    except cognito_cient.exceptions.UserNotFoundException :
+        print(f"User {username['username']} not found.")
+        return "username not found"
+        # for item in user_list:
+        #     index= index+1
+        #     if 'esinhle' in item['Username'].lower():
+        #         print("Usernames : " + item['Username'].lower() + " " + username['username'].lower() )
+        #         index=0
+        #     if(item['Username'].lower() == username['username'].lower()):
+        #         print("inside username")
+        #         for attr in item['Attributes']:
+        #             print("inside attributes")
+        #             if(attr['Name'] == 'picture'):
+        #                 user_image=attr['Value']
+        # username['user_picture'] = user_image
+        # username['municipality_picture'] = ""
+        # municipality_table.query(KeyConditionExpression=Key("municipality_id").eq(username["municipality_id"]),
+        #                          ProjectionExpression="upvotes,viewcount")
+
+    # return json.dumps(user_list, cls=DateTimeEncoder)
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super(DateTimeEncoder, self).default(obj)
