@@ -5,7 +5,7 @@ import { AlertCircle } from "lucide-react";
 
 interface Incident {
   ticket_id : string
-  ticketNumber: string;
+  ticketnumber: string;
   asset_id: string;
   upvotes: number;
   viewcount: number;
@@ -94,7 +94,7 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
             {urgencyMapping[incident.urgency].icon}
           </div>
           <div className="col-span-1 flex justify-center font-bold">
-            {incident.ticketNumber}
+            {incident.ticketnumber}
           </div>
           <div className="col-span-1 flex justify-center">
             {incident.asset_id}
@@ -136,7 +136,7 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
           arrowCount={selectedIncident.upvotes}
           commentCount={selectedIncident.commentcount}
           viewCount={selectedIncident.viewcount}
-          ticketNumber={selectedIncident.ticketNumber}
+          ticketNumber={selectedIncident.ticketnumber}
           description={selectedIncident.description}
           image={selectedIncident.user_picture}
           createdBy={selectedIncident.username}

@@ -177,7 +177,7 @@ export default function CitizenDashboard() {
 
             <Tab key={1} title="List">
               {/*<FaultTable tableitems={dashMostUpvoteResults}/>*/}
-              <FaultTable />
+              <FaultTable tableitems={dashMostUpvoteResults}/>
             </Tab>
 
             <Tab key={2} title="Map">
