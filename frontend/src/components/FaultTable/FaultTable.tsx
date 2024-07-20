@@ -4,22 +4,24 @@ import DashboardFaultCardUserView from "@/components/FaultCardUserView/Dashboard
 import { AlertCircle } from "lucide-react";
 
 interface Incident {
+  ticket_id : string
   ticketNumber: string;
-  faultType: string;
-  engagement: {
-    upvotes: number;
-    shares: number;
-    comments: number;
-  };
+  asset_id: string;
+  upvotes: number;
+  viewcount: number;
+  commentcount: number;
   address: string;
   description: string;
-  image: string;
-  createdBy: string;
+  user_picture: string;
+  username: string;
   status: string;
-  municipalityImage: string;
+  municipality_picture: string;
   urgency: "high" | "medium" | "low"; // Added urgency field
 }
 
+interface IncidentProps{
+  tableitems : Incident[]
+}
 const urgencyMapping = {
   high: { icon: <AlertCircle className="text-red-500" />, label: "Urgent" },
   medium: {
@@ -32,76 +34,13 @@ const urgencyMapping = {
   },
 };
 
-const IncidentTable = () => {
+const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [isOverflowing, setIsOverflowing] = useState<{ [key: number]: boolean }>({});
   const addressRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const incidents: Incident[] = [
-    {
-      ticketNumber: "SA0245",
-      faultType: "Leaking Sewerage",
-      engagement: {
-        upvotes: 21.6,
-        shares: 10.3,
-        comments: 829,
-      },
-      address: "392 Rupert Street, Bucky's Ridge",
-      description: "Sewage leakage causing significant disruption.",
-      createdBy: "John Doe",
-      image: "https://via.placeholder.com/150", // Mock image URL
-      status: "Unaddressed",
-      municipalityImage: "https://via.placeholder.com/50", // Mock municipality image URL
-      urgency: "high", // Added urgency value
-    },
-    {
-      ticketNumber: "SA0246",
-      faultType: "Fire",
-      engagement: {
-        upvotes: 17.6,
-        shares: 8.4,
-        comments: 657,
-      },
-      address: "231 Barker Street, Bucky's Ridge",
-      description: "Fire hazard reported near residential area.",
-      createdBy: "Jane Smith",
-      image: "https://via.placeholder.com/150", // Mock image URL
-      status: "In Progress",
-      municipalityImage: "https://via.placeholder.com/50", // Mock municipality image URL
-      urgency: "medium", // Added urgency value
-    },
-    {
-      ticketNumber: "SA0247",
-      faultType: "Mass Psychosis",
-      engagement: {
-        upvotes: 12.9,
-        shares: 6.3,
-        comments: 459,
-      },
-      address: "8 Happy Street, Bucky's Ridge",
-      description: "Unusual behavior observed in large groups.",
-      createdBy: "Alice Johnson",
-      image: "https://via.placeholder.com/150", // Mock image URL
-      status: "Resolved",
-      municipalityImage: "https://via.placeholder.com/50", // Mock municipality image URL
-      urgency: "low", // Added urgency value
-    },
-    {
-      ticketNumber: "SA0248",
-      faultType: "Leaking Sewerage",
-      engagement: {
-        upvotes: 10.2,
-        shares: 2.7,
-        comments: 153,
-      },
-      address: "392 Rupert Street, Bucky's Ridge",
-      description: "Recurring sewage leakage issue.",
-      createdBy: "Bob Lee",
-      image: "https://via.placeholder.com/150", // Mock image URL
-      status: "Unaddressed",
-      municipalityImage: "https://via.placeholder.com/50", // Mock municipality image URL
-      urgency: "high", // Added urgency value
-    },
+    
   ];
 
   useEffect(() => {
@@ -145,7 +84,7 @@ const IncidentTable = () => {
         <div className="col-span-1 flex justify-center">Upvotes</div>
         <div className="col-span-1 flex justify-center">Address</div>
       </div>
-      {incidents.map((incident, index) => (
+      {tableitems.map((incident, index) => (
         <div
           key={index}
           className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
@@ -158,7 +97,7 @@ const IncidentTable = () => {
             {incident.ticketNumber}
           </div>
           <div className="col-span-1 flex justify-center">
-            {incident.faultType}
+            {incident.asset_id}
           </div>
           <div className="col-span-1 flex justify-center">
             <span className={`px-2 py-1 rounded ${getStatusColor(incident.status)}`}>
@@ -170,7 +109,7 @@ const IncidentTable = () => {
               <div>
                 <FaArrowUp />
               </div>
-              <div>{incident.engagement.upvotes}k</div>
+              <div>{incident.upvotes}</div>
             </div>
           </div>
           <div className="col-span-1 flex justify-center overflow-hidden whitespace-nowrap" ref={(el) => { addressRefs.current[index] = el; }}>
@@ -192,17 +131,17 @@ const IncidentTable = () => {
         <DashboardFaultCardUserView
           show={!!selectedIncident}
           onClose={handleClose}
-          title={selectedIncident.faultType}
+          title={selectedIncident.asset_id}
           address={selectedIncident.address}
-          arrowCount={selectedIncident.engagement.upvotes}
-          commentCount={selectedIncident.engagement.comments}
-          viewCount={selectedIncident.engagement.shares}
+          arrowCount={selectedIncident.upvotes}
+          commentCount={selectedIncident.commentcount}
+          viewCount={selectedIncident.viewcount}
           ticketNumber={selectedIncident.ticketNumber}
           description={selectedIncident.description}
-          image={selectedIncident.image}
-          createdBy={selectedIncident.createdBy}
+          image={selectedIncident.user_picture}
+          createdBy={selectedIncident.username}
           status={selectedIncident.status}
-          municipalityImage={selectedIncident.municipalityImage} // Pass municipality image
+          municipalityImage={selectedIncident.municipality_picture} // Pass municipality image
           urgency={selectedIncident.urgency} // Pass urgency
         />
       )}
