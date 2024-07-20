@@ -65,6 +65,7 @@ def create_ticket(ticket_data):
     try:
         # Validate required fields
         required_fields = [
+            "address",
             "asset",
             "description",
             "latitude",
@@ -98,11 +99,23 @@ def create_ticket(ticket_data):
 
         # Generate ticket ID
         ticket_id = generate_id()
-        location = {
-            "latitude": Decimal(str(ticket_data["latitude"])),
-            "longitude": Decimal(str(ticket_data["longitude"])),
-        }
-        municipality_id = findMunicipality(location)
+
+        latitude = Decimal(str(ticket_data["latitude"]))
+        longitude = Decimal(str(ticket_data["longitude"]))
+
+        # get the address
+        address = ticket_data["address"]
+
+        # extract municipality from address
+        ticket_municipality = ""
+        split_address = address.split(",")
+        if "Local Municipality" in split_address[2]:
+            ticket_municipality = split_address[2].replace("Municipality", "")
+        else:
+            ticket_municipality = split_address[1]
+
+        municipality_id = ticket_municipality.strip()
+
         current_datetime = datetime.now()
 
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
@@ -111,12 +124,13 @@ def create_ticket(ticket_data):
         ticket_item = {
             "ticket_id": ticket_id,
             "asset_id": asset_id,
+            "address": address,
             "dateClosed": "<empty>",
             "dateOpened": formatted_datetime,
             "description": ticket_data["description"],
             "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
-            "latitude": location["latitude"],
-            "longitude": location["longitude"],
+            "latitude": latitude,
+            "longitude": longitude,
             "municipality_id": municipality_id,
             "username": ticket_data["username"],
             "state": ticket_data["state"],  # do not hard code, want to extend in future
@@ -160,39 +174,6 @@ def get_fault_types():
 
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-
-
-def findMunicipality(location):
-    response = municipality_table.scan(
-        ProjectionExpression="latitude,longitude,municipality_id"
-    )
-    latitude = radians(float(location["latitude"]))
-    longitude = radians(float(location["latitude"]))
-    count = 0
-    data = response["Items"]
-    closestdistance = 10000000
-    municipality = ""
-    if len(data) > 0:
-        for x in data:
-            if count < 2:
-                print(x["municipality_id"])
-                count = count + 1
-            lat_str = str(x["latitude"]).strip("'")
-            long_str = str(x["longitude"]).strip("'")
-            lat2 = float(lat_str)
-            long2 = float(long_str)
-            dlat = lat2 - latitude
-            dlong = long2 - longitude
-            a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2
-            r_earth = 6371
-            distance = 2 * r_earth * asin(sqrt(a))
-            if distance < closestdistance:
-                closestdistance = distance
-                municipality = x["municipality_id"]
-
-        return municipality
-    else:
-        return "No data was produced"
 
 
 def getMyTickets(tickets_data):

@@ -64,6 +64,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
     const latitude = selectedAddress?.lat;
     const longitude = selectedAddress?.lng;
+    const fullAddress = `${selectedAddress?.street?.name}, ${selectedAddress?.county}, ${selectedAddress?.city}, ${selectedAddress?.administrative}`;
     const selectedFault = form.get("fault-type");
     const faultDescription = form.get("fault-description");
 
@@ -85,6 +86,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
       description: faultDescription,
       latitude: latitude,
       longitude: longitude,
+      address: fullAddress,
       username: userId,
       state: "OPEN",
     };
@@ -97,6 +99,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
         String(faultDescription),
         String(latitude),
         String(longitude),
+        String(fullAddress),
         String(userId)
       );
       if (isCreated === true) {
@@ -182,11 +185,10 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
             <Button
               type="submit"
               disabled={!isFormValid}
-              className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 ${
-                isFormValid
+              className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 ${isFormValid
                   ? "bg-blue-500 text-white hover:bg-blue-600"
                   : "bg-blue-200 text-white cursor-not-allowed"
-              }`}
+                }`}
             >
               Submit
             </Button>
