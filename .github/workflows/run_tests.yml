@@ -5,6 +5,7 @@ on:
 
 env:
   CI: true
+  USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
 
 jobs:
   frontend_tests:
