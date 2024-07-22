@@ -51,7 +51,7 @@ export default function MuniTenders() {
           >
             
             <Tab key={0} title="Open Tickets">
-            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80">Select a Ticket to see all bids submitted for it.</div>
+            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
               <OpenTicketsTable />
             </Tab>
 
