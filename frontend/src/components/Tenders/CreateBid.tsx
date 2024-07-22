@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useProfile } from "@/hooks/useProfile";
 
 interface Ticket {
   id: string;
@@ -14,6 +15,7 @@ interface CreateBidProps {
 }
 
 const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
+  const userProfile = useProfile();
   const [proposedPrice, setProposedPrice] = useState<string>('0.00');
   const [jobDuration, setJobDuration] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -24,8 +26,15 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    let price = Number(proposedPrice)
+    let duration = Number(jobDuration)
+    const user_data = await userProfile.getUserProfile();   
+    const user_session = String(user_data.current?.session_token)
+    let ticket_id = ticket.id
+    
+
     // Handle form submission logic
   };
 
