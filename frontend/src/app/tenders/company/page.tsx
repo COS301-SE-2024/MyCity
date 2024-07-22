@@ -1,17 +1,37 @@
 'use client';
 
-import React, { Key, useEffect, useRef, useState } from "react";
+import React, { Key, useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import { Tab, Tabs } from "@nextui-org/react";
-import OpenTicketsTable from "@/components/RecordsTable/OpenTicketsTable";
+import CreateBid from "@/components/Tenders/CreateBid";
+
 export default function MuniTenders() {
+  const [view, setView] = useState<'openTickets' | 'createBid'>('openTickets');
+
   const handleTabChange = (key: Key) => {
     const index = Number(key);
+    // Handle tab change if needed
+  };
+
+  const ticket = {
+    id: 'SA0245',
+    faultType: 'Leaking Sewerage',
+    description: 'There is a massive sewerage leakage that...',
+    address: '312 Rupert Street, Bucky\'s Ridge, Pretoria',
+    municipalityImage: 'https://via.placeholder.com/50', // Mock image URL
+  }; //mock data
+
+  const handleBack = () => {
+    setView('openTickets');
+  };
+
+  const handleCreateBidClick = () => {
+    setView('createBid');
   };
 
   return (
     <div>
-      <NavbarMunicipality />
+      <NavbarMunicipality /> {/* this will be service provider */}
       <div
         style={{
           position: "fixed", // Change position to 'fixed'
@@ -49,20 +69,30 @@ export default function MuniTenders() {
             }}
             onSelectionChange={handleTabChange}
           >
-            
             <Tab key={0} title="Open Tickets">
-            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80">Select a Ticket to see all bids submitted for it.</div>
-              <OpenTicketsTable />
+              {view === 'openTickets' ? (
+                <>
+                  <div className="text-white p-4 text-center font-bold text-xl text-opacity-80">
+                    Select a Ticket to create a bid for it.
+                  </div>
+                  <button 
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleCreateBidClick}
+                  >
+                    Create Bid
+                  </button>
+                </>
+              ) : (
+                <CreateBid ticket={ticket} onBack={handleBack} />
+              )}
             </Tab>
 
-            <Tab key={1} title="Active Tenders">
-            <div className="text-white">Select a Ticket to bid for.</div>
-              
+            <Tab key={1} title="Your Tenders">
+              <div className="text-white">Active tenders and unanswered tender bids.</div>
             </Tab>
 
             <Tab key={2} title="Closed Tenders">
-            <div className="text-white">Select a Ticket to bid for.</div>
-              
+              <div className="text-white">Closed tenders.</div>
             </Tab>
           </Tabs>
         </div>

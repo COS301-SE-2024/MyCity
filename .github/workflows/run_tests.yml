@@ -5,6 +5,7 @@ on:
 
 env:
   CI: true
+  USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
 
 jobs:
   frontend_tests:
@@ -24,18 +25,37 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Run Unit & Integration tests
+      - name: Run All Frontend Unit & Integration tests
         working-directory: frontend
         run: npm test
 
-      # - name: Run End-to-End tests
-      #   run: npm run test:e2e
 
-    # backend_tests:
-    # name: Run Backend Tests
-    # runs-on: ubuntu-latest
+  backend_tests:
+    name: Run Backend Tests
+    runs-on: ubuntu-latest
 
-    # steps:
-    #   - name: Checkout repository
-    #     uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+  
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install -r requirements.txt
+
+      - name: Set up AWS CLI
+        working-directory: backend
+        run: |
+          pip install awscli
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ${{ secrets.AWS_REGION }}
+
+      - name: Run All Backend Unit & Integration tests
+        working-directory: backend
+        run: pytest --disable-warnings -q

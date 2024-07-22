@@ -5,6 +5,7 @@ from chalicelib.issues.issues_routes import issues_routes
 from chalicelib.tickets.tickets_routes import tickets_blueprint
 from chalicelib.searching.searching_routes import searching_blueprint
 from chalicelib.municipalities.municipalities_routes import municipalities_blueprint
+from chalicelib.tenders.tenders_routes import tenders_blueprint
 
 app = Chalice(app_name="mycity")
 cors_config = CORSConfig(
@@ -22,6 +23,8 @@ app.register_blueprint(tickets_blueprint, "Tickets", "/tickets")
 app.register_blueprint(searching_blueprint, "Search", "/search")
 
 app.register_blueprint(municipalities_blueprint, "Municipality", "/municipality")
+
+app.register_blueprint(tenders_blueprint, "Tenders", "/tenders")
 
 
 @app.route("/", cors=True)

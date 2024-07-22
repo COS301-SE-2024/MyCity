@@ -3,6 +3,8 @@ import boto3
 from botocore.exceptions import ClientError
 from chalice import BadRequestError, Chalice, Response
 import uuid
+from dotenv import load_dotenv
+import os
 
 from math import radians, cos, sin, asin, sqrt
 from datetime import datetime
@@ -20,8 +22,13 @@ import random
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
-
-
+cognito_cient = boto3.client("cognito-idp")
+load_dotenv()
+user_poolid = os.getenv("USER_POOL_ID")
+# users_response = cognito_cient.list_users(
+#     UserPoolId=user_poolid
+# )
+# user_list = users_response.get('Users', [])
 municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
 ticketupdate_table = dynamodb.Table("ticket_updates")
@@ -58,6 +65,7 @@ def create_ticket(ticket_data):
     try:
         # Validate required fields
         required_fields = [
+            "address",
             "asset",
             "description",
             "latitude",
@@ -91,11 +99,23 @@ def create_ticket(ticket_data):
 
         # Generate ticket ID
         ticket_id = generate_id()
-        location = {
-            "latitude": Decimal(str(ticket_data["latitude"])),
-            "longitude": Decimal(str(ticket_data["longitude"])),
-        }
-        municipality_id = findMunicipality(location)
+
+        latitude = Decimal(str(ticket_data["latitude"]))
+        longitude = Decimal(str(ticket_data["longitude"]))
+
+        # get the address
+        address = ticket_data["address"]
+
+        # extract municipality from address
+        ticket_municipality = ""
+        split_address = address.split(",")
+        if "Local Municipality" in split_address[2]:
+            ticket_municipality = split_address[2].replace("Municipality", "")
+        else:
+            ticket_municipality = split_address[1]
+
+        municipality_id = ticket_municipality.strip()
+
         current_datetime = datetime.now()
 
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
@@ -104,12 +124,13 @@ def create_ticket(ticket_data):
         ticket_item = {
             "ticket_id": ticket_id,
             "asset_id": asset_id,
+            "address": address,
             "dateClosed": "<empty>",
             "dateOpened": formatted_datetime,
             "description": ticket_data["description"],
             "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
-            "latitude": location["latitude"],
-            "longitude": location["longitude"],
+            "latitude": latitude,
+            "longitude": longitude,
             "municipality_id": municipality_id,
             "username": ticket_data["username"],
             "state": ticket_data["state"],  # do not hard code, want to extend in future
@@ -153,39 +174,6 @@ def get_fault_types():
 
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-
-
-def findMunicipality(location):
-    response = municipality_table.scan(
-        ProjectionExpression="latitude,longitude,municipality_id"
-    )
-    latitude = radians(float(location["latitude"]))
-    longitude = radians(float(location["latitude"]))
-    count = 0
-    data = response["Items"]
-    closestdistance = 10000000
-    municipality = ""
-    if len(data) > 0:
-        for x in data:
-            if count < 2:
-                print(x["municipality_id"])
-                count = count + 1
-            lat_str = str(x["latitude"]).strip("'")
-            long_str = str(x["longitude"]).strip("'")
-            lat2 = float(lat_str)
-            long2 = float(long_str)
-            dlat = lat2 - latitude
-            dlong = long2 - longitude
-            a = sin(dlat / 2) ** 2 + cos(latitude) * cos(lat2) * sin(dlong / 2) ** 2
-            r_earth = 6371
-            distance = 2 * r_earth * asin(sqrt(a))
-            if distance < closestdistance:
-                closestdistance = distance
-                municipality = x["municipality_id"]
-
-        return municipality
-    else:
-        return "No data was produced"
 
 
 def getMyTickets(tickets_data):
@@ -239,6 +227,7 @@ def get_in_my_municipality(tickets_data):
                     FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
+            getUserprofile(items)
             return items
         else:
             error_response = {
@@ -289,7 +278,7 @@ def get_watchlist(tickets_data):
                         }
                     }
                     raise ClientError(error_response, "Inconsistencies")
-
+            getUserprofile(ticketsItems)
             return ticketsItems
         else:
             error_response = {
@@ -398,5 +387,49 @@ def getMostUpvoted():
                 FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
             )
             item["commentcount"] = len(response_item["Items"])
+        getUserprofile(top_items)
         return top_items
-    return top_items
+
+
+def getUserprofile(ticket_data):
+    user_image = ""
+    index = 0
+    try:
+        for username in ticket_data:
+
+            user_response = cognito_cient.admin_get_user(
+                UserPoolId=user_poolid, Username=username["username"]
+            )
+            for attr in user_response["UserAttributes"]:
+                if attr["Name"] == "picture":
+                    user_image = attr["Value"]
+            username["user_picture"] = user_image
+            username["municipality_picture"] = ""
+
+    except cognito_cient.exceptions.UserNotFoundException:
+        print(f"User {username['username']} not found.")
+        return "username not found"
+        # for item in user_list:
+        #     index= index+1
+        #     if 'esinhle' in item['Username'].lower():
+        #         print("Usernames : " + item['Username'].lower() + " " + username['username'].lower() )
+        #         index=0
+        #     if(item['Username'].lower() == username['username'].lower()):
+        #         print("inside username")
+        #         for attr in item['Attributes']:
+        #             print("inside attributes")
+        #             if(attr['Name'] == 'picture'):
+        #                 user_image=attr['Value']
+        # username['user_picture'] = user_image
+        # username['municipality_picture'] = ""
+        # municipality_table.query(KeyConditionExpression=Key("municipality_id").eq(username["municipality_id"]),
+        #                          ProjectionExpression="upvotes,viewcount")
+
+    # return json.dumps(user_list, cls=DateTimeEncoder)
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super(DateTimeEncoder, self).default(obj)
