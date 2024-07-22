@@ -1,9 +1,9 @@
 
 
-export async function CreatTender(muni: string, amount: number,ticket: string,time : number, user_session : string)
+export async function CreatTender(authcode: string, amount: number,ticket: string,time : number, user_session : string)
 {
     const data = {
-        municipality : muni,
+        authCode : authcode,
         quote : amount,
         ticket_id : ticket,
         duration : time
