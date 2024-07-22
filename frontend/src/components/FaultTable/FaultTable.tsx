@@ -14,7 +14,7 @@ interface Incident {
   description: string;
   user_picture: string;
   username: string;
-  status: string;
+  state: string;
   municipality_picture: string;
   urgency: "high" | "medium" | "low"; // Added urgency field
 }
@@ -61,13 +61,29 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
     setSelectedIncident(null);
   };
 
+  const getUrgency = (votes : number) =>{
+      if (votes < 10) {
+        return "low";
+    } else if (votes >= 10 && votes < 20) {
+        return "medium";
+    } else if (votes >= 20 && votes <= 40) {
+        return "high";
+    } else {
+        return "low"; // Default case
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Unaddressed':
+      case 'Opened':
         return 'bg-red-200 text-red-800';
       case 'In Progress':
         return 'bg-blue-200 text-blue-800';
-      case 'Resolved':
+      case 'Taking Tenders':
+        return 'bg-blue-200 text-blue-800';
+      case 'Assigning Contract':
+        return 'bg-blue-200 text-blue-800';
+      case 'Closed':
         return 'bg-green-200 text-green-800';
       default:
         return 'bg-gray-200 text-gray-800';
@@ -85,13 +101,15 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
         <div className="col-span-1 flex justify-center">Address</div>
       </div>
       {tableitems.map((incident, index) => (
+        
         <div
           key={index}
           className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
           onClick={() => handleRowClick(incident)}
         >
           <div className="col-span-1 flex justify-center">
-            {urgencyMapping[incident.urgency].icon}
+            {  
+            urgencyMapping[getUrgency(incident.upvotes)].icon}
           </div>
           <div className="col-span-1 flex justify-center font-bold">
             {incident.ticketnumber}
@@ -100,8 +118,8 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
             {incident.asset_id}
           </div>
           <div className="col-span-1 flex justify-center">
-            <span className={`px-2 py-1 rounded ${getStatusColor(incident.status)}`}>
-              {incident.status}
+            <span className={`px-2 py-1 rounded ${getStatusColor(incident.state)}`}>
+              {incident.state}
             </span>
           </div>
           <div className="col-span-1 flex justify-center text-center">
@@ -140,7 +158,7 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
           description={selectedIncident.description}
           image={selectedIncident.user_picture}
           createdBy={selectedIncident.username}
-          status={selectedIncident.status}
+          status={selectedIncident.state}
           municipalityImage={selectedIncident.municipality_picture} // Pass municipality image
           urgency={selectedIncident.urgency} // Pass urgency
         />
