@@ -34,7 +34,7 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
     const user_data = await userProfile.getUserProfile();   
     const user_session = String(user_data.current?.session_token)
     let ticket_id = ticket.id
-    const authcode = String(user_data.current?.authcode)
+    const authcode = String(user_data.current?.company_name)
     const response_submit = await CreatTender(authcode,price,ticket_id,duration,user_session)
     if(response_submit == true)
     {
