@@ -3,7 +3,8 @@ from pytest import fixture
 import pytest
 from chalice.test import Client
 import json
-
+from datetime import datetime
+    
 from chalicelib.tickets.tickets_controllers import (
     BadRequestError,
     create_ticket,
@@ -13,6 +14,8 @@ from chalicelib.tickets.tickets_controllers import (
     get_watchlist,
     view_ticket_data,
     validate_ticket_id,
+    add_ticket_comment_with_image,
+    add_ticket_comment_without_image,
 )
 
 
@@ -120,3 +123,52 @@ def test_validate_ticket_id_invalid():
     for ticket_id in invalid_ticket_ids:
         with pytest.raises(BadRequestError):
             validate_ticket_id(ticket_id)
+
+
+# Unit tests for add_ticket_comment_without_image
+def test_add_ticket_comment_without_image_valid():
+    valid_comment_data = {
+        "comment": "This is a test comment",
+        "ticket_id": "550e8400-e29b-41d4-a716-446655440000",
+        "user_id": "user123"
+    }
+
+    def mock_generate_id():
+        return "test_ticketupdate_id"
+
+    def mock_put_item(Item):
+        assert Item["comment"] == valid_comment_data["comment"]
+        assert Item["ticket_id"] == valid_comment_data["ticket_id"]
+        assert Item["user_id"] == valid_comment_data["user_id"]
+        assert Item["ticketupdate_id"] == "test_ticketupdate_id"
+
+    monkeypatch.setattr("generate_id", mock_generate_id)
+    monkeypatch.setattr("ticketupdate_table.put_item", mock_put_item)
+
+    response = add_ticket_comment_without_image(
+        valid_comment_data["comment"],
+        valid_comment_data["ticket_id"],
+        valid_comment_data["user_id"]
+    )
+
+    assert response["statusCode"] == 200
+    data = json.loads(response["body"])
+    assert data["message"] == "Comment added successfully"
+    assert data["ticketupdate_id"] == "test_ticketupdate_id"
+
+
+def test_add_ticket_comment_without_image_missing_fields():
+    invalid_comment_data = [
+        {"comment": "This is a test comment", "ticket_id": ""},
+        {"comment": "", "ticket_id": "550e8400-e29b-41d4-a716-446655440000"},
+    ]
+
+    for data in invalid_comment_data:
+        with pytest.raises(ClientError):
+            add_ticket_comment_without_image(data["comment"], data["ticket_id"], "user123")
+
+
+def test_add_ticket_comment_without_image_invalid_ticket_id():
+    invalid_ticket_id = "invalidformat"
+    with pytest.raises(BadRequestError):
+        add_ticket_comment_without_image("This is a test comment", invalid_ticket_id, "user123")
