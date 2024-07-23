@@ -50,7 +50,7 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
         <img src={ticket.municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
         <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticket.id}</h2>
         <p className="text-lg font-semibold mb-2 text-center">{ticket.faultType}</p>
-        <p className="text-md mb-4 text-center">"{ticket.description}"</p>
+        <p className="text-md mb-4 text-center">{ticket.description}</p>
         <div className="mb-4 text-center">
           <p className="text-lg font-semibold">Fault Address</p>
           <p>{ticket.address}</p>
