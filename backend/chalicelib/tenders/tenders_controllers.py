@@ -37,7 +37,7 @@ def create_tender(sender_data):
                 raise ClientError(error_response, "InvalideFields")
 
         company_pid = getCompanIDFromName(sender_data["company_name"])
-        if company_pid == '':  # To see that company does exist
+        if company_pid == "":  # To see that company does exist
             error_response = {
                 "Error": {
                     "Code": "CompanyDoesntExist",
@@ -45,7 +45,6 @@ def create_tender(sender_data):
                 }
             }
             raise ClientError(error_response, "CompanyDoesntExist")
-        
 
         company_id = company_pid
         response_check = tenders_table.scan(
@@ -188,8 +187,7 @@ def accept_tender(sender_data):
         company_id = getCompanIDFromName(sender_data["company_name"])
         response_tender = tenders_table.scan(
             FilterExpression=Attr("company_id").eq(company_id)
-            & Attr("ticket_id").eq(sender_data["ticket_id"]),
-            ProjectionExpression="tender_id",
+            & Attr("ticket_id").eq(sender_data["ticket_id"])
         )
         tender_items = response_tender["Items"]
         print(tender_items)
@@ -202,22 +200,23 @@ def accept_tender(sender_data):
             }
             raise ClientError(error_response, "TenderDoesntExist")
         tender_id = tender_items[0]["tender_id"]
-        ticket_id = tender_items[0]['ticket_id']
+        ticket_id = tender_items[0]["ticket_id"]
         updateExp = "set #status=:r"
         expattrName = {"#status": "status"}
         expattrValue = {":r": "accepted"}
         response = updateTenderTable(tender_id, updateExp, expattrName, expattrValue)
         response_tickets = tenders_table.scan(
-             FilterExpression=Attr("ticket_id").eq(ticket_id),
+            FilterExpression=Attr("ticket_id").eq(ticket_id),
         )
-        response_items = response_tickets['Items']
-        if(len(response_items) > 0):
+        response_items = response_tickets["Items"]
+        if len(response_items) > 0:
             for data in response_items:
-                if(data['tender_id'] != tender_id):
+                if data["tender_id"] != tender_id:
                     RejectexpattrValue = {":r": "rejected"}
-                    response_reject = updateTenderTable(data['tender_id'], updateExp, expattrName, RejectexpattrValue)
-        
-    
+                    response_reject = updateTenderTable(
+                        data["tender_id"], updateExp, expattrName, RejectexpattrValue
+                    )
+
         if response["ResponseMetadata"]:
             return {"Status": "Success", "Message": response}
         else:
@@ -268,7 +267,11 @@ def updateTenderTable(
     return response
 
 
-def CheckTenderExists(pid,ticket_id):
+def CheckTenderExists(pid, ticket_id):
     response_tender = tenders_table.scan(
-        FilterExpression=Attr("company_id").eq(authcode) & Attr()
+        FilterExpression=Attr("company_id").eq(pid) & Attr("ticket_id").eq(ticket_id)
     )
+    if len(response_tender["Items"]) <= 0:
+        return False
+    else:
+        return True
