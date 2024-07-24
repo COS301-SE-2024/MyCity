@@ -34,8 +34,9 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
     const user_data = await userProfile.getUserProfile();   
     const user_session = String(user_data.current?.session_token)
     let ticket_id = ticket.id
-    const authcode = String(user_data.current?.company_name)
-    const response_submit = await CreatTender(authcode,price,ticket_id,duration,user_session)
+    const mock_ticket = "b591aa60-9403-40d6-8175-f6988402e45f"
+    const company_name = String(user_data.current?.company_name)
+    const response_submit = await CreatTender(company_name,price,mock_ticket,duration,user_session)
     if(response_submit == true)
     {
       // put toaster

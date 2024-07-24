@@ -5,11 +5,15 @@ import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signIn
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
     await setUserPathSuffix(userRole);
-
+    let username = String(form.get("email"));
     const { isSignedIn } = await signIn({
-        username: String(form.get("email")),
+        username: username.toLowerCase(),
         password: String(form.get("password")),
     });
+
+    console.log("username: " + String(form.get("email")) + " password : " + String(form.get("password")) )
+    console.log("did it log in: " + String(isSignedIn))
+
 
     return { isSignedIn };
 }
@@ -36,7 +40,8 @@ export async function handleSignUp(form: FormData, userRole: UserRole) {
                 email: String(form.get("email")),
                 given_name: String(form.get("firstname")),
                 family_name: String(form.get("surname")),
-                "custom:user_role": userRole
+                "custom:user_role": userRole,
+
             },
             autoSignIn: true,
         },
@@ -44,12 +49,11 @@ export async function handleSignUp(form: FormData, userRole: UserRole) {
 
 
     if (userRole == UserRole.MUNICIPALITY) {
-        signupOptions.options!.userAttributes["custom:municipality"] = String(form.get("municipality"));
         signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("municode"));
 
     }
     else if (userRole == UserRole.PRIVATE_COMPANY) {
-        signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("auth_code"));
+        signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("authcode"));
     }
 
 
@@ -61,6 +65,7 @@ export async function handleSignUp(form: FormData, userRole: UserRole) {
 
 
 const handleSignUpStep = async (step: SignUpOutput["nextStep"], userRole: UserRole) => {
+    console.log(String("Signup step:" + step.signUpStep))
     switch (step.signUpStep) {
         case "CONFIRM_SIGN_UP":
         // Redirect end-user to confirm-sign up screen.
@@ -68,7 +73,6 @@ const handleSignUpStep = async (step: SignUpOutput["nextStep"], userRole: UserRo
         case "COMPLETE_AUTO_SIGN_IN":
             const { isSignedIn } = await autoSignIn();
             return { isSignedIn };
-
     }
 
     const isSignedIn = false;

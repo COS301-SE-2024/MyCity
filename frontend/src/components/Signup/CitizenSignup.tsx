@@ -35,6 +35,7 @@ export default function CitizenSignup() {
 
     try {
       handleSignUp(form, UserRole.CITIZEN);
+  
     }
     catch (error) {
       console.log("Error: " + error);
