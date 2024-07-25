@@ -97,7 +97,7 @@ export default function Settings() {
                 </span>
               </div>
               <p className="text-gray-600">
-                See and change your municipality's information.
+                See and change your municipality&apos;s information.
               </p>
             </button>
             <button
@@ -145,7 +145,7 @@ export default function Settings() {
                 <span className="text-lg font-semibold">Delete Employee Account</span>
               </div>
               <p className="text-gray-600">
-                Remove your account from MyCity's system.
+                Remove your account from MyCity&apos;s system.
               </p>
             </button>
             {showConfirmation && (
