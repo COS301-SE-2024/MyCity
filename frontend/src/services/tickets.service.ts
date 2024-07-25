@@ -19,20 +19,20 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
             }
         );
 
-        if (!response.ok) {
-            console.error(`Error fetching: ${response.statusText}`);
+        if (!response.ok ) {
+            console.log(`Error fetching: ${response.statusText}`);
             return []
         }
 
         const result = await response.json();
 
         const data = result;
-        AssignTicketNumbers(result);
+        AssignTicketNumbers(data);
 
         return data;
 
     } catch (error) {
-        throw error;
+        console.error(error);
     }
 }
 
@@ -64,7 +64,7 @@ export async function getWatchlistTickets(username: string, user_session: string
 
         const result = await response.json();
 
-        if (result.Status) {
+        if (result.Status ) {
             return [];
         }
 
@@ -74,7 +74,7 @@ export async function getWatchlistTickets(username: string, user_session: string
         return data;
 
     } catch (error) {
-        throw error;
+        console.error("Error: " + error);
     }
 }
 
@@ -105,7 +105,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
         return data;
 
     } catch (error) {
-        throw error;
+        console.error("Error: " + error);
     }
 }
 
@@ -140,7 +140,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         if (!response.ok) {
             console.error(`Error fetching: ${response.statusText}`);
-            return []
+            return [];
         }
 
 
@@ -157,7 +157,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         return data;
 
     } catch (error) {
-        throw error;
+        console.error("Error: " + error);
     }
 }
 
