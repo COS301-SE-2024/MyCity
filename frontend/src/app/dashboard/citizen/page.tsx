@@ -21,7 +21,7 @@ export default function CitizenDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+      // try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.email;
         const user_session = String(user_data.current?.session_token)
@@ -41,17 +41,14 @@ export default function CitizenDashboard() {
         }
         else setDashWatchResults([]);
         console.log( dashMostUpvoteResults)
-      } catch (error) {
-        console.log(error);
-      }
+      // } catch (error) {
+      //   console.log(error);
+      // }
     };
 
     fetchData();
   }, [dashMostUpvoteResults, userProfile]); // Add userProfile to the dependency array
 
-  useEffect(() => {
-    console.log(dashMostUpvoteResults);
-  }, [dashMostUpvoteResults]);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -177,7 +174,7 @@ export default function CitizenDashboard() {
 
             <Tab key={1} title="List">
               {/*<FaultTable tableitems={dashMostUpvoteResults}/>*/}
-              <FaultTable />
+              <FaultTable tableitems={dashMostUpvoteResults}/>
             </Tab>
 
             <Tab key={2} title="Map">
