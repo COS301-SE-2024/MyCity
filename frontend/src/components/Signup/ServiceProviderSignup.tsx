@@ -1,6 +1,8 @@
 import React, { FormEvent, useState } from 'react';
 import { Input, Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
+import { handleSignUp } from '@/services/auth.service';
+import { UserRole } from '@/types/custom.types';
 
 
 export default function ServiceProviderSignup() {
@@ -10,23 +12,22 @@ export default function ServiceProviderSignup() {
 
 
 
-  type ServiceArea = {
-    id: number | string;
-    name: string;
-  };
-
-
-  const serviceAreas: ServiceArea[] = [
-    { id: 0, name: "Plumbing" },
-    { id: 1, name: "Cleaning" },
-    { id: 2, name: "Pest Control" },
-    { id: 3, name: "Landscaping" },
-    { id: 4, name: "Electrical Services" }
-  ];
-
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    const form = new FormData(event.currentTarget as HTMLFormElement);
+    try {
+      const signedUp = await handleSignUp(form, UserRole.PRIVATE_COMPANY);
+      if(signedUp.isSignedIn == true)
+      {
+        router.push('/tenders/company')
+      }
+
+    }
+    catch (error) {
+      console.log("Error: " + error);
+    }
+
   };
 
   return (
