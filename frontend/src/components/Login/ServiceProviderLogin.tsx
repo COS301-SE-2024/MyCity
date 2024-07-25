@@ -17,7 +17,7 @@ export default function ServiceProviderLogin() {
       const { isSignedIn } = await handleSignIn(form, UserRole.PRIVATE_COMPANY);
 
       if (isSignedIn) {
-        router.push("/tenders");  ///changed this for tender process
+        router.push("/tenders/company");  ///changed this for tender process
       }
       else {
         throw "Something happened and we could not sign you in.";

@@ -26,11 +26,11 @@ export async function CreatTender(companyname: string, amount: number,ticket: st
     const result = await response.json()
     if(result.Status == "Success" )
     {
+        console.log(result)
         return true
     }
-    else false
+    else return false
     
-    return true;
 
 }
 
