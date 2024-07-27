@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import ChangeMuniInfo from "@/components/Settings/municipality/ChangeMuniInfo";
 import ChangeMuniPass from "@/components/Settings/municipality/ChangeMuniPass";
-import Municode from "@/components/Settings/municipality/Municode";
+import Municode from "@/components/Settings/municipality/municode";
 import { User, HelpCircle, XCircle } from "lucide-react";
 import { Mail, BellOff, Moon, Text } from "lucide-react";
 
