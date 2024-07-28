@@ -1,9 +1,12 @@
 {
   "version": "2.0",
-  "app_name": "mycity",
+  "app_name": "mycity-api",
   "stages": {
     "dev": {
-      "api_gateway_stage": "api"
+      "api_gateway_stage": "dev"
+    },
+    "prod": {
+      "api_gateway_stage": "prod"
     }
   }
 }

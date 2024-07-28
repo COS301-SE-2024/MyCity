@@ -73,7 +73,7 @@
           "swagger": "2.0",
           "info": {
             "version": "1.0",
-            "title": "mycity"
+            "title": "mycity-api"
           },
           "schemes": [
             "https"
@@ -178,7 +178,7 @@
         "Handler": "app.app",
         "CodeUri": "./deployment.zip",
         "Tags": {
-          "aws-chalice": "version=1.31.0:stage=dev:app=mycity"
+          "aws-chalice": "version=1.31.0:stage=dev:app=mycity-api"
         },
         "Tracing": "PassThrough",
         "Timeout": 60,
