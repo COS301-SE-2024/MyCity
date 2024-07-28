@@ -59,6 +59,10 @@ export async function getWatchlistTickets(username: string, user_session: string
 
         const result = await response.json();
 
+        if (result.Status) {
+            return [];
+        }
+
         const data = result.data as any[];
         AssignTicketNumbers(data);
 
@@ -131,6 +135,10 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
 
         const result = await response.json();
+
+        if (result.Status) {
+            return [];
+        }
 
         const data = result.data as any[];
 
