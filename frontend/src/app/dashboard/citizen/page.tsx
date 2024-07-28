@@ -21,7 +21,7 @@ export default function CitizenDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
+      // try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.email;
         const user_session = String(user_data.current?.session_token)
@@ -40,10 +40,10 @@ export default function CitizenDashboard() {
         }
         else setDashWatchResults([]);
         // console.log( dashMostUpvoteResults)
-      }
-      catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      // }
+      // catch (error) {
+      //   console.error("Error fetching data:", error);
+      // }
     };
 
     fetchData();
