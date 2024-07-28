@@ -3,6 +3,8 @@
 import React, { Key, useEffect, useRef, useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import { Tab, Tabs } from "@nextui-org/react";
+import ClosedTenders from "@/components/RecordsTable/ClosedTenders";
+import ActiveTenders from "@/components/RecordsTable/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTable/OpenTicketsTable";
 export default function MuniTenders() {
   const handleTabChange = (key: Key) => {
@@ -51,18 +53,16 @@ export default function MuniTenders() {
           >
             
             <Tab key={0} title="Open Tickets">
-            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80">Select a Ticket to see all bids submitted for it.</div>
+            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
               <OpenTicketsTable />
             </Tab>
 
             <Tab key={1} title="Active Tenders">
-            <div className="text-white">Select a Ticket to bid for.</div>
-              
+              <ActiveTenders />
             </Tab>
 
             <Tab key={2} title="Closed Tenders">
-            <div className="text-white">Select a Ticket to bid for.</div>
-              
+            <ClosedTenders />
             </Tab>
           </Tabs>
         </div>

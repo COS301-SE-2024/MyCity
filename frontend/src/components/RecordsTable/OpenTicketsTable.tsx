@@ -39,11 +39,14 @@ export default function OpenTicketsTable() {
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const recordsPerPage = 10;
 
+  // Filter records with status "Unaddressed"
+  const unaddressedRecords = records.filter(record => record.status === 'Unaddressed');
+
   // Calculate pagination details
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = records.slice(indexOfFirstRecord, indexOfLastRecord);
-  const totalPages = Math.ceil(records.length / recordsPerPage);
+  const currentRecords = unaddressedRecords.slice(indexOfFirstRecord, indexOfLastRecord);
+  const totalPages = Math.ceil(unaddressedRecords.length / recordsPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -61,12 +64,17 @@ export default function OpenTicketsTable() {
     setSelectedTicketId(ticketId);
   };
 
+  const handleBack = () => {
+    setSelectedTicketId(null);
+  };
+
   return (
-    <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
+    <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
       {!selectedTicketId ? (
         <>
-          <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black">
-            <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+          <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
+            <div className='text-xl font-bold'>Select a Ticket to see all Tender Bids submitted for it.</div>
+            <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200 mt-6">
               <div className="col-span-1">Urgency</div>
               <div className="col-span-1">Ticket Number</div>
               <div className="col-span-1">Fault Type</div>
@@ -101,7 +109,7 @@ export default function OpenTicketsTable() {
           </div>
         </>
       ) : (
-        <MuniTenders ticketId={selectedTicketId} />
+        <MuniTenders ticketId={selectedTicketId} onBack={handleBack} />
       )}
     </div>
   );
