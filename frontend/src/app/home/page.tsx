@@ -4,31 +4,34 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
+import {BrowserView, MobileView} from 'react-device-detect';
 
 export default function Home() {
-  const [isMobile, setIsMobile] = useState(false);
+  // const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsMobile(window.innerWidth < 768);
+  //   };
 
-    // Initial check
-    handleResize();
+  //   // Initial check
+  //   handleResize();
 
-    // Add event listener
-    window.addEventListener("resize", handleResize);
+  //   // Add event listener
+  //   window.addEventListener("resize", handleResize);
 
-    // Remove event listener on cleanup
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  //   // Remove event listener on cleanup
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, []);
 
-  const headlineColor = isMobile ? "text-red-500" : "text-blue-200";
+
 
   return (
-    <div
+    <>
+    <BrowserView>
+      <div
       style={{
         position: "relative",
         height: "100vh",
@@ -36,7 +39,7 @@ export default function Home() {
       }}
     >
       {/* Navbar positioned based on isMobile */}
-      <div className={`${isMobile ? 'fixed bottom-0' : 'fixed top-0'} w-full z-20`}>
+      <div className={`w-full z-20`}>
         <Navbar />
       </div>
       {/* Background image */}
@@ -58,9 +61,9 @@ export default function Home() {
       {/* Content */}
       <div className="container mx-auto p-2 relative z-10 ml-16">
         {/* Ensure content is above the background */}
-        <h1 className={`text-4xl text-white font-bold mb-4 ${headlineColor}`}>
+        <h1 className={`text-4xl text-white font-bold mb-4 text-blue-200`}>
           Be the change in your city <br />
-          with <span className={headlineColor}>MyCity</span>.
+          with <span className={'text-blue-200'}>MyCity</span>.
         </h1>
 
         <p className="text-lg text-gray-200 mb-4">
@@ -83,5 +86,19 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </BrowserView>
+    <MobileView>
+      <div
+      style={{
+        position: "relative",
+        height: "100vh",
+        overflow: "hidden", // Prevents content overflow
+      }}
+      >
+        
+      </div>
+    </MobileView>
+    </>
+    
   );
 }
