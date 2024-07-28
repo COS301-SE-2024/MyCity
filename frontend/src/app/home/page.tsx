@@ -35,7 +35,10 @@ export default function Home() {
         overflow: "hidden", // Prevents content overflow
       }}
     >
-      <Navbar />
+      {/* Navbar positioned based on isMobile */}
+      <div className={`${isMobile ? 'fixed bottom-0' : 'fixed top-0'} w-full z-20`}>
+        <Navbar />
+      </div>
       {/* Background image */}
       <div
         style={{
@@ -57,11 +60,11 @@ export default function Home() {
         {/* Ensure content is above the background */}
         <h1 className={`text-4xl text-white font-bold mb-4 ${headlineColor}`}>
           Be the change in your city <br />
-          with <span className={headlineColor}>MyCity.</span>
+          with <span className={headlineColor}>MyCity</span>.
         </h1>
 
         <p className="text-lg text-gray-200 mb-4">
-          MyCity connects citizens with municipalities and third-party businesses <br></br>
+          MyCity connects citizens with municipalities and third-party businesses <br />
           to identify and solve problems in your city - fast.
         </p>
 
