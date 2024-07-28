@@ -59,7 +59,7 @@ export async function getWatchlistTickets(username: string, user_session: string
 
         const result = await response.json();
 
-        if (result.Status) {
+        if (!Array.isArray(result.data)) {
             return [];
         }
 
@@ -136,7 +136,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         const result = await response.json();
 
-        if (result.Status) {
+        if (!Array.isArray(result.data)) {
             return [];
         }
 
