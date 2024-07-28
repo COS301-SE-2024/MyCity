@@ -47,7 +47,7 @@ export default function NavbarUser() {
   }, [getUserProfile]);
 
   return (
-    <nav className="z-40 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
+    <nav className="z-40 w-full bg-red bg-opacity-50 p4 flex items-center justify-between">
       <Link href="/">
         <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
           <img src="https://i.imgur.com/WbMLivx.png" alt="MyCity" width={50} height={50} className="w-50 h-50" />
@@ -76,7 +76,7 @@ export default function NavbarUser() {
         <Link href="/notifications/citizen" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
-              <Bell size={25} />
+              <Bell size={50} />
               <span>Notifications</span>
             </div>
           </div>

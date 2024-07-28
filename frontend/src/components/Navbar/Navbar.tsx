@@ -31,7 +31,7 @@ export default function Navbar() {
                 <NavbarGuest />
             )}
         </React.Fragment>
-        
+
     );
     
 }
