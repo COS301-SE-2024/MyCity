@@ -69,7 +69,7 @@ export default function Home() {
 
       {/* Mobile View */}
 
-      {/* <NavbarUser /> */}
+      
       <div className="block sm:hidden">
         <div
           style={{
@@ -94,8 +94,8 @@ export default function Home() {
               zIndex: -1, // Ensures the background is behind other content
             }}
           ></div>
-          {/* Content */}
 
+          {/* Content */}
           <div className="h-[30vh] flex items-center justify-center"></div>
           <div className="container mx-auto p-2 relative z-10 ml-16">
             {" "}
@@ -124,7 +124,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className=" h-10 bottom-0 flex items-center justify-center border">
+          {/* <NavbarUser /> */}
+          <div className=" h-10 bottom-0 flex items-center">
             <Navbar />
           </div>
           
