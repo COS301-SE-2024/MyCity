@@ -21,6 +21,7 @@ export default function Navbar() {
     }, []);
 
     return (
+
         <React.Fragment>
             {isAuthenticated && (
                 <NavbarUser />
@@ -30,6 +31,7 @@ export default function Navbar() {
                 <NavbarGuest />
             )}
         </React.Fragment>
+        
     );
     
 }
