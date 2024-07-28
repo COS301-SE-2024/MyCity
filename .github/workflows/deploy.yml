@@ -27,7 +27,7 @@ jobs:
     - name: Update config.json
       working-directory: backend
       run: |
-        echo "${{ secrets.CHALICE_CONFIG_JSON }}" > .chalice/config.json
+        echo ${{ secrets.CHALICE_CONFIG_JSON }} > .chalice/config.json
 
     - name: Deploy Chalice App
       env:
