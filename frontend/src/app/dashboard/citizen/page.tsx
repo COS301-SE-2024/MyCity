@@ -5,45 +5,45 @@ import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 import Navbar from "@/components/Navbar/Navbar";
-import {  FaTimes } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
-import { getTicket, getTicketsInMunicipality,getMostUpvote,getWatchlistTickets } from "@/services/tickets.service";
+import { getTicket, getTicketsInMunicipality, getMostUpvote, getWatchlistTickets } from "@/services/tickets.service";
 
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]); 
-  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]); 
-  const [dashWatchResults, setDashWatchResults] = useState<any[]>([]); 
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
+  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      // try {
+      try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.email;
         const user_session = String(user_data.current?.session_token)
-        console.log(user_session);
+        // console.log(user_session);
         const rspmostupvotes = await getMostUpvote(user_session);
         const rspwatchlist = await getWatchlistTickets(String(user_id), user_session);
         const municipality = user_data.current?.municipality;
-        const rspmunicipality = await getTicketsInMunicipality(municipality,user_session);
-        console.log(rspmostupvotes)
+        const rspmunicipality = await getTicketsInMunicipality(municipality, user_session);
+        // console.log(rspmostupvotes)
         // const flattenedWatchlist = rspwatchlist.flat();
-        console.log(rspwatchlist);
+        // console.log(rspwatchlist);
         setMostUpvoteResults(rspmostupvotes)
         setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-        if(rspwatchlist.length > 0)
-        {
+        if (rspwatchlist.length > 0) {
           setDashWatchResults(rspwatchlist);
         }
         else setDashWatchResults([]);
-        console.log( dashMostUpvoteResults)
-      // } catch (error) {
-      //   console.log(error);
-      // }
+        // console.log( dashMostUpvoteResults)
+      }
+      catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchData();
@@ -84,21 +84,21 @@ export default function CitizenDashboard() {
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80 ">Dashboard</h1>
         </div>
-         {/* Persistent Help Icon */}
-      <div className="fixed bottom-4 right-4">
-        <HelpCircle
-          data-testid="open-help-menu"
-          className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
-          size={24}
-          onClick={toggleHelpMenu}
-        />
-      </div>
+        {/* Persistent Help Icon */}
+        <div className="fixed bottom-4 right-4">
+          <HelpCircle
+            data-testid="open-help-menu"
+            className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+            size={24}
+            onClick={toggleHelpMenu}
+          />
+        </div>
 
         {isHelpOpen && (
           <div data-testid="help" className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
               <button
-                 data-testid="close-help-menu"
+                data-testid="close-help-menu"
                 className="absolute top-2 right-2 text-gray-700"
                 onClick={toggleHelpMenu}
               >
@@ -146,8 +146,8 @@ export default function CitizenDashboard() {
                 </h1>
               </div>
               <div className="justify-center text-center">
-              
-                    <DashboardFaultCardContainer cardData={dashMostUpvoteResults} />
+
+                <DashboardFaultCardContainer cardData={dashMostUpvoteResults} />
 
               </div>
 
@@ -157,8 +157,8 @@ export default function CitizenDashboard() {
               <h1 className="text-center text-white mb-4 ml-2">
                 Based on your proximity to the issue.
               </h1>
-      
-                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+
+              <DashboardFaultCardContainer cardData={dashMuniResults} />
 
               <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                 Watchlist
@@ -167,14 +167,14 @@ export default function CitizenDashboard() {
               <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
                 All of the issues you have added to your watchlist.
               </h1>
-              
 
-                  <DashboardFaultCardContainer cardData={dashWatchResults} />
+
+              <DashboardFaultCardContainer cardData={dashWatchResults} />
             </Tab>
 
             <Tab key={1} title="List">
               {/*<FaultTable tableitems={dashMostUpvoteResults}/>*/}
-              <FaultTable tableitems={dashMostUpvoteResults}/>
+              <FaultTable tableitems={dashMostUpvoteResults} />
             </Tab>
 
             <Tab key={2} title="Map">

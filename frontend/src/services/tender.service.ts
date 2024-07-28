@@ -9,7 +9,7 @@ export async function CreatTender(companyname: string, amount: number,ticket: st
         duration : time
     }
 
-    const apiURL = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tenders/create'
+    const apiURL = "/api/tenders/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
@@ -41,7 +41,7 @@ export async function InReview(authcode: string,ticket: string,user_session : st
         ticket_id : ticket,
     }
 
-    const apiURL = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tenders/in-review'
+    const apiURL = "/api/tenders/in-review";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
@@ -73,7 +73,7 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
         ticket_id : ticket,
     }
 
-    const apiURL = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tenders/accept'
+    const apiURL = "/api/tenders/accept";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
