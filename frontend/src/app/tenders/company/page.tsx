@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Key, useState } from "react";
-import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
+import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import { Tab, Tabs } from "@nextui-org/react";
 import CreateBid from "@/components/Tenders/CreateBid";
 
@@ -31,7 +31,7 @@ export default function MuniTenders() {
 
   return (
     <div>
-      <NavbarMunicipality /> {/* this will be service provider */}
+      <NavbarCompany /> {/* this will be service provider */}
       <div
         style={{
           position: "fixed", // Change position to 'fixed'

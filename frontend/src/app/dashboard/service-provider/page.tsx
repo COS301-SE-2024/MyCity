@@ -1,105 +1,78 @@
-'use client'
+'use client';
 
+import { useState } from 'react';
+import NavbarCompany from '@/components/Navbar/NavbarCompany';
+import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
+import { PenToolIcon, ChevronDown } from 'lucide-react';
 
-import React, { Key, useState,useEffect } from "react";
-import { Tabs, Tab } from "@nextui-org/react";
-import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
-import FaultTable from "@/components/FaultTable/FaultTable";
-import FaultMapView from "@/components/FaultMapView/FaultMapView";
-import { useProfile } from "@/hooks/useProfile";
-import { getMostUpvote } from "@/services/tickets.service";
+export default function Dashboard() {
+  const [company, setCompany] = useState("BBL Holdings");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
-export default function ServiceProviderDashboard() {
-    const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]); 
-    const userProfile = useProfile();
-
-    const handleTabChange = (key: Key) => {
-        const index = Number(key);
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const user_data = await userProfile.getUserProfile();
-            const user_id = user_data.current?.email;
-            const user_session = String(user_data.current?.session_token)
-            console.log(user_session);
-            const rspmostupvotes = await getMostUpvote(user_session);
-            
-            // const flattenedWatchlist = rspwatchlist.flat();
-            
-            setMostUpvoteResults(rspmostupvotes)
-          } catch (error) {
-            console.log(error);
-          }
-        };
-    
-        fetchData();
-      }, [dashMostUpvoteResults, userProfile]);
-
-    return (
-        <div>
-
-            
-
-            <main>
-
-                <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">
-                    Service Provider Dashboard
-                </h1>
-                <h2 className="text-3xl font-bold mt-2 ml-2 text-blue-700">
-                    Bob&apos;s Electronics
-                </h2>
-
-                <div className="hidden">
-
-                    <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
-
-                        <Tabs aria-label="Signup Options" defaultSelectedKey={0} className="mt-5 flex justify-center w-full" classNames={{
-                            tab: "min-w-32 min-h-10",
-                            panel: "w-full",
-                            cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
-                            tabContent: "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md"
-                        }} onSelectionChange={handleTabChange}>
-                            <Tab key={0} title="Cards">
-                                <h1 className="text-2xl font-bold mt-2 ml-2">
-                                    Most up-voted
-                                </h1>
-                                <h1 className="text-l mb-4 ml-2">
-                                    Based on votes from the community in your area.
-                                </h1>
-                                <FaultCardContainer />
-                                <h1 className="text-2xl font-bold mt-2 ml-2">
-                                    Nearest to you
-                                </h1>
-                                <h1 className="text-l mb-4 ml-2">
-                                    Based on your proximity to the issue.
-                                </h1>
-                                <FaultCardContainer />
-                                <h1 className="text-2xl font-bold mt-2 ml-2">
-                                    Watchlist
-                                </h1>
-                                <h1 className="text-l mb-4 ml-2">
-                                    All of the issues you have added to your watchlist.
-                                </h1>
-                                <FaultCardContainer />
-                            </Tab>
-
-                            <Tab key={1} title="List" >
-                                <FaultTable tableitems={dashMostUpvoteResults} />
-                            </Tab>
-
-                            <Tab key={2} title="Map" >
-                                <h1 className="text-4xl font-bold mb-4 mt-2 ml-2 text-center">
-                                    Pretoria
-                                </h1>
-                                <FaultMapView />
-                            </Tab>
-                        </Tabs>
-                    </div>
-                </div>
-            </main>
+  return (
+    <div>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          zIndex: -1,
+        }}
+      ></div>
+      <NavbarCompany />
+      <main className="p-8 relative">
+        <div className="flex items-center mb-2 mt-2 ml-2">
+          <h1 className="text-4xl font-bold text-white text-opacity-80">
+            Dashboard
+          </h1>
         </div>
-    );
+        <div className="flex flex-col items-center justify-center text-white text-opacity-80">
+          <PenToolIcon size={30} className="mb-2" />
+          <span className="text-xl">{company}</span>
+        </div>
+        <div className="flex items-center justify-between mt-8">
+          <div className="relative inline-block text-left">
+            <button
+              className="flex items-center text-white text-opacity-80 hover:bg-gray-600 px-4 py-2 rounded transform transition-transform duration-200 hover:scale-105"
+              onClick={toggleDropdown}
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0)' }} // Transparent background
+            >
+              <span>Issues ordered by:</span>
+              <ChevronDown className="ml-2" size={16} />
+            </button>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="py-1">
+                  {['Urgency', 'Ticket Number', 'Fault Type', 'Status', 'Created By', 'Address'].map(field => (
+                    <a
+                      key={field}
+                      href="#"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      {field}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="mt-8">
+          <RecordsTable />
+        </div>
+      </main>
+    </div>
+  );
 }
