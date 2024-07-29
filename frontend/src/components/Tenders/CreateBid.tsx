@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useProfile } from "@/hooks/useProfile";
+import { CreatTender,InReview,AcceptTender } from '@/services/tender.service';
 
 interface Ticket {
   id: string;
@@ -14,6 +16,7 @@ interface CreateBidProps {
 }
 
 const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
+  const userProfile = useProfile();
   const [proposedPrice, setProposedPrice] = useState<string>('0.00');
   const [jobDuration, setJobDuration] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -24,8 +27,29 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    console.log("inside")
+    let price = Number(proposedPrice)
+    let duration = Number(jobDuration)
+    const user_data = await userProfile.getUserProfile();   
+    const user_session = String(user_data.current?.session_token)
+    let ticket_id = ticket.id
+    const mock_ticket = "b591aa60-9403-40d6-8175-f6988402e45f"
+    const company_name = String(user_data.current?.company_name)
+    console.log(user_data.current);
+    console.log("Company name : " + company_name)
+    const response_submit = await CreatTender(company_name,price,mock_ticket,duration,user_session)
+    if(response_submit == true)
+    {
+      console.log("success")
+      // put toaster
+    }
+    else 
+    {
+      //rejecting toaster
+    }
+
     // Handle form submission logic
   };
 

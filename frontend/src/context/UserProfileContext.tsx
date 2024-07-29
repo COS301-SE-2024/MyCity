@@ -27,6 +27,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ c
         const session = await fetchAuthSession();
         //otherwise get current user profile details
         const userDetails = await fetchUserAttributes();
+        console.log("user atr:")
+        console.log(userDetails)
 
         userProfile.current = {
             sub: userDetails.sub,
@@ -35,7 +37,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ c
             family_name: userDetails.family_name,
             picture: userDetails.picture,
             user_role: userDetails["custom:user_role"] as UserRole,
-            municipality: userDetails["custom:municipality"],
+            municipality: String(userDetails["custom:municipality"]),
+            company_name : String(userDetails["custom:company_name"]),
             session_token : String(session.tokens?.idToken),
         };
 
