@@ -436,10 +436,11 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 # function for comments on ticket WITHOUT image uploaded by the user
+# Note that the image is passed as a link (needs to be stored prior to calling the function)
 def add_ticket_comment_with_image(comment, ticket_id, image_url, user_id):
     try:
         # Validate required fields
-        if not comment or not ticket_id or not image_url:
+        if not comment or not ticket_id or not image_url or not user_id:
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",
@@ -451,7 +452,7 @@ def add_ticket_comment_with_image(comment, ticket_id, image_url, user_id):
         # Validate ticket_id
         ticket_id = validate_ticket_id(ticket_id)
 
-        # Generate unique ticket update ID
+        # Generate unique ticket update ID (just to keep track of the comments)
         ticketupdate_id = generate_id()
 
         # Get current date and time
@@ -463,7 +464,7 @@ def add_ticket_comment_with_image(comment, ticket_id, image_url, user_id):
             "ticketupdate_id": ticketupdate_id,
             "comment": comment,
             "date": formatted_datetime,
-            "imageURL": image_url,  # Required field
+            "imageURL": image_url,  # This is gathered from the bucket
             "ticket_id": ticket_id,
             "user_id": user_id,
         }
@@ -486,7 +487,7 @@ def add_ticket_comment_with_image(comment, ticket_id, image_url, user_id):
 def add_ticket_comment_without_image(comment, ticket_id, user_id):
     try:
         # Validate required fields
-        if not comment or not ticket_id:
+        if not comment or not ticket_id or not user_id:
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",

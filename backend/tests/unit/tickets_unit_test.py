@@ -2,6 +2,7 @@ import app
 from pytest import fixture
 import pytest
 from chalice.test import Client
+from chalice.app import Response
 import json
 from datetime import datetime
 from botocore.exceptions import ClientError
@@ -17,6 +18,7 @@ from chalicelib.tickets.tickets_controllers import (
     validate_ticket_id,
     add_ticket_comment_with_image,
     add_ticket_comment_without_image,
+    add_ticket_comment_with_image,
 )
 
 
@@ -129,30 +131,129 @@ def test_validate_ticket_id_invalid():
 
 # Unit tests for add_ticket_comment_without_image that has valid input
 def test_add_ticket_comment_without_image_valid():
-    valid_comment_data = {
-        "comment": "Test comment",
-        "ticket_id": "550e8400-e29b-41d4-a716-446655440000",
-        "user_id": "",
-    }
+    comment = "Test comment"
+    ticket_id = "58a1dadb-1f07-43b0-9869-984dd80cffd4"
+    user_id = "qinisela.mthembu@yahoo.com"
+
+    response = add_ticket_comment_without_image(comment, ticket_id, user_id)
+
+    # Ensure the response is a Response object
+    assert isinstance(response, Response), "Response should be a Response object"
+
+    # Convert the response body to a dictionary
+    response_body = json.loads(response.body)
+
+    # Check the status code
+    assert (
+        response.status_code == 200
+    ), f"Expected status code to be 200, got {response.status_code}"
+
+    # Check the response body for expected values
+    assert (
+        response_body.get("message") == "Comment added successfully"
+    ), "Expected message to be 'Comment added successfully'"
+    assert "ticketupdate_id" in response_body, "Expected 'ticketupdate_id' in response"
 
 
 # Unit tests for add_ticket_comment_without_image that has invalid input
+# checks for empty comment, empty ticket id, empty user id
 def test_add_ticket_comment_without_image_missing_fields():
     invalid_comment_data = [
-        {"comment": "This is a test comment", "ticket_id": ""},
-        {"comment": "", "ticket_id": "550e8400-e29b-41d4-a716-446655440000"},
+        {
+            "comment": "",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment for invalid ticket id",
+            "ticket_id": "",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment for invalid user id",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "user_id": "",
+        },
     ]
 
     for data in invalid_comment_data:
-        response = add_ticket_comment_without_image(data["comment"], data["ticket_id"], "user123")
-        assert response["Status"] == "FAILED", f"Expected status to be FAILED for data: {data}"
-        assert "Error" in response, f"Expected error in response for data: {data}"
-        assert response["Error"] == "Missing required field: comment or ticket_id", f"Expected specific error message for data: {data}"
-
-
-def test_add_ticket_comment_without_image_invalid_ticket_id():
-    invalid_ticket_id = "invalidformat"
-    with pytest.raises(BadRequestError):
-        add_ticket_comment_without_image(
-            "This is a test comment", invalid_ticket_id, "user123"
+        response = add_ticket_comment_without_image(
+            data["comment"], data["ticket_id"], data["user_id"]
         )
+        assert (
+            response["Status"] == "FAILED"
+        ), f"Expected status to be FAILED for data: {data}"
+        assert "Error" in response, f"Expected error in response for data: {data}"
+        assert (
+            response["Error"] == "Missing required field: comment or ticket_id"
+        ), f"Expected specific error message for data: {data}"
+
+
+def test_add_ticket_comment_with_image_invalid():
+    # Testing invalid information, and missing fields
+    invalid_comment_data = [
+        {
+            "comment": "",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "image_url": "",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test for empty image link",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "image_url": "",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment for invalid ticket id",
+            "ticket_id": "",
+            "image_url": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment for invalid user id",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "image_url": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
+            "user_id": "",
+        },
+    ]
+
+    for data in invalid_comment_data:
+        response = add_ticket_comment_with_image(
+            data["comment"], data["ticket_id"], data["image_url"], data["user_id"]
+        )
+        assert (
+            response["Status"] == "FAILED"
+        ), f"Expected status to be FAILED for data: {data}"
+        assert "Error" in response, f"Expected error in response for data: {data}"
+        assert (
+            response["Error"]
+            == "Missing required field: comment, ticket_id, or image_url"
+        ), f"Expected specific error message for data: {data}"
+
+
+def test_add_ticket_comment_with_image_valid():
+    # Testing invalid information, and missing fields
+    comment = "Test comment"
+    ticket_id = "58a1dadb-1f07-43b0-9869-984dd80cffd4"
+    user_id = "qinisela.mthembu@yahoo.com"
+    image_url = "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028"
+
+    response = add_ticket_comment_with_image(comment, ticket_id, image_url, user_id)
+
+    # Ensure the response is a Response object
+    assert isinstance(response, Response), "Response should be a Response object"
+
+    # Convert the response body to a dictionary
+    response_body = json.loads(response.body)
+
+    # Check the status code
+    assert (
+        response.status_code == 200
+    ), f"Expected status code to be 200, got {response.status_code}"
+
+    # Check the response body for expected values
+    assert (
+        response_body.get("message") == "Comment added successfully"
+    ), "Expected message to be 'Comment added successfully'"
+    assert "ticketupdate_id" in response_body, "Expected 'ticketupdate_id' in response"
