@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { AlertCircle } from "lucide-react";
-import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
+import TenderMax from "../Tenders/CompanyTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
-// Import the CreateBid component
 import CreateBid from "../Tenders/CreateBid"; // Adjust the import path as necessary
 
 interface TicketViewCompanyProps {
