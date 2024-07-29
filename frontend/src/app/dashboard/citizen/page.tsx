@@ -9,8 +9,12 @@ import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
-import { getTicket, getTicketsInMunicipality, getMostUpvote, getWatchlistTickets } from "@/services/tickets.service";
-
+import {
+  getTicket,
+  getTicketsInMunicipality,
+  getMostUpvote,
+  getWatchlistTickets,
+} from "@/services/tickets.service";
 
 export default function CitizenDashboard() {
   const user = useRef(null);
@@ -23,37 +27,37 @@ export default function CitizenDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       // try {
-        const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email;
-        const user_session = String(user_data.current?.session_token)
-        // console.log(user_session);
-        const rspmostupvotes = await getMostUpvote(user_session);
-        const rspwatchlist = await getWatchlistTickets(
-          String(user_id),
-          user_session
-        );
-        const municipality = user_data.current?.municipality;
-        const rspmunicipality = await getTicketsInMunicipality(municipality, user_session);
-        // console.log(rspmostupvotes)
-        // const flattenedWatchlist = rspwatchlist.flat();
-        // console.log(rspwatchlist);
-        setMostUpvoteResults(rspmostupvotes)
-        setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-        if (rspwatchlist.length > 0) {
-          setDashWatchResults(rspwatchlist);
-        }
-        else setDashWatchResults([]);
-        // console.log( dashMostUpvoteResults)
+      const user_data = await userProfile.getUserProfile();
+      const user_id = user_data.current?.email;
+      const user_session = String(user_data.current?.session_token);
+      // console.log(user_session);
+      const rspmostupvotes = await getMostUpvote(user_session);
+      const rspwatchlist = await getWatchlistTickets(
+        String(user_id),
+        user_session
+      );
+      const municipality = user_data.current?.municipality;
+      const rspmunicipality = await getTicketsInMunicipality(
+        municipality,
+        user_session
+      );
+      // console.log(rspmostupvotes)
+      // const flattenedWatchlist = rspwatchlist.flat();
+      // console.log(rspwatchlist);
+      setMostUpvoteResults(rspmostupvotes);
+      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+      if (rspwatchlist.length > 0) {
+        setDashWatchResults(rspwatchlist);
+      } else setDashWatchResults([]);
+      // console.log( dashMostUpvoteResults)
       // }
       // catch (error) {
       //   console.error("Error fetching data:", error);
       // }
-
     };
 
     fetchData();
   }, [dashMostUpvoteResults, userProfile]); // Add userProfile to the dependency array
-
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -107,37 +111,6 @@ export default function CitizenDashboard() {
                 onClick={toggleHelpMenu}
               />
             </div>
-          </div>
-        )}
-
-        <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
-          <Tabs
-            aria-label="Signup Options"
-            defaultSelectedKey={0}
-            className="mt-5 flex justify-center w-full"
-            classNames={{
-              tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
-              panel: "w-full",
-              cursor: "w-full border-3 border-blue-700/40",
-              tabContent:
-                "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
-            }}
-            onSelectionChange={handleTabChange}
-          >
-            <Tab key={0} title="Cards">
-              <div className="w-full text-center">
-                <h1 className="text-2xl text-white text-opacity-80 font-bold mt-2">
-                  Most up-voted
-                </h1>
-              </div>
-              <div className="w-full text-center">
-                <h1 className="text-l text-white text-opacity-80 mb-4">
-                  Based on votes from the community in your area.
-                </h1>
-              </div>
-              <div className="justify-center text-center">
-
-                <DashboardFaultCardContainer cardData={dashMostUpvoteResults} />
 
             {isHelpOpen && (
               <div
@@ -170,8 +143,7 @@ export default function CitizenDashboard() {
               </div>
             )}
 
-
-<!--             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
+            <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
               <Tabs
                 aria-label="Signup Options"
                 defaultSelectedKey={0}
@@ -200,16 +172,7 @@ export default function CitizenDashboard() {
                     <DashboardFaultCardContainer
                       cardData={dashMostUpvoteResults}
                     />
-                  </div> -->
-
-              <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
-                Nearest to you
-              </h1>
-              <h1 className="text-center text-white mb-4 ml-2">
-                Based on your proximity to the issue.
-              </h1>
-
-              <DashboardFaultCardContainer cardData={dashMuniResults} />
+                  </div>
 
                   <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
                     Nearest to you
@@ -217,6 +180,7 @@ export default function CitizenDashboard() {
                   <h1 className="text-center text-white mb-4 ml-2">
                     Based on your proximity to the issue.
                   </h1>
+
                   <DashboardFaultCardContainer cardData={dashMuniResults} />
 
                   <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
@@ -232,7 +196,7 @@ export default function CitizenDashboard() {
 
                 <Tab key={1} title="List">
                   {/*<FaultTable tableitems={dashMostUpvoteResults}/>*/}
-                  <FaultTable />
+                  <FaultTable tableitems={dashMostUpvoteResults} />
                 </Tab>
 
                 <Tab key={2} title="Map">
@@ -308,7 +272,6 @@ export default function CitizenDashboard() {
               work on it.
             </p>
           </div>
-
         </div>
       </div>
     </div>
