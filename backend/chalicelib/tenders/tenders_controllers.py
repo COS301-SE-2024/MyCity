@@ -81,26 +81,11 @@ def create_tender(sender_data):
         }
 
         tenders_table.put_item(Item=tender_item)
-        contract_id = generate_id()
-        contract_item = {
-            "contract_id": contract_id,
-            "completedatetime": "<empty>",
-            "contractdatetime": submitted_time,
-            "finalCost": quote,
-            "finalDuration": "",
-            "paymentdatetime": submitted_time,
-            "startdatetime": submitted_time,
-            "status": "in progress",
-            "tender_id": tender_id,
-        }
-
-        contract_table.put_item(Item=contract_item)
 
         accresponse = {
             "Status": "Success",
-            "message": "Tender & Contract created successfully",
+            "message": "Tender created successfully",
             "tender_id": tender_id,
-            "contract_id": contract_id,
         }
         return accresponse
 
@@ -217,8 +202,31 @@ def accept_tender(sender_data):
                         data["tender_id"], updateExp, expattrName, RejectexpattrValue
                     )
 
+        ## Creating contract once tender is accepted
+        current_time = datetime.now()
+        submitted_time = current_time.strftime("%Y-%m-%dT%H:%M:%S")
+        quote = Decimal(tender_items[0]["quote"])
+        contract_id = generate_id()
+        contract_item = {
+            "contract_id": contract_id,
+            "completedatetime": "<empty>",
+            "contractdatetime": submitted_time,
+            "finalCost": quote,
+            "finalDuration": "",
+            "paymentdatetime": submitted_time,
+            "startdatetime": submitted_time,
+            "status": "in progress",
+            "tender_id": tender_id,
+        }
+
+        contract_table.put_item(Item=contract_item)
+
         if response["ResponseMetadata"]:
-            return {"Status": "Success", "Message": response}
+            return {
+                "Status": "Success",
+                "Tender_id": tender_id,
+                "Contract_id": contract_id,
+            }
         else:
             error_response = {
                 "Error": {

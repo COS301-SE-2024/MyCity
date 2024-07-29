@@ -8,10 +8,9 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
     //     revalidateTag("tickets-getinarea"); //invalidate the cache
     // }
     try {
-        const apiUrl = "https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getUpvotes";
+        const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
             {
-                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": user_session,
@@ -19,20 +18,20 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
             }
         );
 
-        if (!response.ok ) {
-            console.log(`Error fetching: ${response.statusText}`);
-            return []
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
         }
 
         const result = await response.json();
 
-        const data = result;
+        const data = result.data as any[];
         AssignTicketNumbers(data);
 
         return data;
 
     } catch (error) {
         console.error(error);
+        throw error;
     }
 }
 
@@ -43,13 +42,10 @@ export async function getWatchlistTickets(username: string, user_session: string
     // }
 
     try {
-        const apiUrl = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getwatchlist';
-        const searchparams = { "username": username };
-        const queryParams = new URLSearchParams(searchparams);
-        const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
+        const apiUrl = "/api/tickets/getwatchlist";
+        const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
         const response = await fetch(urlWithParams,
             {
-                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": user_session
@@ -58,23 +54,23 @@ export async function getWatchlistTickets(username: string, user_session: string
         );
 
         if (!response.ok) {
-            console.error(`Error fetching: ${response.statusText}`);
-            return []
+            throw new Error(`Error fetching: ${response.statusText}`);
         }
 
         const result = await response.json();
 
-        if (result.Status ) {
+        if (!Array.isArray(result.data)) {
             return [];
         }
 
-        AssignTicketNumbers(result);
-        const data = result;
+        const data = result.data as any[];
+        AssignTicketNumbers(data);
 
         return data;
 
     } catch (error) {
         console.error("Error: " + error);
+        throw error;
     }
 }
 
@@ -100,17 +96,16 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 
         const result = await response.json();
 
-        const data = result as any[];
+        const data = result.data as any[];
 
         return data;
 
     } catch (error) {
         console.error("Error: " + error);
+        throw error;
     }
 }
 
-
-// temporary function (request method must be changed to GET)
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
 
     if (!municipality) {
@@ -123,13 +118,9 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
     try {
 
-        const apiUrl = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/getinarea';
-        const searchparams = { "municipality": municipality };
-        const queryParams = new URLSearchParams(searchparams);
-        const urlWithParams = `${apiUrl}?${queryParams.toString()}`;
-        console.log(urlWithParams)
+        const apiUrl = "/api/tickets/getinarea";
+        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
         const response = await fetch(urlWithParams,
-
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -139,25 +130,25 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         );
 
         if (!response.ok) {
-            console.error(`Error fetching: ${response.statusText}`);
-            return [];
+            throw new Error(`Error fetching: ${response.statusText}`);
         }
 
 
         const result = await response.json();
 
-        if (result.Status) {
+        if (!Array.isArray(result.data)) {
             return [];
         }
 
-        AssignTicketNumbers(result);
+        const data = result.data as any[];
 
-        const data = result as any[];
+        AssignTicketNumbers(data);
 
         return data;
 
     } catch (error) {
         console.error("Error: " + error);
+        throw error;
     }
 }
 
@@ -168,7 +159,7 @@ export async function getFaultTypes(revalidate?: boolean) {
 
     try {
 
-        const apiURL = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/fault-types'
+        const apiURL = "/api/tickets/fault-types";
 
         const response = await fetch(apiURL,
             {
@@ -184,7 +175,7 @@ export async function getFaultTypes(revalidate?: boolean) {
 
         const result = await response.json();
 
-        const data = result as FaultType[];
+        const data = result.data as FaultType[];
 
         return data;
 
@@ -203,7 +194,7 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
         username: usern,
         state: "OPEN"
     }
-    const apiURL = 'https://dahex648v1.execute-api.eu-west-1.amazonaws.com/api/tickets/create';
+    const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
@@ -224,7 +215,7 @@ function CreateTicketNumber(municipality: string): string {
     for (let index = 0; index < 2; index++) {
         let randint: number = Math.floor(Math.random() * municipality.length);
         while (municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_") {
-            console.log("inside loop")
+            // console.log("inside loop")
             randint = Math.floor(Math.random() * municipality.length);
         }
         ticketnumber += municipality[randint].toUpperCase();
