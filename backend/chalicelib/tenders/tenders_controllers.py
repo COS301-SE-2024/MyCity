@@ -222,7 +222,11 @@ def accept_tender(sender_data):
         contract_table.put_item(Item=contract_item)
 
         if response["ResponseMetadata"]:
-            return {"Status": "Success", "Tender_id" : tender_id, "Contract_id" : contract_id}
+            return {
+                "Status": "Success",
+                "Tender_id": tender_id,
+                "Contract_id": contract_id,
+            }
         else:
             error_response = {
                 "Error": {
