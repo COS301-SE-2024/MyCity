@@ -232,3 +232,64 @@ function AssignTicketNumbers(data: any[]) {
         item['ticketnumber'] = CreateTicketNumber(item.municipality_id);
     });
 }
+
+export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string,) {
+    try {
+        const apiUrl = "/api/tickets/add-comment-with-image";
+        const data = {
+            comment,
+            ticket_id,
+            image_url,
+            user_id
+        };
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": user_session,
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+export async function addCommentWithoutImage(comment:string, ticket_id:string, user_id:string, user_session: string,) {
+    try {
+        const apiUrl = "/api/tickets/add-comment-without-image";
+        const data = {
+            comment,
+            ticket_id,
+            user_id
+        };
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": user_session,
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
