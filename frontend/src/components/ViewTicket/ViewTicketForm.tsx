@@ -27,24 +27,28 @@ export default function ReportFaultForm({ className }: ReportFaultFormProps) {
     const [ticket_id, setTicket] = useState(''); 
     
 
-        async function fetchticketdata() {
-            try {
-                const user_data = await userProfile.getUserProfile();
-                const user_session = String(user_data.current?.session_token)
-                const data = await getTicket(ticket_id,user_session);
-
+    async function fetchticketdata() {
+        try {
+            const user_data = await userProfile.getUserProfile();
+            const user_session = String(user_data.current?.session_token);
+            const data = await getTicket(ticket_id, user_session);
+    
+            if (data) {
                 console.log(data);
-
+    
                 setTicketData(data.map((item: any) => ({
                     Upvotes: item.upvotes,  // asset_id is used as the unique name
                     FaultType: item.asset_id,
                     Description: item.description                    
                 })));
-
-            } catch (error) {
-                console.error('Error fetching fault types:', error);
+            } else {
+                console.error('No data received from getTicket');
             }
+        } catch (error) {
+            console.error('Error fetching fault types:', error);
         }
+    }
+    
 
     const handleSubmit = (event: FormEvent) => {
         event.preventDefault();

@@ -13,6 +13,7 @@ export interface UserData {
     user_role: UserRole | undefined;
     municipality: string | undefined;
     session_token? : string | undefined;
+    company_name? : string | undefined
 }
 
 export const USER_PATH_SUFFIX_COOKIE_NAME = "mycity.net.za.userpathsuffix";

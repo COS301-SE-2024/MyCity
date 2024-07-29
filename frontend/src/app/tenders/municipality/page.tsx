@@ -3,6 +3,8 @@
 import React, { Key, useEffect, useRef, useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import { Tab, Tabs } from "@nextui-org/react";
+import ClosedTenders from "@/components/RecordsTable/ClosedTenders";
+import ActiveTenders from "@/components/RecordsTable/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTable/OpenTicketsTable";
 export default function MuniTenders() {
   const handleTabChange = (key: Key) => {
@@ -71,7 +73,6 @@ export default function MuniTenders() {
           </main>
         </div>
       </div>
-
       {/* Mobile View */}
       <div className="block sm:hidden">
         <div
@@ -133,6 +134,36 @@ export default function MuniTenders() {
               work on it.
             </p>
           </div>
+
+<!--         <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
+          <Tabs
+            aria-label="Signup Options"
+            defaultSelectedKey={0}
+            className="mt-5 flex justify-center w-full"
+            classNames={{
+              tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
+              panel: "w-full",
+              cursor: "w-full border-3 border-blue-700/40",
+              tabContent:
+                "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
+            }}
+            onSelectionChange={handleTabChange}
+          >
+            
+            <Tab key={0} title="Open Tickets">
+            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
+              <OpenTicketsTable />
+            </Tab>
+
+            <Tab key={1} title="Active Tenders">
+              <ActiveTenders />
+            </Tab>
+
+            <Tab key={2} title="Closed Tenders">
+            <ClosedTenders />
+            </Tab>
+          </Tabs> -->
+
         </div>
       </div>
     </div>

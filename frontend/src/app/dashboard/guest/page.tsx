@@ -150,7 +150,9 @@ export default function GuestDashboard() {
               work on it.
             </p>
           </div>
-
+                        <Tab key={1} title="List" >
+                            <FaultTable tableitems={[]} />
+                        </Tab>
 
         </div>
       </div>

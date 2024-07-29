@@ -1,20 +1,43 @@
 "use client";
 
-import React, { Key } from "react";
+import React, { Key, useState,useEffect } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultCardContainer from "@/components/FaultCardContainer/FaultCardContainer";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
+import { useProfile } from "@/hooks/useProfile";
+import { getMostUpvote } from "@/services/tickets.service";
+
 
 export default function ServiceProviderDashboard() {
-  const handleTabChange = (key: Key) => {
-    const index = Number(key);
-  };
+    const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]); 
+    const userProfile = useProfile();
 
-  return (
-    <div>
-      {/* Desktop View */}
-      <div className="hidden sm:block">
+    const handleTabChange = (key: Key) => {
+        const index = Number(key);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const user_data = await userProfile.getUserProfile();
+            const user_id = user_data.current?.email;
+            const user_session = String(user_data.current?.session_token)
+            console.log(user_session);
+            const rspmostupvotes = await getMostUpvote(user_session);
+            
+            // const flattenedWatchlist = rspwatchlist.flat();
+            
+            setMostUpvoteResults(rspmostupvotes)
+          } catch (error) {
+            console.log(error);
+          }
+        };
+    
+        fetchData();
+      }, [dashMostUpvoteResults, userProfile]);
+
+    return (
         <div>
           <main>
             <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">
@@ -139,6 +162,11 @@ export default function ServiceProviderDashboard() {
               work on it.
             </p>
           </div>
+
+
+                            <Tab key={1} title="List" >
+                                <FaultTable tableitems={dashMostUpvoteResults} />
+                            </Tab>
 
 
         </div>
