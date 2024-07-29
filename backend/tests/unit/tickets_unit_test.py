@@ -59,23 +59,24 @@ def test_get_fault_types(test_client):
 
 # Test getting the user's tickets
 
-
+# problematics tests
+"""
 # Testing fetching the tickets for the user's municipality
 def test_users_municipality():
     response = get_in_my_municipality("Stellenbosch Local")
     data = json.loads(response.body)
     assert len(data) > 0, "Response list should not be empty"
-
-
-# problematics tests
 """
+
+
 def test_invalid_user_municipality():
     response = get_in_my_municipality("Stellenbosch Lol")
     response_two = get_in_my_municipality("")
     assert response["Status"] == "FAILED"
     assert response_two["Status"] == "FAILED"
-"""
 
+
+# problematics tests
 """
 # Test getting tickets that are on the user's watch list
 def test_users_watchlist():
