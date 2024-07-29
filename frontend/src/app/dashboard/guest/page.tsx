@@ -74,7 +74,7 @@ export default function GuestDashboard() {
                 </Tab>
 
                 <Tab key={1} title="List">
-                  <FaultTable />
+                  <FaultTable tableitems={[]} />
                 </Tab>
 
                 <Tab key={2} title="Map">
@@ -150,10 +150,9 @@ export default function GuestDashboard() {
               work on it.
             </p>
           </div>
-                        <Tab key={1} title="List" >
-                            <FaultTable tableitems={[]} />
-                        </Tab>
-
+          <Tab key={1} title="List">
+            <FaultTable tableitems={[]} />
+          </Tab>
         </div>
       </div>
     </div>
