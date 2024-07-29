@@ -17,6 +17,8 @@ interface TicketViewCompanyProps {
   status: string;
   municipalityImage: string;
   urgency: "high" | "medium" | "low";
+  municipality: string;
+  hasBidded: boolean; // Add hasBidded prop
 }
 
 const urgencyMapping = {
@@ -37,6 +39,8 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   status,
   municipalityImage,
   urgency,
+  municipality,
+  hasBidded, // Destructure hasBidded
 }) => {
   const [showTenderMax, setShowTenderMax] = useState(false);
   const [showMuniTenders, setShowMuniTenders] = useState(false);
@@ -156,7 +160,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                       className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
                       onClick={handleCreateBidClick}
                     >
-                      Create Bid
+                      {hasBidded ? "Edit/View Bid" : "Create Bid"}
                     </button>
                   )}
                 </div>
@@ -186,6 +190,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
             hasReportedCompletion: false,
           }}
           onClose={handleTenderMaxClose}
+          municipality={municipality}
         />
       )}
 
@@ -196,21 +201,19 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
         />
       )}
 
-{showCreateBid && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-    <div className="transform scale-80 w-full">
-      <CreateBid
-        ticket={ticket}
-        onBack={handleCreateBidClose}
-      />
-    </div>
-  </div>
-)}
-
-
-
+      {showCreateBid && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="transform scale-80 w-full">
+            <CreateBid
+              ticket={ticket}
+              onBack={handleCreateBidClose}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
 
 export default TicketViewCompany;
+

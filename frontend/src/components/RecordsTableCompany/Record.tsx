@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import TicketViewCompany from '../TicketViewCompany/TicketViewCompany';
+
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
 
@@ -12,6 +13,7 @@ interface RecordType {
   address: string;
   urgency: Urgency;
   municipality: string;
+  hasBidded: boolean;
 }
 
 interface UrgencyMappingType {
@@ -96,7 +98,9 @@ export default function Record({ record }: { record: RecordType }) {
           createdBy={record.createdBy}
           status={record.status}
           municipalityImage={"https://via.placeholder.com/50"} // Update this as per your data source
-          urgency={record.urgency} // Pass urgency to TicketViewMuni
+          urgency={record.urgency} // Pass urgency to TicketViewCompany
+          municipality={record.municipality} // Pass municipality to TicketViewCompany
+          hasBidded={record.hasBidded} // Pass hasBidded to TicketViewCompany
         />
       )}
       <style jsx>{`

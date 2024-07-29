@@ -24,7 +24,15 @@ const statusStyles = {
   Closed: "text-black bg-gray-200 rounded-full",
 };
 
-const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
+const TenderMax = ({
+  tender,
+  onClose,
+  municipality,
+}: {
+  tender: TenderType;
+  onClose: () => void;
+  municipality: string;
+}) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
 
   // Map "Fix in progress" to "Active" for the tender's status
@@ -102,10 +110,17 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-                  {tenderStatus === "Active"
-                    ? `This Tender Contract is currently ${tenderStatus}. ${tender.serviceProvider} has${tender.hasReportedCompletion ? "" : " not"} submitted a completion report.`
-                    : `This Tender Bid is currently ${tenderStatus}. Accepting it will assign ${tender.serviceProvider} to Ticket ${tender.ticketId}.`}
-                </div>
+  {tenderStatus === "Active" ? (
+    <span>
+      This Tender Contract is currently <strong>{tenderStatus}</strong>. Only <strong>{municipality}</strong> can close it.
+    </span>
+  ) : (
+    <span>
+      This Tender Bid is currently <strong>{tenderStatus}</strong>. Accepting it will assign {tender.serviceProvider} to Ticket {tender.ticketId}.
+    </span>
+  )}
+</div>
+
               </div>
 
               <div className="mt-2 flex justify-center gap-2">
@@ -118,7 +133,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                       Terminate Contract
                     </button>
                     <button className="bg-blue-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-blue-600" onClick={() => handleAction("Mark as Complete")}>
-                      Mark as Complete
+                      Report Completion
                     </button>
                   </>
                 ) : (
