@@ -11,7 +11,8 @@
         ]
       },
       "environment_variables": {
-        "API_ENV": "dev"
+        "API_ENV": "dev",
+        "USER_POOL_ID": "eu-west-1_xhcBZxRZk"
       }
     },
     "prod": {
@@ -23,7 +24,8 @@
         ]
       },
       "environment_variables": {
-        "API_ENV": "prod"
+        "API_ENV": "prod",
+        "USER_POOL_ID": "eu-west-1_xhcBZxRZk"
       }
     }
   }
