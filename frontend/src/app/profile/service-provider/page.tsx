@@ -54,6 +54,9 @@ export default function ServiceProviderProfile() {
 
   return (
     <div>
+    {/* Desktop View */}
+    <div className="hidden sm:block">
+<div>
       
       <main className="h-screen flex justify-center p-20">
         <div className="flex flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12 px-7">
@@ -62,5 +65,13 @@ export default function ServiceProviderProfile() {
         </div>
       </main>
     </div>
+    </div>
+
+    {/* Mobile View */}
+    <div className="block sm:hidden">
+      
+    </div>
+  </div>
+    
   );
 };

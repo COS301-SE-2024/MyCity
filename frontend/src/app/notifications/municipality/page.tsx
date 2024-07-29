@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 //import Navbar from "@/components/Navbar/Navbar"; implemented later
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
@@ -11,7 +11,10 @@ import NotificationCreated from "@/components/NotificationsMuni/NotificationCrea
 import NotificationUrgent from "@/components/NotificationsMuni/NotificationUrgent";
 
 export default function Notifications() {
-    return (
+  return (
+    <div>
+      {/* Desktop View */}
+      <div className="hidden sm:block">
         <div>
           <NavbarMunicipality />
           <div
@@ -31,7 +34,9 @@ export default function Notifications() {
             }}
           ></div>
           <main>
-            <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">Notifications</h1>
+            <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
+              Notifications
+            </h1>
             <NotificationComment />
             <NotificationUpdate />
             <NotificationUpvote />
@@ -41,5 +46,10 @@ export default function Notifications() {
             <NotificationUrgent />
           </main>
         </div>
-      );
+      </div>
+
+      {/* Mobile View */}
+      <div className="block sm:hidden"></div>
+    </div>
+  );
 }
