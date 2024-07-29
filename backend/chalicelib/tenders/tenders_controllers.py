@@ -259,7 +259,34 @@ def getCompanyTenders(company_name):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+    
 
+def getTicketTender(ticket_id):
+    try:
+        if ticket_id == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required query: ticket",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+
+        response_tender = tenders_table.scan(
+            FilterExpression=Attr("ticket_id").eq(ticket_id),
+        )
+        if(len(response_tender['Items']) <= 0):
+            error_response = {
+                "Error": {
+                    "Code": "TenderDoesntExist",
+                    "Message": "Tender Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "TenderDoesntExist")
+        return response_tender['Items']
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
 
 def getCompanyID(authcode):
     response_company = companies_table.scan(
