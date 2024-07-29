@@ -55,24 +55,23 @@ export default function MuniTenders() {
                 onSelectionChange={handleTabChange}
               >
                 <Tab key={0} title="Open Tickets">
-                  <div className="text-white p-4 text-center font-bold text-xl text-opacity-80">
-                    Select a Ticket to see all bids submitted for it.
-                  </div>
+                  <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
                   <OpenTicketsTable />
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
-                  <div className="text-white">Select a Ticket to bid for.</div>
+                  <ActiveTenders />
                 </Tab>
 
                 <Tab key={2} title="Closed Tenders">
-                  <div className="text-white">Select a Ticket to bid for.</div>
+                  <ClosedTenders />
                 </Tab>
               </Tabs>
             </div>
           </main>
         </div>
       </div>
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <div
@@ -135,7 +134,7 @@ export default function MuniTenders() {
             </p>
           </div>
 
-<!--         <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
+          {/* <!--         <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
           <Tabs
             aria-label="Signup Options"
             defaultSelectedKey={0}
@@ -162,8 +161,7 @@ export default function MuniTenders() {
             <Tab key={2} title="Closed Tenders">
             <ClosedTenders />
             </Tab>
-          </Tabs> -->
-
+          </Tabs> --> */}
         </div>
       </div>
     </div>
