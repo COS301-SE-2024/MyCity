@@ -38,7 +38,6 @@ const records: RecordType[] = [
   { id: 'SA0315', faultType: 'Vandalism', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium', municipality: 'City of Ekurhuleni', hasBidded: true }
 ];
 
-
 export default function RecordsTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;

@@ -55,7 +55,7 @@ const TenderMax = ({
       case "Decline":
         return "Are you sure you want to decline this tender bid?";
       case "Mark as Complete":
-        return "Are you sure you want to mark this ticket as resolved?";
+        return "Are you sure you want to report this tender as completed?";
       case "Terminate Contract":
         return "Are you sure you want to terminate this tender contract?";
       default:
@@ -110,17 +110,16 @@ const TenderMax = ({
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-  {tenderStatus === "Active" ? (
-    <span>
-      This Tender Contract is currently <strong>{tenderStatus}</strong>. Only <strong>{municipality}</strong> can close it.
-    </span>
-  ) : (
-    <span>
-      This Tender Bid is currently <strong>{tenderStatus}</strong>. Accepting it will assign {tender.serviceProvider} to Ticket {tender.ticketId}.
-    </span>
-  )}
-</div>
-
+                  {tenderStatus === "Active" ? (
+                    <span>
+                      This Tender Contract is currently <strong>{tenderStatus}</strong>. Only <strong>{municipality}</strong> can close it.
+                    </span>
+                  ) : (
+                    <span>
+                      This Tender Bid is currently <strong>{tenderStatus}</strong>. Accepting it will assign {tender.serviceProvider} to Ticket {tender.ticketId}.
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="mt-2 flex justify-center gap-2">

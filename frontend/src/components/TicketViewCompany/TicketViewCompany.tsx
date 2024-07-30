@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/CompanyTenderMax"; // Adjust the import path as necessary
-import MuniTenders from "../RecordsTable/MuniTenders";
 import CreateBid from "../Tenders/CreateBid"; // Adjust the import path as necessary
+import ViewBid from "../Tenders/ViewBid"; // Adjust the import path as necessary
 
 interface TicketViewCompanyProps {
   show: boolean;
@@ -18,7 +18,7 @@ interface TicketViewCompanyProps {
   municipalityImage: string;
   urgency: "high" | "medium" | "low";
   municipality: string;
-  hasBidded: boolean; // Add hasBidded prop
+  hasBidded: boolean;
 }
 
 const urgencyMapping = {
@@ -40,11 +40,16 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   municipalityImage,
   urgency,
   municipality,
-  hasBidded, // Destructure hasBidded
 }) => {
   const [showTenderMax, setShowTenderMax] = useState(false);
-  const [showMuniTenders, setShowMuniTenders] = useState(false);
-  const [showCreateBid, setShowCreateBid] = useState(false);
+  const [showBid, setShowBid] = useState(false);
+  const [hasBidded, setHasBidded] = useState(false);
+
+  useEffect(() => {
+    if (status === "Unaddressed") {
+      setHasBidded(Math.random() < 0.5); // Set hasBidded to true or false randomly
+    }
+  }, [status]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -69,20 +74,12 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     setShowTenderMax(false);
   };
 
-  const handleViewTendersClick = () => {
-    setShowMuniTenders(true);
+  const handleBidClick = () => {
+    setShowBid(true);
   };
 
-  const handleBack = () => {
-    setShowMuniTenders(false);
-  };
-
-  const handleCreateBidClick = () => {
-    setShowCreateBid(true);
-  };
-
-  const handleCreateBidClose = () => {
-    setShowCreateBid(false);
+  const handleBidClose = () => {
+    setShowBid(false);
   };
 
   const ticket = {
@@ -95,7 +92,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
   return (
     <>
-      {!showTenderMax && !showMuniTenders && !showCreateBid && (
+      {!showTenderMax && !showBid && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
           <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
             <button className="absolute top-2 right-2 text-gray-700" onClick={onClose}>
@@ -158,7 +155,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                   {status === "Unaddressed" && (
                     <button
                       className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
-                      onClick={handleCreateBidClick}
+                      onClick={handleBidClick}
                     >
                       {hasBidded ? "Edit/View Bid" : "Create Bid"}
                     </button>
@@ -194,19 +191,23 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
         />
       )}
 
-      {showMuniTenders && (
-        <MuniTenders
-          ticketId={ticketNumber}
-          onBack={handleBack}
-        />
+      {showBid && hasBidded && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="transform scale-80 w-full">
+            <ViewBid
+              ticket={ticket}
+              onBack={handleBidClose}
+            />
+          </div>
+        </div>
       )}
 
-      {showCreateBid && (
+      {showBid && !hasBidded && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
           <div className="transform scale-80 w-full">
             <CreateBid
               ticket={ticket}
-              onBack={handleCreateBidClose}
+              onBack={handleBidClose}
             />
           </div>
         </div>
@@ -216,4 +217,3 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 };
 
 export default TicketViewCompany;
-
