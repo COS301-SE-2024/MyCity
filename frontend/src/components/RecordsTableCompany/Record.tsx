@@ -13,7 +13,6 @@ interface RecordType {
   address: string;
   urgency: Urgency;
   municipality: string;
-  hasBidded: boolean;
 }
 
 interface UrgencyMappingType {
@@ -100,7 +99,6 @@ export default function Record({ record }: { record: RecordType }) {
           municipalityImage={"https://via.placeholder.com/50"} // Update this as per your data source
           urgency={record.urgency} // Pass urgency to TicketViewCompany
           municipality={record.municipality} // Pass municipality to TicketViewCompany
-          hasBidded={record.hasBidded} // Pass hasBidded to TicketViewCompany
         />
       )}
       <style jsx>{`
