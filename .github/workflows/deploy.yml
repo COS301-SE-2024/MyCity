@@ -40,13 +40,13 @@ jobs:
             "dev": {
               "api_gateway_stage": "dev",
               "environment_variables": {
-                "API_ENV": "dev"
+                "API_ENV": "${{ secrets.API_DEV_STAGE_ENV }}"
               }
             },
             "prod": {
               "api_gateway_stage": "prod",
               "environment_variables": {
-                "API_ENV": "prod"
+                "API_ENV": "${{ secrets.API_PROD_STAGE_ENV }}"
               }
             }
           }
