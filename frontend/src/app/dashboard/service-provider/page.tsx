@@ -12,7 +12,33 @@ export default function Dashboard() {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+/*
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
+  const userProfile = useProfile();
 
+  const handleTabChange = (key: Key) => {
+    const index = Number(key);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.email;
+        const user_session = String(user_data.current?.session_token);
+        console.log(user_session);
+        const rspmostupvotes = await getMostUpvote(user_session);
+
+        // const flattenedWatchlist = rspwatchlist.flat();
+
+        setMostUpvoteResults(rspmostupvotes);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, [dashMostUpvoteResults, userProfile]);*/
   return (
     <div>
       <div
