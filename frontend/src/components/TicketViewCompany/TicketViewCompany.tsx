@@ -18,7 +18,6 @@ interface TicketViewCompanyProps {
   municipalityImage: string;
   urgency: "high" | "medium" | "low";
   municipality: string;
-  hasBidded: boolean;
 }
 
 const urgencyMapping = {
