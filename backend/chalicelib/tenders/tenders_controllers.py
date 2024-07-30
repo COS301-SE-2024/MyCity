@@ -283,7 +283,8 @@ def getTicketTender(ticket_id):
                 }
             }
             raise ClientError(error_response, "TenderDoesntExist")
-        return response_tender['Items']
+        item_tender = response_tender['Items']
+        return item_tender[0]
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
