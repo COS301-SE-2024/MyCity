@@ -10,6 +10,7 @@ from chalicelib.tickets.tickets_controllers import (
     getMostUpvoted,
     add_ticket_comment_with_image,
     add_ticket_comment_without_image,
+    get_ticket_comments,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -116,4 +117,15 @@ def add_comment_without_image_route():
         raise BadRequestError("Missing required field: comment, ticket_id, or user_id")
 
     response = add_ticket_comment_without_image(comment, ticket_id, user_id)
+    return response
+
+
+@tickets_blueprint.route("/comments", methods=["GET"], cors=True)
+def get_ticket_comments_route():
+    request = tickets_blueprint.current_request
+    ticket_id = request.headers.get("X-Ticket-ID")
+    if not ticket_id:
+        raise BadRequestError("Missing required header: X-Ticket-ID")
+
+    response = get_ticket_comments(ticket_id)
     return response

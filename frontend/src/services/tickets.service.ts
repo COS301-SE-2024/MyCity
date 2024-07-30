@@ -293,3 +293,27 @@ export async function addCommentWithoutImage(comment:string, ticket_id:string, u
         throw error;
     }
 }
+
+export async function getTicketComments(ticket_id:string, user_session:string) {
+    try {
+        const apiUrl = `/api/tickets/${ticket_id}/comments`;
+        const response = await fetch(apiUrl, {
+            method: "GET",
+            headers: {
+                "Authorization": user_session,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching comments: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result;
+
+    } catch (error) {
+        console.error("Error:", error);
+        throw error;
+    }
+}
