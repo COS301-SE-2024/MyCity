@@ -232,8 +232,9 @@ def accept_tender(sender_data):
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
 
+
 def getCompanyTenders(company_name):
-    try:    
+    try:
         if company_name == None:
             error_response = {
                 "Error": {
@@ -244,22 +245,22 @@ def getCompanyTenders(company_name):
             raise ClientError(error_response, "InvalideFields")
         company_id = getCompanIDFromName(company_name)
         print(company_id)
-        if(company_id == "") :
+        if company_id == "":
             error_response = {
                 "Error": {
                     "Code": "CompanyDoesntExist",
                     "Message": f"Company doesnt exist",
                 }
             }
-            raise ClientError(error_response, "CompanyDoesntExist") 
+            raise ClientError(error_response, "CompanyDoesntExist")
         response_tenders = tenders_table.scan(
             FilterExpression=Attr("company_id").eq(company_id)
         )
-        return response_tenders['Items']
+        return response_tenders["Items"]
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
+
 
 def getTicketTender(ticket_id):
     try:
@@ -275,7 +276,7 @@ def getTicketTender(ticket_id):
         response_tender = tenders_table.scan(
             FilterExpression=Attr("ticket_id").eq(ticket_id),
         )
-        if(len(response_tender['Items']) <= 0):
+        if len(response_tender["Items"]) <= 0:
             error_response = {
                 "Error": {
                     "Code": "TenderDoesntExist",
@@ -283,11 +284,12 @@ def getTicketTender(ticket_id):
                 }
             }
             raise ClientError(error_response, "TenderDoesntExist")
-        item_tender = response_tender['Items']
+        item_tender = response_tender["Items"]
         return item_tender[0]
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
 
 def getCompanyID(authcode):
     response_company = companies_table.scan(
