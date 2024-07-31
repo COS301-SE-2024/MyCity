@@ -52,6 +52,7 @@ const RecordsTable: React.FC<RecordTypeProps> = ({records = []}) => {
           <div className="col-span-1">Ticket Number</div>
           <div className="col-span-1">Fault Type</div>
           <div className="col-span-1">Status</div>
+          <div className="col-span-1">Created By</div>
           <div className="col-span-1">Address</div>
         </div>
       </div>
