@@ -41,6 +41,20 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   municipalityImage,
   urgency
 }) => {
+
+
+  const getUrgency = (votes : number) =>{
+    if (votes < 10) {
+      return "low";
+  } else if (votes >= 10 && votes < 20) {
+      return "medium";
+  } else if (votes >= 20 && votes <= 40) {
+      return "high";
+  } else {
+      return "low"; // Default case
+  }
+}
+
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
     return data
@@ -144,7 +158,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           {/* Left Section */}
           <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
             <div className="absolute top-2 left-2">
-              {urgencyMapping[urgency].icon}
+              {urgencyMapping[getUrgency(viewCount)].icon}
             </div>
             <img src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
             <div className="flex items-center justify-center mb-2">

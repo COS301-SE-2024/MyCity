@@ -109,7 +109,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           viewCount={selectedCard.viewcount}
           ticketNumber={selectedCard.asset_id}
           description={selectedCard.description}
-          image={selectedCard.user_picture}
+          image={selectedCard.imageURL}
           createdBy={selectedCard.createdby}
         />
       )}
