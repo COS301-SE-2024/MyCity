@@ -407,7 +407,7 @@ def getUserprofile(ticket_data):
                 if attr["Name"] == "given_name":
                     user_name = attr["Value"]
             username["user_picture"] = user_image
-            username["createdby"] = user_name 
+            username["createdby"] = user_name
             username["municipality_picture"] = ""
 
     except cognito_cient.exceptions.UserNotFoundException:
