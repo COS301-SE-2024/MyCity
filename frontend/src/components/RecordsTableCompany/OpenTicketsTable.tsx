@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Record from './Record';
-import MuniTenders from './MuniTenders';
+import CreateBid from '../Tenders/CreateBid';
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
@@ -37,7 +37,7 @@ const records: RecordType[] = [
 
 export default function OpenTicketsTable() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<RecordType | null>(null);
   const recordsPerPage = 10;
 
   // Filter records with status "Unaddressed"
@@ -61,20 +61,20 @@ export default function OpenTicketsTable() {
     }
   };
 
-  const handleRecordClick = (ticketId: string) => {
-    setSelectedTicketId(ticketId);
+  const handleRecordClick = (record: RecordType) => {
+    setSelectedTicket(record);
   };
 
   const handleBack = () => {
-    setSelectedTicketId(null);
+    setSelectedTicket(null);
   };
 
   return (
     <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
-      {!selectedTicketId ? (
+      {!selectedTicket ? (
         <>
           <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
-            <div className='text-xl font-bold'>Select a Ticket to see all Tender Bids submitted for it.</div>
+            <div className='text-xl font-bold'>Select a Ticket to create a Tender Bid for it.</div>
             <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200 mt-6">
               <div className="col-span-1">Urgency</div>
               <div className="col-span-1">Ticket Number</div>
@@ -86,7 +86,7 @@ export default function OpenTicketsTable() {
           </div>
           <div className="min-w-full">
             {currentRecords.map(record => (
-              <div key={record.id} onClick={() => handleRecordClick(record.id)}>
+              <div key={record.id} onClick={() => handleRecordClick(record)}>
                 <Record record={record} />
               </div>
             ))}
@@ -110,7 +110,20 @@ export default function OpenTicketsTable() {
           </div>
         </>
       ) : (
-        <MuniTenders ticketId={selectedTicketId} onBack={handleBack} />
+        <div className="fixed inset-0 text-black bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="transform scale-80 w-full">
+          <CreateBid
+          ticket={{
+            id: selectedTicket.id,
+            faultType: selectedTicket.faultType,
+            description: "Add description here", // Add actual description if available
+            address: selectedTicket.address,
+            municipalityImage: "https://via.placeholder.com/50" // Update with actual image URL
+          }}
+          onBack={handleBack}
+        />
+          </div>
+        </div>
       )}
     </div>
   );

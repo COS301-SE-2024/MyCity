@@ -9,7 +9,7 @@ interface TenderType {
   id: string;
   ticketId: string;
   status: Status;
-  serviceProvider: string;
+  municipality: string;
   issueDate: string;
   price: number;
   estimatedDuration: number;
@@ -80,7 +80,7 @@ const TenderMax = ({
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
               <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={tender.serviceProvider} className="w-10 h-10 rounded-full mb-2" />
+                <img src="https://via.placeholder.com/50" alt={tender.municipality} className="w-10 h-10 rounded-full mb-2" />
               </div>
               <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.id}</div>
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[tenderStatus]}`}>{tenderStatus}</div>
@@ -116,7 +116,7 @@ const TenderMax = ({
                     </span>
                   ) : (
                     <span>
-                      This Tender Bid is currently <strong>{tenderStatus}</strong>. Accepting it will assign {tender.serviceProvider} to Ticket {tender.ticketId}.
+                      This Tender Bid is currently <strong>{tenderStatus}</strong>. Only {tender.municipality} can accept this Tender Bid..
                     </span>
                   )}
                 </div>
