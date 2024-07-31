@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Record from './Record';
+import Record from './IntegratedRecord';
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
@@ -11,8 +11,12 @@ interface RecordType {
   user_profile : string;
   municipality_picture : string | "";
   description : string;
-  state: Status;
+  state: string;
   address: string;
+  createdby: string;
+  viewcount : number;
+  commentcount: number;
+  upvotes : number;
   urgency: Urgency;
 }
 
@@ -58,7 +62,7 @@ const RecordsTable: React.FC<RecordTypeProps> = ({records = []}) => {
       </div>
       <div className="min-w-full">
         {currentRecords.map(record => (
-          <Record key={record.ticket_id} record={records} />
+          <Record key={record.ticket_id} record={record} />
         ))}
       </div>
       <div className="flex justify-between mt-4 text-white">
