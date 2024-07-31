@@ -154,6 +154,7 @@ export default function GuestDashboard() {
             <FaultTable tableitems={[]} />
           </Tab>
         </div>
+        <Navbar />
       </div>
     </div>
   );
