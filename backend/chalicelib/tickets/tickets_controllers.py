@@ -393,6 +393,7 @@ def getMostUpvoted():
 
 def getUserprofile(ticket_data):
     user_image = ""
+    user_name = ""
     index = 0
     try:
         for username in ticket_data:
@@ -403,7 +404,10 @@ def getUserprofile(ticket_data):
             for attr in user_response["UserAttributes"]:
                 if attr["Name"] == "picture":
                     user_image = attr["Value"]
+                if attr["Name"] == "given_name":
+                    user_name = attr["Value"]
             username["user_picture"] = user_image
+            username["createdby"] = user_name
             username["municipality_picture"] = ""
 
     except cognito_cient.exceptions.UserNotFoundException:
