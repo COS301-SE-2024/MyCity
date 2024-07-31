@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Key, useState } from "react";
-import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
+import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import { Tab, Tabs } from "@nextui-org/react";
 import CreateBid from "@/components/Tenders/CreateBid";
 
@@ -31,32 +31,29 @@ export default function MuniTenders() {
 
   return (
     <div>
-      {/* Desktop View */}
-      <div className="hidden sm:block">
-        <div>
-          <NavbarMunicipality /> {/* this will be service provider */}
-          <div
-            style={{
-              position: "fixed", // Change position to 'fixed'
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
-            }}
-          ></div>
-          <main>
-            <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 ">
-                Tenders
-              </h1>
-            </div>
+      <NavbarCompany /> {/* this will be service provider */}
+      <div
+        style={{
+          position: "fixed", // Change position to 'fixed'
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
+          zIndex: -1, // Ensures the background is behind other content
+        }}
+      ></div>
+      <main>
+        <div className="flex items-center mb-2 mt-2 ml-2">
+          <h1 className="text-4xl font-bold text-white text-opacity-80 ">
+            Tenders
+          </h1>
+        </div>
 
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
               <Tabs
@@ -102,10 +99,7 @@ export default function MuniTenders() {
               </Tabs>
             </div>
           </main>
-        </div>
-      </div>
-
-      {/* Mobile View */}
+          {/* Mobile View */}
       <div className="block sm:hidden">
         <div
           style={{
@@ -168,6 +162,7 @@ export default function MuniTenders() {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+      
   );
 }

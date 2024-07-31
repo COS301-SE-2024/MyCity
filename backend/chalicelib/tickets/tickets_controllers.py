@@ -433,3 +433,116 @@ class DateTimeEncoder(json.JSONEncoder):
         if isinstance(obj, datetime):
             return obj.isoformat()
         return super(DateTimeEncoder, self).default(obj)
+
+
+# function for comments on ticket WITHOUT image uploaded by the user
+# Note that the image is passed as a link (needs to be stored prior to calling the function)
+def add_ticket_comment_with_image(comment, ticket_id, image_url, user_id):
+    try:
+        # Validate required fields
+        if not comment or not ticket_id or not image_url or not user_id:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": "Missing required field: comment, ticket_id, or image_url",
+                }
+            }
+            raise ClientError(error_response, "InvalidFields")
+
+        # Validate ticket_id
+        ticket_id = validate_ticket_id(ticket_id)
+
+        # Generate unique ticket update ID (just to keep track of the comments)
+        ticketupdate_id = generate_id()
+
+        # Get current date and time
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+
+        # Prepare comment item
+        comment_item = {
+            "ticketupdate_id": ticketupdate_id,
+            "comment": comment,
+            "date": formatted_datetime,
+            "imageURL": image_url,  # This is gathered from the bucket
+            "ticket_id": ticket_id,
+            "user_id": user_id,
+        }
+
+        # Insert comment into ticket_updates table
+        ticketupdate_table.put_item(Item=comment_item)
+
+        response = {
+            "message": "Comment added successfully",
+            "ticketupdate_id": ticketupdate_id,
+        }
+        return format_response(float(200), response)
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+# function for comments on ticket WITH image uploaded by the user
+def add_ticket_comment_without_image(comment, ticket_id, user_id):
+    try:
+        # Validate required fields
+        if not comment or not ticket_id or not user_id:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": "Missing required field: comment or ticket_id",
+                }
+            }
+            raise ClientError(error_response, "InvalidFields")
+
+        # Validate ticket_id
+        ticket_id = validate_ticket_id(ticket_id)
+
+        # Generate unique ticket update ID
+        ticketupdate_id = generate_id()
+
+        # Get current date and time
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+
+        # Prepare comment item
+        comment_item = {
+            "ticketupdate_id": ticketupdate_id,
+            "comment": comment,
+            "date": formatted_datetime,
+            "imageURL": "<empty>",  # Set to <empty> if no image is provided
+            "ticket_id": ticket_id,
+            "user_id": user_id,
+        }
+
+        # Insert comment into ticket_updates table
+        ticketupdate_table.put_item(Item=comment_item)
+
+        response = {
+            "message": "Comment added successfully",
+            "ticketupdate_id": ticketupdate_id,
+        }
+        return format_response(float(200), response)
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+# fetching all of the comments related to a particular ticket that is being viewed
+def get_ticket_comments(curr_ticket_id):
+    curr_ticket_id = validate_ticket_id(curr_ticket_id)
+    try:
+        response = ticketupdate_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if (curr_ticket_id.lower() in item.get("ticket_id", "").lower())
+        ]
+        return filtered_items
+    except ClientError as e:
+        raise BadRequestError(
+            f"Failed to search for the ticket comments: {e.response['Error']['Message']}"
+        )
