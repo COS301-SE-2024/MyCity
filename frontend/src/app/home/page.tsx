@@ -77,6 +77,9 @@ export default function Home() {
             overflow: "hidden", // Prevents content overflow
           }}
         >
+        {/* <NavbarUser /> */}
+          <Navbar />
+          {/* MyCity Logo */}
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
             <img
               src="https://i.imgur.com/WbMLivx.png"
@@ -86,7 +89,6 @@ export default function Home() {
               className="w-100 h-100"
             />
           </div>
-
           {/* Background image */}
           <div
             style={{
@@ -102,37 +104,35 @@ export default function Home() {
               backgroundRepeat: "no-repeat",
               zIndex: -1, // Ensures the background is behind other content
             }}
-          ></div>
-
+          />
           {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
+          {/* <div className="h-[30vh] flex items-center justify-center"></div> */}
+          <div className="container mx-auto p-2 relative z-10 ml-4 mr-4">
             {" "}
             {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
+            <h1 className="text-4xl text-white font-bold mb-4">
+              Be the change in your city <br />
+              with <span className="text-blue-200">MyCity.</span>
             </h1>
-
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-            <img
-              src="https://i.imgur.com/eGeTTuo.png"
-              alt="Under-Construction"
-              width={300}
-              height={300}
-            />
-          </div>
-
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
+            <p className="text-lg text-gray-200 mb-4">
+              MyCity connects citizens with municipalities and third-party
+              businesses <br></br>
+              to identify and solve problems in your city - fast.
             </p>
+            <div className="flex flex-row gap-12">
+              <Link href="/auth/signup">
+                <Button className="bg-blue-500 text-white px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
+                  Get Started
+                </Button>
+              </Link>
+
+              <Link href="auth/login" data-testid="login-btn">
+                <Button className="bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
+                  Log In
+                </Button>
+              </Link>
+            </div>
           </div>
-
-
         </div>
       </div>
     </>

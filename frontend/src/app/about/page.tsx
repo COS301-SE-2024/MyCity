@@ -19,13 +19,8 @@ export default function About() {
 
       {/* Mobile View */}
       <div className="block sm:hidden">
-        <div
-          style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
-          }}
-        >
+        <div>
+          {/* MyCity Logo */}
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
             <img
               src="https://i.imgur.com/WbMLivx.png"
@@ -51,7 +46,7 @@ export default function About() {
               backgroundRepeat: "no-repeat",
               zIndex: -1, // Ensures the background is behind other content
             }}
-          ></div>
+          />
 
           {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
@@ -59,25 +54,25 @@ export default function About() {
             {" "}
             {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
+              What is
+              <span className="text-blue-200"> MyCity</span>?
             </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
+            <div className="bg-white ml-4 mr-4">
+              <p className="text-lg text-gray-200 mb-4 ml-4">
+                MyCity is a powerful Progressive Web App designed to enhance the
+                way third-party companies, community members, and municipalities
+                interact and manage community assets. <br /> <br />
+                By offering a unified platform, MyCity allows users to track
+                assets, log tickets related to these assets, and receive
+                real-time updates on any progress. <br /> <br />
+                This innovative solution reduces communication noise and
+                streamlines issue reporting, ensuring that all stakeholders are
+                kept informed and connected.
+              </p>
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
           </div>
+
+          <Navbar />
         </div>
       </div>
     </div>
