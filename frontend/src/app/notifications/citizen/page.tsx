@@ -8,7 +8,13 @@ import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUp
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import {
   ChakraProvider,
+  Container,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  AlertTitle,
   Box,
+  Button,
   Text,
   Link,
   VStack,
@@ -17,23 +23,47 @@ import {
   theme,
 } from "@chakra-ui/react";
 
-function notifyUser(notificationText = "Thank you for enabling notifications!") {
-  if(!("Notification" in window)) {
+function notifyUser(
+  notificationText = "Thank you for enabling notifications!"
+) {
+  if (!("Notification" in window)) {
     alert("Browser does not support notifications.");
   } else if (Notification.permission === "granted") {
     const notifications = new Notification(notificationText);
   } else if (Notification.permission !== "denied") {
     Notification.requestPermission().then((permission) => {
-      if(permission === "granted") {
+      if (permission === "granted") {
         const notifications = new Notification(notificationText);
       }
     });
   }
 }
 
+function enableNotifsAndClose() {}
+function diableNotifsAndClose() {}
+
 export default function Noticfications() {
-  return (
+  const [userResponded, setUserResponse] = useState(false);
+
+  return !(userResponded && !(Notification.permission === "granted")) ? (
     <ChakraProvider>
+      <Container>
+        <Alert status="success">
+          <AlertIcon />
+          <Box>
+            <AlertTitle mr={2}>Notifications</AlertTitle>
+            <AlertDescription>
+              Would you like to receive notifications from MyCity?
+            </AlertDescription>
+          </Box>
+          <Button colorScheme="blue" size="sm" onClick={enableNotifsAndClose}>
+            Sure!
+          </Button>
+          <Button colorScheme="gray" size="sm" onClick={diableNotifsAndClose}>
+            No Thanks!
+          </Button>
+        </Alert>
+      </Container>
       <div>
         {/* Desktop View */}
         <div className="hidden sm:block">
@@ -132,5 +162,11 @@ export default function Noticfications() {
         </div>
       </div>
     </ChakraProvider>
+  // ) : Notification.permission === "granted" ? (
+    // <ChakraProvider theme={theme}></ChakraProvider>
+  ) : (
+    <>
+      <h1>You have disabled notifications.</h1>
+    </>
   );
 }
