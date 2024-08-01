@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
+import mapboxgl, {Map, Marker } from 'mapbox-gl';
+
+mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -16,6 +19,8 @@ interface FaultCardUserViewProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
+  longitude : number;
+  latitude : number;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
 
@@ -39,6 +44,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   createdBy,
   status,
   municipalityImage,
+  longitude,
+  latitude,
   urgency
 }) => {
 
@@ -68,6 +75,13 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           eyeColor: "black",
         };
   };
+
+  const map = new mapboxgl.Map({
+    container: 'map', // container ID
+    style: 'mapbox://styles/mapbox/streets-v12', // style URL
+    center: [longitude, latitude], // starting position [lng, lat]
+    zoom: 9 // starting zoom
+});
 
   const initialData = getLocalStorageData();
 
@@ -240,7 +254,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           </div>
           {/* Right Section (Map Placeholder) */}
           <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
-            <div className="w-full h-full flex items-center justify-center text-gray-500">
+            <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
               Map Placeholder
             </div>
           </div>
