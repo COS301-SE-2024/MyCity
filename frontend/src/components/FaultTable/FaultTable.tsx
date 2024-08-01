@@ -18,6 +18,8 @@ interface Incident {
   imageURL : string;
   municipality_picture: string;
   createdby : string;
+  latitude : string;
+  longitude : string;
   urgency: "high" | "medium" | "low"; // Added urgency field
 }
 
@@ -163,6 +165,8 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
           status={selectedIncident.state}
           municipalityImage={selectedIncident.municipality_picture} // Pass municipality image
           urgency={selectedIncident.urgency} // Pass urgency
+          longitude={selectedIncident.longitude}
+          latitude={selectedIncident.latitude}
         />
       )}
       <style jsx>{`

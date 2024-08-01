@@ -19,8 +19,8 @@ interface FaultCardUserViewProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
-  longitude : number;
-  latitude : number;
+  longitude : string;
+  latitude : string;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
 
@@ -76,12 +76,19 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
         };
   };
 
-  const map = new mapboxgl.Map({
-    container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/streets-v12', // style URL
-    center: [longitude, latitude], // starting position [lng, lat]
-    zoom: 9 // starting zoom
-});
+  useEffect(()=>{
+    const map =  new mapboxgl.Map({
+        container: "mapcontainer", // container ID
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
+        zoom: 15 // starting zoom
+    });
+
+    new mapboxgl.Marker()
+      .setLngLat([Number(longitude), Number(latitude)])
+      .addTo(map);
+  })
+  
 
   const initialData = getLocalStorageData();
 
@@ -254,7 +261,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           </div>
           {/* Right Section (Map Placeholder) */}
           <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
-            <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
+            <div className="w-full h-full flex items-center justify-center text-gray-500" id="mapcontainer">
               Map Placeholder
             </div>
           </div>
