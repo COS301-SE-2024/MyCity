@@ -109,6 +109,19 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     setShowMuniTenders(false);
   };
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(()=>{
+    const map = new mapboxgl.Map({
+      container: 'map', // container ID
+      style: 'mapbox://styles/mapbox/streets-v12', // style URL
+      center: [Number(longitude),  Number(latitude)], // starting position [lng, lat]
+      zoom: 14 // starting zoom
+    });
+    new mapboxgl.Marker()
+    .setLngLat([Number(longitude), Number(latitude)])
+    .addTo(map);
+  })
+
   return (
     <>
       {!showTenderMax && !showMuniTenders && (
@@ -203,7 +216,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               </div>
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
                   Map Placeholder
                 </div>
               </div>
