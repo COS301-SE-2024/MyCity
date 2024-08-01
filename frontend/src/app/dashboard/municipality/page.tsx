@@ -22,6 +22,7 @@ export default function Dashboard() {
   useEffect(() =>{
     const fetchData = async () => {
       const user_data = await userProfile.getUserProfile();
+      console.log(user_data.current)
       const user_session = String(user_data.current?.session_token);
       const user_municipality = String(user_data.current?.municipality)
       setCity(String(user_data.current?.municipality))

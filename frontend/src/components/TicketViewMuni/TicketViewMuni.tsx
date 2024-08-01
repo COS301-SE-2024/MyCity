@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   FaArrowUp,
   FaCommentAlt,
@@ -9,6 +9,9 @@ import {
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
+import mapboxgl, {Map, Marker } from 'mapbox-gl';
+
+mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -24,6 +27,9 @@ interface TicketViewMuniProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
+  upvotes : number;
+  latitude : string;
+  longitude : string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -50,6 +56,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   createdBy,
   status,
   municipalityImage,
+  upvotes,
+  longitude,
+  latitude,
   urgency,
 }) => {
   const [showTenderMax, setShowTenderMax] = useState(false);
@@ -57,7 +66,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
   const getStatusColor = () => {
     switch (status) {
-      case "Unaddressed":
+      case "Opened":
         return "text-red-500";
       case "Fix in progress":
         return "text-blue-500";
@@ -66,9 +75,23 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
+  const getUrgency = (votes : number) =>{
+      if (votes < 10) {
+        return "low";
+    } else if (votes >= 10 && votes < 20) {
+        return "medium";
+    } else if (votes >= 20 && votes <= 40) {
+        return "high";
+    } else {
+        return "low"; // Default case
+    }
+  }
+
   if (!show) return null;
 
   const addressParts = address.split(",");
+
+ 
 
   const handleTenderContractClick = () => {
     setShowTenderMax(true);
@@ -101,7 +124,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               {/* Left Section */}
               <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
                 <div className="absolute top-2 left-2">
-                  {urgencyMapping[urgency].icon}
+                  {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
                 <img
                   src={municipalityImage}

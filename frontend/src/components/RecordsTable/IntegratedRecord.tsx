@@ -17,6 +17,8 @@ interface RecordType {
     createdby: string;
     viewcount : number;
     commentcount: number;
+    latitude : string;
+    longitude : string;
     upvotes : number;
     urgency: Urgency;
 }
@@ -119,6 +121,9 @@ export default function Record({ record }: { record: RecordType }) {
           createdBy={record.createdby}
           status={record.state}
           municipalityImage={"https://via.placeholder.com/50"} // Update this as per your data source
+          upvotes={record.upvotes}
+          latitude={record.latitude}
+          longitude={record.longitude}
           urgency={record.urgency} // Pass urgency to TicketViewMuni
         />
       )}
