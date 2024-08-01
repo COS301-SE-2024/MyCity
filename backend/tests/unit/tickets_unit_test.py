@@ -19,6 +19,7 @@ from chalicelib.tickets.tickets_controllers import (
     add_ticket_comment_with_image,
     add_ticket_comment_without_image,
     add_ticket_comment_with_image,
+    get_ticket_comments,
 )
 
 
@@ -262,3 +263,36 @@ def test_add_ticket_comment_with_image_valid():
         response_body.get("message") == "Comment added successfully"
     ), "Expected message to be 'Comment added successfully'"
     assert "ticketupdate_id" in response_body, "Expected 'ticketupdate_id' in response"
+
+
+def get_comments_valid():
+    ticket_id = "58a1dadb-1f07-43b0-9869-984dd80cffd4"
+    comments = get_ticket_comments(ticket_id)
+
+    # Check if the function returns a list
+    assert isinstance(comments, list), f"Expected a list, got {type(comments)}"
+
+    # Further checks can include ensuring the structure of items in the list
+    if comments:
+        assert "ticket_id" in comments[0], "Expected 'ticket_id' in the first comment"
+        assert "comment" in comments[0], "Expected 'comment' in the first comment"
+
+
+def get_comments_invalid():
+    invalid_ids = [
+        {"ticket_id": ""},
+        {"ticket_id": "sss"},
+        {"ticket_id": "123"},
+    ]
+
+    for invalid_id in invalid_ids:
+        ticket_id = invalid_id["ticket_id"]
+
+        # Expecting BadRequestError for invalid ticket IDs
+        with pytest.raises(BadRequestError) as excinfo:
+            get_ticket_comments(ticket_id)
+
+        # Check if the error message is as expected
+        assert "Failed to search for the ticket comments" in str(
+            excinfo.value
+        ), f"Unexpected error message: {str(excinfo.value)}"
