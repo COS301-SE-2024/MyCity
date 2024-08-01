@@ -18,7 +18,6 @@ interface TicketViewCompanyProps {
   municipalityImage: string;
   urgency: "high" | "medium" | "low";
   municipality: string;
-  hasBidded: boolean;
 }
 
 const urgencyMapping = {
@@ -179,7 +178,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
             id: ticketNumber,
             ticketId: ticketNumber,
             status: status === "Fix in progress" ? "Active" : "Unassigned",
-            serviceProvider: createdBy,
+            municipality: municipality,
             issueDate: new Date().toISOString().split('T')[0],
             price: 1000,
             estimatedDuration: 5,

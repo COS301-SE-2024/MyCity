@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Record from './Record';
-import MuniTenders from './MuniTenders';
+import CreateBid from '../Tenders/CreateBid';
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
@@ -12,31 +12,32 @@ interface RecordType {
   createdBy: string;
   address: string;
   urgency: Urgency;
+  municipality: string;
 }
 
 const records: RecordType[] = [
-  { id: 'SA0245', faultType: 'Leaking Sewerage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
-  { id: 'SA0287', faultType: 'Bombs', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
-  { id: 'SA0298', faultType: 'Fire', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
+  { id: 'SA0245', faultType: 'Leaking Sewerage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high', municipality: 'City of Cape Town' },
+  { id: 'SA0287', faultType: 'Bombs', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' , municipality: 'City of Cape Town' },
+  { id: 'SA0298', faultType: 'Fire', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' , municipality: 'City of Cape Town' },
   // Add more records as needed for demonstration
-  { id: 'SA0299', faultType: 'Water Leakage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
-  { id: 'SA0300', faultType: 'Electricity Outage', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
-  { id: 'SA0301', faultType: 'Road Damage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street BAAAAAAAAAAAA', urgency: 'medium' },
-  { id: 'SA0302', faultType: 'Tree Fall', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
-  { id: 'SA0303', faultType: 'Street Light', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
-  { id: 'SA0304', faultType: 'Blocked Drain', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
-  { id: 'SA0305', faultType: 'Potholes', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
-  { id: 'SA0306', faultType: 'Noise Complaint', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
-  { id: 'SA0307', faultType: 'Garbage Collection', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
-  { id: 'SA0308', faultType: 'Animal Control', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
-  { id: 'SA0309', faultType: 'Parking Violation', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
-  { id: 'SA0310', faultType: 'Illegal Dumping', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
-  { id: 'SA0311', faultType: 'Public Disturbance', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
+  { id: 'SA0299', faultType: 'Water Leakage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium', municipality: 'City of Cape Town'  },
+  { id: 'SA0300', faultType: 'Electricity Outage', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' , municipality: 'City of Cape Town' },
+  { id: 'SA0301', faultType: 'Road Damage', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street BAAAAAAAAAAAA', urgency: 'medium' , municipality: 'City of Cape Town' },
+  { id: 'SA0302', faultType: 'Tree Fall', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high', municipality: 'City of Cape Town'  },
+  { id: 'SA0303', faultType: 'Street Light', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low', municipality: 'City of Cape Town'  },
+  { id: 'SA0304', faultType: 'Blocked Drain', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' , municipality: 'City of Cape Town' },
+  { id: 'SA0305', faultType: 'Potholes', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' , municipality: 'City of Cape Town' },
+  { id: 'SA0306', faultType: 'Noise Complaint', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' , municipality: 'City of Cape Town' },
+  { id: 'SA0307', faultType: 'Garbage Collection', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low', municipality: 'City of Cape Town'  },
+  { id: 'SA0308', faultType: 'Animal Control', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' , municipality: 'City of Cape Town' },
+  { id: 'SA0309', faultType: 'Parking Violation', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' , municipality: 'City of Cape Town' },
+  { id: 'SA0310', faultType: 'Illegal Dumping', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high', municipality: 'City of Cape Town'  },
+  { id: 'SA0311', faultType: 'Public Disturbance', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' , municipality: 'City of Cape Town' },
 ];
 
 export default function OpenTicketsTable() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<RecordType | null>(null);
   const recordsPerPage = 10;
 
   // Filter records with status "Unaddressed"
@@ -60,20 +61,20 @@ export default function OpenTicketsTable() {
     }
   };
 
-  const handleRecordClick = (ticketId: string) => {
-    setSelectedTicketId(ticketId);
+  const handleRecordClick = (record: RecordType) => {
+    setSelectedTicket(record);
   };
 
   const handleBack = () => {
-    setSelectedTicketId(null);
+    setSelectedTicket(null);
   };
 
   return (
     <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
-      {!selectedTicketId ? (
+      {!selectedTicket ? (
         <>
           <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
-            <div className='text-xl font-bold'>Select a Ticket to see all Tender Bids submitted for it.</div>
+            <div className='text-xl font-bold'>Select a Ticket to create a Tender Bid for it.</div>
             <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200 mt-6">
               <div className="col-span-1">Urgency</div>
               <div className="col-span-1">Ticket Number</div>
@@ -85,7 +86,7 @@ export default function OpenTicketsTable() {
           </div>
           <div className="min-w-full">
             {currentRecords.map(record => (
-              <div key={record.id} onClick={() => handleRecordClick(record.id)}>
+              <div key={record.id} onClick={() => handleRecordClick(record)}>
                 <Record record={record} />
               </div>
             ))}
@@ -109,7 +110,20 @@ export default function OpenTicketsTable() {
           </div>
         </>
       ) : (
-        <MuniTenders ticketId={selectedTicketId} onBack={handleBack} />
+        <div className="fixed inset-0 text-black bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="transform scale-80 w-full">
+          <CreateBid
+          ticket={{
+            id: selectedTicket.id,
+            faultType: selectedTicket.faultType,
+            description: "Add description here", // Add actual description if available
+            address: selectedTicket.address,
+            municipalityImage: "https://via.placeholder.com/50" // Update with actual image URL
+          }}
+          onBack={handleBack}
+        />
+          </div>
+        </div>
       )}
     </div>
   );
