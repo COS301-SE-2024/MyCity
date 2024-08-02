@@ -10,17 +10,6 @@ assets_table = dynamodb.Table("asset")
 municipalities_table = dynamodb.Table("municipalities")
 
 
-# use cognito to fetch session info, i.e. the user's municipality he belongs to
-def get_user_municipality(event):
-    try:
-        user_attributes = event["requestContext"]["authorizer"]["claims"]
-        return user_attributes.get(
-            "custom:municipality", ""
-        )  # Adjust based on your Cognito attribute name
-    except KeyError:
-        raise BadRequestError("User's municipality not found")
-
-
 def validate_search_term(search_term):
     # Allow only alphanumeric characters and spaces to prevent injection attacks
     if not re.match(r"^[a-zA-Z \-]*$", search_term):

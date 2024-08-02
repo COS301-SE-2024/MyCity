@@ -3,7 +3,6 @@ from chalicelib.searching.searching_controllers import (
     search_tickets,
     search_municipalities,
     search_service_providers,
-    get_user_municipality,
     search_alt_municipality_tickets,
 )
 
@@ -16,7 +15,11 @@ def search_tickets_route():
     search_term = request.query_params.get("q")
     if not search_term:
         raise BadRequestError("Search term is required")
-    user_municipality = get_user_municipality(request.to_dict())
+
+    user_municipality = request.json_body.get("user_municipality")
+    if not user_municipality:
+        raise BadRequestError("Missing required field: user_municpality")
+
     return search_tickets(user_municipality, search_term)
 
 
