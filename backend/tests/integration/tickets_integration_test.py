@@ -40,18 +40,27 @@ def test_create_ticket_missing_fields(test_client):
 
 
 # Test viewing ticket data with missing ticket_id
-"""def test_view_ticket_data_missing_ticket_id(test_client):
+def test_view_ticket_data_missing_ticket_id(test_client):
     response = test_client.http.get(
         "/tickets/view",
         headers={"Content-Type": "application/json"},
     )
+
     # Check if the status code is 500, which indicates an internal server error
-    assert response.status_code == 500, f"Expected status code 500 but got {response.status_code}"
-    
+    assert (
+        response.status_code == 500
+    ), f"Expected status code 500 but got {response.status_code}"
+
     # Verify the response body contains the expected error message
-    response_body = json.loads(response.body)
-    assert "Ticket Not Found" in response_body["Error"], f"Expected error message 'Ticket Not Found' but got {response_body['Error']}"
-"""
+    response_body = response.json_body
+    assert "Code" in response_body, "Expected 'Code' key in the response body"
+    assert (
+        response_body["Code"] == "InternalServerError"
+    ), f"Expected error code 'InternalServerError' but got {response_body['Code']}"
+    assert "Message" in response_body, "Expected 'Message' key in the response body"
+    assert (
+        response_body["Message"] == "An internal server error occurred."
+    ), f"Expected error message 'An internal server error occurred.' but got {response_body['Message']}"
 
 
 # Test getting fault types
@@ -63,6 +72,7 @@ def test_get_fault_types(test_client):
 
 
 # Test getting tickets for user's municipality
+# Has a problem with the read capacity users?
 """def test_get_in_my_municipality(test_client):
     response = test_client.http.get(
         "/tickets/getinarea",
@@ -90,8 +100,9 @@ def test_get_fault_types(test_client):
         assert response.json_body.get("Message") == "Failed to fetch tickets"
 """
 
-"""
 # Test getting user's watchlist
+# Has a problem with the read capacity users?
+"""
 def test_get_watchlist(test_client):
     response = test_client.http.get(
         "/tickets/getwatchlist",
