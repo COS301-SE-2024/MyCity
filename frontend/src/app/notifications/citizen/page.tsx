@@ -15,7 +15,7 @@ export default function Noticfications() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NotificationPromt/>
+          <NotificationPromt/> 
           <Navbar />
           <div
             style={{
