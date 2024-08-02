@@ -97,3 +97,30 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
     return true;
 
 }
+
+export async function getTicketTenders(ticket_id: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getmunicipalitytenders";
+    const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.Status )
+    {
+        return false
+    }
+    else result
+    
+
+}

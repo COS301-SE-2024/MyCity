@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import TicketViewMuni from '../TicketViewMuni/TicketViewMuni'; // Import your TicketViewMuni component
 
+
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
 
@@ -125,6 +126,7 @@ export default function Record({ record }: { record: RecordType }) {
           latitude={record.latitude}
           longitude={record.longitude}
           urgency={record.urgency} // Pass urgency to TicketViewMuni
+          ticket_id={record.ticket_id}
         />
       )}
       <style jsx>{`

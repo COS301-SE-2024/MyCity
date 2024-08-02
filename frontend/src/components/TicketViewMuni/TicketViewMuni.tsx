@@ -10,6 +10,8 @@ import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { getTicketTenders } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -22,6 +24,7 @@ interface TicketViewMuniProps {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
+  ticket_id : string;
   description: string;
   image: string;
   createdBy: string;
@@ -59,10 +62,33 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   upvotes,
   longitude,
   latitude,
+  ticket_id,
   urgency,
 }) => {
   const [showTenderMax, setShowTenderMax] = useState(false);
+  const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
+  const [tenders,setTenders] = useState<any>()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      // console.log(user_session);
+      const rspgettenders = await getTicketTenders(ticket_id,user_session);
+      setTenders(rspgettenders);
+      if(tenders != false)
+      {
+        setShowMuniTenders(true)
+      }
+     
+      // }
+    };
+
+    fetchData();
+  }, [ userProfile]);
+
 
   const getStatusColor = () => {
     switch (status) {
@@ -230,11 +256,11 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
           tender={{
             id: ticketNumber,
             ticketId: ticketNumber,
-            status: status === "Fix in progress" ? "Active" : "Unassigned",
+            status: tenders.status === "Fix in progress" ? "Active" : "Unassigned",
             serviceProvider: createdBy,
             issueDate: new Date().toISOString().split('T')[0],
-            price: 1000,
-            estimatedDuration: 5,
+            price: tenders.quote,
+            estimatedDuration: tenders.estimatedTimeHours,
             upload: null,
             hasReportedCompletion: false,
           }}
@@ -244,7 +270,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
       {showMuniTenders && (
         <MuniTenders
-          ticketId={ticketNumber}
+          tenders = {tenders}
           onBack={handleBack}
         />
       )}
