@@ -12,10 +12,12 @@ searching_blueprint = Blueprint(__name__)
 @searching_blueprint.route("/issues", methods=["GET"], cors=True)
 def search_tickets_route():
     request = searching_blueprint.current_request
-    search_term = request.query_params.get("q")
-    if not search_term:
+    query_params = request.query_params
+
+    if not query_params or "q" not in query_params:
         raise BadRequestError("Search term is required")
 
+    search_term = query_params.get("q")
     user_municipality = request.json_body.get("user_municipality")
     if not user_municipality:
         raise BadRequestError("Missing required field: user_municpality")
