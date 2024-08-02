@@ -189,14 +189,33 @@ def test_add_comment_with_image_valid(test_client):
     assert "ticketupdate_id" in response_body
 
 
-"""
 # Test adding a comment with an image with invalid input
 def test_add_comment_with_image_invalid(test_client):
     invalid_comment_data = [
-        {"comment": "", "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4", "image_url": "", "user_id": "qinisela.mthembu@yahoo.com"},
-        {"comment": "Test comment", "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4", "image_url": "", "user_id": "qinisela.mthembu@yahoo.com"},
-        {"comment": "Test comment", "ticket_id": "", "image_url": "https://example.com/image.jpg", "user_id": "qinisela.mthembu@yahoo.com"},
-        {"comment": "Test comment", "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4", "image_url": "https://example.com/image.jpg", "user_id": ""}
+        {
+            "comment": "",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "image_url": "",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "image_url": "",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment",
+            "ticket_id": "",
+            "image_url": "https://example.com/image.jpg",
+            "user_id": "qinisela.mthembu@yahoo.com",
+        },
+        {
+            "comment": "Test comment",
+            "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+            "image_url": "https://example.com/image.jpg",
+            "user_id": "",
+        },
     ]
 
     for data in invalid_comment_data:
@@ -205,9 +224,24 @@ def test_add_comment_with_image_invalid(test_client):
             headers={"Content-Type": "application/json"},
             body=json.dumps(data),
         )
-        assert response.status_code == 400
-        assert response.json_body.get("Message") == "Missing required field: comment, ticket_id, or image_url"
-"""
+        assert (
+            response.status_code == 400
+        ), f"Expected status code 400 but got {response.status_code}"
+
+        # Check the response body structure
+        response_body = response.json_body
+        assert isinstance(
+            response_body, dict
+        ), f"Expected response body to be a dictionary but got {type(response_body)}"
+
+        # Retrieve the error message from the 'Message' key
+        error_message = response_body.get("Message")
+
+        # Check for the expected error message
+        assert (
+            error_message
+            == "Missing required field: comment, ticket_id, image_url, or user_id"
+        ), f"Expected error message 'Missing required field: comment, ticket_id, image_url, or user_id' but got '{error_message}'"
 
 
 # Test getting ticket comments with a valid ticket_id
