@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 
-import Notification_Promt from  "@/components/Noti
+import NotificationPromt from   "@/components/Notifications/NotificationPromt";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
@@ -15,7 +15,7 @@ export default function Noticfications() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <Notification_Promt/>
+          <NotificationPromt/>
           <Navbar />
           <div
             style={{

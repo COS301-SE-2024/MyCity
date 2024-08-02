@@ -35,7 +35,7 @@ import {
     }
   }
 
-  export default function Notification_Promt() {
+  export default function Promt_Popup() {
     const [userResponded, setUserResponded] = useState(false);
 
     function enableNotifsAndClose() {
@@ -57,7 +57,7 @@ import {
                 Would you like to receive notifications from MyCity?
               </AlertDescription>
             </Box>
-            <Button colorScheme="blue" size="sm" onClick={enableNotifsAndClose}>
+            <Button colorScheme="blue" size="sm" onClick={enableNotifsAndClose} >
               Sure!
             </Button>
             <Button colorScheme="gray" size="sm" onClick={diableNotifsAndClose}>
