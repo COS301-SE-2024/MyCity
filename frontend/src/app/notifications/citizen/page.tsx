@@ -1,21 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Navbar from "@/components/Navbar/Navbar";
-
-import NotificationPromt from   "@/components/Notifications/NotificationPromt";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
-
 export default function Noticfications() {
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NotificationPromt/> 
           <Navbar />
           <div
             style={{
