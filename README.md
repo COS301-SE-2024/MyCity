@@ -242,7 +242,7 @@
           <td align="center">
             <img src="/images/profile_Dominique_Da_Silva.jpg" width="256" style="border-radius: 50%" >
             <h2>Dominique Da Silva<h2>
-            <h3>Team Leader | Documentation</h3>
+            <h5>Team Leader | Documentation</h5>
             <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -250,10 +250,11 @@
               <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
             </a>
           </td>
-          <td colspan="2">
-            <h3>Bio: <h3>
-            <p>Developer with a passion for creating innovative solutions</p>
-            <h3>Project Contributions: <h3>
+         <td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I excel in delivering innovative solutions that generate tangible value. Driven by a passion for technology and a commitment to excellence, I am poised to contribute my expertise to impactful projects in the realms of backend development and AI.</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
           </td>
         </tr>
       </table>
@@ -262,15 +263,17 @@
     <tr>
       <table>
         <tr>
-          <td colspan="2">
-            <h3>Bio: <h3>
-              <p>As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function.</p>
-            <h3>Project Contributions: <h3>
+<td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I am a dynamic and innovative individual with a keen eye for aesthetics and user experience. Combining creativity with logical thinking, I bring a unique approach to software engineering as a discipline. 
+</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
           </td>          
           <td align="center" >
             <img src="/images/profile_Kyle_Marshall.jpg" width="256" style="border-radius: 50%" >
             <h2>Kyle Marshall<h2>
-            <h3>UI Engineer | Documentation</h3>
+            <h5>UI Engineer | Documentation</h5>
             <a href="https://github.com/KyleMarshall23">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -288,7 +291,7 @@
           <td align="center">
             <img src="/images/profile_Tino_Gwanyanya.jpg" width="256" style="border-radius: 50%" >
             <h2>Tino Gwanyanya<h2>
-            <h3>Backend Engineer | Intergration Engineer | Documentation</h3>
+            <h5>Backend Engineer | Intergration Engineer | Documentation</h5>
             <a href="https://github.com/Tinogwanz">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -296,10 +299,12 @@
               <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
             </a>
           </td>
-          <td colspan="2">
-            <h3>Bio: <h3>
-            <p>Learning new technologies is my super power!</p>
-            <h3>Project Contributions: <h3>
+          <td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >My superpower? Rapid learning. This means I cannot only adapt to diverse scenarios but also excel in them. The result is then the ability to not only meet but exceed set objectives effectively. Driven by challenges, I possess the patience and resilience to see tasks through to completion.
+</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
           </td>
         </tr>
       </table>
@@ -308,18 +313,19 @@
     <tr>
       <table>
         <tr>
-          <td align="center" colspan="2">
-            <h3>Bio: <h3>
-            <p>I am a passionate software engineer with a background in computer science and multimedia. My expertise spans DevOps, front-end development, and data engineering. I have experience setting up and managing AWS infrastructure, configuring CI/CD pipelines, and developing user-friendly mobile interfaces. I thrive in collaborative environments and am dedicated to creating robust, scalable, and innovative solutions.</p>
-            <h3>Project Contributions: <h3>
-            <p>1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment.</p>
-            <p>2.	Mobile Front-End Engineer: Designed and developed all mobile screens, ensuring a seamless and intuitive user experience.</p>
-            <p>3.	Data Engineer & Intergration Engineer: Created comprehensive mock data sets for testing and validation during the app’s development.</p>
+          <td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I am a passionate software engineer with a background in computer science and multimedia. My expertise spans DevOps, front-end development, and data engineering. I have experience setting up and managing AWS infrastructure, configuring CI/CD pipelines, and developing user-friendly mobile interfaces. I thrive in collaborative environments and am dedicated to creating robust, scalable, and innovative solutions.</h6>
+            <h4>Project Contributions: <h4>
+            <h6>1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment. <br/><br/>
+            2.	Mobile Front-End Engineer: Designed and developed all mobile screens, ensuring a seamless and intuitive user experience. 
+            <br/><br/>
+            3.	Data Engineer & Intergration Engineer: Created comprehensive mock data sets for testing and validation during the app’s development.</h6>
           </td>          
           <td align="center">
             <img src="/images/profile_Matthew_Els.jpg" width="256" style="border-radius: 50%" >
             <h2>Matthew Els<h2>
-            <h3>DevOps Engineer | Mobile Front-End Engineer | Data Engineer | Intergration Engineer | Documentation</h3>
+            <h5>DevOps Engineer | Mobile Front-End Engineer | Data Engineer | Intergration Engineer | Documentation</h5>
             <a href="https://github.com/MatthewEls">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -337,7 +343,7 @@
           <td align="center">
             <img src="/images/profile_Andinda_Bakainaga.jpg" width="256" style="border-radius: 50%" >
             <h2>Andinda Bakainaga<h2>
-            <h3>Backend Engineer | Documentation</h3>
+            <h5>Backend Engineer | Documentation</h5>
             <a href="https://github.com/Dindosss">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -345,10 +351,11 @@
               <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
             </a>
           </td>
-          <td align="center" colspan="2">
-            <h3>Bio: <h3>
-            <p>I will provide any solution you might need if you promise me donuts.</p>
-            <h3>Project Contributions: <h3>
+<td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I am an energetic and relentless software developer, with a focus on backend development. I bring a blend of creativity and strategic thinking to problem-solving in this domain, consistently delivering innovative and efficient solutions</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
           </td>
         </tr>
       </table>
