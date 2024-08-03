@@ -22,7 +22,10 @@
 
 <p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features:</p>
 
-<a href="https://www.mycity.net.za"> MyCity</a>
+<a href="https://www.mycity.net.za" >
+  <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/logo_MyCity.png" alt="MyCity Logo"/>
+  MyCity
+</a>
 
 <p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
 
