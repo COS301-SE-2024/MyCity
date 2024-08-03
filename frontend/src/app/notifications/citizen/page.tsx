@@ -6,13 +6,17 @@ import NotificationComment from "@/components/NotificationsCitizen/NotificationC
 import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
+import NotificationPromt from "@/components/Notifications/NotificationPromt";
+
 export default function Noticfications() {
   return (
     <div>
+      <NotificationPromt />
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
           <Navbar />
+          
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
