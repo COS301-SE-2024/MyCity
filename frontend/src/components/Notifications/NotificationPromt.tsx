@@ -78,21 +78,5 @@ export default function Promt_Popup() {
         </Alert>
       </Container>
     </ChakraProvider>
-  ) : Notification.permission === "granted" ? (
-    <ChakraProvider theme={theme}>
-      <Container>
-        <Box>
-          <h1>Notifications are enabled.</h1>
-        </Box>
-      </Container>
-    </ChakraProvider>
-  ) : (
-    <ChakraProvider theme={theme}>
-      <Container>
-        <Box>
-          <h1>You have disabled notifications.</h1>
-        </Box>
-      </Container>
-    </ChakraProvider>
-  );
+  ) : (<></>);
 }
