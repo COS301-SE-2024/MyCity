@@ -50,3 +50,6 @@ next-env.d.ts
 
 # jest & playwright test results
 /test-results
+
+# WSL Zone Identifier files
+*.Identifier
