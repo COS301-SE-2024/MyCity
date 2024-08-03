@@ -50,10 +50,10 @@ def getmunitenders():
     response = getTicketTender(ticket_id)
     return response
 
+
 @tenders_blueprint.route("/getcontracts", methods=["GET"], cors=True)
 def getmunitenders():
     request = tenders_blueprint.current_request
     tender_id = request.query_params.get("tender")
     response = getContracts(tender_id)
     return response
-

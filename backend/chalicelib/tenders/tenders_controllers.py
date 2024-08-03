@@ -299,8 +299,9 @@ def getTicketTender(ticket_id):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
-def getContracts(tender_id) :
+
+
+def getContracts(tender_id):
     try:
         if tender_id == None:
             error_response = {
@@ -310,12 +311,12 @@ def getContracts(tender_id) :
                 }
             }
             raise ClientError(error_response, "InvalidFields")
-        
+
         reponse_contracts = contract_table.scan(
             FilterExpression=Attr("tender_id").eq(tender_id)
         )
 
-        if(len(reponse_contracts['Items']) <= 0):
+        if len(reponse_contracts["Items"]) <= 0:
             error_response = {
                 "Error": {
                     "Code": "ContractDoesntExist",
@@ -323,21 +324,24 @@ def getContracts(tender_id) :
                 }
             }
             raise ClientError(error_response, "ContractDoesntExist")
-        
-        contracts_items = reponse_contracts['Items']
-        response_tender = tenders_table.query(KeyConditionExpression=Key("tender_id").eq(tender_id))
-        tender_itm = response_tender['Items'][0]
-        response_name = companies_table.query(KeyConditionExpression=Key("pid").eq(tender_itm["company_id"]),
-                                               ProjectionExpression="name")
-        companies = response_name['Items']
-        comp_name = companies[0]
-        contracts_items['companyname'] = comp_name
-        return contracts_items
 
+        contracts_items = reponse_contracts["Items"]
+        response_tender = tenders_table.query(
+            KeyConditionExpression=Key("tender_id").eq(tender_id)
+        )
+        tender_itm = response_tender["Items"][0]
+        response_name = companies_table.query(
+            KeyConditionExpression=Key("pid").eq(tender_itm["company_id"]),
+            ProjectionExpression="name",
+        )
+        companies = response_name["Items"]
+        comp_name = companies[0]
+        contracts_items["companyname"] = comp_name
+        return contracts_items
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
-        return {"Status": "FAILED", "Error": error_message}    
+        return {"Status": "FAILED", "Error": error_message}
 
 
 def getCompanyID(authcode):
@@ -382,9 +386,12 @@ def CheckTenderExists(pid, ticket_id):
         return False
     else:
         return True
-    
-def assignCompanyName(data) :
+
+
+def assignCompanyName(data):
     for item in data:
-        response_name = companies_table.query(KeyConditionExpression=Key("pid").eq(item["company_id"]))
-        items = response_name['Items']
-        item['companyname'] = items['name']
+        response_name = companies_table.query(
+            KeyConditionExpression=Key("pid").eq(item["company_id"])
+        )
+        items = response_name["Items"]
+        item["companyname"] = items["name"]
