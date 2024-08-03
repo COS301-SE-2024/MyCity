@@ -232,6 +232,7 @@
 </p>
 
 # Meet Team LAN Lords
+
 <div>
   <table>
     <!-- Dominique -->
@@ -242,6 +243,12 @@
             <img src="/images/profile_Dominique_Da_Silva.jpg" width="256" style="border-radius: 50%" >
             <h2>Dominique Da Silva<h2>
             <h3>Team Leader | Documentation</h3>
+            <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://github.com/Dominique-Da-Silva">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
           </td>
           <td colspan="2">
             <h3>Bio: <h3>
@@ -260,10 +267,16 @@
               <p>As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function.</p>
             <h3>Project Contributions: <h3>
           </td>          
-          <td align="center">
+          <td align="center" >
             <img src="/images/profile_Kyle_Marshall.jpg" width="256" style="border-radius: 50%" >
             <h2>Kyle Marshall<h2>
             <h3>UI Engineer | Documentation</h3>
+            <a href="https://github.com/KyleMarshall23">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/kyle-marshall23">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
           </td>
         </tr>
       </table>
@@ -276,6 +289,12 @@
             <img src="/images/profile_Tino_Gwanyanya.jpg" width="256" style="border-radius: 50%" >
             <h2>Tino Gwanyanya<h2>
             <h3>Backend Engineer | Intergration Engineer | Documentation</h3>
+            <a href="https://github.com/Tinogwanz">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/anold-tinotenda-gwanyanya">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
           </td>
           <td colspan="2">
             <h3>Bio: <h3>
@@ -301,6 +320,12 @@
             <img src="/images/profile_Matthew_Els.jpg" width="256" style="border-radius: 50%" >
             <h2>Matthew Els<h2>
             <h3>DevOps Engineer | Mobile Front-End Engineer | Data Engineer | Intergration Engineer | Documentation</h3>
+            <a href="https://github.com/MatthewEls">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/matthewels/">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
           </td>
         </tr>
       </table>
@@ -313,6 +338,12 @@
             <img src="/images/profile_Andinda_Bakainaga.jpg" width="256" style="border-radius: 50%" >
             <h2>Andinda Bakainaga<h2>
             <h3>Backend Engineer | Documentation</h3>
+            <a href="https://github.com/Dindosss">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/andinda-bakainaga-b8b011216">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
           </td>
           <td align="center" colspan="2">
             <h3>Bio: <h3>
