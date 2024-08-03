@@ -240,7 +240,7 @@ def accept_tender(sender_data):
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
 
-
+#company tenders
 def getCompanyTenders(company_name):
     try:
         if company_name == None:
