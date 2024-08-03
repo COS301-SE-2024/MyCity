@@ -354,7 +354,7 @@ def getContracts(tender_id):
             raise ClientError(error_response, "CompanyDoesntExist")
 
         companies = response_name["Items"][0]
-        comp_name = companies['name']
+        comp_name = companies["name"]
         contracts_items["companyname"] = comp_name
         return contracts_items
 
