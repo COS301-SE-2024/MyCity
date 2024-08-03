@@ -16,6 +16,8 @@ interface RecordType {
   createdby: string;
   viewcount : number;
   commentcount: number;
+  latitude : string;
+  longitude : string;
   upvotes : number;
   urgency: Urgency;
 }

@@ -6,6 +6,7 @@ type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 interface TenderType {
   tender_id: string;
   company_id : string;
+  companyname : string;
   datetimesubmitted : string;
   ticket_id: string;
   status: string;
@@ -61,7 +62,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.id}</div>
         <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
-        <div className="col-span-1 flex justify-center">{tender.serviceProvider}</div>
+        <div className="col-span-1 flex justify-center">{tender.companyname}</div>
         <div className="col-span-1 flex justify-center">{tender.datetimesubmitted}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
