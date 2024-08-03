@@ -15,7 +15,11 @@ interface Incident {
   user_picture: string;
   username: string;
   state: string;
+  imageURL : string;
   municipality_picture: string;
+  createdby : string;
+  latitude : string;
+  longitude : string;
   urgency: "high" | "medium" | "low"; // Added urgency field
 }
 
@@ -156,11 +160,13 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
           viewCount={selectedIncident.viewcount}
           ticketNumber={selectedIncident.ticketnumber}
           description={selectedIncident.description}
-          image={selectedIncident.user_picture}
-          createdBy={selectedIncident.username}
+          image={selectedIncident.imageURL}
+          createdBy={selectedIncident.createdby}
           status={selectedIncident.state}
           municipalityImage={selectedIncident.municipality_picture} // Pass municipality image
           urgency={selectedIncident.urgency} // Pass urgency
+          longitude={selectedIncident.longitude}
+          latitude={selectedIncident.latitude}
         />
       )}
       <style jsx>{`
@@ -246,4 +252,3 @@ const IncidentTable: React.FC<IncidentItemsProps> = ({tableitems}: IncidentItems
 };
 
 export default IncidentTable;
-*/
