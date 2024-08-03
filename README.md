@@ -24,6 +24,7 @@
 
 <a href="https://www.mycity.net.za" >
   <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/logo_MyCity.png" alt="MyCity Logo"/>
+  <img width="200" height="auto" href="https://www.mycity.net.za" src="/images//qr_MyCity.png" alt="MyCity QR"/>
   MyCity
 </a>
 
