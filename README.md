@@ -65,81 +65,109 @@
 # Features (a short summary of the user's functionality)
 
 # Demo Content
-
-<p align="center">
-<a href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link">Demo 1</a><br>
-<a href="">Demo 2</a><br>
-<a href="">Demo 3</a><br>
-<a href="">Demo 4</a><br>
-<a href="">Project Day</a><br>
-</p>
-
-# Documentation
-
-<p align="center">
+<div align="center">
   <table>
     <tr>
       <td>
         <div align="center">
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_system-requirements.png" alt="System Requirements" href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link"/><br/>
-          <a href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link">System Requirements</a>
-        </div>
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-1.png" alt="Demo 1" href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link"/><br/>
+              <a href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link">Demo 1</a>
+            </div>
       </td>
-      <td>
-        <div align="center"> 
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_System-Architectural-Design.png" alt="System Architectural Design" href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing"/><br/>
-          <a href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing">System Architectural</a>
-        </div>
-      </td>
-      <td>
-        <div align="center">        
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing"/><br/>
-          <a href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing">User Manual</a>
-        </div>
-      </td>
-    </tr>
-    <tr>
       <td>
         <div align="center">
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Testing-Guidelines.png" alt="Testing Guidelines" href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing"/><br/>
-          <a href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing">Testing Guidelines</a>
-        </div>
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-2.png" alt="Demo 2" href=""/><br/>
+              <a href="">Demo 2</a>
+            </div>
       </td>
-      <td>
-        <div align="center"> 
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_GitHub-Strategy.png" alt="GitHub Strategy" href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing"/><br/>   
-          <a href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing">GitHub Strategy</a>
-        </div>
-      </td>
-      <td>
-      <div align="center"> 
-        <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Database-Requirements-and-Overview.png" alt="Database Requirements" href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing"/><br/>     
-        <a href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing">Database Requirements</a>
-      </div>
-      </td>
-    </tr>
-    <tr>
       <td>
         <div align="center">
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Design-Specification.png" alt="Design Specification" href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing"/>    <br/>   
-          <a href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing">Design Specification</a>
-        </div>
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-3.png" alt="Demo 3" href=""/><br/>
+              <a href="">Demo 3</a>
+            </div>
       </td>
       <td>
-        <div align="center"> 
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Coding-Guidelines.png" alt="Coding Guidelines" href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing"/><br/>     
-          <a href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing">Coding Guidelines</a>
-        </div>
+        <div align="center">
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-4.png" alt="Demo 4" href=""/><br/>
+              <a href="">Demo 4</a>
+            </div>
       </td>
       <td>
-        <div align="center">  
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Project-Timeline.png" alt="Project Timeline" href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing"/>     <br/>
-          <a href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing">Project Timeline</a>
+        <div align="center">
+          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Project-Day.png" alt="Project Day" href=""/><br/>
+          <a href="">Project Day</a>
         </div>
       </td>
     </tr>
   </table>
-</p>
+</div>
+
+# Documentation
+<div align="center">
+  <table>
+      <tr>
+        <td>
+          <div align="center">
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_system-requirements.png" alt="System Requirements" href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link">System Requirements</a>
+          </div>
+        </td>
+        <td>
+          <div align="center"> 
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_System-Architectural-Design.png" alt="System Architectural Design" href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing"/><br/>
+            <a href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing">System Architectural</a>
+          </div>
+        </td>
+        <td>
+          <div align="center">        
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing"/><br/>
+            <a href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing">User Manual</a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div align="center">
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Testing-Guidelines.png" alt="Testing Guidelines" href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing"/><br/>
+            <a href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing">Testing Guidelines</a>
+          </div>
+        </td>
+        <td>
+          <div align="center"> 
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_GitHub-Strategy.png" alt="GitHub Strategy" href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing"/><br/>   
+            <a href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing">GitHub Strategy</a>
+          </div>
+        </td>
+        <td>
+        <div align="center"> 
+          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Database-Requirements-and-Overview.png" alt="Database Requirements" href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing"/><br/>     
+          <a href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing">Database Requirements</a>
+        </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div align="center">
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Design-Specification.png" alt="Design Specification" href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing"/>    <br/>   
+            <a href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing">Design Specification</a>
+          </div>
+        </td>
+        <td>
+          <div align="center"> 
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Coding-Guidelines.png" alt="Coding Guidelines" href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing"/><br/>     
+            <a href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing">Coding Guidelines</a>
+          </div>
+        </td>
+        <td>
+          <div align="center">  
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Project-Timeline.png" alt="Project Timeline" href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing"/>     <br/>
+            <a href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing">Project Timeline</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
 
 # Our Tech stack
 
