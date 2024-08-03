@@ -3,6 +3,8 @@ from chalicelib.tenders.tenders_controllers import (
     inreview,
     create_tender,
     accept_tender,
+    getCompanyTenders,
+    getTicketTender,
 )
 
 tenders_blueprint = Blueprint(__name__)
@@ -29,4 +31,20 @@ def accepting_tenders():
     request = tenders_blueprint.current_request
     sender_data = request.json_body
     response = accept_tender(sender_data)
+    return response
+
+
+@tenders_blueprint.route("/getmytenders", methods=["GET"], cors=True)
+def getmytenders():
+    request = tenders_blueprint.current_request
+    company_name = request.query_params.get("name")
+    response = getCompanyTenders(company_name)
+    return response
+
+
+@tenders_blueprint.route("/getmunicipalitytenders", methods=["GET"], cors=True)
+def getmunitenders():
+    request = tenders_blueprint.current_request
+    ticket_id = request.query_params.get("ticket")
+    response = getTicketTender(ticket_id)
     return response

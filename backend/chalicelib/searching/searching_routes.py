@@ -3,7 +3,6 @@ from chalicelib.searching.searching_controllers import (
     search_tickets,
     search_municipalities,
     search_service_providers,
-    get_user_municipality,
     search_alt_municipality_tickets,
 )
 
@@ -13,10 +12,16 @@ searching_blueprint = Blueprint(__name__)
 @searching_blueprint.route("/issues", methods=["GET"], cors=True)
 def search_tickets_route():
     request = searching_blueprint.current_request
-    search_term = request.query_params.get("q")
-    if not search_term:
+    query_params = request.query_params
+
+    if not query_params or "q" not in query_params:
         raise BadRequestError("Search term is required")
-    user_municipality = get_user_municipality(request.to_dict())
+
+    search_term = query_params.get("q")
+    user_municipality = request.json_body.get("user_municipality")
+    if not user_municipality:
+        raise BadRequestError("Missing required field: user_municpality")
+
     return search_tickets(user_municipality, search_term)
 
 
