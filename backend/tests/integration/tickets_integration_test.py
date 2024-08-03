@@ -86,7 +86,7 @@ def test_get_fault_types(test_client):
         assert "ticket_id" in data[0], "Expected 'ticket_id' in the first ticket"
 """
 
-'''
+"""
 # Test invalid user municipality
 def test_invalid_user_municipality(test_client):
     invalid_municipalities = ["Stellenbosch Lol", ""]
@@ -102,11 +102,11 @@ def test_invalid_user_municipality(test_client):
         
         response_body = response.json_body
         assert response["Status"] == "FAILED"
-'''
+"""
 
 
 # Test getting user's watchlist
-'''
+"""
 def test_get_watchlist(test_client):
     # Test with a valid username that has tickets in the watchlist
     response = test_client.http.get(
@@ -116,19 +116,18 @@ def test_get_watchlist(test_client):
     assert response.status_code == 200
     data = response.json_body
     assert isinstance(data, list), "Expected a list of tickets"
-'''
+"""
 
 # Test invalid user watchlist
-"""def test_invalid_user_watchlist(test_client):
+"""
+def test_invalid_user_watchlist(test_client):
     invalid_usernames = ["Stellenbosch Lol", ""]
     for username in invalid_usernames:
         response = test_client.http.get(
-            "/tickets/getwatchlist",
+            "/tickets/getwatchlist?q={username}",
             headers={"Content-Type": "application/json"},
-            query_string=f"username={username}"
         )
-        assert response.status_code == 400
-        assert response.json_body.get("Message") == "Failed to fetch watchlist"
+        assert response["Status"] == "FAILED"
 """
 
 
