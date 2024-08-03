@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -8,19 +7,41 @@ import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUp
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
+import {
+  ChakraProvider,
+  Container,
+  Alert,
+  AlertIcon,
+  AlertDescription,
+  AlertTitle,
+  Box,
+  Button,
+  theme,
+  DarkMode,
+} from "@chakra-ui/react";
 
-export default function Noticfications() {
+export default function Notifications() {
   return (
     <div>
-      <NotificationPromt />
+      {/* <NotificationPromt /> */}
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <Navbar />
-          
+          {/* <Navbar /> */}
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "relative",
+              height: "100vh",
+              overflow: "hidden", // Prevents content overflow
+            }}
+          >
+            <Navbar />
+          </div>
+
+          {/* Background image */}
+          <div
+            style={{
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -30,19 +51,23 @@ export default function Noticfications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
               zIndex: -1, // Ensures the background is behind other content
             }}
-          ></div>
-          <main>
-            <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
-              Notifications
-            </h1>
-            <NotificationComment />
-            <NotificationUpdate />
-            <NotificationUpvote />
-            <NotificationWatchlist />
-          </main>
+          >
+            {/* Content */}
+            <div className="h-[15vh] flex items-center justify-center"></div>
+            <div className="border">
+              <h1>Notifications</h1>
+              <ChakraProvider theme={DarkMode}>
+                <Container>
+                  <NotificationComment />
+                  <NotificationUpdate />
+                  <NotificationUpvote />
+                  <NotificationWatchlist />
+                </Container>
+              </ChakraProvider>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -112,4 +137,3 @@ export default function Noticfications() {
     </div>
   );
 }
-
