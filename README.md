@@ -1,3 +1,4 @@
+
 # MyCity by team LAN Lords
 
 <p align="center">
@@ -5,7 +6,6 @@
 </p>
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
-
 
 <p align="center">
     <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square">
@@ -17,8 +17,18 @@
     <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=flat-square">
 </p>
 
-
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
+
+# MyCity PWA
+
+<p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features:</p>
+
+<a href="https://www.mycity.net.za" >
+  <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/logo_MyCity.png" alt="MyCity Logo"/>
+  MyCity
+</a>
+
+<p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
 
 # Table of contents
 
@@ -32,8 +42,8 @@
 - [Our Tech stack](#our-tech-stack)
 - [Meet Team LAN Lords](#meet-team-lan-lords)
 
-
 # Project Overview
+
 <details>
 <summary><p>MyCity will revolutionise the way municipalities, communities, and third-party vendors and organisations manage, repair and track assets, by acting as a single point of contact to allow users to log tickets related to these assets, and provide updates while the ticket is in progress.</p> </summary>
 
@@ -52,32 +62,112 @@
 
 <p> You can track the progress of our project on the <a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1">Project Board</a> for MyCity.</p>
 
-
-
 # Features (a short summary of the user's functionality)
 
 # Demo Content
-<p align="center">
-<a href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link">Demo 1</a><br>
-<a href="">Demo 2</a><br>
-<a href="">Demo 3</a><br>
-<a href="">Demo 4</a><br>
-<a href="">Project Day</a><br>
-</p>
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <div align="center">
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-1.png" alt="Demo 1" href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link"/><br/>
+              <a href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link">Demo 1</a>
+            </div>
+      </td>
+      <td>
+        <div align="center">
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-2.png" alt="Demo 2" href=""/><br/>
+              <a href="">Demo 2</a>
+            </div>
+      </td>
+      <td>
+        <div align="center">
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-3.png" alt="Demo 3" href=""/><br/>
+              <a href="">Demo 3</a>
+            </div>
+      </td>
+      <td>
+        <div align="center">
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-4.png" alt="Demo 4" href=""/><br/>
+              <a href="">Demo 4</a>
+            </div>
+      </td>
+      <td>
+        <div align="center">
+          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Project-Day.png" alt="Project Day" href=""/><br/>
+          <a href="">Project Day</a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
 
 # Documentation
-
-<p align="center">
-<a href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link">System Requirements (SRS)</a><br>
-<a href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing">System Architectural Design</a><br>
-<a href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing">User Manual</a><br>
-<a href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing">Testing Guidelines</a><br>
-<a href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing">GitHub Strategy</a><br>
-<a href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing">Database Requirements and Overview</a><br>
-<a href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing">Design Specification</a><br>
-<a href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing">Coding Development Guidelines</a><br>
-<a href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing">Project Timeline</a><br>
-</p>
+<div align="center">
+  <table>
+      <tr>
+        <td>
+          <div align="center">
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_system-requirements.png" alt="System Requirements" href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/drive/folders/1i9S7qIlK7l6CivvKWDyjavt4xWDdxWxX?usp=drive_link">System Requirements</a>
+          </div>
+        </td>
+        <td>
+          <div align="center"> 
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_System-Architectural-Design.png" alt="System Architectural Design" href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing"/><br/>
+            <a href="https://docs.google.com/document/d/1BOOb4NRftvo1xs46874oS_fR5Y7npr7N00wtPJLz34Q/edit?usp=sharing">System Architectural</a>
+          </div>
+        </td>
+        <td>
+          <div align="center">        
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing"/><br/>
+            <a href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing">User Manual</a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div align="center">
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Testing-Guidelines.png" alt="Testing Guidelines" href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing"/><br/>
+            <a href="https://docs.google.com/document/d/1sZ2ArCRmKwBHk6gz4ez0bNNLgCv8e1hYfTPa99Em9-Q/edit?usp=sharing">Testing Guidelines</a>
+          </div>
+        </td>
+        <td>
+          <div align="center"> 
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_GitHub-Strategy.png" alt="GitHub Strategy" href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing"/><br/>   
+            <a href="https://docs.google.com/document/d/1xwSrbRhNgeZNj9OJyeFsAZcZLBGH7HAqRzKF0woggmo/edit?usp=sharing">GitHub Strategy</a>
+          </div>
+        </td>
+        <td>
+        <div align="center"> 
+          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Database-Requirements-and-Overview.png" alt="Database Requirements" href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing"/><br/>     
+          <a href="https://docs.google.com/document/d/1_QhEc70qz2058H00ZBPEm1a-XIa0mhzXWdwdg9PCTNs/edit?usp=sharing">Database Requirements</a>
+        </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div align="center">
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Design-Specification.png" alt="Design Specification" href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing"/>    <br/>   
+            <a href="https://docs.google.com/document/d/1tianXEVGNIxnXVOBRpPKE0U0coOy3P-hDIPLjxaNB0Y/edit?usp=sharing">Design Specification</a>
+          </div>
+        </td>
+        <td>
+          <div align="center"> 
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Coding-Guidelines.png" alt="Coding Guidelines" href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing"/><br/>     
+            <a href="https://docs.google.com/document/d/1L8Rv-nD-Y_Z9MiOHB6WgvOjVE4w0diAerxDoX3qQ3sU/edit?usp=sharing">Coding Guidelines</a>
+          </div>
+        </td>
+        <td>
+          <div align="center">  
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Project-Timeline.png" alt="Project Timeline" href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing"/>     <br/>
+            <a href="https://docs.google.com/document/d/1aNQvC-An7qno-8LbaOcglUXu1TaOQ4JJX0Y4zsAKbFM/edit?usp=sharing">Project Timeline</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
 
 # Our Tech stack
 
@@ -143,10 +233,11 @@
 
 # Meet Team LAN Lords
 
-| Name and Surname             | Github Profiles                                                                                           | LinkedIn Profile                                 | Roles                  | Bio                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Profile Image                                                                |
-| :--------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Dominique Da Silva           | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)                                        | Team Lead and Documentation      | Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Dominique_Da_Silva.jpg" width="700">                       |
-| Kyle Marshall                | <a href="https://github.com/KyleMarshall23"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/kyle-marshall23)                                                        | UI Engineer and Documentation              | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function.                                                                             | <img src="/images/profile_Kyle_Marshall.jpg" width="700">                       |
-| Tino Gwanyanya                | <a href="https://github.com/Tinogwanz"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/anold-tinotenda-gwanyanya)                                                        | Backend and Documentation               | Hi, I am Tino. Learning new technologies is my super power!                                                                            | <img src="/images/profile_Tino_Gwanyanya.jpg" width="700">                       |
-| Matt                | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/matthewels/)                                                        | Dev Ops and Documentation              | Hi, I am Matt. I have a passion for networks.                                                                             | <img src="/images/profile_Matthew_Els.jpg" width="700">                       |
-| Andinda Bakainaga               | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216)                                                        | Backend and Documentation               | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                             | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">                       |
+| Name and Surname   | Github Profiles                                                                                                    | LinkedIn Profile                                                    | Roles                         | Bio                                                                                                                                                                                                                                                                                                                                                                                 | Profile Image                                                  |
+| :----------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Dominique Da Silva | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a> | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)           | Team Lead and Documentation   | Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                          | <img src="/images/profile_Dominique_Da_Silva.jpg" width="700"> |
+| Kyle Marshall      | <a href="https://github.com/KyleMarshall23"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>     | [LinkedIn](https://www.linkedin.com/in/kyle-marshall23)             | UI Engineer and Documentation | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function. | <img src="/images/profile_Kyle_Marshall.jpg" width="700">      |
+| Tino Gwanyanya     | <a href="https://github.com/Tinogwanz"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>          | [LinkedIn](https://www.linkedin.com/in/anold-tinotenda-gwanyanya)   | Backend and Documentation     | Hi, I am Tino. Learning new technologies is my super power!                                                                                                                                                                                                                                                                                                                         | <img src="/images/profile_Tino_Gwanyanya.jpg" width="700">     |
+| Matt               | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>         | [LinkedIn](https://www.linkedin.com/in/matthewels/)                 | Dev Ops and Documentation     | Hi, I am Matt. I have a passion for networks.                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Matthew_Els.jpg" width="700">        |
+| Andinda Bakainaga  | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>           | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216) | Backend and Documentation     | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                                                                                                                                                                                                                                              | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">  |
+
