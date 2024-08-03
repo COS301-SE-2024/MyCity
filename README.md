@@ -370,12 +370,16 @@
     <tr>
       <td>
         <div align="center">  
-          <img width="200" height="auto" src="/images/logo_epi-use.png" alt="Epi-Use Labs" href="https://www.epiuselabs.com/"/>     
+          <a href="https://www.epiuselabs.com/">
+            <img width="200" height="auto" src="/images/logo_epi-use.png" alt="Epi-Use Labs" />     
+          </a>
         </div>
       </td>
       <td>
         <div align="center">  
-          <img width="200" height="auto" src="/images/logo_group-elephant.png" alt="Group Elephant" href="https://www.groupelephant.com/"/>     
+          <a href="https://www.groupelephant.com/" >
+            <img width="200" height="auto" src="/images/logo_group-elephant.png" alt="Group Elephant" />     
+          </a>
         </div>
       </td>
     </tr>
