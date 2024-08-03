@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from botocore.exceptions import ClientError
 
-from chalicelib.tickets.tickets_controllers import (
+from chalicelib.tenders.tenders_controllers import (
     BadRequestError,
     inreview,
     create_tender,
