@@ -22,7 +22,7 @@
 
 <p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features:</p>
 
-<a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1"> MyCity</a>
+<a href="https://www.mycity.net.za"> MyCity</a>
 
 <p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
 
