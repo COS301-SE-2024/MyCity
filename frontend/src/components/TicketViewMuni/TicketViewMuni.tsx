@@ -254,8 +254,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {showTenderMax && (
         <TenderMax
           tender={{
-            id: ticketNumber,
-            ticketId: ticketNumber,
+            ticket_id: ticketNumber,
             status: tenders.status === "Fix in progress" ? "Active" : "Unassigned",
             serviceProvider: createdBy,
             issueDate: new Date().toISOString().split('T')[0],

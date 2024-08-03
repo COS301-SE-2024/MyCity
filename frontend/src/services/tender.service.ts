@@ -120,7 +120,34 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
     {
         return false
     }
-    else result
+    else 
+    {
+        AssignTenderNumbers(result)
+        return result
+    }
     
 
+}
+
+function CreateTenderNumber(municipality: string): string {
+    let ticketnumber = municipality[0].toUpperCase();
+    for (let index = 0; index < 2; index++) {
+        let randint: number = Math.floor(Math.random() * municipality.length);
+        while (municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_") {
+            // console.log("inside loop")
+            randint = Math.floor(Math.random() * municipality.length);
+        }
+        ticketnumber += municipality[randint].toUpperCase();
+    }
+    for (let index = 0; index < 2; index++) {
+        const randint = Math.floor(Math.random() * municipality.length) + 1;
+        ticketnumber += String(randint);
+    }
+    return ticketnumber;
+}
+
+function AssignTenderNumbers(data: any[]) {
+    data.forEach((item: any) => {
+        item['tendernumber'] = CreateTenderNumber(item.municipality_id);
+    });
 }

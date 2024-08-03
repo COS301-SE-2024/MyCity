@@ -5,6 +5,7 @@ type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
 interface TenderType {
   tender_id: string;
+  tendernumber : string;
   company_id : string;
   companyname : string;
   datetimesubmitted : string;
@@ -60,7 +61,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
             {tender.status}
           </span>
         </div>
-        <div className="col-span-1 flex justify-center font-bold">{tender.id}</div>
+        <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
         <div className="col-span-1 flex justify-center">{tender.datetimesubmitted}</div>
