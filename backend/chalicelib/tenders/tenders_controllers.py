@@ -330,6 +330,15 @@ def getContracts(tender_id):
             KeyConditionExpression=Key("tender_id").eq(tender_id)
         )
 
+        if len(response_tender["Items"]) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "TenderDoesntExist",
+                    "Message": "Tender Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "TenderDoesntExist")
+
         tender_itm = response_tender["Items"][0]
         response_name = companies_table.query(
             KeyConditionExpression=Key("pid").eq(tender_itm["company_id"])
