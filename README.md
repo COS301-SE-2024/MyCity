@@ -1,4 +1,3 @@
-
 # MyCity by team LAN Lords
 
 <p align="center">
@@ -65,6 +64,7 @@
 # Features (a short summary of the user's functionality)
 
 # Demo Content
+
 <div align="center">
   <table>
     <tr>
@@ -103,6 +103,7 @@
 </div>
 
 # Documentation
+
 <div align="center">
   <table>
       <tr>
@@ -167,7 +168,6 @@
       </tr>
     </table>
   </div>
-  
 
 # Our Tech stack
 
@@ -232,29 +232,112 @@
 </p>
 
 # Meet Team LAN Lords
-
-| Name and Surname   | Github Profiles                                                                                                    | LinkedIn Profile                                                    | Roles                         | Bio                                                                                                                                                                                                                                                                                                                                                                                 | Profile Image                                                  |
-| :----------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Dominique Da Silva | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a> | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)           | Team Lead and Documentation   | Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                          | <img src="/images/profile_Dominique_Da_Silva.jpg" width="700"> |
-| Kyle Marshall      | <a href="https://github.com/KyleMarshall23"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>     | [LinkedIn](https://www.linkedin.com/in/kyle-marshall23)             | UI Engineer and Documentation | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function. | <img src="/images/profile_Kyle_Marshall.jpg" width="700">      |
-| Tino Gwanyanya     | <a href="https://github.com/Tinogwanz"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>          | [LinkedIn](https://www.linkedin.com/in/anold-tinotenda-gwanyanya)   | Backend and Documentation     | Hi, I am Tino. Learning new technologies is my super power!                                                                                                                                                                                                                                                                                                                         | <img src="/images/profile_Tino_Gwanyanya.jpg" width="700">     |
-| Matt               | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>         | [LinkedIn](https://www.linkedin.com/in/matthewels/)                 | Dev Ops and Documentation     | Hi, I am Matt. I have a passion for networks.                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Matthew_Els.jpg" width="700">        |
-| Andinda Bakainaga  | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>           | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216) | Backend and Documentation     | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                                                                                                                                                                                                                                              | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">  |
-
-
+<div>
+  <table>
+    <!-- Dominique -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center">
+            <img src="/images/profile_Dominique_Da_Silva.jpg" width="256" style="border-radius: 50%" >
+            <h2>Dominique Da Silva<h2>
+            <h3>Team Leader | Documentation</h3>
+          </td>
+          <td colspan="2">
+            <h3>Bio: <h3>
+            <p>Developer with a passion for creating innovative solutions</p>
+            <h3>Project Contributions: <h3>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Kyle -->
+    <tr>
+      <table>
+        <tr>
+          <td colspan="2">
+            <h3>Bio: <h3>
+              <p>As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function.</p>
+            <h3>Project Contributions: <h3>
+          </td>          
+          <td align="center">
+            <img src="/images/profile_Kyle_Marshall.jpg" width="256" style="border-radius: 50%" >
+            <h2>Kyle Marshall<h2>
+            <h3>UI Engineer | Documentation</h3>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Tino -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center">
+            <img src="/images/profile_Tino_Gwanyanya.jpg" width="256" style="border-radius: 50%" >
+            <h2>Tino Gwanyanya<h2>
+            <h3>Backend Engineer | Intergration Engineer | Documentation</h3>
+          </td>
+          <td colspan="2">
+            <h3>Bio: <h3>
+            <p>Learning new technologies is my super power!</p>
+            <h3>Project Contributions: <h3>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Matthew -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center" colspan="2">
+            <h3>Bio: <h3>
+            <p>I am a passionate software engineer with a background in computer science and multimedia. My expertise spans DevOps, front-end development, and data engineering. I have experience setting up and managing AWS infrastructure, configuring CI/CD pipelines, and developing user-friendly mobile interfaces. I thrive in collaborative environments and am dedicated to creating robust, scalable, and innovative solutions.</p>
+            <h3>Project Contributions: <h3>
+            <p>1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment.</p>
+            <p>2.	Mobile Front-End Engineer: Designed and developed all mobile screens, ensuring a seamless and intuitive user experience.</p>
+            <p>3.	Data Engineer & Intergration Engineer: Created comprehensive mock data sets for testing and validation during the app’s development.</p>
+          </td>          
+          <td align="center">
+            <img src="/images/profile_Matthew_Els.jpg" width="256" style="border-radius: 50%" >
+            <h2>Matthew Els<h2>
+            <h3>DevOps Engineer | Mobile Front-End Engineer | Data Engineer | Intergration Engineer | Documentation</h3>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Andinda -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center">
+            <img src="/images/profile_Andinda_Bakainaga.jpg" width="256" style="border-radius: 50%" >
+            <h2>Andinda Bakainaga<h2>
+            <h3>Backend Engineer | Documentation</h3>
+          </td>
+          <td align="center" colspan="2">
+            <h3>Bio: <h3>
+            <p>I will provide any solution you might need if you promise me donuts.</p>
+            <h3>Project Contributions: <h3>
+          </td>
+        </tr>
+      </table>
+    </tr>
+  </table>
+</div>
 
 # In Association With
+
 <div align="center">
   <table>
     <tr>
       <td>
         <div align="center">  
-          <img width="100" height="auto" src="/images/logo_epi-use.png" alt="Epi-Use Labs" href="https://www.epiuselabs.com/"/>     
+          <img width="200" height="auto" src="/images/logo_epi-use.png" alt="Epi-Use Labs" href="https://www.epiuselabs.com/"/>     
         </div>
       </td>
       <td>
         <div align="center">  
-          <img width="100" height="auto" src="/images/logo_group-elephant.png" alt="Group Elephant" href="https://www.groupelephant.com/"/>     
+          <img width="200" height="auto" src="/images/logo_group-elephant.png" alt="Group Elephant" href="https://www.groupelephant.com/"/>     
         </div>
       </td>
     </tr>
