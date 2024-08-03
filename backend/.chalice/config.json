@@ -3,30 +3,10 @@
   "app_name": "mycity-api",
   "stages": {
     "dev": {
-      "api_gateway_stage": "dev",
-      "resource_policy": {
-        "rest_api_id": "sqtiboblx8",
-        "ignore_resources": [
-          "COGNITO-AUTHORIZER"
-        ]
-      },
-      "environment_variables": {
-        "API_ENV": "dev",
-        "USER_POOL_ID": "eu-west-1_xhcBZxRZk"
-      }
+      "api_gateway_stage": "dev"
     },
     "prod": {
-      "api_gateway_stage": "prod",
-      "resource_policy": {
-        "rest_api_id": "sqtiboblx8",
-        "ignore_resources": [
-          "COGNITO-AUTHORIZER"
-        ]
-      },
-      "environment_variables": {
-        "API_ENV": "prod",
-        "USER_POOL_ID": "eu-west-1_xhcBZxRZk"
-      }
+      "api_gateway_stage": "prod"
     }
   }
 }

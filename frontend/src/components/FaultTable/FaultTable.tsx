@@ -252,4 +252,3 @@ const IncidentTable: React.FC<IncidentItemsProps> = ({tableitems}: IncidentItems
 };
 
 export default IncidentTable;
-*/
