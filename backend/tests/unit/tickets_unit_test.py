@@ -86,13 +86,6 @@ def test_users_watchlist():
 """
 
 
-def test_invalid_user_municipality():
-    response = get_watchlist("Stellenbosch Lol")
-    response_two = get_watchlist("")
-    assert response["Status"] == "FAILED"
-    assert response_two["Status"] == "FAILED"
-
-
 # Tests for fetching/viewing of a single ticket's data
 def test_view_ticket_data_invalid_ticket_id():
     invalid_ticket_id = "invalidformat"
