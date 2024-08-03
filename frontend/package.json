@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.2.4",
+    "@chakra-ui/react": "^2.8.2",
     "@googlemaps/js-api-loader": "^1.16.6",
     "@nextui-org/react": "^2.4.1",
     "@nextui-org/system": "^2.2.1",
