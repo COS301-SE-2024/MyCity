@@ -241,3 +241,22 @@
 | Matt               | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>         | [LinkedIn](https://www.linkedin.com/in/matthewels/)                 | Dev Ops and Documentation     | Hi, I am Matt. I have a passion for networks.                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Matthew_Els.jpg" width="700">        |
 | Andinda Bakainaga  | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>           | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216) | Backend and Documentation     | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                                                                                                                                                                                                                                              | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">  |
 
+
+
+# In Association With
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <div align="center">  
+          <img width="100" height="auto" src="/images/logo_epi-use.png" alt="Epi-Use Labs" href="https://www.epiuselabs.com/"/>     
+        </div>
+      </td>
+      <td>
+        <div align="center">  
+          <img width="100" height="auto" src="/images/logo_group-elephant.png" alt="Group Elephant" href="https://www.groupelephant.com/"/>     
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
