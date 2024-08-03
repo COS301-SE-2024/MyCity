@@ -6,7 +6,6 @@
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
-
 <p align="center">
     <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square">
     <img alt="Code_Coverage" src="https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square"> 
@@ -17,8 +16,15 @@
     <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=flat-square">
 </p>
 
-
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
+
+# MyCity PWA
+
+<p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features:</p>
+
+<a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1"> MyCity</a>
+
+<p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
 
 # Table of contents
 
@@ -32,8 +38,8 @@
 - [Our Tech stack](#our-tech-stack)
 - [Meet Team LAN Lords](#meet-team-lan-lords)
 
-
 # Project Overview
+
 <details>
 <summary><p>MyCity will revolutionise the way municipalities, communities, and third-party vendors and organisations manage, repair and track assets, by acting as a single point of contact to allow users to log tickets related to these assets, and provide updates while the ticket is in progress.</p> </summary>
 
@@ -52,11 +58,10 @@
 
 <p> You can track the progress of our project on the <a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1">Project Board</a> for MyCity.</p>
 
-
-
 # Features (a short summary of the user's functionality)
 
 # Demo Content
+
 <p align="center">
 <a href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link">Demo 1</a><br>
 <a href="">Demo 2</a><br>
@@ -143,10 +148,10 @@
 
 # Meet Team LAN Lords
 
-| Name and Surname             | Github Profiles                                                                                           | LinkedIn Profile                                 | Roles                  | Bio                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Profile Image                                                                |
-| :--------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Dominique Da Silva           | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)                                        | Team Lead and Documentation      | Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Dominique_Da_Silva.jpg" width="700">                       |
-| Kyle Marshall                | <a href="https://github.com/KyleMarshall23"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/kyle-marshall23)                                                        | UI Engineer and Documentation              | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function.                                                                             | <img src="/images/profile_Kyle_Marshall.jpg" width="700">                       |
-| Tino Gwanyanya                | <a href="https://github.com/Tinogwanz"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/anold-tinotenda-gwanyanya)                                                        | Backend and Documentation               | Hi, I am Tino. Learning new technologies is my super power!                                                                            | <img src="/images/profile_Tino_Gwanyanya.jpg" width="700">                       |
-| Matt                | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/matthewels/)                                                        | Dev Ops and Documentation              | Hi, I am Matt. I have a passion for networks.                                                                             | <img src="/images/profile_Matthew_Els.jpg" width="700">                       |
-| Andinda Bakainaga               | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>                             | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216)                                                        | Backend and Documentation               | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                             | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">                       |
+| Name and Surname   | Github Profiles                                                                                                    | LinkedIn Profile                                                    | Roles                         | Bio                                                                                                                                                                                                                                                                                                                                                                                 | Profile Image                                                  |
+| :----------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Dominique Da Silva | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a> | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)           | Team Lead and Documentation   | Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                          | <img src="/images/profile_Dominique_Da_Silva.jpg" width="700"> |
+| Kyle Marshall      | <a href="https://github.com/KyleMarshall23"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>     | [LinkedIn](https://www.linkedin.com/in/kyle-marshall23)             | UI Engineer and Documentation | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function. | <img src="/images/profile_Kyle_Marshall.jpg" width="700">      |
+| Tino Gwanyanya     | <a href="https://github.com/Tinogwanz"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>          | [LinkedIn](https://www.linkedin.com/in/anold-tinotenda-gwanyanya)   | Backend and Documentation     | Hi, I am Tino. Learning new technologies is my super power!                                                                                                                                                                                                                                                                                                                         | <img src="/images/profile_Tino_Gwanyanya.jpg" width="700">     |
+| Matt               | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>         | [LinkedIn](https://www.linkedin.com/in/matthewels/)                 | Dev Ops and Documentation     | Hi, I am Matt. I have a passion for networks.                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Matthew_Els.jpg" width="700">        |
+| Andinda Bakainaga  | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>           | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216) | Backend and Documentation     | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                                                                                                                                                                                                                                              | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">  |
