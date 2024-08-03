@@ -1,4 +1,3 @@
-
 # MyCity by team LAN Lords
 
 <p align="center">
@@ -25,6 +24,7 @@
 
 <a href="https://www.mycity.net.za" >
   <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/logo_MyCity.png" alt="MyCity Logo"/>
+  <img width="200" height="auto" href="https://www.mycity.net.za" src="/images//qr_MyCity.png" alt="MyCity QR"/>
   MyCity
 </a>
 
@@ -65,6 +65,7 @@
 # Features (a short summary of the user's functionality)
 
 # Demo Content
+
 <div align="center">
   <table>
     <tr>
@@ -103,6 +104,7 @@
 </div>
 
 # Documentation
+
 <div align="center">
   <table>
       <tr>
@@ -167,7 +169,6 @@
       </tr>
     </table>
   </div>
-  
 
 # Our Tech stack
 
@@ -233,11 +234,155 @@
 
 # Meet Team LAN Lords
 
-| Name and Surname   | Github Profiles                                                                                                    | LinkedIn Profile                                                    | Roles                         | Bio                                                                                                                                                                                                                                                                                                                                                                                 | Profile Image                                                  |
-| :----------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Dominique Da Silva | <a href="https://github.com/Dominique-Da-Silva"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a> | [LinkedIn](https://www.linkedin.com/in/DominiqueDaSilva/)           | Team Lead and Documentation   | Developer with a passion for creating innovative solutions                                                                                                                                                                                                                                                                                                                          | <img src="/images/profile_Dominique_Da_Silva.jpg" width="700"> |
-| Kyle Marshall      | <a href="https://github.com/KyleMarshall23"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>     | [LinkedIn](https://www.linkedin.com/in/kyle-marshall23)             | UI Engineer and Documentation | Hi, I am Kyle Marshall! As a dedicated designer, I bring a keen eye for beauty, aesthetics and professionalism to every project. Currently pursuing my third year in Computer Science, I leverage my technical knowledge to enhance my design work. Specializing in UX/UI design, I'm passionate about crafting intuitive user experiences that seamlessly blend form and function. | <img src="/images/profile_Kyle_Marshall.jpg" width="700">      |
-| Tino Gwanyanya     | <a href="https://github.com/Tinogwanz"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>          | [LinkedIn](https://www.linkedin.com/in/anold-tinotenda-gwanyanya)   | Backend and Documentation     | Hi, I am Tino. Learning new technologies is my super power!                                                                                                                                                                                                                                                                                                                         | <img src="/images/profile_Tino_Gwanyanya.jpg" width="700">     |
-| Matt               | <a href="https://github.com/MatthewEls"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>         | [LinkedIn](https://www.linkedin.com/in/matthewels/)                 | Dev Ops and Documentation     | Hi, I am Matt. I have a passion for networks.                                                                                                                                                                                                                                                                                                                                       | <img src="/images/profile_Matthew_Els.jpg" width="700">        |
-| Andinda Bakainaga  | <a href="https://github.com/Dindosss"><img src="https://skillicons.dev/icons?i=github&theme=light"/></a>           | [LinkedIn](https://www.linkedin.com/in/andinda-bakainaga-b8b011216) | Backend and Documentation     | Hi, I am Andinda. I will provide any solution you might need if you promise me donuts.                                                                                                                                                                                                                                                                                              | <img src="/images/profile_Andinda_Bakainaga.jpg" width="700">  |
+<div>
+  <table>
+    <!-- Dominique -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center">
+            <img src="/images/profile_Dominique_Da_Silva.jpg" width="256" style="border-radius: 50%" >
+            <h2>Dominique Da Silva<h2>
+            <h5>Team Leader | Documentation</h5>
+            <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://github.com/Dominique-Da-Silva">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
+          </td>
+         <td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I excel in delivering innovative solutions that generate tangible value. Driven by a passion for technology and a commitment to excellence, I am poised to contribute my expertise to impactful projects in the realms of backend development and AI.</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Kyle -->
+    <tr>
+      <table>
+        <tr>
+<td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I am a dynamic and innovative individual with a keen eye for aesthetics and user experience. Combining creativity with logical thinking, I bring a unique approach to software engineering as a discipline. 
+</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
+          </td>          
+          <td align="center" >
+            <img src="/images/profile_Kyle_Marshall.jpg" width="256" style="border-radius: 50%" >
+            <h2>Kyle Marshall<h2>
+            <h5>UI Engineer | Documentation</h5>
+            <a href="https://github.com/KyleMarshall23">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/kyle-marshall23">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Tino -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center">
+            <img src="/images/profile_Tino_Gwanyanya.jpg" width="256" style="border-radius: 50%" >
+            <h2>Tino Gwanyanya<h2>
+            <h5>Backend Engineer | Intergration Engineer | Documentation</h5>
+            <a href="https://github.com/Tinogwanz">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/anold-tinotenda-gwanyanya">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
+          </td>
+          <td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >My superpower? Rapid learning. This means I cannot only adapt to diverse scenarios but also excel in them. The result is then the ability to not only meet but exceed set objectives effectively. Driven by challenges, I possess the patience and resilience to see tasks through to completion.
+</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Matthew -->
+    <tr>
+      <table>
+        <tr>
+          <td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I am a passionate software engineer with a background in computer science and multimedia. My expertise spans DevOps, front-end development, and data engineering. I have experience setting up and managing AWS infrastructure, configuring CI/CD pipelines, and developing user-friendly mobile interfaces. I thrive in collaborative environments and am dedicated to creating robust, scalable, and innovative solutions.</h6>
+            <h4>Project Contributions: <h4>
+            <h6>1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment. <br/><br/>
+            2.	Mobile Front-End Engineer: Designed and developed all mobile screens, ensuring a seamless and intuitive user experience. 
+            <br/><br/>
+            3.	Data Engineer & Intergration Engineer: Created comprehensive mock data sets for testing and validation during the app’s development.</h6>
+          </td>          
+          <td align="center">
+            <img src="/images/profile_Matthew_Els.jpg" width="256" style="border-radius: 50%" >
+            <h2>Matthew Els<h2>
+            <h5>DevOps Engineer | Mobile Front-End Engineer | Data Engineer | Intergration Engineer | Documentation</h5>
+            <a href="https://github.com/MatthewEls">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/matthewels/">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </tr>
+    <!-- Andinda -->
+    <tr>
+      <table>
+        <tr>
+          <td align="center">
+            <img src="/images/profile_Andinda_Bakainaga.jpg" width="256" style="border-radius: 50%" >
+            <h2>Andinda Bakainaga<h2>
+            <h5>Backend Engineer | Documentation</h5>
+            <a href="https://github.com/Dindosss">
+              <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+            </a>
+            <a href="https://www.linkedin.com/in/andinda-bakainaga-b8b011216">
+              <img src="/images/logo_linkedin.png" alt="Linkedin" style="width: 60px; height: auto;"/>
+            </a>
+          </td>
+<td align="left" colspan="2">
+            <h4>Bio: <h4>
+            <h6 >I am an energetic and relentless software developer, with a focus on backend development. I bring a blend of creativity and strategic thinking to problem-solving in this domain, consistently delivering innovative and efficient solutions</h6>
+            <h4>Project Contributions: <h4>
+            <h6></h6>
+          </td>
+        </tr>
+      </table>
+    </tr>
+  </table>
+</div>
 
+# In Association With
+
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <div align="center">  
+          <a href="https://www.epiuselabs.com/">
+            <img width="200" height="auto" src="/images/logo_epi-use.png" alt="Epi-Use Labs" />     
+          </a>
+        </div>
+      </td>
+      <td>
+        <div align="center">  
+          <a href="https://www.groupelephant.com/" >
+            <img width="200" height="auto" src="/images/logo_group-elephant.png" alt="Group Elephant" />     
+          </a>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
