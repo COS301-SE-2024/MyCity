@@ -393,6 +393,7 @@ def getMostUpvoted():
 
 def getUserprofile(ticket_data):
     user_image = ""
+    user_name = ""
     index = 0
     try:
         for username in ticket_data:
@@ -403,7 +404,10 @@ def getUserprofile(ticket_data):
             for attr in user_response["UserAttributes"]:
                 if attr["Name"] == "picture":
                     user_image = attr["Value"]
+                if attr["Name"] == "given_name":
+                    user_name = attr["Value"]
             username["user_picture"] = user_image
+            username["createdby"] = user_name
             username["municipality_picture"] = ""
 
     except cognito_cient.exceptions.UserNotFoundException:
@@ -528,3 +532,21 @@ def add_ticket_comment_without_image(comment, ticket_id, user_id):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
+
+# fetching all of the comments related to a particular ticket that is being viewed
+def get_ticket_comments(curr_ticket_id):
+    curr_ticket_id = validate_ticket_id(curr_ticket_id)
+    try:
+        response = ticketupdate_table.scan()
+        items = response.get("Items", [])
+        filtered_items = [
+            item
+            for item in items
+            if (curr_ticket_id.lower() in item.get("ticket_id", "").lower())
+        ]
+        return filtered_items
+    except ClientError as e:
+        raise BadRequestError(
+            f"Failed to search for the ticket comments: {e.response['Error']['Message']}"
+        )

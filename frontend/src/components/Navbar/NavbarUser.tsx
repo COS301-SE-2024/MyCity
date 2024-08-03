@@ -91,7 +91,7 @@ export default function NavbarUser() {
             <Link href="/notifications/citizen" passHref>
               <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
                 <div className="flex flex-col gap-1 items-center">
-                  <Bell size={50} />
+                  <Bell size={25} />
                   <span>Notifications</span>
                 </div>
               </div>

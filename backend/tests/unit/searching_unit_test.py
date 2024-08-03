@@ -54,6 +54,57 @@ def test_validate_search_term_invalid():
             validate_search_term(term)
 
 
+# searching for tickets and asset search term based on the user's current municipality# Unit test for search_tickets with valid municipality name and search term
+def test_search_tickets_valid(test_client):
+    user_municipality = "Mafube Local"  # Example municipality name
+    search_term = "water"
+
+    try:
+        response = search_tickets(user_municipality, search_term)
+        assert isinstance(response, list), "Response should be a list"
+        # Additional checks if necessary based on the structure of the response
+        if response:
+            for item in response:
+                assert (
+                    "municipality_id" in item
+                ), "Each item should have a 'municipality_id' field"
+                assert (
+                    "description" in item or "asset_id" in item
+                ), "Each item should have either a 'description' or 'asset_id' field"
+                assert (
+                    user_municipality.lower() in item.get("municipality_id", "").lower()
+                ), "User municipality should be in 'municipality_id'"
+                assert (
+                    search_term.lower() in item.get("description", "").lower()
+                    or search_term.lower() in item.get("asset_id", "").lower()
+                ), "Search term should be in 'description' or 'asset_id' field"
+    except BadRequestError as e:
+        pytest.fail(f"BadRequestError was not expected: {str(e)}")
+
+
+# Unit test for search_tickets with invalid search term
+def test_search_tickets_invalid_search_term(test_client):
+    user_municipality = "Mafube Local"
+    search_term = "Invalid$Term"
+
+    with pytest.raises(BadRequestError):
+        search_tickets(user_municipality, search_term)
+
+
+# Unit test for search_tickets with empty search term
+def test_search_tickets_empty_search_term(test_client):
+    user_municipality = "Mafube Local"
+    search_term = ""
+
+    try:
+        response = search_tickets(user_municipality, search_term)
+        assert response, "Response should not be empty for an empty search term"
+    except BadRequestError as e:
+        pytest.fail(
+            f"BadRequestError was not expected for an empty search term: {str(e)}"
+        )
+
+
 # Invalid search term should return bad request (due to the valid search term check)
 def test_search_service_providers_invalid_term(test_client):
     search_term_invalid = "Select * "
