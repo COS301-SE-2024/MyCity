@@ -1,4 +1,3 @@
-
 from venv import logger
 import boto3
 from botocore.exceptions import ClientError
@@ -241,7 +240,8 @@ def accept_tender(sender_data):
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
 
-#company tenders
+
+# company tenders
 def getCompanyTenders(company_name):
     try:
         if company_name == None:
