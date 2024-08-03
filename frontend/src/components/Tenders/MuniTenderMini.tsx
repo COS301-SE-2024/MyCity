@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import TenderMax from './MuniTenderMax'; // Assuming the detailed view component is in the same directory
 

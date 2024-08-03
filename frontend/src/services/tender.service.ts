@@ -1,5 +1,4 @@
 
-
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
 {
     const data = {
@@ -150,4 +149,4 @@ function AssignTenderNumbers(data: any[]) {
     data.forEach((item: any) => {
         item['tendernumber'] = CreateTenderNumber(item.municipality_id);
     });
-}
+

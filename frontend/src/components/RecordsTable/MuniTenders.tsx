@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
 
@@ -119,4 +120,3 @@ export default function MuniTenders({
       </div>
     </div>
   );
-}
