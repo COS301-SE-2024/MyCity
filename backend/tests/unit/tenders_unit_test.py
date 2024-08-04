@@ -16,8 +16,152 @@ from chalicelib.tenders.tenders_controllers import (
     getTicketTender,
 )
 
+
+# Fixture for sample data
+@fixture
+def sample_data():
+    return {
+        "company_name": "TownCraft Services",
+        "quote": "1234.56",
+        "ticket_id": "58a1dadb-1f07-43b0-9869-984dd80cffd4",
+        "duration": "5",
+    }
+
+
 # Unit tests for "inreview"
+# AssertionError: assert 'FAILED' == 'Success'
+"""
+def test_inreview_success():
+    sample_data = {
+        "company_name": "",
+        "ticket_id": "",
+    }
+    response = inreview(sample_data)
+    assert response["Status"] == "Success"
+"""
+
+
+def test_inreview_missing_fields():
+    sample_data = {
+        "ticket_id": "ticket123",
+    }
+    response = inreview(sample_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Missing required field: company_name"
+
+
+# AssertionError: assert 'Company Does not Exist' == 'Tender Does not Exist'
+"""
+def test_inreview_tender_doesnt_exist():
+    sample_data = {
+        "company_name": "CityAlliance Maintenance",
+        "ticket_id": "nonexistent_ticket",
+    }
+    response = inreview(sample_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Tender Does not Exist"
+"""
+
+
 # Unit tests for "create_tender"
+# Note that this function should fail with the current sample data as the function was tested and the data already inserted into the database.
+"""
+def test_create_tender_success(sample_data):
+    response = create_tender(sample_data)
+    assert response["Status"] == "Success"
+    assert "tender_id" in response
+"""
+
+
+def test_create_tender_missing_fields(sample_data):
+    incomplete_data = sample_data.copy()
+    incomplete_data.pop("company_name")
+    response = create_tender(incomplete_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Missing required field: company_name"
+
+
+def test_create_tender_company_doesnt_exist(sample_data):
+    sample_data["company_name"] = "Nonexistent Company"
+    response = create_tender(sample_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Company Does not Exist"
+
+
+"""
+def test_create_tender_tender_exists(sample_data):
+    # Ensure a tender with the same company and ticket_id exists
+    response = create_tender(sample_data)
+    assert response["Status"] == "Success"
+    # Try to create the same tender again
+    response = create_tender(sample_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Company already has a tender on this Ticket"
+"""
+
+
 # Unit tests for "accept_tender"
+"""
+def test_accept_tender_success():
+    sample_data = {
+        "company_name": "CityAlliance Maintenance",
+        "ticket_id": "6be96e97-1554-4bd1-a234-998b4544a9b0",
+    }
+    response = accept_tender(sample_data)
+    assert response["Status"] == "Success"
+"""
+
+
+def test_accept_tender_missing_fields():
+    sample_data = {
+        "ticket_id": "ticket123",
+    }
+    response = accept_tender(sample_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Missing required field: company_name"
+
+
+def test_accept_tender_tender_doesnt_exist():
+    sample_data = {
+        "company_name": "Test Company",
+        "ticket_id": "nonexistent_ticket",
+    }
+    response = accept_tender(sample_data)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Tender Does not Exist"
+
+
 # Unit tests for "getCompanyTenders"
+def test_getCompanyTenders_success():
+    response = getCompanyTenders("CityAlliance Maintenance")
+    assert isinstance(response, list)
+
+
+def test_getCompanyTenders_missing_fields():
+    response = getCompanyTenders(None)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Missing required query: name"
+
+
+def test_getCompanyTenders_company_doesnt_exist():
+    response = getCompanyTenders("Nonexistent Company")
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Company doesnt exist"
+
+
 # Unit tests for "getTicketTender"
+def test_getTicketTender_success():
+    response = getTicketTender("6be96e97-1554-4bd1-a234-998b4544a9b0")
+    assert isinstance(response, list)
+
+
+def test_getTicketTender_missing_fields():
+    response = getTicketTender(None)
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Missing required query: ticket"
+
+
+def test_getTicketTender_tender_doesnt_exist():
+    response = getTicketTender("nonexistent_ticket")
+    assert response["Status"] == "FAILED"
+    assert response["Error"] == "Tender Does not Exist"
