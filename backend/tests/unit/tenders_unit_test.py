@@ -6,6 +6,7 @@ from chalice.app import Response
 import json
 from datetime import datetime
 from botocore.exceptions import ClientError
+from unittest.mock import patch
 
 from chalicelib.tenders.tenders_controllers import (
     BadRequestError,
@@ -29,15 +30,17 @@ def sample_data():
 
 
 # Unit tests for "inreview"
-# AssertionError: assert 'FAILED' == 'Success'
 """
 def test_inreview_success():
     sample_data = {
-        "company_name": "",
-        "ticket_id": "",
+        "company_name": "TownRoots Services",
+        "ticket_id": "9645fd66-8f4c-4a29-82e7-eab0a8db8ccb",
     }
-    response = inreview(sample_data)
-    assert response["Status"] == "Success"
+    # Mocking the getCompanIDFromName function to return a list of dictionaries
+    with patch("chalicelib.tenders.tenders_controllers.getCompanIDFromName", return_value=[{"pid": "some_company_id"}]):
+        response = inreview(sample_data)
+        print(response)  # Print the response for debugging purposes
+        assert response["Status"] == "Success"
 """
 
 
@@ -51,16 +54,19 @@ def test_inreview_missing_fields():
 
 
 # AssertionError: assert 'Company Does not Exist' == 'Tender Does not Exist'
-"""
 def test_inreview_tender_doesnt_exist():
     sample_data = {
         "company_name": "CityAlliance Maintenance",
         "ticket_id": "nonexistent_ticket",
     }
-    response = inreview(sample_data)
-    assert response["Status"] == "FAILED"
-    assert response["Error"] == "Tender Does not Exist"
-"""
+    
+    # Mocking the getCompanIDFromName function to return a list of dictionaries
+    with patch("chalicelib.tenders.tenders_controllers.getCompanIDFromName", return_value=[{"pid": "some_company_id"}]):
+        # Mocking the tenders_table.scan method to return an empty list for Items
+        with patch("chalicelib.tenders.tenders_controllers.tenders_table.scan", return_value={"Items": []}):
+            response = inreview(sample_data)
+            assert response["Status"] == "FAILED"
+            assert response["Error"] == "Tender Does not Exist"
 
 
 # Unit tests for "create_tender"
@@ -88,16 +94,27 @@ def test_create_tender_company_doesnt_exist(sample_data):
     assert response["Error"] == "Company Does not Exist"
 
 
-"""
-def test_create_tender_tender_exists(sample_data):
+
+@fixture
+def sample_data_duplicate_tender():
+    return {
+        "company_name": "CityAlliance Maintenance",
+        "quote": "176440.6",
+        "ticket_id": "6be96e97-1554-4bd1-a234-998b4544a9b0",
+        "duration": "15",
+    }
+
+def test_create_tender_tender_exists(sample_data_duplicate_tender):
+    """
     # Ensure a tender with the same company and ticket_id exists
-    response = create_tender(sample_data)
+    response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "Success"
     # Try to create the same tender again
-    response = create_tender(sample_data)
+    """
+    response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "FAILED"
     assert response["Error"] == "Company already has a tender on this Ticket"
-"""
+
 
 
 # Unit tests for "accept_tender"
