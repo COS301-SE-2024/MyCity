@@ -17,12 +17,12 @@ def validate_search_term(search_term):
 def search_watchlist(search_term):
     search_term = validate_search_term(search_term)
     try:
-        response = watchlist_table.scan()
+        response = watchlist_table.scan(
+            FilterExpression="contains(user_id, :search_term)",
+            ExpressionAttributeValues={":search_term": search_term},
+        )
         items = response.get("Items", [])
-        filtered_items = [
-            item for item in items if "".lower() in item.get("user_id", "").lower()
-        ]
-        return filtered_items
+        return items
     except ClientError as e:
         raise BadRequestError(
             f"Failed to search service providers: {e.response['Error']['Message']}"
