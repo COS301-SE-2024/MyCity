@@ -68,7 +68,7 @@ export async function InReview(authcode: string,ticket: string,user_session : st
 export async function AcceptTender(companyname: string,ticket: string,user_session : string)
 {
     const data = {
-        company_name : companyname,
+        company_id : companyname,
         ticket_id : ticket,
     }
 
