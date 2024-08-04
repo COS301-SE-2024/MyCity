@@ -93,7 +93,6 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
     }
     else false
     
-    return true;
 
 }
 

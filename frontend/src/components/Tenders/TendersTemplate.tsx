@@ -55,7 +55,9 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
   // Map "Fix in progress" to "Active" for the tender's status
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
+  console.log(tender.company_id)
   const handleAction = async (action: string) => {
+    setDialog({ action, show: true });
     if(action == "Accept")
     {
         const user_data = await userProfile.getUserProfile();
@@ -63,15 +65,13 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
         const accepted = await AcceptTender(tender.company_id,tender.ticket_id,user_session)
         if(accepted == true)
         {
-            setDialog({ action, show: true });
-            toast.success(`${dialog.action} action confirmed.`);
+            console.log("inside true")
         }
         else
         {
             toast.error("Couldnt accept this tender")
         }
     }
-    setDialog({ action, show: true });
   };
 
   const confirmAction = () => {
@@ -157,7 +157,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
                   {tenderStatus === "In progress"
-                    ? `This Tender Contract is currently ${tenderStatus}. ${tender.companyname} has${tender.hasReportedCompletion ? "" : " not"} submitted a completion report.`
+                    ? `This Tender  is currently ${tenderStatus}. ${tender.companyname} has${tender.hasReportedCompletion ? "" : " not"} submitted a completion report.`
                     : `This Tender Bid is currently ${tenderStatus}.`}
                 </div>
               </div>
