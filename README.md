@@ -5,7 +5,7 @@
     <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
   </a>
   <a href="https://www.mycity.net.za">
-    <img style="width: 250px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
+    <img style="width: 150px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
   </a>
 </p>
 
@@ -27,7 +27,7 @@
 
 <p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features: 
   <a href="https://www.mycity.net.za" >
-    MyCity
+    https://www.mycity.net.za
   </a>
 </p>
 
