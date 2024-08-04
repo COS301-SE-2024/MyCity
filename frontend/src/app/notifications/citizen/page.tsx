@@ -1,18 +1,11 @@
-"use client";
-
-import React, { ReactNode } from "react";
+import React from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
-
-// Define the types for ScrollablePanel props
-interface ScrollablePanelProps {
-  title: string;
-  children: ReactNode;
-}
+import { notificationStates } from "@/components/NotificationsCitizen/states";
 
 const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
   title,
@@ -35,7 +28,7 @@ export default function Notifications() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <Navbar />
@@ -53,57 +46,45 @@ export default function Notifications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
           />
 
           {/* Content */}
           <div className="fixed inset-0 overflow-hidden">
-            {" "}
-            {/* Change from overflow-hidden to overflow-auto */}
-            <main className="h-full flex items-center justify-center pb-4 overflow-auto">
-              {" "}
-              {/* Added space-y-4 */}
+            <main className="h-full flex items-center justify-center pb-16 overflow-auto">
               {/* Your Ticket Interactions */}
               <ScrollablePanel title="Your Ticket Interactions">
                 <NotificationComment />
                 <NotificationUpvote />
                 <NotificationComment />
-                <NotificationUpvote />
-                <NotificationComment />
-                <NotificationComment />
-                <NotificationComment />
+                <NotificationComment />          
                 <NotificationUpvote />
                 <NotificationComment />
                 <NotificationUpvote />
+                <NotificationComment />
               </ScrollablePanel>
               {/* Your Ticket Updates */}
               <ScrollablePanel title="Your Ticket Updates">
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
-                <NotificationUpdate />
+                <NotificationUpdate state="AssigningContract" />
+                <NotificationUpdate state="Closed" />
+                <NotificationUpdate state="InProgress" />
+                <NotificationUpdate state="Closed" />
+                <NotificationUpdate state="AssigningContract" />
+                <NotificationUpdate state="Opened" />
+                <NotificationUpdate state="TakingTenders" />
               </ScrollablePanel>
               {/* Your Watchlist */}
               <ScrollablePanel title="Your Watchlist">
-                <NotificationWatchlist /> <NotificationComment />
+                <NotificationUpdate state="InProgress" />
                 <NotificationUpvote />
                 <NotificationComment />
-                <NotificationUpvote />
-                <NotificationWatchlist />
+                <NotificationUpdate state="AssigningContract" />
                 <NotificationComment />
+                <NotificationUpdate state="InProgress" />
+                <NotificationUpdate state="Closed" />
                 <NotificationComment />
-                <NotificationComment />
-                <NotificationUpvote />
-                <NotificationWatchlist />
-                <NotificationComment />
-                <NotificationUpvote />
-                <NotificationWatchlist />
+                <NotificationUpdate state="Opened" />
               </ScrollablePanel>
             </main>
           </div>
@@ -116,7 +97,7 @@ export default function Notifications() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
@@ -142,7 +123,7 @@ export default function Notifications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
           />
 
