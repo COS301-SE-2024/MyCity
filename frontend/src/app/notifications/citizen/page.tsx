@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
@@ -8,23 +8,37 @@ import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUp
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
 
+// Define the types for ScrollablePanel props
+interface ScrollablePanelProps {
+  title: string;
+  children: ReactNode;
+}
+
+const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
+  title,
+  children,
+}) => (
+  <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-[80vh] m-4 overflow-auto">
+    <div className="flex justify-center border p-4">
+      <h1 className="text-2xl font-bold">{title}</h1>
+    </div>
+    <div className="overflow-y-auto h-full overflow-auto">{children}</div>
+  </div>
+);
+
 export default function Notifications() {
   return (
     <div>
-      {/* <NotificationPromt /> */}
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
-          {/* <Navbar /> */}
-          <div
-            style={{
-              position: "relative",
-              height: "100vh",
-              overflow: "hidden", // Prevents content overflow
-            }}
-          >
-            <Navbar />
-          </div>
+        <div
+          style={{
+            position: "relative",
+            height: "100vh",
+            overflow: "hidden", // Prevents content overflow
+          }}
+        >
+          <Navbar />
 
           {/* Background image */}
           <div
@@ -41,92 +55,57 @@ export default function Notifications() {
               backgroundRepeat: "no-repeat",
               zIndex: -1, // Ensures the background is behind other content
             }}
-          >
-            {/* Content */}
-            <div className="h-[2vh] flex items-center justify-center"></div>
-            <div>
-              <main className="h-screen flex justify-center">
-                {/* Your Ticket Interations */}
-                <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit pb-4 pt-4 m-4">
-                  <div className="flex justify-center border p-4">
-                    <h1>Your Ticket Interations</h1>
-                  </div>
-                  <div className="my-2 mx-4">
-                    <NotificationComment />
-                  </div>
+          />
 
-                  <div className="my-2 mx-4">
-                    <NotificationUpvote />
-                  </div>
-                  <div className="my-2 mx-4">
-                    <NotificationComment />
-                  </div>
-
-                  <div className="my-2 mx-4">
-                    <NotificationUpvote />
-                  </div>
-
-                  <div className="my-2 mx-4">
-                    <NotificationComment />
-                  </div>
-
-                  <div className="my-2 mx-4">
-                    <NotificationUpvote />
-                  </div>
-                </div>
-
-                {/* Your Ticket Interations */}
-                <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit pb-4 m-4">
-                  <div className="flex justify-center border p-4">
-                    <h1>Your Ticket Updates</h1>
-                  </div>
-                  <div className="my-2 mx-4">
-                    <NotificationUpdate />
-                  </div>
-
-                  <div className="m-4">
-                    <NotificationUpdate />
-                  </div>
-                  <div className="m-4">
-                    <NotificationUpdate />
-                  </div>
-
-                  <div className="m-4">
-                    <NotificationUpdate />
-                  </div>
-
-                  <div className="m-4">
-                    <NotificationUpdate />
-                  </div>
-
-                  <div className="m-4">
-                    <NotificationUpdate />
-                  </div>
-                </div>
-
-                {/* Your Watchlist */}
-                <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit pb-4 pt-4 m-4">
-                  <div className="flex justify-center border p-4">
-                    <h1>Your Watchlist</h1>
-                  </div>
-                  <div className="my-2 mx-4">
-                    <NotificationWatchlist />
-                  </div>
-
-                  <div className="my-2 mx-4">
-                    <NotificationWatchlist />
-                  </div>
-                  <div className="my-2 mx-4">
-                    <NotificationWatchlist />
-                  </div>
-
-                  <div className="my-2 mx-4">
-                    <NotificationWatchlist />
-                  </div>
-
-                </div>
-              </main>
-            </div>
+          {/* Content */}
+          <div className="fixed inset-0 overflow-hidden">
+            {" "}
+            {/* Change from overflow-hidden to overflow-auto */}
+            <main className="h-full flex items-center justify-center pb-4 overflow-auto">
+              {" "}
+              {/* Added space-y-4 */}
+              {/* Your Ticket Interactions */}
+              <ScrollablePanel title="Your Ticket Interactions">
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+                <NotificationComment />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+                <NotificationUpvote />
+              </ScrollablePanel>
+              {/* Your Ticket Updates */}
+              <ScrollablePanel title="Your Ticket Updates">
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+                <NotificationUpdate />
+              </ScrollablePanel>
+              {/* Your Watchlist */}
+              <ScrollablePanel title="Your Watchlist">
+                <NotificationWatchlist /> <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationWatchlist />
+                <NotificationComment />
+                <NotificationComment />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationWatchlist />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationWatchlist />
+              </ScrollablePanel>
+            </main>
           </div>
         </div>
       </div>
@@ -165,13 +144,11 @@ export default function Notifications() {
               backgroundRepeat: "no-repeat",
               zIndex: -1, // Ensures the background is behind other content
             }}
-          ></div>
+          />
 
           {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction
