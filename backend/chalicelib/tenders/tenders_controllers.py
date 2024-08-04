@@ -202,7 +202,7 @@ def accept_tender(sender_data):
                         data["tender_id"], updateExp, expattrName, RejectexpattrValue
                     )
 
-        #editing ticket as well to In Progress
+        # editing ticket as well to In Progress
         ticket_updateExp = "set #state=:r"
         ticket_expattrName = {"#state": "state"}
         ticket_expattrValue = {":r": "In Progress"}
