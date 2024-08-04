@@ -5,7 +5,6 @@ import re
 
 dynamodb = boto3.resource("dynamodb")
 upvotes_table = dynamodb.Table("upvotes")
-companies_table = dynamodb.Table("private_companies")
 
 
 def validate_search_term(search_term):
@@ -18,12 +17,12 @@ def validate_search_term(search_term):
 def search_upvotes(search_term):
     search_term = validate_search_term(search_term)
     try:
-        response = companies_table.scan()
+        response = upvotes_table.scan()
         items = response.get("Items", [])
         filtered_items = [
             item
             for item in items
-            if search_term.lower() in item.get("name", "").lower()
+            if search_term.lower() in item.get("user_id", "").lower()
         ]
         return filtered_items
     except ClientError as e:
