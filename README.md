@@ -1,7 +1,12 @@
 # MyCity by team LAN Lords
 
 <p align="center">
-  <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
+  <a href="https://www.mycity.net.za">
+    <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
+  </a>
+  <a href="https://www.mycity.net.za">
+    <img style="width: 250px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
+  </a>
 </p>
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
@@ -20,13 +25,11 @@
 
 # MyCity PWA
 
-<p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features:</p>
-
-<a href="https://www.mycity.net.za" >
-  <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/logo_MyCity.png" alt="MyCity Logo"/>
-  <img width="200" height="auto" href="https://www.mycity.net.za" src="/images//qr_MyCity.png" alt="MyCity QR"/>
-  MyCity
-</a>
+<p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features: 
+  <a href="https://www.mycity.net.za" >
+    MyCity
+  </a>
+</p>
 
 <p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
 
@@ -71,32 +74,32 @@
     <tr>
       <td>
         <div align="center">
-              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-1.png" alt="Demo 1" href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link"/><br/>
-              <a href="https://drive.google.com/file/d/1WwK-rCcIKqEVR3G_t68R4HtnDdFkUB35/view?usp=drive_link">Demo 1</a>
+              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-1.png" alt="Demo 1" href="https://drive.google.com/drive/u/4/folders/1avFWB9kwlpBMzTB_sf69hy4mYV0fVZ-2"/><br/>
+              <a href="https://drive.google.com/drive/u/4/folders/1avFWB9kwlpBMzTB_sf69hy4mYV0fVZ-2">Demo 1</a>
             </div>
       </td>
       <td>
         <div align="center">
-              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-2.png" alt="Demo 2" href=""/><br/>
-              <a href="">Demo 2</a>
+              <img width="100" height="auto" href="https://drive.google.com/drive/u/4/folders/1nmr4Iq4ge30EMOy7w8KVYFfUuLLCCS6w" src="/images/icon_Demo-2.png" alt="Demo 2" href=""/><br/>
+              <a href="https://drive.google.com/drive/u/4/folders/1nmr4Iq4ge30EMOy7w8KVYFfUuLLCCS6w">Demo 2</a>
             </div>
       </td>
       <td>
         <div align="center">
-              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-3.png" alt="Demo 3" href=""/><br/>
-              <a href="">Demo 3</a>
+              <img width="100" height="auto" href="https://drive.google.com/drive/u/4/folders/1GOX9lom3t0gnMyl04yL4d1E94AdjlQXV" src="/images/icon_Demo-3.png" alt="Demo 3" href=""/><br/>
+              <a href="https://drive.google.com/drive/u/4/folders/1GOX9lom3t0gnMyl04yL4d1E94AdjlQXV">Demo 3</a>
             </div>
       </td>
       <td>
         <div align="center">
-              <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Demo-4.png" alt="Demo 4" href=""/><br/>
-              <a href="">Demo 4</a>
+              <img width="100" height="auto" href="https://drive.google.com/drive/u/4/folders/19AlBwP63rVEkt71bPHeHUvxjrWBkORRT" src="/images/icon_Demo-4.png" alt="Demo 4" href=""/><br/>
+              <a href="https://drive.google.com/drive/u/4/folders/19AlBwP63rVEkt71bPHeHUvxjrWBkORRT">Demo 4</a>
             </div>
       </td>
       <td>
         <div align="center">
-          <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Project-Day.png" alt="Project Day" href=""/><br/>
-          <a href="">Project Day</a>
+          <img width="100" height="auto" href="https://drive.google.com/drive/u/4/folders/12j6ciH338590703i1MX8mGWqSPuA9goL" src="/images/icon_Project-Day.png" alt="Project Day" href=""/><br/>
+          <a href="https://drive.google.com/drive/u/4/folders/12j6ciH338590703i1MX8mGWqSPuA9goL">Project Day</a>
         </div>
       </td>
     </tr>
