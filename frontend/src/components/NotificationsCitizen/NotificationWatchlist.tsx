@@ -14,7 +14,7 @@ const WatchlistComponent = () => {
         <div className="ml-4">
           <div className="font-bold ">City of Ekurhuleni</div>
           <div className="text-sm ">
-            updated the status of a Ticket on your Watchlist (EKU2-4080-45GE4)
+            updated the status of a Ticket on your Watchlist (EKU2-4080-45GE)
           </div>
           <div className="bg-blue-200 bg-opacity-75 text-black  text-center font-bold rounded-lg px-3 py-1 mt-1">
             Fix in Progress

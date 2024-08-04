@@ -7,18 +7,6 @@ import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUp
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
-import {
-  ChakraProvider,
-  Container,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  AlertTitle,
-  Box,
-  Button,
-  theme,
-  DarkMode,
-} from "@chakra-ui/react";
 
 export default function Notifications() {
   return (
