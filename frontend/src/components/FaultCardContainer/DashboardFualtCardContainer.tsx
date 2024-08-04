@@ -8,11 +8,13 @@ import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
   asset_id: string;
   state: string;
   dateOpened: string;
+  createdby : string;
   imageURL: string;
-  viewcount : number
+  viewcount : number;
   description: string;
   municipality_id: string;
-  commentcount : number
+  commentcount : number;
+  user_picture : string;
   address : string ;
 }
 
@@ -108,7 +110,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           ticketNumber={selectedCard.asset_id}
           description={selectedCard.description}
           image={selectedCard.imageURL}
-          createdBy={selectedCard.dateOpened}
+          createdBy={selectedCard.createdby}
         />
       )}
     </div>
@@ -116,3 +118,5 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
 };
 
 export default DashboardFaultCardContainer
+
+ 
