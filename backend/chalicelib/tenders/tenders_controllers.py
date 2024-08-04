@@ -12,6 +12,7 @@ from datetime import datetime
 from chalicelib.tickets.tickets_controllers import generate_id
 
 dynamodb = boto3.resource("dynamodb")
+ticket_table = dynamodb.Table("tickets")
 tenders_table = dynamodb.Table("tenders")
 companies_table = dynamodb.Table("private_companies")
 contract_table = dynamodb.Table("contracts")
@@ -295,6 +296,7 @@ def getTicketTender(ticket_id):
             raise ClientError(error_response, "TenderDoesntExist")
         item_tender = response_tender["Items"]
         assignCompanyName(item_tender)
+        assignLongLat(item_tender)
         return item_tender
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -411,3 +413,19 @@ def assignCompanyName(data):
         else:
             items = response_name["Items"][0]
             item["companyname"] = items["name"]
+
+
+def assignLongLat(data):
+    for item in data:
+        response = ticket_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+        )
+        if len(response["Items"]) <= 0:
+            item["longitude"] = "26.5623685320641"
+            item["latitude"] = "-32.90383"
+        else:
+            print(response["Items"][0])
+            tickets = response["Items"][0]
+            item["longitude"] = tickets["longitude"]
+            item["latitude"] = tickets["latitude"]
+
