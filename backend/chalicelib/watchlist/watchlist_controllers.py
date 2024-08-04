@@ -20,9 +20,7 @@ def search_watchlist(search_term):
         response = watchlist_table.scan()
         items = response.get("Items", [])
         filtered_items = [
-            item
-            for item in items
-            if "".lower() in item.get("user_id", "").lower()
+            item for item in items if "".lower() in item.get("user_id", "").lower()
         ]
         return filtered_items
     except ClientError as e:
