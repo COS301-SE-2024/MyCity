@@ -202,6 +202,17 @@ def accept_tender(sender_data):
                         data["tender_id"], updateExp, expattrName, RejectexpattrValue
                     )
 
+        #editing ticket as well to In Progress
+        ticket_updateExp = "set #state=:r"
+        ticket_expattrName = {"#state": "state"}
+        ticket_expattrValue = {":r": "In Progress"}
+        response = ticket_table.update_item(
+            Key={"ticket_id": ticket_id},
+            UpdateExpression=ticket_updateExp,
+            ExpressionAttributeNames=ticket_expattrName,
+            ExpressionAttributeValues=ticket_expattrValue,
+        )
+
         ## Creating contract once tender is accepted
         current_time = datetime.now()
         submitted_time = current_time.strftime("%Y-%m-%dT%H:%M:%S")
