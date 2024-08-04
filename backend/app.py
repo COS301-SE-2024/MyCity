@@ -28,6 +28,7 @@ app.register_blueprint(municipalities_blueprint, "Municipality", "/municipality"
 
 app.register_blueprint(tenders_blueprint, "Tenders", "/tenders")
 
+app.register_blueprint(searching_blueprint, "Upvotes", "/upvotes")
 
 @app.route("/", authorizer=cognito_authorizer, cors=True)
 def index():
