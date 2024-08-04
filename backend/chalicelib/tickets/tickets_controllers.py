@@ -550,3 +550,32 @@ def get_ticket_comments(curr_ticket_id):
         raise BadRequestError(
             f"Failed to search for the ticket comments: {e.response['Error']['Message']}"
         )
+
+
+# NOTE: tests still need to be written for this function
+def get_geodata_all():
+    try:
+        # ---- retrieve geodata for ALL available tickets in the table ------
+        # response = tickets_table.scan(
+        #     ProjectionExpression="asset_id, latitude, longitude"
+        # )
+        # items = response.get("Items", [])
+
+        # while "LastEvaluatedKey" in response:
+        #     response = tickets_table.scan(
+        #         ExclusiveStartKey=response["LastEvaluatedKey"]
+        #     )
+        #     items.extend(response.get("Items", []))
+
+        # ----- retrieve geodata for all tickets up to the dynamodb limit -----
+        response = tickets_table.scan(
+            ProjectionExpression="asset_id, latitude, longitude"
+        )
+        items = response.get("Items", [])
+
+        return items
+
+    except ClientError as e:
+        raise BadRequestError(
+            f"Failed to retrieve all tickets: {e.response['Error']['Message']}"
+        )
