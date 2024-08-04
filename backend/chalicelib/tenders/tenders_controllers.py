@@ -429,3 +429,4 @@ def assignLongLat(data):
             tickets = response["Items"][0]
             item["longitude"] = tickets["longitude"]
             item["latitude"] = tickets["latitude"]
+
