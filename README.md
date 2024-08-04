@@ -4,9 +4,6 @@
   <a href="https://www.mycity.net.za">
     <img style="width: 250px; height: auto;" src="/images/logo_MyCity.png" />
   </a>
-  <a href="https://www.mycity.net.za">
-    <img style="width: 150px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
-  </a>
 </p>
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
@@ -29,6 +26,11 @@
   <a href="https://www.mycity.net.za" >
     https://www.mycity.net.za
   </a>
+  <br/> 
+  <a href="https://www.mycity.net.za">
+    <img style="width: 200px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
+  </a>
+  <br/> 
 </p>
 
 <p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
