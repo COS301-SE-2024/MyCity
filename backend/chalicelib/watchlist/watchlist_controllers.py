@@ -4,7 +4,7 @@ from chalice import BadRequestError
 import re
 
 dynamodb = boto3.resource("dynamodb")
-upvotes_table = dynamodb.Table("upvotes")
+watchlist_table = dynamodb.Table("watchlist")
 
 
 def validate_search_term(search_term):
@@ -14,10 +14,10 @@ def validate_search_term(search_term):
     return search_term
 
 
-def search_upvotes(search_term):
+def search_watchlist(search_term):
     search_term = validate_search_term(search_term)
     try:
-        response = upvotes_table.scan()
+        response = watchlist_table.scan()
         items = response.get("Items", [])
         filtered_items = [
             item for item in items if "".lower() in item.get("user_id", "").lower()
