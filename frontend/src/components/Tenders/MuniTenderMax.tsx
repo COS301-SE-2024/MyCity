@@ -1,19 +1,24 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import mapboxgl, {Map, Marker } from 'mapbox-gl';
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
   tender_id: string;
   companyname : string;
-  startdatetime : string;
+  contractdatetime : string;
+  contractnumber : string;
+  ticketnumber: string
   status: string;
   finalCost: number;
   finalDuration: number;
   completedatetime : string;
+  latitude : number;
+  longitude : number;
   upload: File | null;
   hasReportedCompletion: boolean | false;
 }
@@ -75,7 +80,19 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
     confirmAction();
   };
 
-  const formattedDate = tender.startdatetime.split('T')[0]; // Format date to YYYY-MM-DD
+  useEffect(()=>{
+    const map = new mapboxgl.Map({
+      container: 'map', // container ID
+      style: 'mapbox://styles/mapbox/streets-v12', // style URL
+      center: [tender.longitude,  tender.latitude], // starting position [lng, lat]
+      zoom: 14 // starting zoom
+    });
+    new mapboxgl.Marker()
+    .setLngLat([tender.longitude, tender.latitude])
+    .addTo(map);
+  },[])
+
+  const formattedDate = tender.contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -88,19 +105,19 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
               <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={tender.companyname} className="w-10 h-10 rounded-full mb-2" />
+                <img src="https://via.placeholder.com/50" alt={tender.companyname} className="w-10 h-10 rounded-full mb-2 mt-3" />
               </div>
-              <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.tender_id}</div>
+              <div className="text-center text-black text-2xl font-bold mb-2">Contract</div>
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.tender_id}
+                <strong>Associated Ticket:</strong> {tender.ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
+                <strong>Proposed Price:</strong> R{tender.finalCost}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Estimated Duration:</strong> {tender.finalDuration} days
@@ -128,7 +145,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
                   Back
                 </button>
-                {tenderStatus === "Active" ? (
+                {tenderStatus === "in progress" ? (
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract
@@ -142,16 +159,13 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                     <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600" onClick={() => handleAction("Decline")}>
                       Decline
                     </button>
-                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600" onClick={() => handleAction("Accept")}>
-                      Accept
-                    </button>
                   </>
                 )}
               </div>
             </div>
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-500">Map Placeholder</div>
+              <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">Map Placeholder</div>
             </div>
           </div>
         </div>

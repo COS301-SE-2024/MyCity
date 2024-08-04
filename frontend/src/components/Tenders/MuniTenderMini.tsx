@@ -61,6 +61,8 @@ export default function Tender({ tender }: { tender: TenderType }) {
     }
   };
 
+  const formatDate = tender.datetimesubmitted.split('T')[0]
+
   const handleClose = () => {
     setShowDetails(false);
   };
@@ -83,7 +85,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticket_id}</div>
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
-        <div className="col-span-1 flex justify-center">{tender.datetimesubmitted}</div>
+        <div className="col-span-1 flex justify-center">{formatDate}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
       </div>

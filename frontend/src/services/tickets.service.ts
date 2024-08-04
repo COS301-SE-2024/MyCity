@@ -1,17 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { FaultType } from "@/types/custom.types";
-import mapboxgl, {Map, Marker } from 'mapbox-gl';
 
-mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
-
-export async function DisplaySnapshotMap(latitude : number, longitude : number){
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        center: [longitude, latitude], // starting position [lng, lat]
-        zoom: 9 // starting zoom
-    });
-}
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
@@ -37,6 +26,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
         const data = result.data as any[];
         AssignTicketNumbers(data);
+        formatAddress(data)
 
         return data;
 
@@ -76,6 +66,7 @@ export async function getWatchlistTickets(username: string, user_session: string
 
         const data = result.data as any[];
         AssignTicketNumbers(data);
+        formatAddress(data)
 
         return data;
 
@@ -154,6 +145,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         const data = result.data as any[];
 
         AssignTicketNumbers(data);
+        formatAddress(data)
 
         return data;
 
@@ -327,4 +319,12 @@ export async function getTicketComments(ticket_id:string, user_session:string) {
         console.error("Error:", error);
         throw error;
     }
+}
+
+function formatAddress(data : any[])
+{
+    data.forEach(item  => {
+        let address = String(item.address)
+        item['address'] = address.split(',').slice(0, 2).join(',');
+    });
 }

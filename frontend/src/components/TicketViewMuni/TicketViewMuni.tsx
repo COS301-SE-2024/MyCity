@@ -28,7 +28,7 @@ interface TicketViewMuniProps {
   ticketNumber: string;
   ticket_id : string;
   description: string;
-  image: string;
+  user_picture: string;
   createdBy: string;
   status: string;
   municipalityImage: string;
@@ -57,7 +57,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   address,
   ticketNumber,
   description,
-  image,
+  user_picture,
   createdBy,
   status,
   municipalityImage,
@@ -67,6 +67,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   ticket_id,
   urgency,
 }) => {
+  console.log(user_picture)
   const [showTenderMax, setShowTenderMax] = useState(false);
   const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
@@ -111,19 +112,35 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
+      const rspgettenders = await getTicketTenders(ticket_id,user_session);
+      setTenders(rspgettenders);
       if(tenders == null)
       {
         return
       }
-      const response_contract = await getContract(tenders.tender_id || "",user_session) ; // Replace with your API endpoint
-      
-      console.log(response_contract);
-      if(response_contract != null)
+      let tender_contract = ""
+      tenders.forEach((item: { status: string;tender_id : string })  => {
+        if(item.status == "approved")
         {
-          setContract(response_contract)
-          setShowTenderMax(true);
+          tender_contract = item.tender_id;
         }
-        else setShowTenderMax(false);
+      });
+      if(tender_contract == "")
+      {
+        setShowTenderMax(false);
+      }
+      else {
+        const response_contract = await getContract(tender_contract || "",user_session) ; // Replace with your API endpoint
+      
+        console.log(response_contract);
+        if(response_contract != null)
+          {
+            setContract(response_contract)
+            setShowTenderMax(true);
+          }
+          else setShowTenderMax(false);
+      }
+      
       
       // Handle the fetched data
     } catch (error) {
@@ -164,7 +181,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     new mapboxgl.Marker()
     .setLngLat([Number(longitude), Number(latitude)])
     .addTo(map);
-  })
+
+    return () => map.remove();
+
+  },[])
 
   return (
     <>
@@ -203,10 +223,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   <p className="text-gray-700 text-sm">{description}</p>
                 </div>
 
-                {image && (
+                {user_picture && (
                   <div className="mb-2 flex justify-center">
                     <img
-                      src={image}
+                      src={user_picture}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
                     />
@@ -225,9 +245,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   <div className="flex flex-col items-center justify-center">
                     <h3 className="font-bold text-md">Created By</h3>
                     <img
-                      src="https://via.placeholder.com/40"
+                      src={user_picture}
                       alt="Created By"
-                      className="rounded-full mb-1"
+                      className="rounded-full mb-1 object-cover w-full h-full"
                     />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
@@ -240,7 +260,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   >
                     Back
                   </button>
-                  {status === "In Progress"  && (
+                  {status === "In Progress" || status === "Assigning Contract"  && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleTenderContractClick}
@@ -248,7 +268,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {status === "Opened" && (
+                  {status === "Opened" || status === "Taking Tenders" && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
@@ -275,11 +295,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
             tender_id: contract.tender_id,
             status: contract.status,
             companyname: tenders.companyname,
-            startdatetime: formatDate(String(contract.startdatetime)),
+            contractdatetime: formatDate(String(contract.contractdatetime)),
             finalCost: contract.finalCost,
             finalDuration: contract.finalDuration,
             upload: null,
+            ticketnumber : ticketNumber,
+            latitude : Number(latitude),
+            longitude : Number(longitude),
             completedatetime: contract.completedatetime,
+            contractnumber : contract.contractnumber,
             hasReportedCompletion: false,
           }}
           onClose={handleTenderMaxClose}

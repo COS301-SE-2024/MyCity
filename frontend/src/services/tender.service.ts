@@ -123,8 +123,8 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
     else 
     {
         console.log(result)
-        AssignTenderNumbers(result)
-        return result
+        AssignTenderNumbers(result.data)
+        return result.data
     }
     
 
@@ -148,13 +148,16 @@ export async function getContract(tender_id: string,user_session : string)
     }
 
     const result = await response.json()
+
     if(result.data.Status )
     {
         return null
     }
     else 
     {
-        return result
+        console.log(result)
+        AssignContractNumbers(result.data)
+        return result.data
     }
     
 
@@ -181,4 +184,9 @@ function AssignTenderNumbers(data: any[]) {
     data.forEach((item: any) => {
         item['tendernumber'] = CreateTenderNumber(item.companyname);
     });
+}
+
+function AssignContractNumbers(data: any) {
+    
+    data['contractnumber'] = CreateTenderNumber(data.companyname);
 }
