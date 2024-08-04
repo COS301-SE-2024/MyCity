@@ -10,6 +10,8 @@ interface TenderType {
   company_id : string;
   companyname : string;
   datetimesubmitted : string;
+  longitude : string;
+  latitude : string;
   ticket_id: string;
   status: string;
   quote: number;

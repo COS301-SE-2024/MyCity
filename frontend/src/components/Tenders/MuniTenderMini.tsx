@@ -16,6 +16,8 @@ interface TenderType {
   status: string;
   quote: number;
   estimatedTimeHours: number;
+  longitude : string;
+  latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean | false; // New prop
 }
