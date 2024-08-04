@@ -20,9 +20,7 @@ def search_upvotes(search_term):
         response = upvotes_table.scan()
         items = response.get("Items", [])
         filtered_items = [
-            item
-            for item in items
-            if search_term.lower() in item.get("user_id", "").lower()
+            item for item in items if "".lower() in item.get("user_id", "").lower()
         ]
         return filtered_items
     except ClientError as e:
