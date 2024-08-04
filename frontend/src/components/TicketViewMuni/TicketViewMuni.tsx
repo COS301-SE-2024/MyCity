@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState,useEffect } from "react";
 import {
   FaArrowUp,
   FaCommentAlt,
@@ -9,6 +10,11 @@ import {
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
+import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { getTicketTenders } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
+
+mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -19,11 +25,15 @@ interface TicketViewMuniProps {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
+  ticket_id : string;
   description: string;
   image: string;
   createdBy: string;
   status: string;
   municipalityImage: string;
+  upvotes : number;
+  latitude : string;
+  longitude : string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -50,14 +60,40 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   createdBy,
   status,
   municipalityImage,
+  upvotes,
+  longitude,
+  latitude,
+  ticket_id,
   urgency,
 }) => {
   const [showTenderMax, setShowTenderMax] = useState(false);
+  const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
+  const [tenders,setTenders] = useState<any>()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      // console.log(user_session);
+      const rspgettenders = await getTicketTenders(ticket_id,user_session);
+      setTenders(rspgettenders);
+      if(tenders != false)
+      {
+        setShowMuniTenders(true)
+      }
+     
+      // }
+    };
+
+    fetchData();
+  }, [ userProfile]);
+
 
   const getStatusColor = () => {
     switch (status) {
-      case "Unaddressed":
+      case "Opened":
         return "text-red-500";
       case "Fix in progress":
         return "text-blue-500";
@@ -66,9 +102,23 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
+  const getUrgency = (votes : number) =>{
+      if (votes < 10) {
+        return "low";
+    } else if (votes >= 10 && votes < 20) {
+        return "medium";
+    } else if (votes >= 20 && votes <= 40) {
+        return "high";
+    } else {
+        return "low"; // Default case
+    }
+  }
+
   if (!show) return null;
 
   const addressParts = address.split(",");
+
+ 
 
   const handleTenderContractClick = () => {
     setShowTenderMax(true);
@@ -86,6 +136,19 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     setShowMuniTenders(false);
   };
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(()=>{
+    const map = new mapboxgl.Map({
+      container: 'map', // container ID
+      style: 'mapbox://styles/mapbox/streets-v12', // style URL
+      center: [Number(longitude),  Number(latitude)], // starting position [lng, lat]
+      zoom: 14 // starting zoom
+    });
+    new mapboxgl.Marker()
+    .setLngLat([Number(longitude), Number(latitude)])
+    .addTo(map);
+  })
+
   return (
     <>
       {!showTenderMax && !showMuniTenders && (
@@ -101,7 +164,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               {/* Left Section */}
               <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
                 <div className="absolute top-2 left-2">
-                  {urgencyMapping[urgency].icon}
+                  {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
                 <img
                   src={municipalityImage}
@@ -180,7 +243,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               </div>
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
                   Map Placeholder
                 </div>
               </div>
@@ -192,13 +255,12 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {showTenderMax && (
         <TenderMax
           tender={{
-            id: ticketNumber,
-            ticketId: ticketNumber,
-            status: status === "Fix in progress" ? "Active" : "Unassigned",
+            ticket_id: ticketNumber,
+            status: tenders.status === "Fix in progress" ? "Active" : "Unassigned",
             serviceProvider: createdBy,
             issueDate: new Date().toISOString().split('T')[0],
-            price: 1000,
-            estimatedDuration: 5,
+            price: tenders.quote,
+            estimatedDuration: tenders.estimatedTimeHours,
             upload: null,
             hasReportedCompletion: false,
           }}
@@ -208,7 +270,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
       {showMuniTenders && (
         <MuniTenders
-          ticketId={ticketNumber}
+          tenders = {tenders}
           onBack={handleBack}
         />
       )}

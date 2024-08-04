@@ -326,7 +326,7 @@ def getContracts(tender_id):
             }
             raise ClientError(error_response, "ContractDoesntExist")
 
-        contracts_items = reponse_contracts["Items"]
+        contracts_items = reponse_contracts["Items"][0]
         response_tender = tenders_table.query(
             KeyConditionExpression=Key("tender_id").eq(tender_id)
         )
@@ -346,17 +346,11 @@ def getContracts(tender_id):
         )
 
         if len(response_name["Items"]) <= 0:
-            error_response = {
-                "Error": {
-                    "Code": "CompanyDoesntExist",
-                    "Message": "Company Does not Exist",
-                }
-            }
-            raise ClientError(error_response, "CompanyDoesntExist")
-
-        companies = response_name["Items"][0]
-        comp_name = companies["name"]
-        contracts_items["companyname"] = comp_name
+            contracts_items["companyname"] = "Xero Industries"
+        else:
+            companies = response_name["Items"][0]
+            comp_name = companies["name"]
+            contracts_items["companyname"] = comp_name
         return contracts_items
 
     except ClientError as e:
@@ -413,5 +407,8 @@ def assignCompanyName(data):
         response_name = companies_table.query(
             KeyConditionExpression=Key("pid").eq(item["company_id"])
         )
-        items = response_name["Items"]
-        item["companyname"] = items["name"]
+        if len(response_name["Items"]) <= 0:
+            item["companyname"] = "Xero industries"
+        else:
+            items = response_name["Items"][0]
+            item["companyname"] = items["name"]

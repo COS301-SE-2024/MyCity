@@ -1,5 +1,4 @@
 
-
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
 {
     const data = {
@@ -97,3 +96,57 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
     return true;
 
 }
+
+export async function getTicketTenders(ticket_id: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getmunicipalitytenders";
+    const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.Status )
+    {
+        return false
+    }
+    else 
+    {
+        AssignTenderNumbers(result)
+        return result
+    }
+    
+
+}
+
+function CreateTenderNumber(municipality: string): string {
+    let ticketnumber = municipality[0].toUpperCase();
+    for (let index = 0; index < 2; index++) {
+        let randint: number = Math.floor(Math.random() * municipality.length);
+        while (municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_") {
+            // console.log("inside loop")
+            randint = Math.floor(Math.random() * municipality.length);
+        }
+        ticketnumber += municipality[randint].toUpperCase();
+    }
+    for (let index = 0; index < 2; index++) {
+        const randint = Math.floor(Math.random() * municipality.length) + 1;
+        ticketnumber += String(randint);
+    }
+    return ticketnumber;
+}
+
+function AssignTenderNumbers(data: any[]) {
+    data.forEach((item: any) => {
+        item['tendernumber'] = CreateTenderNumber(item.municipality_id);
+    });
+
