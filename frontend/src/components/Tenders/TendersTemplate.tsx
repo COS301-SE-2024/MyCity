@@ -27,24 +27,24 @@ interface TenderType {
 
 function getStatus(status : string){
   switch (status) {
-    case "completed":
-      return "completed"
+    case "rejected":
+      return "rejected"
       break;
-    case "closed":
-      return "closed"
-    case "in progress":
-      return "in_progress"
+    case "under review":
+      return "under_review"
+    case "submitted":
+      return "submitted"
     default:
-      return "closed"
+      return "submitted"
       break;
   }
 }
 
 const statusStyles = {
-  in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-black bg-green-200 rounded-full",
-  // rejected: "text-black bg-red-200 rounded-full",
-  closed: "text-black bg-gray-200 rounded-full",
+  under_review: "text-blue-500 border-blue-500 rounded-full",
+//   c: "text-black bg-green-200 rounded-full",
+  rejected: "text-black bg-red-200 rounded-full",
+  submitted: "text-black bg-gray-200 rounded-full",
 };
 
 const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
@@ -64,6 +64,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
         if(accepted == true)
         {
             setDialog({ action, show: true });
+            toast.success(`${dialog.action} action confirmed.`);
         }
         else
         {
@@ -131,7 +132,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.tendernumber}
+                <strong>Tender number:</strong> {tender.tendernumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
@@ -165,7 +166,8 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
                   Back
                 </button>
-                {tenderStatus === "in progress" ? (
+                {tenderStatus === "approved" ? (
+                    ///Add button to open component of the contract
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract
