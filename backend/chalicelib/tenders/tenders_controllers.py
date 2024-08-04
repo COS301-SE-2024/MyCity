@@ -157,7 +157,7 @@ def inreview(sender_data):
 
 def accept_tender(sender_data):
     try:
-        required_fields = ["company_name", "ticket_id"]
+        required_fields = ["company_id", "ticket_id"]
 
         for field in required_fields:
             if field not in sender_data:
@@ -169,9 +169,8 @@ def accept_tender(sender_data):
                 }
                 raise ClientError(error_response, "InvalideFields")
 
-        company_id = getCompanIDFromName(sender_data["company_name"])
         response_tender = tenders_table.scan(
-            FilterExpression=Attr("company_id").eq(company_id)
+            FilterExpression=Attr("company_id").eq(sender_data["company_id"])
             & Attr("ticket_id").eq(sender_data["ticket_id"])
         )
         tender_items = response_tender["Items"]
