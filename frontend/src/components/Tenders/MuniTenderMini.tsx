@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { useProfile } from "@/hooks/useProfile";
+import { getContract } from '@/services/tender.service';
 import TenderMax from './MuniTenderMax'; // Assuming the detailed view component is in the same directory
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
@@ -38,9 +40,25 @@ function statusStyles(status : string) {
 
 export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [contract,setContract] = useState<any>()
+  const userProfile = useProfile();
 
-  const handleTenderClick = () => {
-    setShowDetails(true);
+  const handleTenderClick = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await getContract(tender.tender_id,user_session) ; // Replace with your API endpoint
+      
+      console.log(response_contract);
+      if(response_contract != null)
+        {
+          setContract(response_contract)
+        }
+      else setShowDetails(false);
+      // Handle the fetched data
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleClose = () => {
@@ -63,14 +81,14 @@ export default function Tender({ tender }: { tender: TenderType }) {
           </span>
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
-        <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
+        <div className="col-span-1 flex justify-center">{tender.ticket_id}</div>
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
         <div className="col-span-1 flex justify-center">{tender.datetimesubmitted}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={tender} onClose={handleClose} />}
+      {showDetails && <TenderMax tender={contract} onClose={handleClose} />}
     </>
   );
 }

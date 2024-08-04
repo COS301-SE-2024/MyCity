@@ -11,8 +11,9 @@ import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
-import { getTicketTenders } from "@/services/tender.service";
+import { getTicketTenders,getContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
+import { Tenor_Sans } from "next/font/google";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -69,26 +70,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [showTenderMax, setShowTenderMax] = useState(false);
   const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
-  const [tenders,setTenders] = useState<any>()
+  const [tenders,setTenders] = useState<any>(null)
+  const [contract,setContract] = useState<any>()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // try {
-      const user_data = await userProfile.getUserProfile();
-      const user_session = String(user_data.current?.session_token);
-      // console.log(user_session);
-      const rspgettenders = await getTicketTenders(ticket_id,user_session);
-      setTenders(rspgettenders);
-      if(tenders != false)
-      {
-        setShowMuniTenders(true)
-      }
-     
-      // }
-    };
-
-    fetchData();
-  }, [ userProfile]);
 
 
   const getStatusColor = () => {
@@ -118,18 +102,51 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
   const addressParts = address.split(",");
 
+  function formatDate(given_date : string){
+    return given_date.slice(0,given_date.indexOf('T'))
+  }
  
 
-  const handleTenderContractClick = () => {
-    setShowTenderMax(true);
+  const handleTenderContractClick = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      if(tenders == null)
+      {
+        return
+      }
+      const response_contract = await getContract(tenders.tender_id || "",user_session) ; // Replace with your API endpoint
+      
+      console.log(response_contract);
+      if(response_contract != null)
+        {
+          setContract(response_contract)
+          setShowTenderMax(true);
+        }
+        else setShowTenderMax(false);
+      
+      // Handle the fetched data
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleTenderMaxClose = () => {
     setShowTenderMax(false);
   };
 
-  const handleViewTendersClick = () => {
-    setShowMuniTenders(true);
+  const handleViewTendersClick = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+      // console.log(user_session);
+    const rspgettenders = await getTicketTenders(ticket_id,user_session);
+    setTenders(rspgettenders);
+    console.log(ticket_id);
+    if(tenders == null)
+    {
+      setShowMuniTenders(false);
+    }
+    else setShowMuniTenders(true)
   };
 
   const handleBack = () => {
@@ -223,7 +240,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   >
                     Back
                   </button>
-                  {status === "Fix in progress" && (
+                  {status === "In Progress"  && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleTenderContractClick}
@@ -231,7 +248,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {status === "Unaddressed" && (
+                  {status === "Opened" && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
@@ -255,13 +272,14 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {showTenderMax && (
         <TenderMax
           tender={{
-            ticket_id: ticketNumber,
-            status: tenders.status === "Fix in progress" ? "Active" : "Unassigned",
-            serviceProvider: createdBy,
-            issueDate: new Date().toISOString().split('T')[0],
-            price: tenders.quote,
-            estimatedDuration: tenders.estimatedTimeHours,
+            tender_id: contract.tender_id,
+            status: contract.status,
+            companyname: tenders.companyname,
+            startdatetime: formatDate(String(contract.startdatetime)),
+            finalCost: contract.finalCost,
+            finalDuration: contract.finalDuration,
             upload: null,
+            completedatetime: contract.completedatetime,
             hasReportedCompletion: false,
           }}
           onClose={handleTenderMaxClose}

@@ -8,39 +8,36 @@ type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
   tender_id: string;
-  company_id : string;
   companyname : string;
-  datetimesubmitted : string;
-  ticket_id: string;
+  startdatetime : string;
   status: string;
-  quote: number;
-  estimatedTimeHours: number;
+  finalCost: number;
+  finalDuration: number;
+  completedatetime : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
 }
 
 function getStatus(status : string){
   switch (status) {
-    case "accepted":
-      return "accepted"
+    case "completed":
+      return "completed"
       break;
-    case "rejected":
-      return "rejected"
-    case "submitted":
-      return "submitted"
-    case "under review":
-      return "under_review"
+    case "closed":
+      return "closed"
+    case "in progress":
+      return "in_progress"
     default:
-      return "submitted"
+      return "closed"
       break;
   }
 }
 
 const statusStyles = {
-  under_review: "text-blue-500 border-blue-500 rounded-full",
-  accepted: "text-black bg-green-200 rounded-full",
-  rejected: "text-black bg-red-200 rounded-full",
-  submitted: "text-black bg-gray-200 rounded-full",
+  in_progress: "text-blue-500 border-blue-500 rounded-full",
+  completed: "text-black bg-green-200 rounded-full",
+  // rejected: "text-black bg-red-200 rounded-full",
+  closed: "text-black bg-gray-200 rounded-full",
 };
 
 const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
@@ -78,7 +75,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
     confirmAction();
   };
 
-  const formattedDate = tender.datetimesubmitted.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = tender.startdatetime.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -103,10 +100,10 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.quote.toFixed(2)}
+                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.estimatedTimeHours} days
+                <strong>Estimated Duration:</strong> {tender.finalDuration} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
@@ -121,9 +118,9 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-                  {tenderStatus === "Active"
+                  {tenderStatus === "In progress"
                     ? `This Tender Contract is currently ${tenderStatus}. ${tender.companyname} has${tender.hasReportedCompletion ? "" : " not"} submitted a completion report.`
-                    : `This Tender Bid is currently ${tenderStatus}. Accepting it will assign ${tender.companyname} to Ticket ${tender.ticket_id}.`}
+                    : `This Tender Bid is currently ${tenderStatus}.`}
                 </div>
               </div>
 

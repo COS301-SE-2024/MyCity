@@ -6,14 +6,16 @@ type Status = "Unassigned" | "approved" | "rejected" | "Closed";
 
 interface TenderType {
   tender_id: string;
+  tendernumber : string;
   company_id : string;
+  companyname : string;
   datetimesubmitted : string;
   ticket_id: string;
   status: string;
   quote: number;
   estimatedTimeHours: number;
   upload: File | null;
-  hasReportedCompletion: boolean | false; // New prop
+  hasReportedCompletion: boolean | false; 
 }
 
 interface TenderTypeProps {
@@ -120,3 +122,4 @@ export default function MuniTenders({
       </div>
     </div>
   );
+}
