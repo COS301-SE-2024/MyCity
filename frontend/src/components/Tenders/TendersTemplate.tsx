@@ -4,23 +4,25 @@ import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { AcceptTender } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  tender_id: string;
-  companyname : string;
-  contractdatetime : string;
-  contractnumber : string;
-  ticketnumber: string
-  status: string;
-  finalCost: number;
-  finalDuration: number;
-  completedatetime : string;
-  latitude : number;
-  longitude : number;
-  upload: File | null;
-  hasReportedCompletion: boolean | false;
+    tender_id: string;
+    tendernumber : string;
+    company_id : string;
+    companyname : string;
+    datetimesubmitted : string;
+    ticket_id: string;
+    status: string;
+    quote: number;
+    estimatedTimeHours: number;
+    longitude : string;
+    latitude : string;
+    upload: File | null;
+    hasReportedCompletion: boolean | false;
 }
 
 function getStatus(status : string){
@@ -45,13 +47,29 @@ const statusStyles = {
   closed: "text-black bg-gray-200 rounded-full",
 };
 
-const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
+const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
+
+  const userProfile = useProfile();
 
   // Map "Fix in progress" to "Active" for the tender's status
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
-  const handleAction = (action: string) => {
+  const handleAction = async (action: string) => {
+    if(action == "Accept")
+    {
+        const user_data = await userProfile.getUserProfile();
+        const user_session = String(user_data.current?.session_token);
+        const accepted = await AcceptTender(tender.company_id,tender.ticket_id,user_session)
+        if(accepted == true)
+        {
+            setDialog({ action, show: true });
+        }
+        else
+        {
+            toast.error("Couldnt accept this tender")
+        }
+    }
     setDialog({ action, show: true });
   };
 
@@ -60,6 +78,8 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
     setDialog({ action: "", show: false });
     onClose();
   };
+
+  const estimateddays = Math.ceil(Number(tender.estimatedTimeHours)/24)
 
   const getDialogText = (action: string) => {
     switch (action) {
@@ -84,15 +104,15 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
     const map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: [tender.longitude,  tender.latitude], // starting position [lng, lat]
+      center: [Number(tender.longitude),  Number(tender.latitude)], // starting position [lng, lat]
       zoom: 14 // starting zoom
     });
     new mapboxgl.Marker()
-    .setLngLat([tender.longitude, tender.latitude])
+    .setLngLat([Number(tender.longitude), Number(tender.latitude)])
     .addTo(map);
   },[])
 
-  const formattedDate = tender.contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = tender.datetimesubmitted.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -107,20 +127,20 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className="absolute top-7 left-2">
                 <img src="https://via.placeholder.com/50" alt={tender.companyname} className="w-10 h-10 rounded-full mb-2 mt-3" />
               </div>
-              <div className="text-center text-black text-2xl font-bold mb-2">Contract</div>
+              <div className="text-center text-black text-2xl font-bold mb-2">Tender</div>
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketnumber}
+                <strong>Associated Ticket:</strong> {tender.tendernumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.finalCost}
+                <strong>Proposed Price:</strong> R{tender.quote}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.finalDuration} days
+                <strong>Estimated Duration:</strong> {estimateddays} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
@@ -159,6 +179,9 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                     <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600" onClick={() => handleAction("Decline")}>
                       Decline
                     </button>
+                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600" onClick={() => handleAction("Accept")}>
+                      Accept
+                    </button>
                   </>
                 )}
               </div>
@@ -192,4 +215,4 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
   );
 };
 
-export default TenderMax;
+export default TenderContainer;

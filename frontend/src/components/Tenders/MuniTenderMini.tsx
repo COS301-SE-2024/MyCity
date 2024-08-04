@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useProfile } from "@/hooks/useProfile";
 import { getContract } from '@/services/tender.service';
 import TenderMax from './MuniTenderMax'; // Assuming the detailed view component is in the same directory
+import TenderContainer from './TendersTemplate';
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
@@ -47,16 +48,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
 
   const handleTenderClick = async () => {
     try {
-      const user_data = await userProfile.getUserProfile();
-      const user_session = String(user_data.current?.session_token);
-      const response_contract = await getContract(tender.tender_id,user_session) ; // Replace with your API endpoint
-      
-      console.log(response_contract);
-      if(response_contract != null)
-        {
-          setContract(response_contract)
-        }
-      else setShowDetails(false);
+      setShowDetails(true)
       // Handle the fetched data
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -92,7 +84,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={contract} onClose={handleClose} />}
+      {showDetails && <TenderContainer tender={tender} onClose={handleClose} />}
     </>
   );
 }

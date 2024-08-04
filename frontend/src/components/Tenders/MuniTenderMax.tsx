@@ -156,9 +156,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                   </>
                 ) : (
                   <>
-                    <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600" onClick={() => handleAction("Decline")}>
-                      Decline
-                    </button>
+  
                   </>
                 )}
               </div>
