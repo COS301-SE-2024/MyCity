@@ -140,12 +140,12 @@ def test_accept_tender_missing_fields():
     }
     response = accept_tender(sample_data)
     assert response["Status"] == "FAILED"
-    assert response["Error"] == "Missing required field: company_name"
+    assert response["Error"] == "Missing required field: company_id"
 
 
 def test_accept_tender_tender_doesnt_exist():
     sample_data = {
-        "company_name": "Test Company",
+        "company_id": "Test Company",
         "ticket_id": "nonexistent_ticket",
     }
     response = accept_tender(sample_data)
