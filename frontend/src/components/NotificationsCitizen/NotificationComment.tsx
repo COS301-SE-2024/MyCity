@@ -29,7 +29,7 @@ const CommentComponent = () => {
           <div className="text-center">
             <MessageCirclePlus
               size={32}
-              color="#7034a9"
+              color="#fee1bf"
               strokeWidth={3}
             ></MessageCirclePlus>
           </div>

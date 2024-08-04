@@ -17,7 +17,7 @@ const UpvoteComponent = () => {
           {/* Comment Content */}
           <div className="flex items-center text-opacity-80 justify-center">
             <div className="ml-4">
-              <div className="font-bold">Kyle Marshall</div>
+              <div className="font-bold">James May</div>
               <div className="bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
               Upvoted (EKU2-4080-45GE)
               </div>
@@ -28,7 +28,7 @@ const UpvoteComponent = () => {
         <div className="text-center" style={{ marginLeft: "auto" }}>
           <p className="text-sm">10:52</p>
           <div className="text-center">
-            <ArrowBigUp  size={32} color="#7034a9" fill="#7034a9" strokeWidth={3}></ArrowBigUp >
+            <ArrowBigUp  size={32} color="#fcdbee" fill="#fcdbee" strokeWidth={3}></ArrowBigUp >
           </div>
         </div>
       </div>
