@@ -59,11 +59,17 @@ def test_inreview_tender_doesnt_exist():
         "company_name": "CityAlliance Maintenance",
         "ticket_id": "nonexistent_ticket",
     }
-    
+
     # Mocking the getCompanIDFromName function to return a list of dictionaries
-    with patch("chalicelib.tenders.tenders_controllers.getCompanIDFromName", return_value=[{"pid": "some_company_id"}]):
+    with patch(
+        "chalicelib.tenders.tenders_controllers.getCompanIDFromName",
+        return_value=[{"pid": "some_company_id"}],
+    ):
         # Mocking the tenders_table.scan method to return an empty list for Items
-        with patch("chalicelib.tenders.tenders_controllers.tenders_table.scan", return_value={"Items": []}):
+        with patch(
+            "chalicelib.tenders.tenders_controllers.tenders_table.scan",
+            return_value={"Items": []},
+        ):
             response = inreview(sample_data)
             assert response["Status"] == "FAILED"
             assert response["Error"] == "Tender Does not Exist"
@@ -94,7 +100,6 @@ def test_create_tender_company_doesnt_exist(sample_data):
     assert response["Error"] == "Company Does not Exist"
 
 
-
 @fixture
 def sample_data_duplicate_tender():
     return {
@@ -103,6 +108,7 @@ def sample_data_duplicate_tender():
         "ticket_id": "6be96e97-1554-4bd1-a234-998b4544a9b0",
         "duration": "15",
     }
+
 
 def test_create_tender_tender_exists(sample_data_duplicate_tender):
     """
@@ -114,7 +120,6 @@ def test_create_tender_tender_exists(sample_data_duplicate_tender):
     response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "FAILED"
     assert response["Error"] == "Company already has a tender on this Ticket"
-
 
 
 # Unit tests for "accept_tender"
