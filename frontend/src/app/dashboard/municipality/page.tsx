@@ -31,6 +31,7 @@ export default function Dashboard() {
         user_municipality,
         user_session
       );
+      console.log(rspmunicipality)
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
     };
     fetchData();

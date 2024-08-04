@@ -31,6 +31,7 @@ interface TicketViewMuniProps {
   user_picture: string;
   createdBy: string;
   status: string;
+  imageURL : string;
   municipalityImage: string;
   upvotes : number;
   latitude : string;
@@ -65,9 +66,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   longitude,
   latitude,
   ticket_id,
+  imageURL,
   urgency,
 }) => {
-  console.log(user_picture)
   const [showTenderMax, setShowTenderMax] = useState(false);
   const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
@@ -106,7 +107,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   function formatDate(given_date : string){
     return given_date.slice(0,given_date.indexOf('T'))
   }
- 
+
+  console.log(municipalityImage);
 
   const handleTenderContractClick = async () => {
     try {
@@ -158,7 +160,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       // console.log(user_session);
     const rspgettenders = await getTicketTenders(ticket_id,user_session);
     setTenders(rspgettenders);
-    console.log(ticket_id);
+    
     if(tenders == null)
     {
       setShowMuniTenders(false);
@@ -226,7 +228,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                 {user_picture && (
                   <div className="mb-2 flex justify-center">
                     <img
-                      src={user_picture}
+                      src={imageURL}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
                     />
@@ -243,11 +245,11 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                     ))}
                   </div>
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-md">Created By</h3>
+                    <h3 className="font-bold text-sm">Created By</h3>
                     <img
                       src={user_picture}
                       alt="Created By"
-                      className="rounded-full mb-1 object-cover w-full h-full"
+                      className="rounded-full mb-1 object-cover w-12 h-12"
                     />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
