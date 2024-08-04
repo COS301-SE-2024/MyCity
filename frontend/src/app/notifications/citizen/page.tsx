@@ -55,17 +55,89 @@ export default function Notifications() {
             }}
           >
             {/* Content */}
-            <div className="h-[15vh] flex items-center justify-center"></div>
-            <div className="border">
-              <h1>Notifications</h1>
-              <ChakraProvider theme={DarkMode}>
-                <Container>
-                  <NotificationComment />
-                  <NotificationUpdate />
-                  <NotificationUpvote />
-                  <NotificationWatchlist />
-                </Container>
-              </ChakraProvider>
+            <div className="h-[2vh] flex items-center justify-center"></div>
+            <div>
+              <main className="h-screen flex justify-center">
+                {/* Your Ticket Interations */}
+                <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit pb-4 pt-4 m-4">
+                  <div className="flex justify-center border p-4">
+                    <h1>Your Ticket Interations</h1>
+                  </div>
+                  <div className="my-2 mx-4">
+                    <NotificationComment />
+                  </div>
+
+                  <div className="my-2 mx-4">
+                    <NotificationUpvote />
+                  </div>
+                  <div className="my-2 mx-4">
+                    <NotificationComment />
+                  </div>
+
+                  <div className="my-2 mx-4">
+                    <NotificationUpvote />
+                  </div>
+
+                  <div className="my-2 mx-4">
+                    <NotificationComment />
+                  </div>
+
+                  <div className="my-2 mx-4">
+                    <NotificationUpvote />
+                  </div>
+                </div>
+
+                {/* Your Ticket Interations */}
+                <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit pb-4 m-4">
+                  <div className="flex justify-center border p-4">
+                    <h1>Your Ticket Updates</h1>
+                  </div>
+                  <div className="my-2 mx-4">
+                    <NotificationUpdate />
+                  </div>
+
+                  <div className="m-4">
+                    <NotificationUpdate />
+                  </div>
+                  <div className="m-4">
+                    <NotificationUpdate />
+                  </div>
+
+                  <div className="m-4">
+                    <NotificationUpdate />
+                  </div>
+
+                  <div className="m-4">
+                    <NotificationUpdate />
+                  </div>
+
+                  <div className="m-4">
+                    <NotificationUpdate />
+                  </div>
+                </div>
+
+                {/* Your Watchlist */}
+                <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit pb-4 pt-4 m-4">
+                  <div className="flex justify-center border p-4">
+                    <h1>Your Watchlist</h1>
+                  </div>
+                  <div className="my-2 mx-4">
+                    <NotificationWatchlist />
+                  </div>
+
+                  <div className="my-2 mx-4">
+                    <NotificationWatchlist />
+                  </div>
+                  <div className="my-2 mx-4">
+                    <NotificationWatchlist />
+                  </div>
+
+                  <div className="my-2 mx-4">
+                    <NotificationWatchlist />
+                  </div>
+
+                </div>
+              </main>
             </div>
           </div>
         </div>
