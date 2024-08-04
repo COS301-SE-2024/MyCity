@@ -14,6 +14,7 @@ def validate_search_term(search_term):
         raise BadRequestError("Invalid search term")
     return search_term
 
+
 def search_upvotes(search_term):
     search_term = validate_search_term(search_term)
     try:

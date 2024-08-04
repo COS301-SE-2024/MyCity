@@ -5,6 +5,7 @@ from chalicelib.upvotes.upvotes_controllers import (
 
 upvotes_blueprint = Blueprint(__name__)
 
+
 @upvotes_blueprint.route("/upvotes", methods=["GET"], cors=True)
 def search_upvotes_route():
     request = upvotes_blueprint.current_request
