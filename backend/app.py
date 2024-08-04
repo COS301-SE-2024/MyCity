@@ -6,6 +6,7 @@ from chalicelib.tickets.tickets_routes import tickets_blueprint
 from chalicelib.searching.searching_routes import searching_blueprint
 from chalicelib.municipalities.municipalities_routes import municipalities_blueprint
 from chalicelib.tenders.tenders_routes import tenders_blueprint
+from chalicelib.upvotes.upvotes_routes import upvotes_blueprint
 
 from chalicelib.authorisers import cognito_authorizer
 
@@ -28,7 +29,7 @@ app.register_blueprint(municipalities_blueprint, "Municipality", "/municipality"
 
 app.register_blueprint(tenders_blueprint, "Tenders", "/tenders")
 
-app.register_blueprint(searching_blueprint, "Upvotes", "/upvotes")
+app.register_blueprint(upvotes_blueprint, "Upvotes", "/upvotes")
 
 
 @app.route("/", authorizer=cognito_authorizer, cors=True)
