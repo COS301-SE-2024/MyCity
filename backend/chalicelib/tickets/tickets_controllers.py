@@ -278,8 +278,10 @@ def get_watchlist(tickets_data):
                         }
                     }
                     raise ClientError(error_response, "Inconsistencies")
-            getUserprofile(ticketsItems)
-            return ticketsItems
+                getUserprofile(ticketsItems)
+                collective.extend(ticketsItems)
+            return collective
+
         else:
             error_response = {
                 "Error": {
