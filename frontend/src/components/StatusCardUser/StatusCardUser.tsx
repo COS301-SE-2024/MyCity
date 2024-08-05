@@ -26,10 +26,29 @@ function formatNumber(num: number): string {
 }
 
 function formatMunicipalityID(mun: string): string {
-  return mun.replace(/ /g, '_');
+  return mun.replace(/ /g, "_");
 }
 
+function getDate(date: string): string {
+  return date.split("T")[0];
+}
+function getTime(date: string): string {
+  return date.split("T")[1].split(".")[0];
+}
 
+function displayDate(date: string): string {
+  const inputDate = new Date(date);
+  const currentDate = new Date();
+
+  const inputDay = inputDate.toISOString().split("T")[0];
+  const currentDay = currentDate.toISOString().split("T")[0];
+
+  if (inputDay === currentDay) {
+    return getTime(date);
+  } else {
+    return getDate(date);
+  }
+}
 
 const StatusCardUser: React.FC<StatusCardUserProps> = ({
   title,
@@ -45,6 +64,42 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
 }) => {
   return (
     // NotificationComment
+    // <div className="py-2 px-4">
+    //   {/* Comment Container */}
+    //   <div className="flex border border-gray-300 w-full rounded-md p-4">
+    //     <div className="flex ">
+    //       {/* User Profile */}
+    //       <div>
+    //         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+    //           <img
+    //             src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+    //               municipality_id
+    //             )}.png`}
+    //             alt=""
+    //           />
+    //         </div>
+    //       </div>
+    //       {/* Comment Content */}
+    //       <div className="flex items-start text-opacity-80 justify-center border">
+    //         <div className="ml-4">
+    //           <div className="font-bold text-start">{municipality_id}</div>
+    //           <div className="text-start">{title}</div>
+    //           <div className=" bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
+    //             {state}
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //     <div className="text-center" style={{ marginLeft: "auto" }}>
+    //       <p className="text-sm">{displayDate(createdBy)}</p>
+    //       <div className="w">
+    //         <img src={image} alt="Fault image" />
+    //       </div>
+
+    //     </div>
+    //   </div>
+    // </div>
+
     <div className="py-2 px-4">
       {/* Comment Container */}
       <div className="flex border border-gray-300 w-full rounded-md p-4">
@@ -52,29 +107,36 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
           {/* User Profile */}
           <div>
             <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-            <img src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(municipality_id)}.png`} alt="" />
-
+              <img
+                src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                  municipality_id
+                )}.png`}
+                alt=""
+              />
             </div>
           </div>
+
           {/* Comment Content */}
-          <div className="flex items-center text-opacity-80 justify-center">
+          <div className="flex items-start text-opacity-80 justify-center">
             <div className="ml-4">
               <div className="font-bold text-start">{municipality_id}</div>
-              <div className="bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
-                {title} - {state}
+              <div className="text-start">{title}</div>
+              <div className=" bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
+                {state}
               </div>
             </div>
           </div>
-        </div>
-        <div className="text-center" style={{ marginLeft: "auto" }}>
-          <p className="text-sm">{createdBy}</p>
-          <div className="text-center">
-            <ArrowBigUp
-              size={32}
-              color="#fcdbee"
-              fill="#fcdbee"
-              strokeWidth={3}
-            ></ArrowBigUp>
+
+          {/* Comment Content */}
+          <div className="flex items-start text-opacity-80 justify-center">
+            <div className="ml-4">
+              <img
+                src={image}
+                alt="Fault image"
+                width={300}
+                className="rounded-md"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -33,7 +33,7 @@ const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
   title,
   children,
 }) => (
-  <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-[80vh] m-4 overflow-auto">
+  <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 h-[80vh] m-4 overflow-auto">
     <div className="flex justify-center border p-4">
       <h1 className="text-2xl font-bold">{title}</h1>
     </div>
@@ -138,7 +138,7 @@ export default function Notifications() {
                 <NotificationComment />
               </ScrollablePanel>
               {/* Your Ticket Updates */}
-              <ScrollablePanel title="Your Ticket Updates">
+              {/* <ScrollablePanel title="Your Ticket Updates"> */}
                 {/* <NotificationUpdate state="AssigningContract" />
                 <NotificationUpdate state="Closed" />
                 <NotificationUpdate state="InProgress" />
@@ -146,19 +146,19 @@ export default function Notifications() {
                 <NotificationUpdate state="AssigningContract" />
                 <NotificationUpdate state="Opened" />
                 <NotificationUpdate state="TakingTenders" /> */}
-              </ScrollablePanel>
+              {/* </ScrollablePanel> */}
               {/* Your Watchlist */}
-              <ScrollablePanel title="Your Watchlist">
+              {/* <ScrollablePanel title="Your Watchlist"> */}
                 {/* <NotificationUpdate state="InProgress" /> */}
-                <NotificationUpvote />
-                <NotificationComment />
+                {/* <NotificationUpvote /> */}
+                {/* <NotificationComment /> */}
                 {/* <NotificationUpdate state="AssigningContract" /> */}
-                <NotificationComment />
+                {/* <NotificationComment /> */}
                 {/* <NotificationUpdate state="InProgress" /> */}
                 {/* <NotificationUpdate state="Closed" /> */}
-                <NotificationComment />
+                {/* <NotificationComment /> */}
                 {/* <NotificationUpdate state="Opened" /> */}
-              </ScrollablePanel>
+              {/* </ScrollablePanel> */}
             </main>
           </div>
         </div>
