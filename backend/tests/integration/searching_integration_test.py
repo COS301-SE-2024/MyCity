@@ -43,20 +43,20 @@ def test_search_tickets_user_municipality_assets_valid(test_client):
 
 
 # Integration test for /issues endpoint with missing search term
-"""def test_search_tickets_user_municipality_assets_missing_search_term(test_client):
+def test_search_tickets_user_municipality_assets_missing_search_term(test_client):
     user_municipality = "Mafube Local"
     response = test_client.http.get(
         "/search/issues",
         headers={"Content-Type": "application/json"},
-        body=json.dumps({"user_municipality": user_municipality})
+        body=json.dumps({"user_municipality": user_municipality}),
     )
 
     assert (
         response.status_code == 400
     ), f"Expected status code 400, got {response.status_code}"
     assert (
-        response.json_body.get("message") == "Search term is required"
-    ), "Expected error message for missing search term"
+        response.json_body.get("Message") == "Search term is required"
+    ), f"Expected error message 'Search term is required', got '{response.json_body.get('Message')}'"
 
 
 # Integration test for /issues endpoint with missing user_municipality
@@ -65,16 +65,15 @@ def test_search_tickets_user_municipality_assets_missing_user_municipality(test_
     response = test_client.http.get(
         f"/search/issues?q={search_term}",
         headers={"Content-Type": "application/json"},
-        body=json.dumps({})
+        body=json.dumps({}),
     )
 
     assert (
         response.status_code == 400
     ), f"Expected status code 400, got {response.status_code}"
     assert (
-        response.json_body.get("message") == "Missing required field: user_municpality"
-    ), "Expected error message for missing user_municipality"
-"""
+        response.json_body.get("Message") == "Missing required field: user_municpality"
+    ), f"Expected error message 'Missing required field: user_municpality', got '{response.json_body.get('Message')}'"
 
 
 # Integration test for /municipality endpoint

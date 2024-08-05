@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
@@ -6,29 +7,47 @@ import "react-toastify/dist/ReactToastify.css";
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  id: string;
-  ticketId: string;
-  status: Status;
-  serviceProvider: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+  tender_id: string;
+  company_id : string;
+  companyname : string;
+  datetimesubmitted : string;
+  ticket_id: string;
+  status: string;
+  quote: number;
+  estimatedTimeHours: number;
   upload: File | null;
-  hasReportedCompletion: boolean;
+  hasReportedCompletion: boolean | false;
+}
+
+function getStatus(status : string){
+  switch (status) {
+    case "accepted":
+      return "accepted"
+      break;
+    case "rejected":
+      return "rejected"
+    case "submitted":
+      return "submitted"
+    case "under review":
+      return "under_review"
+    default:
+      return "submitted"
+      break;
+  }
 }
 
 const statusStyles = {
-  Unassigned: "text-blue-500 border-blue-500 rounded-full",
-  Active: "text-black bg-green-200 rounded-full",
-  Rejected: "text-black bg-red-200 rounded-full",
-  Closed: "text-black bg-gray-200 rounded-full",
+  under_review: "text-blue-500 border-blue-500 rounded-full",
+  accepted: "text-black bg-green-200 rounded-full",
+  rejected: "text-black bg-red-200 rounded-full",
+  submitted: "text-black bg-gray-200 rounded-full",
 };
 
 const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
 
   // Map "Fix in progress" to "Active" for the tender's status
-  const tenderStatus = tender.status;
+  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
   const handleAction = (action: string) => {
     setDialog({ action, show: true });
@@ -59,7 +78,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
     confirmAction();
   };
 
-  const formattedDate = tender.issueDate.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = tender.datetimesubmitted.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -72,22 +91,22 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
               <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={tender.serviceProvider} className="w-10 h-10 rounded-full mb-2" />
+                <img src="https://via.placeholder.com/50" alt={tender.companyname} className="w-10 h-10 rounded-full mb-2" />
               </div>
-              <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.id}</div>
-              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[tenderStatus]}`}>{tenderStatus}</div>
+              <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.tender_id}</div>
+              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketId}
+                <strong>Associated Ticket:</strong> {tender.tender_id}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.price.toFixed(2)}
+                <strong>Proposed Price:</strong> R{tender.quote.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.estimatedDuration} days
+                <strong>Estimated Duration:</strong> {tender.estimatedTimeHours} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
@@ -103,8 +122,8 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
                   {tenderStatus === "Active"
-                    ? `This Tender Contract is currently ${tenderStatus}. ${tender.serviceProvider} has${tender.hasReportedCompletion ? "" : " not"} submitted a completion report.`
-                    : `This Tender Bid is currently ${tenderStatus}. Accepting it will assign ${tender.serviceProvider} to Ticket ${tender.ticketId}.`}
+                    ? `This Tender Contract is currently ${tenderStatus}. ${tender.companyname} has${tender.hasReportedCompletion ? "" : " not"} submitted a completion report.`
+                    : `This Tender Bid is currently ${tenderStatus}. Accepting it will assign ${tender.companyname} to Ticket ${tender.ticket_id}.`}
                 </div>
               </div>
 

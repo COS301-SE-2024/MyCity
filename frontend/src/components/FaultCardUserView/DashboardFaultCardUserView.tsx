@@ -1,6 +1,10 @@
+
 import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
+import mapboxgl, {Map, Marker } from 'mapbox-gl';
+
+mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -16,6 +20,8 @@ interface FaultCardUserViewProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
+  longitude : string;
+  latitude : string;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
 
@@ -39,8 +45,24 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   createdBy,
   status,
   municipalityImage,
+  longitude,
+  latitude,
   urgency
 }) => {
+
+
+  const getUrgency = (votes : number) =>{
+    if (votes < 10) {
+      return "low";
+  } else if (votes >= 10 && votes < 20) {
+      return "medium";
+  } else if (votes >= 20 && votes <= 40) {
+      return "high";
+  } else {
+      return "low"; // Default case
+  }
+}
+
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
     return data
@@ -54,6 +76,20 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           eyeColor: "black",
         };
   };
+
+  useEffect(()=>{
+    const map =  new mapboxgl.Map({
+        container: "mapcontainer", // container ID
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
+        zoom: 15 // starting zoom
+    });
+
+    new mapboxgl.Marker()
+      .setLngLat([Number(longitude), Number(latitude)])
+      .addTo(map);
+  })
+  
 
   const initialData = getLocalStorageData();
 
@@ -144,7 +180,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           {/* Left Section */}
           <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
             <div className="absolute top-2 left-2">
-              {urgencyMapping[urgency].icon}
+              {urgencyMapping[getUrgency(viewCount)].icon}
             </div>
             <img src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
             <div className="flex items-center justify-center mb-2">
@@ -226,7 +262,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           </div>
           {/* Right Section (Map Placeholder) */}
           <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
-            <div className="w-full h-full flex items-center justify-center text-gray-500">
+            <div className="w-full h-full flex items-center justify-center text-gray-500" id="mapcontainer">
               Map Placeholder
             </div>
           </div>

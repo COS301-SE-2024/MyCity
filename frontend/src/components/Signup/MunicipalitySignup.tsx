@@ -1,3 +1,4 @@
+
 import React, { FormEvent } from "react";
 import { Input, Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,11 @@ export default function MunicipalitySignup() {
     const form = new FormData(event.currentTarget as HTMLFormElement);
 
     try {
-      handleSignUp(form, UserRole.MUNICIPALITY);
+      const signedUp = await handleSignUp(form, UserRole.MUNICIPALITY);
+      if(signedUp.isSignedIn == true)
+      {
+        router.push('/dashboard/municipality')
+      }
     }
     catch (error) {
       console.log("Error: " + error);

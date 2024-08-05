@@ -57,7 +57,7 @@ export default function CitizenDashboard() {
     };
 
     fetchData();
-  }, [dashMostUpvoteResults, userProfile]); // Add userProfile to the dependency array
+  }, [ userProfile]); // Add userProfile to the dependency array
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
