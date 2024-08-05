@@ -121,7 +121,7 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
     }
     else 
     {
-        console.log(result)
+        console.log(result.data)
         AssignTenderNumbers(result.data)
         return result.data
     }
