@@ -150,3 +150,4 @@ function AssignTenderNumbers(data: any[]) {
         item['tendernumber'] = CreateTenderNumber(item.municipality_id);
     });
 
+}

@@ -1,11 +1,14 @@
+'use client';
+
 import React from "react";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
-import { notificationStates } from "@/components/NotificationsCitizen/states";
+//import { notificationStates } from "@/components/NotificationsCitizen/states";
+type ScrollablePanelProps = any; //just to deal with the error
 
 const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
   title,
@@ -31,7 +34,7 @@ export default function Notifications() {
             overflow: "hidden",
           }}
         >
-          <Navbar />
+          <NavbarUser />
 
           {/* Background image */}
           <div

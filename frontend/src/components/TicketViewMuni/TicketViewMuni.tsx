@@ -1,5 +1,4 @@
-
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaArrowUp,
   FaCommentAlt,
@@ -10,7 +9,7 @@ import {
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
-import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import mapboxgl, { Map, Marker } from 'mapbox-gl';
 import { getTicketTenders } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -25,15 +24,15 @@ interface TicketViewMuniProps {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
-  ticket_id : string;
+  ticket_id: string;
   description: string;
   image: string;
   createdBy: string;
   status: string;
   municipalityImage: string;
-  upvotes : number;
-  latitude : string;
-  longitude : string;
+  upvotes: number;
+  latitude: string;
+  longitude: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -69,27 +68,21 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [showTenderMax, setShowTenderMax] = useState(false);
   const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
-  const [tenders,setTenders] = useState<any>()
+  const [tenders, setTenders] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      // try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      // console.log(user_session);
-      const rspgettenders = await getTicketTenders(ticket_id,user_session);
+      const rspgettenders = await getTicketTenders(ticket_id, user_session);
       setTenders(rspgettenders);
-      if(tenders != false)
-      {
-        setShowMuniTenders(true)
+      if (rspgettenders !== false) {
+        setShowMuniTenders(true);
       }
-     
-      // }
     };
 
     fetchData();
-  }, [ userProfile]);
-
+  }, [ticket_id, userProfile]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -102,23 +95,35 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  const getUrgency = (votes : number) =>{
-      if (votes < 10) {
-        return "low";
+  const getUrgency = (votes: number) => {
+    if (votes < 10) {
+      return "low";
     } else if (votes >= 10 && votes < 20) {
-        return "medium";
+      return "medium";
     } else if (votes >= 20 && votes <= 40) {
-        return "high";
+      return "high";
     } else {
-        return "low"; // Default case
+      return "low"; // Default case
     }
-  }
+  };
+
+  useEffect(() => {
+    if (show) {
+      const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
+        zoom: 14 // starting zoom
+      });
+      new mapboxgl.Marker()
+        .setLngLat([Number(longitude), Number(latitude)])
+        .addTo(map);
+    }
+  }, [show, latitude, longitude]);
 
   if (!show) return null;
 
   const addressParts = address.split(",");
-
- 
 
   const handleTenderContractClick = () => {
     setShowTenderMax(true);
@@ -135,19 +140,6 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const handleBack = () => {
     setShowMuniTenders(false);
   };
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(()=>{
-    const map = new mapboxgl.Map({
-      container: 'map', // container ID
-      style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: [Number(longitude),  Number(latitude)], // starting position [lng, lat]
-      zoom: 14 // starting zoom
-    });
-    new mapboxgl.Marker()
-    .setLngLat([Number(longitude), Number(latitude)])
-    .addTo(map);
-  })
 
   return (
     <>
@@ -255,12 +247,16 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {showTenderMax && (
         <TenderMax
           tender={{
+            id: "placeholder",
+            tendernumber: "placeholder",
+            company_id: "placeholder",
+            companyname: "placeholder",
+            serviceProvider: createdBy,
+            datetimesubmitted: new Date().toISOString().split('T')[0],
             ticket_id: ticketNumber,
             status: tenders.status === "Fix in progress" ? "Active" : "Unassigned",
-            serviceProvider: createdBy,
-            issueDate: new Date().toISOString().split('T')[0],
-            price: tenders.quote,
-            estimatedDuration: tenders.estimatedTimeHours,
+            quote: 0,
+            estimatedTimeHours: 0,
             upload: null,
             hasReportedCompletion: false,
           }}
@@ -270,7 +266,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
       {showMuniTenders && (
         <MuniTenders
-          tenders = {tenders}
+          tenders={tenders}
           onBack={handleBack}
         />
       )}

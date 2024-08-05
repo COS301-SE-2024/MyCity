@@ -42,7 +42,7 @@ const UpdateComponent: React.FC<UpdateComponentProps> = ({ state }) => {
           {/* User Profile */}
           <div>
             <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-              <img src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/City_of_Ekurhuleni_Metropolitan.png"/>
+              <img src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/City_of_Ekurhuleni_Metropolitan.png" alt="Logo"/>
             </div>
           </div>
           {/* Comment Content */}
