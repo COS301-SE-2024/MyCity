@@ -102,10 +102,19 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
 
     <div className="py-2 px-4">
       {/* Comment Container */}
-      <div className="flex border border-gray-300 w-full rounded-md p-4">
+      <div className="flex flex-col border border-gray-300 w-full rounded-md p-4 items-center">
+        <div className="font-bold text-start text-lg">{title}</div>
         <div className="flex ">
           {/* User Profile */}
-          <div>
+
+          {/* Comment Content */}
+          <div className="flex flex-col justify-between text-opacity-80 border ml-4">
+            <div className="flex items-start justify-center">
+              <div className="bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
+                {state}
+              </div>
+            </div>
+            <div className="flex items-end justify-center p-4">
             <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
               <img
                 src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
@@ -114,16 +123,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
                 alt=""
               />
             </div>
-          </div>
-
-          {/* Comment Content */}
-          <div className="flex items-start text-opacity-80 justify-center">
-            <div className="ml-4">
-              <div className="font-bold text-start">{municipality_id}</div>
-              <div className="text-start">{title}</div>
-              <div className=" bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
-                {state}
-              </div>
+              <div className="border">{municipality_id}</div>
             </div>
           </div>
 

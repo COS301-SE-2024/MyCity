@@ -73,12 +73,14 @@ export default function Notifications() {
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
       if (rspwatchlist.length > 0) {
         setDashWatchResults(rspwatchlist);
+        console.log(dashWatchResults);
       } else setDashWatchResults([]);
       // console.log( dashMostUpvoteResults)
       // }
       // catch (error) {
       //   console.error("Error fetching data:", error);
       // }
+      
     };
 
     fetchData();
@@ -128,6 +130,7 @@ export default function Notifications() {
               {/* Your Ticket Interactions */}
               <ScrollablePanel title="Your Ticket Interactions">
                 <DashboardStatusCardContainer cardData={dashWatchResults}  />
+                
                 <NotificationComment />
                 <NotificationUpvote />
                 <NotificationComment />
