@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from "react";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
@@ -128,7 +128,7 @@ export default function CreateTicket() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <Navbar />
+          <NavbarUser />
           <div
             style={{
               position: "fixed",

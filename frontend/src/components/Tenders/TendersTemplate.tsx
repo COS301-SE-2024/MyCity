@@ -111,7 +111,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
     new mapboxgl.Marker()
     .setLngLat([Number(tender.longitude), Number(tender.latitude)])
     .addTo(map);
-  },[])
+  },[tender.longitude,tender.latitude])
 
   const formattedDate = tender.datetimesubmitted.split('T')[0]; // Format date to YYYY-MM-DD
 

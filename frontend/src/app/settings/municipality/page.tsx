@@ -185,7 +185,9 @@ export default function Settings() {
     switch (activeTab) {
       case "MunicipalityInformation":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+          >
             <h2 className="text-2xl font-semibold mb-4">
               Municipality Information
             </h2>
@@ -195,7 +197,9 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+          >
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -255,7 +259,9 @@ export default function Settings() {
 
       case "Municode":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+          >
             <h2 className="text-2xl font-semibold mb-4">Municode</h2>
             {renderSubPageContent()}
           </div>
@@ -263,7 +269,9 @@ export default function Settings() {
 
       case "Accessibility":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+          >
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -387,7 +395,7 @@ export default function Settings() {
             )}
 
             <div className="flex">
-              <div className="w-64 bg-white bg-opacity-70 rounded-lg shadow-md p-4">
+            <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                 <div className="flex items-center mb-4">
                   <User className="w-12 h-12 rounded-full mr-4" />
                   <div>
