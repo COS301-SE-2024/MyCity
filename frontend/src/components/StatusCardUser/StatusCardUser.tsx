@@ -1,6 +1,7 @@
 import React from "react";
 import { FaArrowUp, FaEye, FaCommentAlt } from "react-icons/fa";
 import { User, ArrowBigUp } from "lucide-react";
+import { Default } from "node_modules/react-toastify/dist/utils";
 
 interface CardData {
   title: string;
@@ -12,11 +13,42 @@ interface CardData {
   description: string;
   image: string;
   createdBy: string;
+  state: string;
+  municipality_id: string;
+  stateFormat: keyof typeof notificationStates;
 }
 
 interface StatusCardUserProps extends CardData {
   onClick?: () => void; // Make onClick optional
 }
+
+// states.ts
+export const notificationStates = {
+  AssigningContract: {
+    color: "bg-blue-200",
+    text: "Assigning Contract",
+  },
+  Closed: {
+    color: "bg-green-200",
+    text: "Closed",
+  },
+  InProgress: {
+    color: "bg-yellow-200",
+    text: "In Progress",
+  },
+  Opened: {
+    color: "bg-red-200",
+    text: "Opened",
+  },
+  TakingTenders: {
+    color: "bg-purple-200",
+    text: "Taking Tenders",
+  },
+  Default: {
+    color: "bg-gray-200",
+    text: "Taking Tenders",
+  },
+};
 
 function formatNumber(num: number): string {
   if (num >= 1000) {
@@ -50,6 +82,10 @@ function displayDate(date: string): string {
   }
 }
 
+function formatState(state: string): string {
+  return state.replace(/ /g, "");
+}
+
 const StatusCardUser: React.FC<StatusCardUserProps> = ({
   title,
   address,
@@ -61,82 +97,48 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
   onClick,
   municipality_id,
   state,
+  stateFormat,
 }) => {
+  const formattedStateKey = formatState(state);
+  const { color, text } = notificationStates[formattedStateKey];
+  // const { color, text } = notificationStates["AssigningContract"];
+
+  console.log(formatState(state));
+
+  const iconColor = color.replace("bg-", "#").replace("-200", "");
   return (
-    // NotificationComment
-    // <div className="py-2 px-4">
-    //   {/* Comment Container */}
-    //   <div className="flex border border-gray-300 w-full rounded-md p-4">
-    //     <div className="flex ">
-    //       {/* User Profile */}
-    //       <div>
-    //         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-    //           <img
-    //             src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-    //               municipality_id
-    //             )}.png`}
-    //             alt=""
-    //           />
-    //         </div>
-    //       </div>
-    //       {/* Comment Content */}
-    //       <div className="flex items-start text-opacity-80 justify-center border">
-    //         <div className="ml-4">
-    //           <div className="font-bold text-start">{municipality_id}</div>
-    //           <div className="text-start">{title}</div>
-    //           <div className=" bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
-    //             {state}
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     <div className="text-center" style={{ marginLeft: "auto" }}>
-    //       <p className="text-sm">{displayDate(createdBy)}</p>
-    //       <div className="w">
-    //         <img src={image} alt="Fault image" />
-    //       </div>
-
-    //     </div>
-    //   </div>
-    // </div>
-
     <div className="py-2 px-4">
       {/* Comment Container */}
       <div className="flex flex-col border border-gray-300 w-full rounded-md p-4 items-center">
         <div className="font-bold text-start text-lg">{title}</div>
-        <div className="flex ">
-          {/* User Profile */}
-
-          {/* Comment Content */}
-          <div className="flex flex-col justify-between text-opacity-80 border ml-4">
-            <div className="flex items-start justify-center">
-              <div className="bg-pink-200 bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1">
+        <div className="flex flex-col w-full">
+          <div className="flex justify-between items-start w-full">
+            <div className="flex flex-col">
+              <div
+                className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
+              >
                 {state}
               </div>
             </div>
             <div className="flex items-end justify-center p-4">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-              <img
-                src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                  municipality_id
-                )}.png`}
-                alt=""
-              />
-            </div>
-              <div className="border">{municipality_id}</div>
+              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+                <img
+                  src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                    municipality_id
+                  )}.png`}
+                  alt=""
+                />
+              </div>
+              <div className="ml-2 border">{municipality_id}</div>
             </div>
           </div>
-
-          {/* Comment Content */}
-          <div className="flex items-start text-opacity-80 justify-center">
-            <div className="ml-4">
-              <img
-                src={image}
-                alt="Fault image"
-                width={300}
-                className="rounded-md"
-              />
-            </div>
+          <div className="flex items-center justify-center w-full mt-4">
+            <img
+              src={image}
+              alt="Fault image"
+              width={200}
+              className="rounded-md"
+            />
           </div>
         </div>
       </div>
