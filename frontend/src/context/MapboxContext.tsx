@@ -1,31 +1,33 @@
 'use client'
 
-import { MutableRefObject, ReactNode, createContext, useContext, useRef, useState } from 'react';
+import { MutableRefObject, ReactNode, createContext, useRef, useState } from 'react';
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import placekit, { PKResult } from '@placekit/client-js';
+import { FaultGeoData } from '@/types/custom.types';
 
 export interface MapboxContextProps {
+    faultMap: MutableRefObject<mapboxgl.Map | null>;
     map: MutableRefObject<mapboxgl.Map | null>;
     selectedAddress: PKResult | null;
     dropPin: (shouldDrop: boolean, pkResult?: PKResult) => void;
     panMapTo: (lng: number | undefined, lat: number | undefined) => void;
     panToCurrentLocation: () => void;
     initialiseMap: (mapContainerRef: React.RefObject<HTMLDivElement>) => MutableRefObject<mapboxgl.Map | null>;
+    initialiseFaultMap: (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[]) => MutableRefObject<mapboxgl.Map | null>;
 }
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 const MapboxContext = createContext<MapboxContextProps | undefined>(undefined);
 
-
 const apiKey = String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY);
 
 const pk = placekit(apiKey);
 
-
 export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // const [map, setMap] = useState<Map | null>(null);
     const map = useRef<Map | null>(null);
+    const faultMap = useRef<Map | null>(null);
+
     const currentMarker = useRef<Marker | null>(null);
     const [selectedAddress, setSelectedAddress] = useState<PKResult | null>(null);
 
@@ -73,26 +75,26 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         });
 
 
-         map.current.on("style.load", (event) => {
-             map.current!.setFog({}); // Set the default atmosphere style
+        map.current.on("style.load", (event) => {
+            map.current!.setFog({}); // Set the default atmosphere style
         });
 
         // Pause spinning on interaction
-         map.current!.on("mousedown", (event) => {
+        map.current.on("mousedown", (event) => {
             userInteracting = true;
         });
 
-         map.current.on("dragstart", () => {
+        map.current.on("dragstart", () => {
             userInteracting = true;
         });
 
         // When animation is complete, start spinning if there is no ongoing interaction
-         map.current!.on("moveend", () => {
-            spinGlobe( map.current!);
+        map.current.on("moveend", () => {
+            spinGlobe(map.current!);
         });
 
 
-        spinGlobe( map.current!);
+        spinGlobe(map.current!);
 
 
         return map;
@@ -178,15 +180,112 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             currentMarker.current.remove();
             setSelectedAddress(null);
         }
-
-
-
-
-
     };
 
-    const getSelectedAddress = () => {
-        return selectedAddress;
+    const initialiseFaultMap = (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[]) => {
+        if (faultMap.current) {
+            return faultMap;
+        }
+
+        faultMap.current = new mapboxgl.Map({
+            container: faultMapContainerRef.current!,
+            center: [28.23142, -25.75442],
+            zoom: 10
+        });
+
+
+        faultMap.current.on("mousedown", (event) => {
+            userInteracting = true;
+        });
+
+        faultMap.current.on("dragstart", () => {
+            userInteracting = true;
+        });
+
+
+        addFaultMarkers(faultGeodata);
+
+        return faultMap;
+    };
+
+
+    const addFaultMarkers = (faultGeodata: FaultGeoData[]) => {
+        if (!faultMap.current) {
+            return;
+        }
+
+        // add markers to map
+        for (const feature of faultGeodata) {
+            new mapboxgl.Marker().setLngLat([Number(feature.longitude), Number(feature.latitude)]).addTo(faultMap.current);
+        }
+
+
+        // faultMap.current.on("load", function () {
+        //     if (!faultMap.current) {
+        //         return;
+        //     }
+
+        //     faultMap.current.addSource("faults", {
+        //         type: "geojson",
+        //         data: geoJSONData,
+        //         cluster: true,
+        //         clusterMaxZoom: 14, // Max zoom to cluster points on
+        //         clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        //     });
+
+        //     faultMap.current.addLayer({
+        //         id: "clusters",
+        //         type: "circle",
+        //         source: "faults",
+        //         filter: ["has", "point_count"],
+        //         paint: {
+        //             "circle-color": [
+        //                 "step",
+        //                 ["get", "point_count"],
+        //                 "#51bbd6",
+        //                 100,
+        //                 "#f1f075",
+        //                 750,
+        //                 "#f28cb1"
+        //             ],
+        //             "circle-radius": [
+        //                 "step",
+        //                 ["get", "point_count"],
+        //                 20,
+        //                 100,
+        //                 30,
+        //                 750,
+        //                 40
+        //             ]
+        //         }
+        //     });
+
+        //     faultMap.current.addLayer({
+        //         id: "cluster-count",
+        //         type: "symbol",
+        //         source: "faults",
+        //         filter: ["has", "point_count"],
+        //         layout: {
+        //             "text-field": "{point_count_abbreviated}",
+        //             "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+        //             "text-size": 12
+        //         }
+        //     });
+
+        //     faultMap.current.addLayer({
+        //         id: "unclustered-point",
+        //         type: "circle",
+        //         source: "faults",
+        //         filter: ["!", ["has", "point_count"]],
+        //         paint: {
+        //             "circle-color": "#11b4da",
+        //             "circle-radius": 4,
+        //             "circle-stroke-width": 1,
+        //             "circle-stroke-color": "#fff"
+        //         }
+        //     });
+        // });
+
     };
 
 
@@ -201,16 +300,10 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
     return (
-        <MapboxContext.Provider value={{ map, dropPin, panMapTo, selectedAddress, panToCurrentLocation, initialiseMap }}>
+        <MapboxContext.Provider value={{ map, dropPin, panMapTo, selectedAddress, panToCurrentLocation, initialiseMap, faultMap, initialiseFaultMap }}>
             {children}
         </MapboxContext.Provider>
     );
 }
 
-export const useMapbox = (): MapboxContextProps => {
-    const context = useContext(MapboxContext);
-    if (!context) {
-        throw new Error("useMapbox must be used within a MapboxProvider");
-    }
-    return context;
-};
+export default MapboxContext;

@@ -4,7 +4,7 @@ import React from "react";
 
 import CreateTicketMap from "@/components/CreateTicket/CreateTicketMap";
 import CreateTicketForm from "@/components/CreateTicket/CreateTicketForm";
-import { useMapbox } from "@/context/MapboxContext";
+import { useMapbox } from "@/hooks/useMapbox";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 
 export default function CreateTicket() {

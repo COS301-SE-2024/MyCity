@@ -1,23 +1,39 @@
+import { useMapbox } from "@/hooks/useMapbox";
+import { useProfile } from "@/hooks/useProfile";
+import { getTicketsGeoData } from "@/services/tickets.service";
+import { useEffect, useRef } from "react";
 
-const mapPlaceholder = "https://media.wired.com/photos/59269cd37034dc5f91bec0f1/191:100/w_1280,c_limit/GoogleMapTA.jpg";
+export default function FaultMapView() {
+  const faultMapContainer = useRef<HTMLDivElement>(null);
+  const { faultMap, initialiseFaultMap } = useMapbox();
 
-const FaultMapView = () => {
+  const { getUserProfile } = useProfile();
+
+  useEffect(() => {
+
+    const loadFaultMap = async () => {
+      const userProfile = await getUserProfile();
+      const sessionToken = userProfile.current?.session_token;
+
+      const faultGeodata = await getTicketsGeoData(sessionToken);
+
+      if (faultMapContainer.current) {
+        initialiseFaultMap(faultMapContainer, faultGeodata);
+      }
+
+    };
+
+    loadFaultMap();
+  }, [getUserProfile, initialiseFaultMap]);
+
+
   return (
     <div className="flex flex-col md:flex-row h-full">
       {/* Map Section */}
       <div className="md:w-1/2 lg:w-1/2 md:pr-4 flex-grow flex pl-2">
-        <div className="relative w-full rounded-lg shadow-md overflow-hidden">
-          <img 
-            src={mapPlaceholder} 
-            alt="Map Placeholder" 
-            width={640} 
-            height={335} 
-            className="absolute top-0 left-0 w-full h-full object-cover rounded-lg" 
-          />
-          <div className="pt-[55.34%]"></div> {/* Aspect Ratio */}
-        </div>
+        <div className="relative w-full h-full rounded-lg shadow-md" ref={faultMapContainer}></div>
       </div>
-      
+
       {/* Key and Regional Summary Section */}
       <div className="md:w-1/2 lg:w-1/2 flex flex-col">
         <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex-grow bg-opacity-70">
@@ -55,5 +71,3 @@ const FaultMapView = () => {
     </div>
   );
 };
-
-export default FaultMapView;
