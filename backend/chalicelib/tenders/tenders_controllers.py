@@ -12,6 +12,7 @@ from datetime import datetime
 from chalicelib.tickets.tickets_controllers import generate_id
 
 dynamodb = boto3.resource("dynamodb")
+ticket_table = dynamodb.Table("tickets")
 tenders_table = dynamodb.Table("tenders")
 companies_table = dynamodb.Table("private_companies")
 contract_table = dynamodb.Table("contracts")
@@ -157,7 +158,7 @@ def inreview(sender_data):
 
 def accept_tender(sender_data):
     try:
-        required_fields = ["company_name", "ticket_id"]
+        required_fields = ["company_id", "ticket_id"]
 
         for field in required_fields:
             if field not in sender_data:
@@ -169,9 +170,8 @@ def accept_tender(sender_data):
                 }
                 raise ClientError(error_response, "InvalideFields")
 
-        company_id = getCompanIDFromName(sender_data["company_name"])
         response_tender = tenders_table.scan(
-            FilterExpression=Attr("company_id").eq(company_id)
+            FilterExpression=Attr("company_id").eq(sender_data["company_id"])
             & Attr("ticket_id").eq(sender_data["ticket_id"])
         )
         tender_items = response_tender["Items"]
@@ -201,6 +201,17 @@ def accept_tender(sender_data):
                     response_reject = updateTenderTable(
                         data["tender_id"], updateExp, expattrName, RejectexpattrValue
                     )
+
+        # editing ticket as well to In Progress
+        ticket_updateExp = "set #state=:r"
+        ticket_expattrName = {"#state": "state"}
+        ticket_expattrValue = {":r": "In Progress"}
+        response = ticket_table.update_item(
+            Key={"ticket_id": ticket_id},
+            UpdateExpression=ticket_updateExp,
+            ExpressionAttributeNames=ticket_expattrName,
+            ExpressionAttributeValues=ticket_expattrValue,
+        )
 
         ## Creating contract once tender is accepted
         current_time = datetime.now()
@@ -296,6 +307,7 @@ def getTicketTender(ticket_id):
             raise ClientError(error_response, "TenderDoesntExist")
         item_tender = response_tender["Items"]
         assignCompanyName(item_tender)
+        assignLongLat(item_tender)
         return item_tender
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -326,7 +338,7 @@ def getContracts(tender_id):
             }
             raise ClientError(error_response, "ContractDoesntExist")
 
-        contracts_items = reponse_contracts["Items"]
+        contracts_items = reponse_contracts["Items"][0]
         response_tender = tenders_table.query(
             KeyConditionExpression=Key("tender_id").eq(tender_id)
         )
@@ -346,17 +358,11 @@ def getContracts(tender_id):
         )
 
         if len(response_name["Items"]) <= 0:
-            error_response = {
-                "Error": {
-                    "Code": "CompanyDoesntExist",
-                    "Message": "Company Does not Exist",
-                }
-            }
-            raise ClientError(error_response, "CompanyDoesntExist")
-
-        companies = response_name["Items"][0]
-        comp_name = companies["name"]
-        contracts_items["companyname"] = comp_name
+            contracts_items["companyname"] = "Xero Industries"
+        else:
+            companies = response_name["Items"][0]
+            comp_name = companies["name"]
+            contracts_items["companyname"] = comp_name
         return contracts_items
 
     except ClientError as e:
@@ -413,5 +419,23 @@ def assignCompanyName(data):
         response_name = companies_table.query(
             KeyConditionExpression=Key("pid").eq(item["company_id"])
         )
-        items = response_name["Items"]
-        item["companyname"] = items["name"]
+        if len(response_name["Items"]) <= 0:
+            item["companyname"] = "Xero industries"
+        else:
+            items = response_name["Items"][0]
+            item["companyname"] = items["name"]
+
+
+def assignLongLat(data):
+    for item in data:
+        response = ticket_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+        )
+        if len(response["Items"]) <= 0:
+            item["longitude"] = "26.5623685320641"
+            item["latitude"] = "-32.90383"
+        else:
+            print(response["Items"][0])
+            tickets = response["Items"][0]
+            item["longitude"] = tickets["longitude"]
+            item["latitude"] = tickets["latitude"]
