@@ -129,6 +129,39 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
 
 }
 
+export async function getCompanyTenders(companyname: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getmytenders";
+    const urlWithParams = `${apiURL}?name=${encodeURIComponent(companyname)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+    console.log(result)
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result.data)
+        AssignTenderNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
 export async function getContract(tender_id: string,user_session : string)
 {
 

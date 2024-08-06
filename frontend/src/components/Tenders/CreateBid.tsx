@@ -3,20 +3,19 @@ import { useProfile } from "@/hooks/useProfile";
 import { CreatTender } from '@/services/tender.service';
 import { FaInfoCircle } from 'react-icons/fa';
 
-interface Ticket {
-  id: string;
+interface TicketProps {
+  ticket_id : string;
+  company_name :string;
+  ticketnumber: string;
   faultType: string;
   description: string;
   address: string;
   municipalityImage: string;
-}
-
-interface CreateBidProps {
-  ticket: Ticket;
   onBack: () => void;
 }
 
-const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
+
+const CreateBid: React.FC<TicketProps> = ({ ticket_id,company_name, ticketnumber, faultType,description,address,municipalityImage, onBack }) => {
   const userProfile = useProfile();
   const [proposedPrice, setProposedPrice] = useState<string>('0.00');
   const [jobDuration, setJobDuration] = useState<string>('');
@@ -35,7 +34,6 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
     let duration = Number(jobDuration);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
-    let ticket_id = ticket.id;
     const mock_ticket = "b591aa60-9403-40d6-8175-f6988402e45f";
     const company_name = String(user_data.current?.company_name);
     console.log(user_data.current);
@@ -73,13 +71,13 @@ const CreateBid: React.FC<CreateBidProps> = ({ ticket, onBack }) => {
     <>
       <div className="bg-white rounded-lg shadow-lg p-4 max-w-4xl mx-auto flex flex-col lg:flex-row">
         <div className="flex-1 p-4">
-          <img src={ticket.municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
-          <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticket.id}</h2>
-          <p className="text-lg font-semibold mb-2 text-center">{ticket.faultType}</p>
-          <p className="text-md mb-4 text-center">{ticket.description}</p>
+          <img src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
+          <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticketnumber}</h2>
+          <p className="text-lg font-semibold mb-2 text-center">{faultType}</p>
+          <p className="text-md mb-4 text-center">{description}</p>
           <div className="mb-4 text-center">
             <p className="text-lg font-semibold">Fault Address</p>
-            <p>{ticket.address}</p>
+            <p>{address}</p>
           </div>
           <form onSubmit={handleFormSubmit}>
             <div className="mb-4">
