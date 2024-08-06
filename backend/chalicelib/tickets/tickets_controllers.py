@@ -22,6 +22,8 @@ import random
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
+tenders_table = dynamodb.Table("tenders")
+companies_table = dynamodb.Table("private_companies")
 cognito_cient = boto3.client("cognito-idp")
 load_dotenv()
 user_poolid = os.getenv("USER_POOL_ID")
@@ -381,18 +383,97 @@ def interact_ticket(ticket_data):
 
 
 def getMostUpvoted():
-    response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
-    items = response["Items"]
-    sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
-    top_items = sorted_items[:6]
-    if len(top_items) > 0:
-        for item in top_items:
-            response_item = ticketupdate_table.scan(
-                FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
-            )
-            item["commentcount"] = len(response_item["Items"])
-        getUserprofile(top_items)
-        return top_items
+    try:
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+        top_items = sorted_items[:6]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            return top_items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def getCompanyTicekts(companyname):
+    try:
+        if companyname == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required query: company",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+
+        collective = []
+        company_id = getCompanIDFromName(companyname)
+        response_tender = tenders_table.scan(
+            FilterExpression=Attr("company_id").eq(company_id)
+        )
+
+        ###For all the tickets they have tenders for
+        if len(response_tender["Items"]) > 0:
+            Items = response_tender["Items"]
+            for item in Items:
+                response_company_tickets = tickets_table.query(
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+                )
+                company_tickets = response_company_tickets["Items"]
+                if len(company_tickets) > 0:
+                    getUserprofile(company_tickets)
+                    collective.extend(company_tickets)
+
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+        filtered_items = [item for item in sorted_items if item["state"] == "Opened"]
+        top_items = filtered_items[:6]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            collective.extend(top_items)
+            return collective
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    ## Error Handling
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def getCompanIDFromName(company_name):
+    response = companies_table.scan()
+    response_items = response["Items"]
+    company_id = ""
+    for item in response_items:
+        if company_name.lower() == item["name"].lower():
+            company_id = item["pid"]
+    return company_id
 
 
 def getUserprofile(ticket_data):
