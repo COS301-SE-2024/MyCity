@@ -68,7 +68,7 @@ export async function InReview(authcode: string,ticket: string,user_session : st
 export async function AcceptTender(companyname: string,ticket: string,user_session : string)
 {
     const data = {
-        company_name : companyname,
+        company_id : companyname,
         ticket_id : ticket,
     }
 
@@ -87,13 +87,12 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
     }
 
     const result = await response.json()
-    if(result.Status == "Success" )
+    if(result.data.Status == "Success" )
     {
         return true
     }
     else false
     
-    return true;
 
 }
 
@@ -111,35 +110,70 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
     });
 
     if (!response.ok) {
-        return false;
+        return null;
     }
 
     const result = await response.json()
-    if(result.Status )
+    console.log(result)
+    if(result.data.Status )
     {
-        return false
+        return null
     }
     else 
     {
-        AssignTenderNumbers(result)
-        return result
+        console.log(result.data)
+        AssignTenderNumbers(result.data)
+        return result.data
     }
     
 
 }
 
-function CreateTenderNumber(municipality: string): string {
-    let ticketnumber = municipality[0].toUpperCase();
+export async function getContract(tender_id: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getcontracts";
+    const urlWithParams = `${apiURL}?tender=${encodeURIComponent(tender_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result)
+        AssignContractNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
+function CreateTenderNumber(company_name: string): string {
+    let ticketnumber = company_name[0].toUpperCase();
     for (let index = 0; index < 2; index++) {
-        let randint: number = Math.floor(Math.random() * municipality.length);
-        while (municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_") {
+        let randint: number = Math.floor(Math.random() * company_name.length);
+        while (company_name[randint] == " " || company_name[randint] == "-" || company_name[randint] == "_") {
             // console.log("inside loop")
-            randint = Math.floor(Math.random() * municipality.length);
+            randint = Math.floor(Math.random() * company_name.length);
         }
-        ticketnumber += municipality[randint].toUpperCase();
+        ticketnumber += company_name[randint].toUpperCase();
     }
     for (let index = 0; index < 2; index++) {
-        const randint = Math.floor(Math.random() * municipality.length) + 1;
+        const randint = Math.floor(Math.random() * company_name.length) + 1;
         ticketnumber += String(randint);
     }
     return ticketnumber;
@@ -147,6 +181,11 @@ function CreateTenderNumber(municipality: string): string {
 
 function AssignTenderNumbers(data: any[]) {
     data.forEach((item: any) => {
-        item['tendernumber'] = CreateTenderNumber(item.municipality_id);
+        item['tendernumber'] = CreateTenderNumber(item.companyname);
     });
+}
 
+function AssignContractNumbers(data: any) {
+    
+    data['contractnumber'] = CreateTenderNumber(data.companyname);
+}
