@@ -4,6 +4,7 @@ import MuniTenders from './MuniTenders';
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
+type TenderStatus = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface RecordType {
   id: string;
@@ -12,6 +13,22 @@ interface RecordType {
   createdBy: string;
   address: string;
   urgency: Urgency;
+}
+
+interface TenderType {
+  id: string;
+  tender_id: string;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string;
+  datetimesubmitted: string;
+  ticket_id: string;
+  status: TenderStatus;
+  quote: number;
+  estimatedTimeHours: number;
+  upload: File | null;
+  hasReportedCompletion: boolean;
 }
 
 const records: RecordType[] = [
@@ -32,6 +49,41 @@ const records: RecordType[] = [
   { id: 'SA0309', faultType: 'Parking Violation', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'low' },
   { id: 'SA0310', faultType: 'Illegal Dumping', status: 'Unaddressed', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'high' },
   { id: 'SA0311', faultType: 'Public Disturbance', status: 'Fix in progress', createdBy: 'Kyle Marshall', address: '312 Rupert Street', urgency: 'medium' },
+];
+
+// Mock data for tenders
+const mockTenders: TenderType[] = [
+  {
+    id: "1",
+    tender_id: "T001",
+    tendernumber: "TN001",
+    company_id: "C001",
+    companyname: "Company A",
+    serviceProvider: "ServiceProvider A",
+    datetimesubmitted: "2023-07-01T08:30:00Z",
+    ticket_id: "SA0300",
+    status: "Active",
+    quote: 1500.5,
+    estimatedTimeHours: 120,
+    upload: null,
+    hasReportedCompletion: false,
+  },
+  {
+    id: "2",
+    tender_id: "T002",
+    tendernumber: "TN002",
+    company_id: "C002",
+    companyname: "Company B",
+    serviceProvider: "ServiceProvider B",
+    datetimesubmitted: "2023-07-02T09:15:00Z",
+    ticket_id: "SA0302",
+    status: "Active",
+    quote: 2000.0,
+    estimatedTimeHours: 72,
+    upload: null,
+    hasReportedCompletion: false,
+  },
+  // Add more mock tenders as needed
 ];
 
 export default function OpenTicketsTable() {
@@ -109,7 +161,7 @@ export default function OpenTicketsTable() {
           </div>
         </>
       ) : (
-        <MuniTenders ticketId={selectedTicketId} onBack={handleBack} />
+        <MuniTenders tenders={mockTenders.filter(tender => tender.ticket_id === selectedTicketId)} onBack={handleBack} />
       )}
     </div>
   );

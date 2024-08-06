@@ -1,44 +1,37 @@
-
 import React, { useState } from "react";
 import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
 
-type Status = "Unassigned" | "approved" | "rejected" | "Closed";
-
+type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 interface TenderType {
+  id: string;
   tender_id: string;
-  tendernumber : string;
-  company_id : string;
-  companyname : string;
-  datetimesubmitted : string;
-  longitude : string;
-  latitude : string;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string; // Add serviceProvider here
+  datetimesubmitted: string;
   ticket_id: string;
-  status: string;
+  status: Status;
   quote: number;
   estimatedTimeHours: number;
   upload: File | null;
-  hasReportedCompletion: boolean | false; 
+  hasReportedCompletion: boolean; // New prop
 }
 
 interface TenderTypeProps {
   tenders: TenderType[];
 }
 
-
 export default function MuniTenders({
-  tenders, 
+  tenders,
   onBack,
 }: {
-  tenders : TenderType[]
+  tenders: TenderType[];
   onBack: () => void;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
-  // Filter tenders associated with the selected ticket ID and Unassigned status
-  
-
-  // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
   const currentTenders = tenders.slice(

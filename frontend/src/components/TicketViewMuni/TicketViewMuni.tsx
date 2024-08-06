@@ -1,5 +1,4 @@
-
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaArrowUp,
   FaCommentAlt,
@@ -26,16 +25,16 @@ interface TicketViewMuniProps {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
-  ticket_id : string;
+  ticket_id: string;
   description: string;
   user_picture: string;
   createdBy: string;
   status: string;
   imageURL : string;
   municipalityImage: string;
-  upvotes : number;
-  latitude : string;
-  longitude : string;
+  upvotes: number;
+  latitude: string;
+  longitude: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -88,17 +87,31 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  const getUrgency = (votes : number) =>{
-      if (votes < 10) {
-        return "low";
+  const getUrgency = (votes: number) => {
+    if (votes < 10) {
+      return "low";
     } else if (votes >= 10 && votes < 20) {
-        return "medium";
+      return "medium";
     } else if (votes >= 20 && votes <= 40) {
-        return "high";
+      return "high";
     } else {
-        return "low"; // Default case
+      return "low"; // Default case
     }
-  }
+  };
+
+  useEffect(() => {
+    if (show) {
+      const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/streets-v12', // style URL
+        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
+        zoom: 14 // starting zoom
+      });
+      new mapboxgl.Marker()
+        .setLngLat([Number(longitude), Number(latitude)])
+        .addTo(map);
+    }
+  }, [show, latitude, longitude]);
 
   if (!show) return null;
 
@@ -317,7 +330,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
       {showMuniTenders && (
         <MuniTenders
-          tenders = {tenders}
+          tenders={tenders}
           onBack={handleBack}
         />
       )}

@@ -1,7 +1,6 @@
+'use client';
 
-"use client";
-
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 // import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
@@ -27,7 +26,7 @@ import {
 
 interface ScrollablePanelProps {
   title: string;
-  childern: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
@@ -105,8 +104,7 @@ export default function Notifications() {
             overflow: "hidden",
           }}
         >
-          <Navbar />
-          {/* <NotificationPromt /> */}
+          <NavbarUser />
 
           {/* Background image */}
           <div
