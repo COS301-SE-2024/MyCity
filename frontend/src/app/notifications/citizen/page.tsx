@@ -1,4 +1,3 @@
-
 "use client";
 
 import Navbar from "@/components/Navbar/Navbar";
@@ -16,6 +15,7 @@ import React, { Key, useEffect, useRef, useState } from "react";
 // import { FaTimes } from "react-icons/fa";
 // import { HelpCircle } from "lucide-react";
 import DashboardStatusCardContainer from "@/components/StatusCardContainer/DashboardStatusCardContainer";
+// import StatusCardUser from "@/components/StatusCardUser/StatusCardUser";
 import { useProfile } from "@/hooks/useProfile";
 
 import {
@@ -23,30 +23,119 @@ import {
   getTicketsInMunicipality,
   getMostUpvote,
   getWatchlistTickets,
-} from "@/services/tickets.service"; 
+} from "@/services/tickets.service";
+import StatusCardUser from "@/components/StatusCardUser/StatusCardUser";
 
 interface ScrollablePanelProps {
   title: string;
   childern: React.ReactNode;
 }
 
-const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
-  title,
-  children,
-}) => (
-  <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 h-[80vh] m-4 overflow-auto">
-    <div className="flex justify-center border p-4">
-      <h1 className="text-2xl font-bold">{title}</h1>
-    </div>
-    <div className="overflow-y-auto h-full overflow-auto">{children}</div>
-  </div>
-);
+// const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
+//   title,
+//   children,
+// }) => (
+
+// );
+
+export const mockWatchlist = [
+  {
+    dateClosed: "",
+    upvotes: 9.0,
+    ticket_id: "f5e97ab9-c4c4-4115-93c5-933fb0660a8a",
+    address:
+      "Umzumbe Ward 12, Ugu District Municipality, Umzumbe Local Municipality, KwaZulu-Natal",
+    asset_id: "Park equipment maintenance",
+    state: "In Progress",
+    dateOpened: "2024-04-05T09:18:00",
+    imageURL:
+      "https://media.istockphoto.com/id/1329935249/photo/old-swings-abandoned-playground-equipment-on-the-background-of-swings-and-carousels.jpg?s=612x612&w=0&k=20&c=b75a7nquAomAUowIorleQTF3-z5QnPfWsuD0wvqsA_E=",
+    viewcount: 30.0,
+    longitude: "30.4233950524851",
+    username: "ethan.clark@telkomsa.net",
+    description: "This Park equipment maintenance problem is a safety hazard.",
+    latitude: "-30.4659199",
+    municipality_id: "Umzumbe Local",
+    commentcount: 3,
+    user_picture: "https://i.imgur.com/4CZCyPM.png",
+    createdby: "Ethan",
+    municipality_picture:
+      "https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/Umzumbe_Local.png",
+  },
+  {
+    dateClosed: "",
+    upvotes: 9.0,
+    ticket_id: "b3f9f49e-c894-4832-be28-5e0bbb16aeb3",
+    address:
+      "Umzumbe Ward 12, Ugu District Municipality, Umzumbe Local Municipality, KwaZulu-Natal",
+    asset_id: "Vandalized bus stops",
+    state: "Opened",
+    dateOpened: "2024-04-20T17:58:00",
+    imageURL:
+      "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1051",
+    viewcount: 29.0,
+    longitude: "30.4233950524851",
+    username: "niki.makris@live.com",
+    description: "New Vandalized bus stops problem here.",
+    latitude: "-30.4859199",
+    municipality_id: "Umzumbe Local",
+    commentcount: 3,
+    user_picture: "https://i.imgur.com/xKEKm62.png",
+    createdby: "Niki",
+    municipality_picture:
+      "https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/Umzumbe_Local.png",
+  },
+  {
+    dateClosed: "",
+    upvotes: 4.0,
+    ticket_id: "5fee334d-ecc9-48c7-9399-fad622e42fdb",
+    address:
+      "Umzumbe Ward 7, Ugu District Municipality, Umzumbe Local Municipality, KwaZulu-Natal",
+    asset_id: "Damaged fire hydrants",
+    state: "Assigning Contract",
+    dateOpened: "2024-04-18T15:45:00",
+    imageURL:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6RroVo8cseVUTMqm7p2J0LnJmQ20ZFhTSbA&s",
+    viewcount: 25.0,
+    longitude: "30.3033950524851",
+    username: "francois.jordaan@mimecast.com",
+    description: "This Damaged fire hydrants problem needs to be fixed.",
+    latitude: "-30.3959199",
+    municipality_id: "Umzumbe Local",
+    commentcount: 3,
+    user_picture: "https://i.imgur.com/xKEKm62.png",
+    createdby: "Francois",
+    municipality_picture:
+      "https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/Umzumbe_Local.png",
+  },
+  {
+    dateClosed: "2024-04-09T08:31:00",
+    upvotes: 9.0,
+    ticket_id: "3486f609-ecb2-4289-b7e1-5e373e939b96",
+    address:
+      "D150, Ugu District Municipality, Hibiscus Coast Local Municipality, KwaZulu-Natal",
+    asset_id: "Bridge maintenance",
+    state: "Closed",
+    dateOpened: "2024-04-07T16:46:00",
+    imageURL:
+      "https://t4.ftcdn.net/jpg/01/80/25/51/360_F_180255112_O1dUOvcA0kNqR9BM7cHDEkX6sJ41mC90.jpg",
+    viewcount: 28.0,
+    longitude: "30.4233950524851",
+    username: "petro.kruger@gmail.com",
+    description: "Fix this Bridge maintenance problem.",
+    latitude: "-30.5759199",
+    municipality_id: "Umzumbe Local",
+    commentcount: 3,
+    user_picture: "https://i.imgur.com/eQ2LFOY.png",
+    createdby: "Petro",
+    municipality_picture:
+      "https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/Umzumbe_Local.png",
+  },
+];
 
 export default function Notifications() {
   const user = useRef(null);
   const userProfile = useProfile();
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
 
@@ -58,30 +147,40 @@ export default function Notifications() {
       const user_session = String(user_data.current?.session_token);
       // console.log(user_session);
       const rspmostupvotes = await getMostUpvote(user_session);
+      console.log(rspmostupvotes);
+
+
       const rspwatchlist = await getWatchlistTickets(
         String(user_id),
         user_session
       );
+
+
+
       const municipality = user_data.current?.municipality;
-      const rspmunicipality = await getTicketsInMunicipality(
-        municipality,
-        user_session
-      );
+      // const rspmunicipality = await getTicketsInMunicipality(
+      //   municipality,
+      //   user_session
+      // );
       // console.log(rspmostupvotes)
       // const flattenedWatchlist = rspwatchlist.flat();
       console.log(rspwatchlist);
-      setMostUpvoteResults(rspmostupvotes);
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-      if (rspwatchlist.length > 0) {
-        setDashWatchResults(rspwatchlist);
-        console.log(dashWatchResults);
-      } else setDashWatchResults([]);
+      // setMostUpvoteResults(rspmostupvotes);
+      // setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+
+      // if (rspwatchlist.length > 0) {
+      //   setDashWatchResults(rspwatchlist);
+      //   console.log(dashWatchResults);
+      // } else setDashWatchResults(mockWatchlist);
+
+
+      setDashWatchResults(mockWatchlist)
+
       // console.log( dashMostUpvoteResults)
       // }
       // catch (error) {
       //   console.error("Error fetching data:", error);
       // }
-      
     };
 
     fetchData();
@@ -129,21 +228,21 @@ export default function Notifications() {
           <div className="fixed inset-0 overflow-hidden">
             <main className="h-full flex items-center justify-center pb-16 overflow-auto">
               {/* Your Ticket Interactions */}
-              <ScrollablePanel title="Your Ticket Interactions">
-                <DashboardStatusCardContainer cardData={dashWatchResults}  />
-                
-                <NotificationComment />
+              {/* <DashboardStatusCardContainer title="Your Ticket Interactions" > */}
+                <DashboardStatusCardContainer cardData={dashWatchResults} />
+
+                {/* <NotificationComment />
                 <NotificationUpvote />
                 <NotificationComment />
                 <NotificationComment />
                 <NotificationUpvote />
                 <NotificationComment />
                 <NotificationUpvote />
-                <NotificationComment />
-              </ScrollablePanel>
+                <NotificationComment /> */}
+              {/* </DashboardStatusCardContainer> */}
               {/* Your Ticket Updates */}
               {/* <ScrollablePanel title="Your Ticket Updates"> */}
-                {/* <NotificationUpdate state="AssigningContract" />
+              {/* <NotificationUpdate state="AssigningContract" />
                 <NotificationUpdate state="Closed" />
                 <NotificationUpdate state="InProgress" />
                 <NotificationUpdate state="Closed" />
@@ -153,15 +252,15 @@ export default function Notifications() {
               {/* </ScrollablePanel> */}
               {/* Your Watchlist */}
               {/* <ScrollablePanel title="Your Watchlist"> */}
-                {/* <NotificationUpdate state="InProgress" /> */}
-                {/* <NotificationUpvote /> */}
-                {/* <NotificationComment /> */}
-                {/* <NotificationUpdate state="AssigningContract" /> */}
-                {/* <NotificationComment /> */}
-                {/* <NotificationUpdate state="InProgress" /> */}
-                {/* <NotificationUpdate state="Closed" /> */}
-                {/* <NotificationComment /> */}
-                {/* <NotificationUpdate state="Opened" /> */}
+              {/* <NotificationUpdate state="InProgress" /> */}
+              {/* <NotificationUpvote /> */}
+              {/* <NotificationComment /> */}
+              {/* <NotificationUpdate state="AssigningContract" /> */}
+              {/* <NotificationComment /> */}
+              {/* <NotificationUpdate state="InProgress" /> */}
+              {/* <NotificationUpdate state="Closed" /> */}
+              {/* <NotificationComment /> */}
+              {/* <NotificationUpdate state="Opened" /> */}
               {/* </ScrollablePanel> */}
             </main>
           </div>
@@ -232,4 +331,3 @@ export default function Notifications() {
     </div>
   );
 }
-
