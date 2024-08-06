@@ -1,6 +1,5 @@
 'use client';
 
-import React from "react";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
 // import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
@@ -27,7 +26,7 @@ import {
 
 interface ScrollablePanelProps {
   title: string;
-  childern: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
