@@ -103,11 +103,25 @@ const UpvoteCardUser: React.FC<UpvoteCardUserProps> = ({
     <div className="py-2 px-4">
       {/* Comment Container */}
       <div className="flex flex-col border border-gray-300 w-full rounded-md p-4 items-center">
-        <div className="font-bold  text-2xl pb-4">{title}</div>
+        <div className="flex w-full justify-between items-center">
+          <div className="flex justify-start items-center">
+            <div className="text-xl font-bold text-gray-400 ">
+              UMZ2-4051-7J62
+            </div>
+          </div>
 
-        <div className="flex w-full">
+          <div className="flex justify-end items-center ">
+            <div className="font-bold text-2xl pb-4">{title}</div>
+          </div>
+
+          <div className="flex justify-end items-center  text-gray-400">
+            <div className="font-bold text-lg pb-4">2 August</div>
+          </div>
+        </div>
+
+        <div className="flex w-full justify-between items-center">
           {/* Users Profile */}
-          <div className=" flex justify-start w-1/3">
+          <div className=" flex">
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
                 <img
@@ -122,12 +136,12 @@ const UpvoteCardUser: React.FC<UpvoteCardUserProps> = ({
           </div>
 
           {/* Status */}
-          <div className="flex justify-center w-1/3">
+          <div className="flex  w-1/3">
             <div className="flex items-center justify-center w-full">
               <div className="flex flex-col justify-center items-start w-full">
                 {/*Status Button*/}
                 <div
-                  className={`bg-orange-400 bg-opacity-75 text-black font-bold text-lg rounded-lg px-3 py-1 mt-1 w-full`}
+                  className={`bg-pink-300 bg-opacity-75 text-black font-bold text-lg rounded-lg px-3 py-1 mt-1 w-full`}
                 >
                   Upvoted
                 </div>
@@ -136,11 +150,11 @@ const UpvoteCardUser: React.FC<UpvoteCardUserProps> = ({
           </div>
 
           {/* Upvotes */}
-          <div className="flex justify-end w-1/3 ">
+          <div className="flex text-gray-400">
             {" "}
             <div className="flex items-center justify-center">
               <ArrowBigUp size={48} />
-              <div className="ml-1 text-lg font-bold">{arrowCount}</div>
+              <div className="ml-1 text-lg font-bold ">{arrowCount}</div>
             </div>
           </div>
         </div>

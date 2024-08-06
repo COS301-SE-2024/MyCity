@@ -1,7 +1,7 @@
 import React from "react";
-import { Eye } from "lucide-react";
-import { MessageCirclePlus } from 'lucide-react';
-import { ArrowBigUp } from 'lucide-react';
+import { Eye, Key } from "lucide-react";
+import { MessageCirclePlus } from "lucide-react";
+import { ArrowBigUp } from "lucide-react";
 
 interface cardDataWatchlist {
   title: string;
@@ -15,6 +15,7 @@ interface cardDataWatchlist {
   createdBy: string;
   state: string;
   municipality_id: string;
+  key: string;
   stateFormat: keyof typeof notificationStates;
 }
 
@@ -90,6 +91,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
   onClick,
   municipality_id,
   state,
+  key,
   stateFormat,
 }) => {
   const formattedStateKey = formatState(state);
@@ -103,10 +105,24 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
     <div className="py-2 px-4">
       {/* Comment Container */}
       <div className="flex flex-col border border-gray-300 w-full rounded-md p-4 items-center">
-        <div className="font-bold text-start text-2xl pb-4">{title}</div>
+        <div className="flex w-full justify-between items-center">
+          <div className="flex justify-start items-center">
+            <div className="text-xl font-bold text-gray-400 ">
+              UMZ2-4051-7J62
+            </div>
+          </div>
+
+          <div className="flex justify-end items-center ">
+            <div className="font-bold text-2xl pb-4">{title}</div>
+          </div>
+
+          <div className="flex justify-end items-center  text-gray-400">
+            <div className="font-bold text-lg pb-4">2 August</div>
+          </div>
+
+        </div>
 
         <div className="flex w-full">
-
           {/* Status and Profile */}
           <div className="flex flex-col justify-between items-start w-3/6 ">
             {/*Status Button*/}
@@ -151,7 +167,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
               <div className="ml-1 text-lg font-bold">{viewCount}</div>
             </div>
             <div className="flex items-center justify-center">
-              <MessageCirclePlus  size={48} />
+              <MessageCirclePlus size={48} />
               <div className="ml-1 text-lg font-bold">{commentCount}</div>
             </div>
             <div className="flex items-center justify-center">
@@ -161,11 +177,8 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
           </div>
 
           {/* Fault Image */}
-          <div className="flex items-end" >
-            <div
-              className="flex"
-              style={{ width: "320px", height: "240px" }}
-            >
+          <div className="flex items-end">
+            <div className="flex" style={{ width: "320px", height: "240px" }}>
               <img
                 src={image}
                 alt="Fault image"
