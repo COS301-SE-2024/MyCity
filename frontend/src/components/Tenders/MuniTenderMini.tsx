@@ -1,6 +1,9 @@
 
 import React, { useState } from 'react';
+import { useProfile } from "@/hooks/useProfile";
+import { getContract } from '@/services/tender.service';
 import TenderMax from './MuniTenderMax'; // Assuming the detailed view component is in the same directory
+import TenderContainer from './TendersTemplate';
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
@@ -14,6 +17,8 @@ interface TenderType {
   status: string;
   quote: number;
   estimatedTimeHours: number;
+  longitude : string;
+  latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean | false; // New prop
 }
@@ -22,7 +27,7 @@ function statusStyles(status : string) {
   switch (status){
     case 'rejected':
       return 'bg-red-200 text-black'
-    case 'approved':
+    case 'accepted':
       return 'bg-green-200 text-black'
     case 'under review':
       return 'border-blue-500 text-blue-500 bg-white'
@@ -38,10 +43,19 @@ function statusStyles(status : string) {
 
 export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [contract,setContract] = useState<any>()
+  const userProfile = useProfile();
 
-  const handleTenderClick = () => {
-    setShowDetails(true);
+  const handleTenderClick = async () => {
+    try {
+      setShowDetails(true)
+      // Handle the fetched data
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+
+  const formatDate = tender.datetimesubmitted.split('T')[0]
 
   const handleClose = () => {
     setShowDetails(false);
@@ -63,14 +77,14 @@ export default function Tender({ tender }: { tender: TenderType }) {
           </span>
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
-        <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
+        <div className="col-span-1 flex justify-center">{tender.ticket_id}</div>
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
-        <div className="col-span-1 flex justify-center">{tender.datetimesubmitted}</div>
+        <div className="col-span-1 flex justify-center">{formatDate}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={tender} onClose={handleClose} />}
+      {showDetails && <TenderContainer tender={tender} onClose={handleClose} />}
     </>
   );
 }

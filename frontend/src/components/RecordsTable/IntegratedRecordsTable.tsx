@@ -8,9 +8,10 @@ interface RecordType {
   ticket_id: string;
   ticketnumber : string;
   asset_id: string;
-  user_profile : string;
-  municipality_picture : string | "";
+  user_picture : string;
+  municipality_picture : string ;
   description : string;
+  imageURL : string;
   state: string;
   address: string;
   createdby: string;

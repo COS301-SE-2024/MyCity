@@ -10,8 +10,9 @@ interface RecordType {
     ticket_id: string;
     ticketnumber : string;
     asset_id: string;
-    user_profile : string;
-    municipality_picture : string | "";
+    imageURL : string;
+    user_picture : string;
+    municipality_picture : string ;
     description : string;
     state: string;
     address: string;
@@ -118,10 +119,11 @@ export default function Record({ record }: { record: RecordType }) {
           viewCount={record.viewcount} // Update this as per your data source
           ticketNumber={record.ticketnumber}
           description={record.description} // Update this as per your data source
-          image={record.user_profile} // Update this as per your data source
+          user_picture={record.user_picture} // Update this as per your data source
           createdBy={record.createdby}
+          imageURL={record.imageURL}
           status={record.state}
-          municipalityImage={"https://via.placeholder.com/50"} // Update this as per your data source
+          municipalityImage={record.municipality_picture} // Update this as per your data source
           upvotes={record.upvotes}
           latitude={record.latitude}
           longitude={record.longitude}
