@@ -73,3 +73,4 @@ const UpdateComponent: React.FC<UpdateComponentProps> = ({ state }) => {
 };
 
 export default UpdateComponent;
+
