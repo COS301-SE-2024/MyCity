@@ -186,8 +186,9 @@ def getMyTickets(tickets_data):
                 }
             }
             raise ClientError(error_response, "InvalideFields")
-        response = tickets_table.scan(
-            FilterExpression=Attr("username").eq(tickets_data)
+        response = tickets_table.query(
+            IndexName="username-index",
+            KeyConditionExpression=Key("username").eq(tickets_data),
         )
         items = response["Items"]
         if len(items) > 0:
@@ -217,14 +218,15 @@ def get_in_my_municipality(tickets_data):
                 }
             }
             raise ClientError(error_response, "InvalideFields")
-        response = tickets_table.scan(
-            FilterExpression=Attr("municipality_id").eq(tickets_data)
+        response = tickets_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
         if len(items) > 0:
             for item in items:
                 response_item = ticketupdate_table.scan(
-                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                    FilterExpression=Key("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
