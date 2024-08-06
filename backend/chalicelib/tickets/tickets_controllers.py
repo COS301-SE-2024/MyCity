@@ -278,8 +278,10 @@ def get_watchlist(tickets_data):
                         }
                     }
                     raise ClientError(error_response, "Inconsistencies")
-            getUserprofile(ticketsItems)
-            return ticketsItems
+                getUserprofile(ticketsItems)
+                collective.extend(ticketsItems)
+            return collective
+
         else:
             error_response = {
                 "Error": {
@@ -408,7 +410,16 @@ def getUserprofile(ticket_data):
                     user_name = attr["Value"]
             username["user_picture"] = user_image
             username["createdby"] = user_name
-            username["municipality_picture"] = ""
+            response_municipality = municipality_table.query(
+                KeyConditionExpression=Key("municipality_id").eq(
+                    username["municipality_id"]
+                )
+            )
+            if len(response_municipality["Items"]) > 0:
+                logo = response_municipality["Items"][0]
+                username["municipality_picture"] = logo["municipalityLogo"]
+            else:
+                username["municipality_picture"] = ""
 
     except cognito_cient.exceptions.UserNotFoundException:
         print(f"User {username['username']} not found.")
