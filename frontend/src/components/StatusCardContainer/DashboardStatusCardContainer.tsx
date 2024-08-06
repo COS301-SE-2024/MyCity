@@ -76,7 +76,7 @@ const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
     ));
 
   return (
-    <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2 border">
+    <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2 ">
       <div
         className="w-full overflow-x-auto custom-scrollbar"
         style={{
