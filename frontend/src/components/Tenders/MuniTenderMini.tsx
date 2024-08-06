@@ -27,7 +27,7 @@ function statusStyles(status : string) {
   switch (status){
     case 'rejected':
       return 'bg-red-200 text-black'
-    case 'approved':
+    case 'accepted':
       return 'bg-green-200 text-black'
     case 'under review':
       return 'border-blue-500 text-blue-500 bg-white'
