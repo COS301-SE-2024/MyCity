@@ -17,6 +17,7 @@ interface CardData {
   commentcount: number;
   user_picture: string;
   address: string;
+  onClick: void;
 }
 
 interface CardComponentProps {
@@ -75,7 +76,7 @@ const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
     ));
 
   return (
-    <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2">
+    <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2 border">
       <div
         className="w-full overflow-x-auto custom-scrollbar"
         style={{
@@ -85,14 +86,25 @@ const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
           scrollbarColor: "rgba(255, 255, 255, 0.5) transparent", // For Firefox
         }}
       >
+        {/* <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 h-[80vh] m-4 overflow-auto">
+          <div className="flex justify-center border p-4">
+            <h1 className="text-2xl font-bold">{title}</h1>
+          </div>
+          <div className="overflow-y-auto h-full overflow-auto">{children}</div>
+        </div> */}
+
         {/* style goes here */}
-        <div className="flex justify-start">
-          <div className="flex mb-8 text-center flex-nowrap">
+        <div className="flex justify-center">
+          <div className="flex flex-col pb-16 text-center flex-nowrap w-1/2 bg-white rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 h-[80vh] m-4 overflow-auto">
+            <div className="flex justify-center border p-4">
+              <h1 className="text-2xl font-bold">Status Notifications</h1>
+            </div>
             {/* Display multiple FaultCardUser components */}
             {visibleItems}
           </div>
         </div>
       </div>
+
       {showModal && selectedCard && (
         <StatusCardUserView
           show={showModal}

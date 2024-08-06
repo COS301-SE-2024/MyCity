@@ -1,8 +1,4 @@
 import React from "react";
-import { FaArrowUp, FaEye, FaCommentAlt } from "react-icons/fa";
-import { User, ArrowBigUp } from "lucide-react";
-import { Default } from "node_modules/react-toastify/dist/utils";
-
 interface CardData {
   title: string;
   address: string;
@@ -50,12 +46,7 @@ export const notificationStates = {
   },
 };
 
-function formatNumber(num: number): string {
-  if (num >= 1000) {
-    return (num / 1000).toFixed(1) + "k";
-  }
-  return num.toString();
-}
+
 
 function formatMunicipalityID(mun: string): string {
   return mun.replace(/ /g, "_");
