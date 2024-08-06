@@ -169,7 +169,7 @@ export default function Notifications() {
           <div className="fixed inset-0 overflow-hidden">
             <main className="h-full flex items-center justify-center pb-16 overflow-auto">
               {/* Your Ticket Interactions */}
-              <DashboardNotificationsCardContainer cardData={dashWatchResults} />
+              <DashboardNotificationsCardContainer cardDataWatchlist={dashWatchResults} cardDataUpvotes={dashWatchResults} />
             </main>
           </div>
         </div>

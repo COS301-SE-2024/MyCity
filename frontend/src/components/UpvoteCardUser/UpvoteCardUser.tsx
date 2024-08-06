@@ -1,7 +1,7 @@
 import React from "react";
 import { Eye } from "lucide-react";
-import { MessageCirclePlus } from 'lucide-react';
-import { ArrowBigUp } from 'lucide-react';
+import { MessageCirclePlus } from "lucide-react";
+import { ArrowBigUp } from "lucide-react";
 
 interface cardDataWatchlist {
   title: string;
@@ -18,7 +18,7 @@ interface cardDataWatchlist {
   stateFormat: keyof typeof notificationStates;
 }
 
-interface StatusCardUserProps extends cardDataWatchlist {
+interface UpvoteCardUserProps extends cardDataWatchlist {
   onClick?: () => void; // Make onClick optional
 }
 
@@ -79,7 +79,7 @@ function formatState(state: string): string {
   return state.replace(/ /g, "");
 }
 
-const StatusCardUser: React.FC<StatusCardUserProps> = ({
+const UpvoteCardUser: React.FC<UpvoteCardUserProps> = ({
   title,
   address,
   arrowCount,
@@ -103,35 +103,12 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
     <div className="py-2 px-4">
       {/* Comment Container */}
       <div className="flex flex-col border border-gray-300 w-full rounded-md p-4 items-center">
-        <div className="font-bold text-start text-2xl pb-4">{title}</div>
+        <div className="font-bold  text-2xl pb-4">{title}</div>
 
         <div className="flex w-full">
-
-          {/* Status and Profile */}
-          <div className="flex flex-col justify-between items-start w-3/6 ">
-            {/*Status Button*/}
-            <div
-              className={`${color} bg-opacity-75 text-black font-bold text-lg rounded-lg px-3 py-1 mt-1 w-full`}
-            >
-              {state}
-            </div>
-
-            {/* ETA */}
-            <div className="flex justify-between mt-4 w-3/4">
-              <div className="text-xl font-bold text-gray-500">
-                Estimated Time:{" "}
-              </div>
-              <div className="text-xl font-bold text-gray-500"> 18 hours</div>
-            </div>
-
-            {/* Address */}
-            <div className="flex justify-between mt-4 w-full">
-              <div className="text-xl font-bold text-gray-500">Address: </div>
-              <div className="text-sm font-bold text-gray-500">{address}</div>
-            </div>
-
-            {/* Fault's Municipality */}
-            <div className="flex items-center justify-center">
+          {/* Users Profile */}
+          <div className=" flex justify-start w-1/3">
+            <div className="flex items-center">
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
                 <img
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
@@ -144,34 +121,26 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
             </div>
           </div>
 
-          {/* View, Comment, Arrow Count */}
-          <div className="flex flex-col justify-between items-start w-1/6 p-4 text-gray-400">
-            <div className="flex items-center justify-center">
-              <Eye size={48} />
-              <div className="ml-1 text-lg font-bold">{viewCount}</div>
-            </div>
-            <div className="flex items-center justify-center">
-              <MessageCirclePlus  size={48} />
-              <div className="ml-1 text-lg font-bold">{commentCount}</div>
-            </div>
-            <div className="flex items-center justify-center">
-              <ArrowBigUp size={48} />
-              <div className="ml-1 text-lg font-bold">{arrowCount}</div>
+          {/* Status */}
+          <div className="flex justify-center w-1/3">
+            <div className="flex items-center justify-center w-full">
+              <div className="flex flex-col justify-center items-start w-full">
+                {/*Status Button*/}
+                <div
+                  className={`bg-orange-400 bg-opacity-75 text-black font-bold text-lg rounded-lg px-3 py-1 mt-1 w-full`}
+                >
+                  Upvoted
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Fault Image */}
-          <div className="flex items-end" >
-            <div
-              className="flex"
-              style={{ width: "320px", height: "240px" }}
-            >
-              <img
-                src={image}
-                alt="Fault image"
-                className="rounded-md object-fill w-full h-full"
-                // style={{ width: "320px", height: "240px" }}
-              />
+          {/* Upvotes */}
+          <div className="flex justify-end w-1/3 ">
+            {" "}
+            <div className="flex items-center justify-center">
+              <ArrowBigUp size={48} />
+              <div className="ml-1 text-lg font-bold">{arrowCount}</div>
             </div>
           </div>
         </div>
@@ -180,4 +149,4 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
   );
 };
 
-export default StatusCardUser;
+export default UpvoteCardUser;
