@@ -202,7 +202,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
     return () => map.remove();
 
-  },[])
+  },[latitude,longitude])
 
   return (
     <>
