@@ -187,8 +187,8 @@ def getMyTickets(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="username-index", 
-            KeyConditionExpression=Key("username").eq(tickets_data)
+            IndexName="username-index",
+            KeyConditionExpression=Key("username").eq(tickets_data),
         )
         items = response["Items"]
         if len(items) > 0:
@@ -220,14 +220,13 @@ def get_in_my_municipality(tickets_data):
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
             IndexName="municipality_id-index",
-            KeyConditionExpression=Key("municipality_id").eq(tickets_data)
+            KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
         if len(items) > 0:
             for item in items:
-                response_item = ticketupdate_table.query(
-                    IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Key("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
@@ -269,9 +268,8 @@ def get_watchlist(tickets_data):
                 ticketsItems = respitem["Items"]
                 if len(ticketsItems) > 0:
                     for tckitem in ticketsItems:
-                        response_item = ticketupdate_table.query(
-                            IndexName="ticket_id-index",
-                            KeyConditionExpression=Key("ticket_id").eq(tckitem["ticket_id"])
+                        response_item = ticketupdate_table.scan(
+                            FilterExpression=Attr("ticket_id").eq(tckitem["ticket_id"])
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
                 else:
