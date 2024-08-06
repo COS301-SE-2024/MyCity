@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useProfile } from "@/hooks/useProfile";
 import { CreatTender } from '@/services/tender.service';
 import { FaInfoCircle } from 'react-icons/fa';
+import RenderMap from '@/hooks/mapboxmap';
 
 interface TicketProps {
   ticket_id : string;
@@ -10,12 +11,14 @@ interface TicketProps {
   faultType: string;
   description: string;
   address: string;
+  longitude : string;
+  latitude : string;
   municipalityImage: string;
   onBack: () => void;
 }
 
 
-const CreateBid: React.FC<TicketProps> = ({ ticket_id,company_name, ticketnumber, faultType,description,address,municipalityImage, onBack }) => {
+const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company_name, ticketnumber, faultType,description,address,municipalityImage, onBack }) => {
   const userProfile = useProfile();
   const [proposedPrice, setProposedPrice] = useState<string>('0.00');
   const [jobDuration, setJobDuration] = useState<string>('');
@@ -38,7 +41,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,company_name, ticketnumber
     const company_name = String(user_data.current?.company_name);
     console.log(user_data.current);
     console.log("Company name : " + company_name);
-    const response_submit = await CreatTender(company_name, price, mock_ticket, duration, user_session);
+    const response_submit = await CreatTender(company_name, price, ticket_id, duration, user_session);
     if (response_submit === true) {
       console.log("success");
       onBack(); // Go back to the previous state on success
@@ -51,6 +54,8 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,company_name, ticketnumber
     event.preventDefault();
     setShowDialog(true);
   };
+
+  RenderMap(Number(longitude),Number(latitude))
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9.]/g, '');

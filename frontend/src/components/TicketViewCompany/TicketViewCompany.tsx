@@ -57,10 +57,44 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 }) => {
   const userProfile = useProfile();
   const [showTenderMax, setShowTenderMax] = useState(false);
+  const [company,setCompany] = useState(String)
   const [showBid, setShowBid] = useState(false);
   const [hasBidded, setHasBidded] = useState(false);
   const [tender,setTender] = useState<any>(null)
   
+  console.log("ticket id: " + ticket_id)
+  useEffect(() => {
+    const fetchData = async () => {
+      // try {
+      const user_data = await userProfile.getUserProfile();
+      const user_company = String(user_data.current?.company_name);
+      const user_session = String(user_data.current?.session_token)
+      setCompany(user_company);
+      const rsptenders = await getCompanyTenders(user_company, user_session)
+      if(rsptenders == null)
+      {
+        setHasBidded(false);
+      }
+      else {
+        rsptenders.forEach((item: { ticket_id: string; }) => {
+            console.log(item)
+            if(item.ticket_id == ticket_id)
+            {
+              setTender(item)
+            } 
+        });
+        if(tender == null)
+        {
+            setHasBidded(false);
+        }
+        else {
+            setHasBidded(true);
+        }
+      }
+    };
+
+    fetchData();
+  }, [ userProfile]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -97,6 +131,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     }
     else {
        rsptenders.forEach((item: { ticket_id: string; }) => {
+          console.log(item)
           if(item.ticket_id == ticket_id)
           {
             setTender(item)
@@ -196,7 +231,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {(status === "Opened" || status === "Taking Tenders") && (
+                  {(status === "Opened" || status === "Taking Tenders" || status === "Closed") && (
                     <button
                       className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
                       onClick={handleBidClick}
@@ -264,8 +299,10 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
           <div className="transform scale-80 w-full">
             <CreateBid
+              longitude={longitude}
+              latitude={latitude}
               ticket_id={ticket_id}
-              company_name={tender.companyname}
+              company_name={company}
               ticketnumber={ticketNumber}
               faultType={title}
               address={address}

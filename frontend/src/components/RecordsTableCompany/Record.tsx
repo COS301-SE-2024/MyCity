@@ -86,7 +86,7 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.state === 'Unaddressed' ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}`}>
+          <span className={`px-2 py-1 rounded ${record.state === 'Opened' ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
             {record.state}
           </span>
         </div>

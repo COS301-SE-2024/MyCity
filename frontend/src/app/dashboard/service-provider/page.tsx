@@ -4,7 +4,7 @@ import { useState,useEffect } from 'react';
 import NavbarCompany from '@/components/Navbar/NavbarCompany';
 import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
 import { PenToolIcon, ChevronDown } from 'lucide-react';
-import { getMostUpvote } from '@/services/tickets.service';
+import { getCompanyTickets } from '@/services/tickets.service';
 import { useProfile } from "@/hooks/useProfile";
 
 export default function Dashboard() {
@@ -20,7 +20,8 @@ export default function Dashboard() {
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
-      const rspmostupvotes = await getMostUpvote(user_session);
+      const rspmostupvotes = await getCompanyTickets(user_company,user_session);
+      console.log(user_company)
       setCompany(user_company);
       setUpvoteTickets(rspmostupvotes);
     };
