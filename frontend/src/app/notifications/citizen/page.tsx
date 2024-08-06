@@ -2,7 +2,7 @@
 
 import Navbar from "@/components/Navbar/Navbar";
 import React, {useEffect, useRef, useState } from "react";
-import DashboardStatusCardContainer from "@/components/StatusCardContainer/DashboardStatusCardContainer";
+import DashboardNotificationsCardContainer from "@/components/NotificationsCardContainer/DashboardNotificationsCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 
 import {
@@ -169,7 +169,7 @@ export default function Notifications() {
           <div className="fixed inset-0 overflow-hidden">
             <main className="h-full flex items-center justify-center pb-16 overflow-auto">
               {/* Your Ticket Interactions */}
-              <DashboardStatusCardContainer cardData={dashWatchResults} />
+              <DashboardNotificationsCardContainer cardData={dashWatchResults} />
             </main>
           </div>
         </div>

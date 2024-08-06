@@ -24,7 +24,7 @@ interface CardComponentProps {
   cardData: CardData[];
 }
 
-const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
+const DashboardNotificationsCardContainer: React.FC<CardComponentProps> = ({
   cardData = [],
 }) => {
   const [startIndex, setStartIndex] = useState(0); // Index to track the starting point of displayed items
@@ -101,29 +101,12 @@ const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
             </div>
             {/* Display multiple FaultCardUser components */}
             {visibleItems}
+            {visibleItems}
           </div>
         </div>
       </div>
-
-      {showModal && selectedCard && (
-        <StatusCardUserView
-          show={showModal}
-          onClose={handleCloseModal}
-          title={selectedCard.asset_id}
-          address={selectedCard.address}
-          arrowCount={selectedCard.upvotes}
-          commentCount={selectedCard.commentcount}
-          viewCount={selectedCard.viewcount}
-          ticketNumber={selectedCard.asset_id}
-          description={selectedCard.description}
-          image={selectedCard.imageURL}
-          createdBy={selectedCard.createdby}
-          municipality_id={selectedCard.municipality_id}
-          state={selectedCard.state}
-        />
-      )}
     </div>
   );
 };
 
-export default DashboardStatusCardContainer;
+export default DashboardNotificationsCardContainer;
