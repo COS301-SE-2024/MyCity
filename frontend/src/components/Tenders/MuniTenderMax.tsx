@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MapComponent from "@/context/MapboxMap";
+import { record } from "aws-amplify/analytics";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
@@ -10,9 +12,13 @@ interface TenderType {
   status : string;
   companyname : string;
   contractdatetime : string;
-  finalCost : string;
-  finalDuration : string;
+  finalCost : number;
+  finalDuration : number;
   ticketnumber : string;
+  latitude : number,
+  longitude : number,
+  completedatetime : string;
+  contractnumber : string;
   upload: File | null;
   hasReportedCompletion: boolean;
 }
@@ -73,7 +79,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
     confirmAction();
   };
 
-  const formattedDate = tender.datetimesubmitted.split('T')[0];
+  const formattedDate = tender.contractdatetime.split('T')[0];
 
   return (
     <>
@@ -92,16 +98,16 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticket_id}
+                <strong>Associated Ticket:</strong> {tender.ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.quote.toFixed(2)}
+                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.estimatedTimeHours} days
+                <strong>Estimated Duration:</strong> {tender.finalDuration} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
@@ -116,7 +122,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-                  This Tender Contract is currently {tender.status}. {tender.serviceProvider} has
+                  This Tender Contract is currently {tender.status}. {tender.companyname} has
                   {tender.hasReportedCompletion ? '' : ' not'} submitted a completion report.
                 </div>
               </div>
@@ -139,7 +145,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500">
-                Map Placeholder
+                <MapComponent longitude={tender.longitude} latitude={tender.latitude} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
               </div>
             </div>
           </div>
