@@ -6,16 +6,13 @@ import "react-toastify/dist/ReactToastify.css";
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  id: string;
-  tendernumber: string;
-  company_id: string;
-  companyname: string;
-  serviceProvider: string;
-  datetimesubmitted: string;
-  ticket_id: string;
-  status: Status;
-  quote: number;
-  estimatedTimeHours: number;
+  tender_id : string;
+  status : string;
+  companyname : string;
+  contractdatetime : string;
+  finalCost : string;
+  finalDuration : string;
+  ticketnumber : string;
   upload: File | null;
   hasReportedCompletion: boolean;
 }
@@ -91,7 +88,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className="absolute top-7 left-2">
                 <img src="https://via.placeholder.com/50" alt={tender.companyname} className="w-10 h-10 rounded-full mb-2" />
               </div>
-              <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.id}</div>
+              <div className="text-center text-black text-2xl font-bold mb-2">Contract</div>
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">

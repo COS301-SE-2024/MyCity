@@ -21,6 +21,7 @@ interface RecordType {
   longitude : string;
   upvotes : number;
   urgency: Urgency;
+  municipality : string;
 }
 
 interface RecordTypeProps {
