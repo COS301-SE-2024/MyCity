@@ -8,7 +8,16 @@ import {
 import { BasicMunicipality, UserRole } from "@/types/custom.types";
 import { handleSignUp } from "@/services/auth.service";
 import { getMunicipalityList } from "@/services/municipalities.service";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import {
+  FaCheck,
+  FaTimes,
+  FaInfoCircle,
+  FaAngleDown,
+  FaAngleUp,
+  FaSpinner,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
 
 export default function CitizenSignup() {
   const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
@@ -24,6 +33,23 @@ export default function CitizenSignup() {
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [passwordValid, setPasswordValid] = useState(false);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [isChecklistVisible, setIsChecklistVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const toggleChecklistVisibility = () => {
+    setIsChecklistVisible(!isChecklistVisible);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   useEffect(() => {
     // Fetch the municipalities when the component mounts
@@ -88,13 +114,16 @@ export default function CitizenSignup() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     const form = new FormData(event.currentTarget as HTMLFormElement);
     form.set("municipality", selectedMunicipality); // Append selected municipality to the form data
 
     try {
-      handleSignUp(form, UserRole.CITIZEN);
-    } catch (error) {
-      console.log("Error: " + error);
+      await handleSignUp(form, UserRole.CITIZEN);
+    } catch (error: any) {
+      setError(`Error: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -142,8 +171,7 @@ export default function CitizenSignup() {
             className="w-1/2"
             label={
               <span className="font-semibold text-medium block mb-[0.20em]">
-                First Name{" "}
-                <span className={`${getAsteriskColor("firstname")} *`}></span>
+                First Name <span className="text-blue-500">*</span>
               </span>
             }
             labelPlacement={"outside"}
@@ -163,8 +191,7 @@ export default function CitizenSignup() {
             className="w-1/2"
             label={
               <span className="font-semibold text-medium block mb-[0.20em]">
-                Last Name{" "}
-                <span className={`${getAsteriskColor("surname")} *`}></span>
+                Last Name <span className="text-blue-500">*</span>
               </span>
             }
             labelPlacement={"outside"}
@@ -186,7 +213,7 @@ export default function CitizenSignup() {
           fullWidth
           label={
             <span className="font-semibold text-medium block mb-[0.20em]">
-              Email <span className={`${getAsteriskColor("email")} *`}></span>
+              Email <span className="text-blue-500">*</span>
             </span>
           }
           labelPlacement={"outside"}
@@ -206,7 +233,11 @@ export default function CitizenSignup() {
           label={
             <span className="font-semibold text-medium block mb-[0.20em]">
               Municipality{" "}
-              <span className={`${selectedMunicipality ? "text-green-500" : "text-red-500"} *`}></span>
+              <span
+                className={`${
+                  selectedMunicipality ? "text-green-500" : "text-red-500"
+                } *`}
+              ></span>
             </span>
           }
           labelPlacement="outside"
@@ -233,62 +264,100 @@ export default function CitizenSignup() {
         </Autocomplete>
 
         <div className="flex justify-between gap-4">
-          <div className="relative w-1/2">
-            <Input
-              variant={"bordered"}
-              label={
-                <span className="font-semibold text-medium block mb-[0.20em]">
-                  Create Password{" "}
-                  <span className={`${passwordValid ? "text-green-500" : "text-red-500"} *`}></span>
-                </span>
-              }
-              labelPlacement={"outside"}
-              classNames={{
-                inputWrapper: "h-[3em]",
-              }}
-              type="password"
-              name="password"
-              autoComplete="new-password"
-              placeholder="Password"
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-          </div>
-          <Input
-            variant={"bordered"}
-            className="w-1/2"
-            label={
-              <span className="font-semibold text-medium block mb-[0.20em]">
-                Confirm Password{" "}
-                <span className={`${passwordsMatch && formData.confirmPassword ? "text-green-500" : "text-red-500"} *`}></span>
-              </span>
-            }
-            labelPlacement={"outside"}
-            classNames={{
-              inputWrapper: "h-[3em]",
-            }}
-            type="password"
-            name="confirmPassword"
-            autoComplete="new-password"
-            placeholder="Password"
-            required
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-          />
-        </div>
+  <div className="relative w-1/2">
+    <Input
+      variant={"bordered"}
+      label={
+        <span className="font-semibold text-medium block mb-[0.20em]">
+          Create Password <span className="text-blue-500">*</span>
+        </span>
+      }
+      labelPlacement={"outside"}
+      classNames={{
+        inputWrapper: "h-[3em]",
+      }}
+      type={showPassword ? "text" : "password"}
+      name="password"
+      autoComplete="new-password"
+      placeholder="Password"
+      required
+      value={formData.password}
+      onChange={handleInputChange}
+    />
+    <button
+      type="button"
+      className="absolute inset-y-0 right-3 flex items-center justify-center top-1/2 transform -translate-y-1/2"
+      onClick={togglePasswordVisibility}
+    >
+      {showPassword ? (
+        <FaEyeSlash className="h-5 w-5" />
+      ) : (
+        <FaEye className="h-5 w-5" />
+      )}
+    </button>
+  </div>
+  <div className="relative w-1/2">
+    <Input
+      variant={"bordered"}
+      label={
+        <span className="font-semibold text-medium block mb-[0.20em]">
+          Confirm Password <span className="text-blue-500">*</span>
+        </span>
+      }
+      labelPlacement={"outside"}
+      classNames={{
+        inputWrapper: "h-[3em]",
+      }}
+      type={showConfirmPassword ? "text" : "password"}
+      name="confirmPassword"
+      autoComplete="new-password"
+      placeholder="Password"
+      required
+      value={formData.confirmPassword}
+      onChange={handleInputChange}
+    />
+    <button
+      type="button"
+      className="absolute inset-y-0 right-3 flex items-center justify-center top-1/2 transform -translate-y-1/2"
+      onClick={toggleConfirmPasswordVisibility}
+    >
+      {showConfirmPassword ? (
+        <FaEyeSlash className="h-5 w-5" />
+      ) : (
+        <FaEye className="h-5 w-5" />
+      )}
+    </button>
+  </div>
+</div>
 
-        <div className="flex flex-col gap-1 mt-2">
-          {passwordChecklist.map((item, index) => (
-            <div key={index} className="flex items-center gap-2 text-black text-sm">
-              {item.test(formData.password) ? (
-                <FaCheck className="text-green-500" />
-              ) : (
-                <FaTimes className="text-red-500" />
-              )}
-              <span>{item.text}</span>
+
+        <div className="mt-2">
+          <button
+            className="flex items-center gap-2 text-sm text-blue-500 font-semibold"
+            type="button"
+            onClick={toggleChecklistVisibility}
+          >
+            Password Requirements
+            <FaInfoCircle />
+            {isChecklistVisible ? <FaAngleUp /> : <FaAngleDown />}
+          </button>
+          {isChecklistVisible && (
+            <div className="flex flex-col gap-1 mt-2">
+              {passwordChecklist.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 text-black text-sm"
+                >
+                  {item.test(formData.password) ? (
+                    <FaCheck className="text-green-500" />
+                  ) : (
+                    <FaTimes className="text-red-500" />
+                  )}
+                  <span>{item.text}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
 
         <Button
@@ -301,9 +370,23 @@ export default function CitizenSignup() {
           type="submit"
           disabled={!isFormValid}
         >
-          Submit
+          {isLoading ? <FaSpinner className="animate-spin" /> : "Submit"}
         </Button>
       </form>
+
+      {error && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <p className="text-black">{error}.</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
