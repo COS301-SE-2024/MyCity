@@ -501,8 +501,10 @@ def getUserprofile(ticket_data):
             if len(response_municipality["Items"]) > 0:
                 logo = response_municipality["Items"][0]
                 username["municipality_picture"] = logo["municipalityLogo"]
+                username["municipality"] = logo['municipality_id']
             else:
                 username["municipality_picture"] = ""
+                username["municipality"] = ""
 
     except cognito_cient.exceptions.UserNotFoundException:
         print(f"User {username['username']} not found.")
