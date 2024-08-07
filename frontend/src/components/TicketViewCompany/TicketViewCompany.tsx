@@ -6,6 +6,7 @@ import CreateBid from "../Tenders/CreateBid"; // Adjust the import path as neces
 import ViewBid from "../Tenders/ViewBid"; // Adjust the import path as necessary
 import { useProfile } from "@/hooks/useProfile";
 import RenderMap from "@/hooks/mapboxmap";
+import MapComponent from "@/context/MapboxMap";
 
 import { getCompanyTenders } from "@/services/tender.service";
 
@@ -61,6 +62,8 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   const [showBid, setShowBid] = useState(false);
   const [hasBidded, setHasBidded] = useState(false);
   const [tender,setTender] = useState<any>(null)
+  const [reRender,setReRender] = useState(Boolean)
+  const [mapKey, setMapKey] = useState(0);
   
   console.log("ticket id: " + ticket_id)
   useEffect(() => {
@@ -96,6 +99,11 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     fetchData();
   }, [ userProfile]);
 
+  useEffect(() => {
+    // Force re-render of the map when component mounts
+    setMapKey(prevKey => prevKey + 1);
+  }, []);
+
   const getStatusColor = () => {
     switch (status) {
       case "Opened":
@@ -112,6 +120,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   const addressParts = address.split(",");
 
   const handleTenderContractClick = () => {
+    setReRender(false)
     setShowTenderMax(true);
   };
 
@@ -124,8 +133,10 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     const company_name = String(user_data.current?.company_name)
     const user_session = String(user_data.current?.session_token)
     const rsptenders = await getCompanyTenders(company_name, user_session)
+    setReRender(false)
     if(rsptenders == null)
     {
+      show = true;
       setShowBid(true);
       setHasBidded(false);
     }
@@ -139,10 +150,12 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
        });
        if(tender == null)
        {
+          show = true;
           setShowBid(true);
           setHasBidded(false);
        }
        else {
+          show = true;
           setShowBid(true);
           setHasBidded(true);
        }
@@ -167,7 +180,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  RenderMap(Number(longitude),Number(latitude))
+  // RenderMap(Number(longitude),Number(latitude))
 
   return (
     <>
@@ -244,7 +257,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-                  Map Placeholder
+                  <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
                 </div>
               </div>
             </div>
