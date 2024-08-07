@@ -16,7 +16,7 @@ export default function MunicipalityLogin() {
       const { isSignedIn } = await handleSignIn(form, UserRole.MUNICIPALITY);
 
       if (isSignedIn) {
-        router.push("/dashboard");
+        router.push("/dashboard/municipality");
       }
       else {
         throw "Something happened and we could not sign you in.";
