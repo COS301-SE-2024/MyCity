@@ -8,12 +8,12 @@ import ActiveTenders from "@/components/RecordsTableCompany/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTableCompany/OpenTicketsTable";
 import { useProfile } from "@/hooks/useProfile";
 import {
-  getTicketsInMunicipality,
+  getCompanyTickets,
 } from "@/services/tickets.service"
 export default function MuniTenders() {
 
   const userProfile = useProfile();
-  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -22,15 +22,10 @@ export default function MuniTenders() {
   useEffect(() =>{
     const fetchData = async () => {
       const user_data = await userProfile.getUserProfile();
-      console.log(user_data.current)
+      const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
-      const user_municipality = String(user_data.current?.municipality)
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session
-      );
-      console.log(rspmunicipality)
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+      const rspmostupvotes = await getCompanyTickets(user_company,user_session);
+      setUpvoteTickets(rspmostupvotes);
     };
     fetchData();
   },[userProfile])
@@ -80,7 +75,7 @@ export default function MuniTenders() {
               >
                 <Tab key={0} title="Open Tickets">
                   <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
-                  <OpenTicketsTable records={dashMuniResults}/>
+                  <OpenTicketsTable records={upvotedTickets}/>
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
