@@ -6,7 +6,7 @@ type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
 
 interface RecordType {
-  ticket_id: string;
+    ticket_id: string;
     ticketnumber : string;
     asset_id: string;
     imageURL : string;
