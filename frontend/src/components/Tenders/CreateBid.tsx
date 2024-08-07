@@ -136,7 +136,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
           </form>
         </div>
         <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
-          <div className="w-full h-full text-gray-500">
+          <div className="w-full h-full text-gray-500" id="map">
             <p className="text-center">Map Placeholder</p>
           </div>
         </div>

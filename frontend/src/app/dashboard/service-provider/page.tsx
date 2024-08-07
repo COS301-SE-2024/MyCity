@@ -9,7 +9,7 @@ import { useProfile } from "@/hooks/useProfile";
 
 export default function Dashboard() {
   const userProfile = useProfile();
-  const [company, setCompany] = useState("BBL Holdings");
+  const [company, setCompany] = useState("");
   const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
