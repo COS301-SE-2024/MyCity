@@ -13,6 +13,7 @@ import mapboxgl, {Map, Marker } from 'mapbox-gl';
 import { getTicketTenders,getContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 import { Tenor_Sans } from "next/font/google";
+import MapComponent from "@/context/MapboxMap";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -310,6 +311,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {showTenderMax && (
         <TenderMax
           tender={{
+            id : contract.tender_id,
             tender_id: contract.tender_id,
             status: contract.status,
             companyname: tenders.companyname,
