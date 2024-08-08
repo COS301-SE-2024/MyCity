@@ -68,7 +68,26 @@ export default function Record({ record }: { record: RecordType }) {
     } else {
         return "low"; // Default case
     }
-}
+  }
+
+  function getStateColour(state : string) {
+    switch (state) {
+        case "Opened":
+            return 'bg-green-200 text-green-800';
+        case "In Progress":
+            return 'bg-blue-200 text-blue-800';
+        case "Assigning Contract":
+            return 'bg-blue-200 text-blue-800';
+        case "Closed":
+            return 'bg-red-200 text-red-800';
+        case "Taking Tenders":
+          return 'bg-green-200 text-green-800'
+        default:
+            return 'bg-gray-200 text-gray-800';
+    }
+  }
+
+
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
@@ -89,7 +108,7 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.state == "Opened" ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}`}>
+          <span className={`px-2 py-1 rounded ${getStateColour(record.state)}`}>
             {record.state}
           </span>
         </div>

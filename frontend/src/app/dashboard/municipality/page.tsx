@@ -29,7 +29,8 @@ export default function Dashboard() {
       setCity(String(user_data.current?.municipality))
       const rspmunicipality = await getTicketsInMunicipality(
         user_municipality,
-        user_session
+        user_session,
+    
       );
       console.log(rspmunicipality)
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);

@@ -4,9 +4,9 @@ import { FaultType } from "@/types/custom.types";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
-    // if (revalidate) {
-    //     revalidateTag("tickets-getinarea"); //invalidate the cache
-    // }
+    if (revalidate) {
+        revalidateTag("tickets-getUpvotes"); //invalidate the cache
+    }
     try {
         const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
@@ -38,9 +38,9 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
 
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     revalidateTag("username"); //invalidate the cache
-    // }
+    if (revalidate) {
+        revalidateTag("tickets-getcompanytickets"); //invalidate the cache
+    }
 
     try {
         const apiUrl = "/api/tickets/getcompanytickets";
@@ -79,9 +79,9 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     revalidateTag("username"); //invalidate the cache
-    // }
+    if (revalidate) {
+        revalidateTag("tickets-getwatchlist"); //invalidate the cache
+    }
 
     try {
         const apiUrl = "/api/tickets/getwatchlist";
@@ -152,7 +152,9 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-
+    if (revalidate) {
+        revalidateTag("tickets-getinarea"); //invalidate the cache
+    }
     if (!municipality) {
         throw new Error("Missing municipality");
     }

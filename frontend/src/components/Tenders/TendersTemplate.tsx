@@ -47,17 +47,28 @@ const statusStyles = {
   submitted: "text-black bg-gray-200 rounded-full",
 };
 
-const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
+const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (data? : number) => void }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
 
   const userProfile = useProfile();
+
+  const handleBack = () => {
+    onClose(0); 
+  };
+
+  const handleAccept = () => {
+    onClose(1); // Example number to send back
+  };
+
+  const handleDecline = () => {
+    onClose(1); // Example number to send back
+  };
 
   // Map "Fix in progress" to "Active" for the tender's status
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
   console.log(tender.company_id)
   const handleAction = async (action: string) => {
-    setDialog({ action, show: true });
     if(action == "Accept")
     {
         const user_data = await userProfile.getUserProfile();
@@ -65,6 +76,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
         const accepted = await AcceptTender(tender.company_id,tender.ticket_id,user_session)
         if(accepted == true)
         {
+            setDialog({ action, show: true });
             console.log("inside true")
         }
         else
@@ -77,7 +89,16 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
   const confirmAction = () => {
     toast.success(`${dialog.action} action confirmed.`);
     setDialog({ action: "", show: false });
-    onClose();
+    switch (dialog.action) {
+      case "Accept":
+        handleAccept()
+        break;
+      case "Decline":
+        handleDecline()
+      default:
+        handleBack()
+        break;
+    }
   };
 
   const estimateddays = Math.ceil(Number(tender.estimatedTimeHours)/24)
@@ -119,7 +140,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
         <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
-          <button className="absolute top-2 right-2 text-gray-700" onClick={onClose}>
+          <button className="absolute top-2 right-2 text-gray-700" onClick={handleBack}>
             <FaTimes size={24} />
           </button>
           <div className="flex flex-col lg:flex-row w-full overflow-auto">
@@ -163,7 +184,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: () 
               </div>
 
               <div className="mt-2 flex justify-center gap-2">
-                <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
+                <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={handleBack}>
                   Back
                 </button>
                 {tenderStatus === "approved" ? (

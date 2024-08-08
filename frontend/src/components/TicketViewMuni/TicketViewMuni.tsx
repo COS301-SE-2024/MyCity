@@ -79,9 +79,13 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const getStatusColor = () => {
     switch (status) {
       case "Opened":
-        return "text-red-500";
+        return "text-green-500";
       case "Fix in progress":
         return "text-blue-500";
+      case "Assigning Contract":
+        return "text-blue-500";
+      case "Taking Tenders":
+        return "text-green-500";
       default:
         return "text-gray-500";
     }
@@ -162,13 +166,16 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_session = String(user_data.current?.session_token);
     // console.log(user_session); //
     const rspgettenders = await getTicketTenders(ticket_id,user_session);
-    setTenders(rspgettenders);
     
-    if(tenders == null)
+    if(rspgettenders === null)
     {
       setShowMuniTenders(false);
     }
-    else setShowMuniTenders(true)
+    else 
+    {
+      setShowMuniTenders(true)
+      setTenders(rspgettenders)
+    }
   };
 
   const handleBack = () => {
