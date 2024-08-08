@@ -225,25 +225,24 @@ export default function CreateTicket() {
                   (filter) => (
                     <div
                       key={filter}
-                      className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${
-                        selectedFilter === filter
-                          ? "bg-gray-500 text-white"
-                          : "bg-transparent text-white"
-                      }`}
+                      className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
+                        ? "bg-gray-500 text-white"
+                        : "bg-transparent text-white"
+                        }`}
                       onClick={() =>
                         handleFilterChange(
                           filter as
-                            | "myMunicipality"
-                            | "municipalities"
-                            | "serviceProviders"
+                          | "myMunicipality"
+                          | "municipalities"
+                          | "serviceProviders"
                         )
                       }
                     >
                       {filter === "myMunicipality"
                         ? "My Municipality"
                         : filter === "municipalities"
-                        ? "Municipalities"
-                        : "Service Providers"}
+                          ? "Municipalities"
+                          : "Service Providers"}
                     </div>
                   )
                 )}
@@ -253,11 +252,10 @@ export default function CreateTicket() {
                   {["Near Me", "Asset"].map((subfilter, index) => (
                     <div
                       key={subfilter}
-                      className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 ${
-                        selectedSubfilter === index
-                          ? "bg-gray-500 text-white"
-                          : "bg-transparent text-gray-300 border border-gray-300"
-                      }`}
+                      className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedSubfilter === index
+                        ? "bg-gray-500 text-white"
+                        : "bg-transparent text-gray-300 border border-gray-300"
+                        }`}
                       onClick={() => handleSubfilterChange(index)}
                     >
                       {subfilter}
@@ -281,7 +279,7 @@ export default function CreateTicket() {
               </div>
             ) : hasSearched && searchResults.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-                {currentResults.map((result, index) => (
+                {/* {currentResults.map((result, index) => (
                   <div
                     key={index}
                     className="p-4 bg-white bg-opacity-80 rounded-lg shadow-md"
@@ -296,7 +294,22 @@ export default function CreateTicket() {
                       <SearchSP serviceProviders={result} />
                     )}
                   </div>
-                ))}
+                ))} */}
+
+                <div
+                  // key={index}
+                  className="p-4 bg-white bg-opacity-80 rounded-lg shadow-md"
+                >
+                  {selectedFilter === "myMunicipality" && (
+                    <SearchTicket tickets={currentResults} />
+                  )}
+                  {selectedFilter === "municipalities" && (
+                    <SearchMunicipality municipalities={currentResults} />
+                  )}
+                  {selectedFilter === "serviceProviders" && (
+                    <SearchSP serviceProviders={currentResults} />
+                  )}
+                </div>
               </div>
             ) : hasSearched ? (
               <div className="flex justify-center items-center mt-4">
@@ -319,20 +332,18 @@ export default function CreateTicket() {
                 <button
                   key={index}
                   onClick={() => paginate(index + 1)}
-                  className={`px-3 py-1 mx-1 rounded-full transition duration-300 ${
-                    currentPage === index + 1
-                      ? "bg-gray-500 text-white"
-                      : "bg-transparent text-white"
-                  }`}
+                  className={`px-3 py-1 mx-1 rounded-full transition duration-300 ${currentPage === index + 1
+                    ? "bg-gray-500 text-white"
+                    : "bg-transparent text-white"
+                    }`}
                 >
                   {index + 1}
                 </button>
               ))}
             </div>
             <div
-              className={`fixed bottom-4 left-4 bg-green-500 text-white p-3 rounded-lg shadow-lg transition-opacity duration-300 ${
-                showToast ? "opacity-100" : "opacity-0"
-              }`}
+              className={`fixed bottom-4 left-4 bg-green-500 text-white p-3 rounded-lg shadow-lg transition-opacity duration-300 ${showToast ? "opacity-100" : "opacity-0"
+                }`}
             >
               <p>
                 Found {totalResults} results in {searchTime.toFixed(2)} seconds.
