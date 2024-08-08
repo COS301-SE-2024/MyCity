@@ -7,14 +7,10 @@ import CitizenSignup from "@/components/Signup/CitizenSignup";
 import MunicipalitySignup from "@/components/Signup/MunicipalitySignup";
 import ServiceProviderSignup from "@/components/Signup/ServiceProviderSignup";
 import PrivateCompanySignup from "@/components/Signup/PrivateCompanySignup";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Signup() {
-  const headers: string[] = [
-    "Get Connected.",
-    "Take Control.",
-    "Be The Change.",
-  ];
+  const headers: string[] = ["Get Connected.", "Take Control.", "Be The Change."];
   const [currentFormHeader, setCurrentFormHeader] = useState(headers[2]);
 
   const handleTabChange = (key: Key) => {
@@ -26,11 +22,11 @@ export default function Signup() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
-          <Navbar />
+        <div className="relative">
+          <NavbarGuest />
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -40,15 +36,13 @@ export default function Signup() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
+              backgroundAttachment: "fixed",
+              zIndex: -1,
             }}
           ></div>
-          <main className="h-screen flex justify-center p-20">
-            <div className="flex flex-col bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12">
-              <span className="text-[2.5em] font-bold">
-                {currentFormHeader}
-              </span>
+          <main className="flex justify-center mb-8">
+            <div className="flex flex-col bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[40em] h-fit py-12 mt-12">
+              <span className="text-[2.5em] font-bold">{currentFormHeader}</span>
               <Tabs
                 aria-label="Signup Options"
                 defaultSelectedKey={2}
@@ -65,18 +59,10 @@ export default function Signup() {
                 <Tab key={0} title="Citizen" data-testid="citizen-tab">
                   <CitizenSignup />
                 </Tab>
-                <Tab
-                  key={1}
-                  title="Municipality"
-                  data-testid="municipality-tab"
-                >
+                <Tab key={1} title="Municipality" data-testid="municipality-tab">
                   <MunicipalitySignup />
                 </Tab>
-                <Tab
-                  key={2}
-                  title="Service Provider"
-                  data-testid="service-provider-tab"
-                >
+                <Tab key={2} title="Service Provider" data-testid="service-provider-tab">
                   <ServiceProviderTabs />
                 </Tab>
               </Tabs>
@@ -146,8 +132,6 @@ export default function Signup() {
               work on it.
             </p>
           </div>
-
-
         </div>
       </div>
     </div>
