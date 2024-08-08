@@ -12,6 +12,7 @@ from chalicelib.tickets.tickets_controllers import (
     add_ticket_comment_without_image,
     get_ticket_comments,
     get_geodata_all,
+    getCompanyTicekts,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -88,6 +89,14 @@ def get_my_tickets():
 def get_Upvote_tickets():
     tickets = getMostUpvoted()
     return tickets
+
+
+@tickets_blueprint.route("/getcompanytickets", methods=["GET"], cors=True)
+def get_company_tickets():
+    request = tickets_blueprint.current_request
+    company_name = request.query_params.get("company")
+    response = getCompanyTicekts(company_name)
+    return response
 
 
 @tickets_blueprint.route("/add-comment-with-image", methods=["POST"], cors=True)

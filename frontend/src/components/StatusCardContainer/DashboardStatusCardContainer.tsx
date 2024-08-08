@@ -55,24 +55,24 @@ const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
 
   // Calculate which items to display based on startIndex and itemsPerPage
   const visibleItems = cardData
-    .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
-    .map((item, index) => (
-      <StatusCardUser
-        key={item.ticket_id}
-        title={item.asset_id}
-        address={item.address}
-        arrowCount={item.upvotes}
-        commentCount={item.commentcount}
-        viewCount={item.viewcount}
-        description={item.description}
-        image={item.imageURL}
-        createdBy={item.dateOpened}
-        ticketNumber={item.ticket_id}
-        municipality_id={item.municipality_id}
-        state={item.state}
-        onClick={() => handleCardClick(item)}
-      />
-    ));
+    // .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
+    // .map((item, index) => (
+    //   // <StatusCardUser
+    //   //   key={item.ticket_id}
+    //   //   title={item.asset_id}
+    //   //   address={item.address}
+    //   //   arrowCount={item.upvotes}
+    //   //   commentCount={item.commentcount}
+    //   //   viewCount={item.viewcount}
+    //   //   description={item.description}
+    //   //   image={item.imageURL}
+    //   //   createdBy={item.dateOpened}
+    //   //   ticketNumber={item.ticket_id}
+    //   //   municipality_id={item.municipality_id}
+    //   //   state={item.state}
+    //   //   onClick={() => handleCardClick(item)}
+    //   // />
+    // ));
 
   return (
     <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2">
@@ -89,27 +89,10 @@ const DashboardStatusCardContainer: React.FC<CardComponentProps> = ({
         <div className="flex justify-start">
           <div className="flex mb-8 text-center flex-nowrap">
             {/* Display multiple FaultCardUser components */}
-            {visibleItems}
+            {/* {visibleItems} */}
           </div>
         </div>
       </div>
-      {showModal && selectedCard && (
-        <StatusCardUserView
-          show={showModal}
-          onClose={handleCloseModal}
-          title={selectedCard.asset_id}
-          address={selectedCard.address}
-          arrowCount={selectedCard.upvotes}
-          commentCount={selectedCard.commentcount}
-          viewCount={selectedCard.viewcount}
-          ticketNumber={selectedCard.asset_id}
-          description={selectedCard.description}
-          image={selectedCard.imageURL}
-          createdBy={selectedCard.createdby}
-          municipality_id={selectedCard.municipality_id}
-          state={selectedCard.state}
-        />
-      )}
     </div>
   );
 };

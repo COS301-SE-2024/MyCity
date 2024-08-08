@@ -13,8 +13,8 @@ import mapboxgl, {Map, Marker } from 'mapbox-gl';
 import { getTicketTenders,getContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 import { Tenor_Sans } from "next/font/google";
+import MapComponent from "@/context/MapboxMap";
 
-mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -99,19 +99,6 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (show) {
-      const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
-        zoom: 14 // starting zoom
-      });
-      new mapboxgl.Marker()
-        .setLngLat([Number(longitude), Number(latitude)])
-        .addTo(map);
-    }
-  }, [show, latitude, longitude]);
 
   if (!show) return null;
 
@@ -189,20 +176,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(()=>{
-    const map = new mapboxgl.Map({
-      container: 'map', // container ID
-      style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: [Number(longitude),  Number(latitude)], // starting position [lng, lat]
-      zoom: 14 // starting zoom
-    });
-    new mapboxgl.Marker()
-    .setLngLat([Number(longitude), Number(latitude)])
-    .addTo(map);
-
-    return () => map.remove();
-
-  },[latitude,longitude])
+  
 
   return (
     <>
@@ -299,7 +273,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-                  Map Placeholder
+                <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
                 </div>
               </div>
             </div>

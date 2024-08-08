@@ -100,12 +100,12 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
   stateFormat,
 }) => {
   const formattedStateKey = formatState(state);
-  const { color, text } = notificationStates[formattedStateKey];
+  // const { color, text } = notificationStates[formattedStateKey];
   // const { color, text } = notificationStates["AssigningContract"];
 
   console.log(formatState(state));
 
-  const iconColor = color.replace("bg-", "#").replace("-200", "");
+  // const iconColor = color.replace("bg-", "#").replace("-200", "");
   return (
     <div className="py-2 px-4">
       {/* Comment Container */}
@@ -115,7 +115,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
           <div className="flex justify-between items-start w-full">
             <div className="flex flex-col">
               <div
-                className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
+                // className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
               >
                 {state}
               </div>
