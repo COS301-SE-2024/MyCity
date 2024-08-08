@@ -1,203 +1,233 @@
 import { revalidateTag } from "next/cache";
-import { FaultGeoData, FaultType } from "@/types/custom.types";
-import mapboxgl, { Map, Marker } from 'mapbox-gl';
+import { FaultType } from "@/types/custom.types";
 
-mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
-
-export async function DisplaySnapshotMap(latitude: number, longitude: number) {
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        center: [longitude, latitude], // starting position [lng, lat]
-        zoom: 9 // starting zoom
-    });
-}
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
-    return [];
-    // // if (revalidate) {
-    // //     revalidateTag("tickets-getinarea"); //invalidate the cache
-    // // }
-    // try {
-    //     const apiUrl = "/api/tickets/getUpvotes";
-    //     const response = await fetch(apiUrl,
-    //         {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": user_session,
-    //             },
-    //         }
-    //     );
-
-    //     if (!response.ok) {
-    //         throw new Error(`Error fetching: ${response.statusText}`);
-    //     }
-
-    //     const result = await response.json();
-
-    //     const data = result.data as any[];
-    //     AssignTicketNumbers(data);
-
-    //     return data;
-
-    // } catch (error) {
-    //     console.error(error);
-    //     throw error;
-    // }
-}
-
-
-export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    return [];
-    // // if (revalidate) {
-    // //     revalidateTag("username"); //invalidate the cache
-    // // }
-
-    // try {
-    //     const apiUrl = "/api/tickets/getwatchlist";
-    //     const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
-    //     const response = await fetch(urlWithParams,
-    //         {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": user_session
-    //             },
-    //         }
-    //     );
-
-    //     if (!response.ok) {
-    //         throw new Error(`Error fetching: ${response.statusText}`);
-    //     }
-
-    //     const result = await response.json();
-
-    //     if (!Array.isArray(result.data)) {
-    //         return [];
-    //     }
-
-    //     const data = result.data as any[];
-    //     AssignTicketNumbers(data);
-
-    //     return data;
-
-    // } catch (error) {
-    //     console.error("Error: " + error);
-    //     throw error;
-    // }
-}
-
-
-export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
-    return [];
-    // if (revalidate) {
-    //     revalidateTag("tickets-view"); //invalidate the cache
-    // }
-
-    // try {
-    //     const response = await fetch(`/api/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`,
-    //         {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": user_session
-    //             },
-    //         }
-    //     );
-
-    //     if (!response.ok) {
-    //         throw new Error(`Error fetching: ${response.statusText}`);
-    //     }
-
-    //     const result = await response.json();
-
-    //     const data = result.data as any[];
-
-    //     return data;
-
-    // } catch (error) {
-    //     console.error("Error: " + error);
-    //     throw error;
-    // }
-}
-
-export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-    return [];
-
-    // if (!municipality) {
-    //     throw new Error("Missing municipality");
-    // }
 
     // if (revalidate) {
     //     revalidateTag("tickets-getinarea"); //invalidate the cache
     // }
+    try {
+        const apiUrl = "/api/tickets/getUpvotes";
+        const response = await fetch(apiUrl,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session,
+                },
+            }
+        );
 
-    // try {
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
 
-    //     const apiUrl = "/api/tickets/getinarea";
-    //     const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
-    //     const response = await fetch(urlWithParams,
-    //         {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": user_session,
-    //             },
-    //         }
-    //     );
+        const result = await response.json();
 
-    //     if (!response.ok) {
-    //         throw new Error(`Error fetching: ${response.statusText}`);
-    //     }
+        const data = result.data as any[];
+        AssignTicketNumbers(data);
+        formatAddress(data)
+
+        return data;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
 
 
-    //     const result = await response.json();
-
-    //     if (!Array.isArray(result.data)) {
-    //         return [];
-    //     }
-
-    //     const data = result.data as any[];
-
-    //     AssignTicketNumbers(data);
-
-    //     return data;
-
-    // } catch (error) {
-    //     console.error("Error: " + error);
-    //     throw error;
+export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
+    // if (revalidate) {
+    //     revalidateTag("username"); //invalidate the cache
     // }
+
+    try {
+        const apiUrl = "/api/tickets/getcompanytickets";
+        const urlWithParams = `${apiUrl}?company=${encodeURIComponent(companyname)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+        AssignTicketNumbers(data);
+        formatAddress(data)
+
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+
+
+export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
+    // if (revalidate) {
+    //     revalidateTag("username"); //invalidate the cache
+    // }
+
+    try {
+        const apiUrl = "/api/tickets/getwatchlist";
+        const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+        AssignTicketNumbers(data);
+        formatAddress(data)
+
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+
+
+
+export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        revalidateTag("tickets-view"); //invalidate the cache
+    }
+
+    try {
+        const response = await fetch(`/api/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as any[];
+
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
+
+    if (!municipality) {
+        throw new Error("Missing municipality");
+    }
+
+    if (revalidate) {
+        revalidateTag("tickets-getinarea"); //invalidate the cache
+    }
+
+    try {
+
+        const apiUrl = "/api/tickets/getinarea";
+        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+
+        AssignTicketNumbers(data);
+        formatAddress(data)
+
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
 }
 
 export async function getFaultTypes(revalidate?: boolean) {
-    return [];
+    if (revalidate) {
+        revalidateTag("tickets-fault-types"); //invalidate the cache
+    }
 
-    // if (revalidate) {
-    //     revalidateTag("tickets-fault-types"); //invalidate the cache
-    // }
+    try {
 
-    // try {
+        const apiURL = "/api/tickets/fault-types";
 
-    //     const apiURL = "/api/tickets/fault-types";
+        const response = await fetch(apiURL,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
 
-    //     const response = await fetch(apiURL,
-    //         {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //         }
-    //     );
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
 
-    //     if (!response.ok) {
-    //         throw new Error(`Error fetching: ${response.statusText}`);
-    //     }
+        const result = await response.json();
 
-    //     const result = await response.json();
+        const data = result.data as FaultType[];
 
-    //     const data = result.data as FaultType[];
+        return data;
 
-    //     return data;
-
-    // } catch (error) {
-    //     throw error;
-    // }
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function CreatTicket(sessiont: string, assett: string, descrip: string, lat: string, longi: string, fullAddress: string, usern: string): Promise<boolean> {
@@ -249,7 +279,7 @@ function AssignTicketNumbers(data: any[]) {
     });
 }
 
-export async function addCommentWithImage(comment: string, ticket_id: string, image_url: string, user_id: string, user_session: string,) {
+export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-with-image";
         const data = {
@@ -280,7 +310,7 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
     }
 }
 
-export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, user_session: string,) {
+export async function addCommentWithoutImage(comment:string, ticket_id:string, user_id:string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-without-image";
         const data = {
@@ -310,7 +340,7 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
     }
 }
 
-export async function getTicketComments(ticket_id: string, user_session: string) {
+export async function getTicketComments(ticket_id:string, user_session:string) {
     try {
         const apiUrl = `/api/tickets/${ticket_id}/comments`;
         const response = await fetch(apiUrl, {
@@ -334,6 +364,13 @@ export async function getTicketComments(ticket_id: string, user_session: string)
     }
 }
 
+function formatAddress(data : any[])
+{
+    data.forEach(item  => {
+        let address = String(item.address)
+        item['address'] = address.split(',').slice(0, 2).join(',');
+    });
+}
 
 
 export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
@@ -368,3 +405,5 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
         throw error;
     }
 }
+
+

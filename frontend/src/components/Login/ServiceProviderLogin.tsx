@@ -17,7 +17,7 @@ export default function ServiceProviderLogin() {
       const { isSignedIn } = await handleSignIn(form, UserRole.PRIVATE_COMPANY);
 
       if (isSignedIn) {
-        router.push("/tenders/company");  ///changed this for tender process
+        router.push("/dashboard/service-provider");  ///changed this for tender process
       }
       else {
         throw "Something happened and we could not sign you in.";
@@ -72,7 +72,7 @@ export default function ServiceProviderLogin() {
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
-        <Button name="submit" data-testid="submit-btn" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
+        <Button name="submit" data-testid="submit-btn" className="w-28 h-11 rounded-3xl m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
         {/* Social Media Sign Up Options */}

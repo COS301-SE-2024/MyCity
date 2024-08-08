@@ -4,7 +4,7 @@ import React, { Key, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
@@ -79,7 +79,7 @@ export default function CitizenDashboard() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <Navbar />
+          <NavbarUser />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
