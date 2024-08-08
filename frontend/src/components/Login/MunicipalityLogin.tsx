@@ -83,7 +83,7 @@ export default function MunicipalityLogin() {
         <Button
           name="submit"
           data-testid="submit-btn"
-          className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold"
+          className="w-28 h-11 rounded-3xl m-auto bg-blue-500 text-white font-semibold"
           type="submit"
         >
           Submit

@@ -1,15 +1,13 @@
-import React, { FormEvent } from 'react';
-import { Input, Button } from '@nextui-org/react';
-import Link from 'next/link';
-import { FcGoogle } from 'react-icons/fc';
+import React, { FormEvent } from "react";
+import Link from "next/link";
+import { Input, Button } from "@nextui-org/react";
 import { useRouter } from 'next/navigation';
-import { UserRole } from '@/types/custom.types';
-import { handleGoogleSignIn, handleSignIn } from '@/services/auth.service';
-
+import { UserRole } from "@/types/custom.types";
+import { handleGoogleSignIn, handleSignIn } from "@/services/auth.service";
+import { FcGoogle } from 'react-icons/fc';
 
 export default function CitizenLogin() {
   const router = useRouter();
-
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -20,16 +18,12 @@ export default function CitizenLogin() {
 
       if (isSignedIn) {
         router.push("/dashboard");
-      }
-      else {
+      } else {
         throw "Something happened and we could not sign you in.";
       }
-
-    }
-    catch (error) {
+    } catch (error) {
       console.log("Error: " + error);
     }
-
   };
 
   const googleButtonOnClick = async () => {
@@ -39,7 +33,6 @@ export default function CitizenLogin() {
   return (
     <div className="px-12">
       <form data-testid="citizen-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
-
         <Input
           variant={"bordered"}
           fullWidth
@@ -56,7 +49,8 @@ export default function CitizenLogin() {
           name="email"
           autoComplete="new-email"
           placeholder="example@mail.com"
-          required />
+          required
+        />
 
         <Input
           variant={"bordered"}
@@ -74,29 +68,38 @@ export default function CitizenLogin() {
           name="password"
           autoComplete="new-password"
           placeholder="Password"
-          required />
+          required
+        />
 
-        <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1rem]">Forgot password?</Link>
+        <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">
+          Forgot password?
+        </Link>
 
-        <div className="flex flex-col items-center justify-center px-16">
+        <Button
+          name="submit"
+          data-testid="submit-btn"
+          className="w-56 h-11 rounded-3xl m-auto bg-blue-500 text-white font-semibold"
+          type="submit"
+        >
+          Login
+        </Button>
 
-          <Button fullWidth name="submit" data-testid="submit-btn" radius="md" className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-400 transition duration-300 text-center font-semibold" type="submit">
-            Login
-          </Button>
-
-          <div className="w-full flex flex-row items-center my-3">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="mx-4 text-sm">OR</span>
-            <hr className="flex-grow border-t border-gray-300" />
-          </div>
-
-          <Button onClick={googleButtonOnClick} fullWidth name="gogle-submit" data-testid="google-login-btn" radius="md" className=" text-gray-800 px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold">
-            <FcGoogle size={20} />
-            <span>Continue with Google</span>
-          </Button>
-
+        <div className="w-full flex flex-row items-center">
+          <hr className="flex-grow border-t border-gray-300" />
+          <span className="mx-4 text-sm">OR</span>
+          <hr className="flex-grow border-t border-gray-300" />
         </div>
 
+        <Button
+          onClick={googleButtonOnClick}
+          name="google-submit"
+          data-testid="google-login-btn"
+          className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+          type="button"
+        >
+          <FcGoogle size={20} />
+          <span className="ml-2">Continue with Google</span>
+        </Button>
       </form>
     </div>
   );
