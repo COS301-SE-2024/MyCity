@@ -65,7 +65,8 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={tender} onClose={handleClose} />}
+      {/* Removed so build can run */}
+      {/* {showDetails && <TenderMax tender={tender} onClose={handleClose} />} */}
     </>
   );
 }
