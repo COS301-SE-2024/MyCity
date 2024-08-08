@@ -1,6 +1,7 @@
 import { useMapbox } from "@/hooks/useMapbox";
 import { useProfile } from "@/hooks/useProfile";
 import { getTicketsGeoData } from "@/services/tickets.service";
+import { FaultGeoData } from "@/types/custom.types";
 import { useEffect, useRef } from "react";
 
 export default function FaultMapView() {
@@ -16,9 +17,15 @@ export default function FaultMapView() {
       const sessionToken = userProfile.current?.session_token;
 
       const faultGeodata = await getTicketsGeoData(sessionToken);
+      const actualFaultGeodata: FaultGeoData[] = [];
+
+      //copy half of the faults
+      for (let i = 0; i < faultGeodata.length / 2; i++) {
+        actualFaultGeodata.push(faultGeodata[i]);
+      }
 
       if (faultMapContainer.current) {
-        initialiseFaultMap(faultMapContainer, faultGeodata);
+        initialiseFaultMap(faultMapContainer, actualFaultGeodata);
       }
 
     };
