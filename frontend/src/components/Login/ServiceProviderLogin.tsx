@@ -72,7 +72,7 @@ export default function ServiceProviderLogin() {
 
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">Forgot password?</Link>
 
-        <Button name="submit" data-testid="submit-btn" className="w-28 h-11 rounded-lg m-auto bg-blue-500 text-white font-semibold" type="submit">
+        <Button name="submit" data-testid="submit-btn" className="w-28 h-11 rounded-3xl m-auto bg-blue-500 text-white font-semibold" type="submit">
           Submit
         </Button>
         {/* Social Media Sign Up Options */}

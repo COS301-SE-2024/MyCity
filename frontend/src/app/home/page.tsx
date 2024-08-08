@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 
@@ -16,7 +16,7 @@ export default function Home() {
             overflow: "hidden", // Prevents content overflow
           }}
         >
-          <Navbar />
+          <NavbarGuest />
           {/* <NavbarUser /> */}
 
           {/* Background image */}
@@ -52,13 +52,13 @@ export default function Home() {
             </p>
             <div className="flex flex-row gap-12">
               <Link href="/auth/signup">
-                <Button className="bg-blue-500 text-white px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
-                  Get Started
+                <Button className="bg-white text-blue-600 border-2 px-4 py-2 font-bold rounded-3xl">
+                  Sign Up
                 </Button>
               </Link>
 
-              <Link href="auth/login" data-testid="login-btn">
-                <Button className="bg-blue-500 text-white w-24 px-4 py-2 font-bold rounded-3xl hover:bg-blue-600 transition duration-300">
+              <Link href="/auth/login" data-testid="login-btn">
+                <Button className="bg-blue-500 text-white px-4 py-2 font-bold rounded-3xl">
                   Log In
                 </Button>
               </Link>
@@ -113,16 +113,14 @@ export default function Home() {
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction
             </h1>
-
             <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-            <img
-              src="https://i.imgur.com/eGeTTuo.png"
-              alt="Under-Construction"
-              width={300}
-              height={300}
-            />
-          </div>
-
+              <img
+                src="https://i.imgur.com/eGeTTuo.png"
+                alt="Under-Construction"
+                width={300}
+                height={300}
+              />
+            </div>
             <p className="text-lg text-gray-200 mb-4 ml-4">
               Our Mobile site is currently under construction.
               <br />
@@ -131,8 +129,6 @@ export default function Home() {
               work on it.
             </p>
           </div>
-
-
         </div>
       </div>
     </>

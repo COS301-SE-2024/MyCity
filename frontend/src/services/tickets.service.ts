@@ -371,3 +371,39 @@ function formatAddress(data : any[])
         item['address'] = address.split(',').slice(0, 2).join(',');
     });
 }
+
+
+export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
+    if (revalidate) {
+        revalidateTag("tickets-geodata-all"); //invalidate the cache
+    }
+
+    try {
+
+        const response = await fetch("/api/tickets/geodata/all",
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as FaultGeoData[];
+        console.log("faults geodata: ", data);
+
+        return data;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+
