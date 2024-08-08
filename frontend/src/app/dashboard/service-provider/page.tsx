@@ -1,13 +1,33 @@
 "use client";
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import NavbarCompany from '@/components/Navbar/NavbarCompany';
 import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
 import { PenToolIcon, ChevronDown } from 'lucide-react';
+import { getCompanyTickets } from '@/services/tickets.service';
+import { useProfile } from "@/hooks/useProfile";
 
 export default function Dashboard() {
-  const [company, setCompany] = useState("BBL Holdings");
+  const userProfile = useProfile();
+  const [company, setCompany] = useState("");
+  const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // try {
+      const user_data = await userProfile.getUserProfile();
+      const user_company = String(user_data.current?.company_name);
+      const user_session = String(user_data.current?.session_token);
+      const rspmostupvotes = await getCompanyTickets(user_company,user_session);
+      console.log(user_company)
+      setCompany(user_company);
+      setUpvoteTickets(rspmostupvotes);
+    };
+
+    fetchData();
+  }, [ userProfile]); 
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -70,7 +90,7 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="mt-8">
-          <RecordsTable />
+          <RecordsTable records={upvotedTickets} />
         </div>
       </main>
 
