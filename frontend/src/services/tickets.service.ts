@@ -26,6 +26,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
         const data = result.data as any[];
         AssignTicketNumbers(data);
+        formatAddress(data)
 
         return data;
 
@@ -34,6 +35,47 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
         throw error;
     }
 }
+
+
+export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
+    // if (revalidate) {
+    //     revalidateTag("username"); //invalidate the cache
+    // }
+
+    try {
+        const apiUrl = "/api/tickets/getcompanytickets";
+        const urlWithParams = `${apiUrl}?company=${encodeURIComponent(companyname)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+        AssignTicketNumbers(data);
+        formatAddress(data)
+
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
 
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
@@ -65,6 +107,7 @@ export async function getWatchlistTickets(username: string, user_session: string
 
         const data = result.data as any[];
         AssignTicketNumbers(data);
+        formatAddress(data)
 
         return data;
 
@@ -73,6 +116,8 @@ export async function getWatchlistTickets(username: string, user_session: string
         throw error;
     }
 }
+
+
 
 
 export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
@@ -143,6 +188,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         const data = result.data as any[];
 
         AssignTicketNumbers(data);
+        formatAddress(data)
 
         return data;
 
@@ -316,4 +362,12 @@ export async function getTicketComments(ticket_id:string, user_session:string) {
         console.error("Error:", error);
         throw error;
     }
+}
+
+function formatAddress(data : any[])
+{
+    data.forEach(item  => {
+        let address = String(item.address)
+        item['address'] = address.split(',').slice(0, 2).join(',');
+    });
 }

@@ -1,26 +1,115 @@
+'use client';
 
-"use client";
-
-import React from "react";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
-import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
+// import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
 import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
 import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
+// import { notificationStates } from "@/components/NotificationsCitizen/states";
+// import NotificationsStatusCardContainer from "@/components/NotificationsStatusCardContainer/NotificationsStatusCardContainer";
+import React, { Key, useEffect, useRef, useState } from "react";
+// import { Tabs, Tab } from "@nextui-org/react";
+// import FaultTable from "@/components/FaultTable/FaultTable";
+// import FaultMapView from "@/components/FaultMapView/FaultMapView";
+// import { FaTimes } from "react-icons/fa";
+// import { HelpCircle } from "lucide-react";
+import DashboardStatusCardContainer from "@/components/StatusCardContainer/DashboardStatusCardContainer";
+import { useProfile } from "@/hooks/useProfile";
 
-export default function Noticfications() {
+import {
+  getTicket,
+  getTicketsInMunicipality,
+  getMostUpvote,
+  getWatchlistTickets,
+} from "@/services/tickets.service"; 
+
+interface ScrollablePanelProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
+  title,
+  children,
+}) => (
+  <div className="flex bg-white flex-col rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 h-[80vh] m-4 overflow-auto">
+    <div className="flex justify-center border p-4">
+      <h1 className="text-2xl font-bold">{title}</h1>
+    </div>
+    <div className="overflow-y-auto h-full overflow-auto">{children}</div>
+  </div>
+);
+
+export default function Notifications() {
+  const user = useRef(null);
+  const userProfile = useProfile();
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
+  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // try {
+      const user_data = await userProfile.getUserProfile();
+      const user_id = user_data.current?.email;
+      const user_session = String(user_data.current?.session_token);
+      // console.log(user_session);
+      const rspmostupvotes = await getMostUpvote(user_session);
+      const rspwatchlist = await getWatchlistTickets(
+        String(user_id),
+        user_session
+      );
+      const municipality = user_data.current?.municipality;
+      const rspmunicipality = await getTicketsInMunicipality(
+        municipality,
+        user_session
+      );
+      // console.log(rspmostupvotes)
+      // const flattenedWatchlist = rspwatchlist.flat();
+      console.log(rspwatchlist);
+      setMostUpvoteResults(rspmostupvotes);
+      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+      if (rspwatchlist.length > 0) {
+        setDashWatchResults(rspwatchlist);
+        console.log(dashWatchResults);
+      } else setDashWatchResults([]);
+      // console.log( dashMostUpvoteResults)
+      // }
+      // catch (error) {
+      //   console.error("Error fetching data:", error);
+      // }
+      
+    };
+
+    fetchData();
+  }, [userProfile]); // Add userProfile to the dependency array
+
+  const hasStatusFieldMuni =
+    Array.isArray(dashMuniResults) &&
+    dashMuniResults.some((item) => item.Status !== undefined);
+  const hasStatusFieldWatch =
+    Array.isArray(dashWatchResults) &&
+    dashWatchResults.some((item) => item.Status !== undefined);
+
   return (
     <div>
-      <NotificationPromt />
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
-          <Navbar />
-          
+        <div
+          style={{
+            position: "relative",
+            height: "100vh",
+            overflow: "hidden",
+          }}
+        >
+          <NavbarUser />
+
+          {/* Background image */}
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -30,19 +119,50 @@ export default function Noticfications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
-          ></div>
-          <main>
-            <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
-              Notifications
-            </h1>
-            <NotificationComment />
-            <NotificationUpdate />
-            <NotificationUpvote />
-            <NotificationWatchlist />
-          </main>
+          />
+
+          {/* Content */}
+          <div className="fixed inset-0 overflow-hidden">
+            <main className="h-full flex items-center justify-center pb-16 overflow-auto">
+              {/* Your Ticket Interactions */}
+              <ScrollablePanel title="Your Ticket Interactions">
+                <DashboardStatusCardContainer cardData={dashWatchResults}  />
+                
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+                <NotificationUpvote />
+                <NotificationComment />
+              </ScrollablePanel>
+              {/* Your Ticket Updates */}
+              {/* <ScrollablePanel title="Your Ticket Updates"> */}
+                {/* <NotificationUpdate state="AssigningContract" />
+                <NotificationUpdate state="Closed" />
+                <NotificationUpdate state="InProgress" />
+                <NotificationUpdate state="Closed" />
+                <NotificationUpdate state="AssigningContract" />
+                <NotificationUpdate state="Opened" />
+                <NotificationUpdate state="TakingTenders" /> */}
+              {/* </ScrollablePanel> */}
+              {/* Your Watchlist */}
+              {/* <ScrollablePanel title="Your Watchlist"> */}
+                {/* <NotificationUpdate state="InProgress" /> */}
+                {/* <NotificationUpvote /> */}
+                {/* <NotificationComment /> */}
+                {/* <NotificationUpdate state="AssigningContract" /> */}
+                {/* <NotificationComment /> */}
+                {/* <NotificationUpdate state="InProgress" /> */}
+                {/* <NotificationUpdate state="Closed" /> */}
+                {/* <NotificationComment /> */}
+                {/* <NotificationUpdate state="Opened" /> */}
+              {/* </ScrollablePanel> */}
+            </main>
+          </div>
         </div>
       </div>
 
@@ -52,7 +172,7 @@ export default function Noticfications() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
@@ -78,15 +198,13 @@ export default function Noticfications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
-          ></div>
+          />
 
           {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction

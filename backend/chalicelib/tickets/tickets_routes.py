@@ -11,6 +11,8 @@ from chalicelib.tickets.tickets_controllers import (
     add_ticket_comment_with_image,
     add_ticket_comment_without_image,
     get_ticket_comments,
+    get_geodata_all,
+    getCompanyTicekts,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -89,6 +91,14 @@ def get_Upvote_tickets():
     return tickets
 
 
+@tickets_blueprint.route("/getcompanytickets", methods=["GET"], cors=True)
+def get_company_tickets():
+    request = tickets_blueprint.current_request
+    company_name = request.query_params.get("company")
+    response = getCompanyTicekts(company_name)
+    return response
+
+
 @tickets_blueprint.route("/add-comment-with-image", methods=["POST"], cors=True)
 def add_comment_with_image_route():
     request = tickets_blueprint.current_request
@@ -128,4 +138,12 @@ def get_ticket_comments_route():
         raise BadRequestError("Missing required header: X-Ticket-ID")
 
     response = get_ticket_comments(ticket_id)
+    return response
+
+
+# endpoint should retrieve geodata for all unclosed tickets
+# NOTE: tests still need to be written for this endpoint
+@tickets_blueprint.route("/geodata/all", methods=["GET"], cors=True)
+def get_geodata_route():
+    response = get_geodata_all()
     return response

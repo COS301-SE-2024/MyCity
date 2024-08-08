@@ -1,17 +1,41 @@
+
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
-import RecordsTable from "@/components/RecordsTable/RecordsTable";
+import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
 import { Building, ChevronDown } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
+import {
+  getTicketsInMunicipality,
+} from "@/services/tickets.service";
 
 export default function Dashboard() {
-  const [city, setCity] = useState("City of Ekurhuleni");
+  const [city, setCity] = useState(String);
+  const userProfile = useProfile();
+  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+
+  useEffect(() =>{
+    const fetchData = async () => {
+      const user_data = await userProfile.getUserProfile();
+      console.log(user_data.current)
+      const user_session = String(user_data.current?.session_token);
+      const user_municipality = String(user_data.current?.municipality)
+      setCity(String(user_data.current?.municipality))
+      const rspmunicipality = await getTicketsInMunicipality(
+        user_municipality,
+        user_session
+      );
+      console.log(rspmunicipality)
+      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    };
+    fetchData();
+  },[userProfile])
 
   return (
     <div>
@@ -88,7 +112,7 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="mt-8">
-              <RecordsTable />
+              <RecordsTable records={dashMuniResults} />
             </div>
           </main>
         </div>
@@ -162,3 +186,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

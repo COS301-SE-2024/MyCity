@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaArrowUp,
   FaCommentAlt,
@@ -9,6 +9,12 @@ import {
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
+import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { getTicketTenders,getContract } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
+import { Tenor_Sans } from "next/font/google";
+import MapComponent from "@/context/MapboxMap";
+
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -19,11 +25,16 @@ interface TicketViewMuniProps {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
+  ticket_id: string;
   description: string;
-  image: string;
+  user_picture: string;
   createdBy: string;
   status: string;
+  imageURL : string;
   municipalityImage: string;
+  upvotes: number;
+  latitude: string;
+  longitude: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -46,18 +57,28 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   address,
   ticketNumber,
   description,
-  image,
+  user_picture,
   createdBy,
   status,
   municipalityImage,
+  upvotes,
+  longitude,
+  latitude,
+  ticket_id,
+  imageURL,
   urgency,
 }) => {
   const [showTenderMax, setShowTenderMax] = useState(false);
+  const userProfile = useProfile();
   const [showMuniTenders, setShowMuniTenders] = useState(false);
+  const [tenders,setTenders] = useState<any>(null)
+  const [contract,setContract] = useState<any>()
+
+
 
   const getStatusColor = () => {
     switch (status) {
-      case "Unaddressed":
+      case "Opened":
         return "text-red-500";
       case "Fix in progress":
         return "text-blue-500";
@@ -66,25 +87,96 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
+  const getUrgency = (votes: number) => {
+    if (votes < 10) {
+      return "low";
+    } else if (votes >= 10 && votes < 20) {
+      return "medium";
+    } else if (votes >= 20 && votes <= 40) {
+      return "high";
+    } else {
+      return "low"; // Default case
+    }
+  };
+
+
   if (!show) return null;
 
   const addressParts = address.split(",");
 
-  const handleTenderContractClick = () => {
-    setShowTenderMax(true);
+  function formatDate(given_date : string){
+    return given_date.slice(0,given_date.indexOf('T'))
+  }
+  
+
+  const handleTenderContractClick = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const rspgettenders = await getTicketTenders(ticket_id,user_session);
+      setTenders(rspgettenders);
+      console.log(rspgettenders);
+      if(rspgettenders == null)
+      {
+        return 
+      }
+      let tender_contract = ""
+      rspgettenders.forEach((item: { status: string;tender_id : string })  => {
+        
+        console.log(item.tender_id)
+        if(item.status == "accepted" || item.status == "approved")
+        {
+          tender_contract = item.tender_id;
+          console.log(item.tender_id)
+        }
+      });
+      if(tender_contract == "")
+      {
+        setShowTenderMax(false);
+      }
+      else {
+        const response_contract = await getContract(tender_contract || "",user_session) ; // Replace with your API endpoint
+      
+        console.log(response_contract);
+        if(response_contract != null)
+          {
+            setContract(response_contract)
+            setShowTenderMax(true);
+          }
+          else setShowTenderMax(false);
+      }
+      
+      
+      // Handle the fetched data
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleTenderMaxClose = () => {
     setShowTenderMax(false);
   };
 
-  const handleViewTendersClick = () => {
-    setShowMuniTenders(true);
+  const handleViewTendersClick = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    // console.log(user_session); //
+    const rspgettenders = await getTicketTenders(ticket_id,user_session);
+    setTenders(rspgettenders);
+    
+    if(tenders == null)
+    {
+      setShowMuniTenders(false);
+    }
+    else setShowMuniTenders(true)
   };
 
   const handleBack = () => {
     setShowMuniTenders(false);
   };
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  
 
   return (
     <>
@@ -101,7 +193,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               {/* Left Section */}
               <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
                 <div className="absolute top-2 left-2">
-                  {urgencyMapping[urgency].icon}
+                  {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
                 <img
                   src={municipalityImage}
@@ -123,10 +215,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   <p className="text-gray-700 text-sm">{description}</p>
                 </div>
 
-                {image && (
+                {user_picture && (
                   <div className="mb-2 flex justify-center">
                     <img
-                      src={image}
+                      src={imageURL}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
                     />
@@ -143,11 +235,11 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                     ))}
                   </div>
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-md">Created By</h3>
+                    <h3 className="font-bold text-sm">Created By</h3>
                     <img
-                      src="https://via.placeholder.com/40"
+                      src={user_picture}
                       alt="Created By"
-                      className="rounded-full mb-1"
+                      className="rounded-full mb-1 object-cover w-12 h-12"
                     />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
@@ -160,7 +252,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   >
                     Back
                   </button>
-                  {status === "Fix in progress" && (
+                  {(status === "In Progress" || status === "Assigning Contract")  && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleTenderContractClick}
@@ -168,7 +260,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {status === "Unaddressed" && (
+                  {(status === "Opened" || status === "Taking Tenders") && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
@@ -180,8 +272,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               </div>
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
-                  Map Placeholder
+                <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
+                <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
                 </div>
               </div>
             </div>
@@ -192,14 +284,18 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {showTenderMax && (
         <TenderMax
           tender={{
-            id: ticketNumber,
-            ticketId: ticketNumber,
-            status: status === "Fix in progress" ? "Active" : "Unassigned",
-            serviceProvider: createdBy,
-            issueDate: new Date().toISOString().split('T')[0],
-            price: 1000,
-            estimatedDuration: 5,
+            tender_id: contract.tender_id,
+            status: contract.status,
+            companyname: tenders.companyname,
+            contractdatetime: formatDate(String(contract.contractdatetime)),
+            finalCost: contract.finalCost,
+            finalDuration: contract.finalDuration,
             upload: null,
+            ticketnumber : ticketNumber,
+            latitude : Number(latitude),
+            longitude : Number(longitude),
+            completedatetime: contract.completedatetime,
+            contractnumber : contract.contractnumber,
             hasReportedCompletion: false,
           }}
           onClose={handleTenderMaxClose}
@@ -208,7 +304,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
       {showMuniTenders && (
         <MuniTenders
-          ticketId={ticketNumber}
+          tenders={tenders}
           onBack={handleBack}
         />
       )}

@@ -1,5 +1,4 @@
 
-
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
 {
     const data = {
@@ -24,7 +23,7 @@ export async function CreatTender(companyname: string, amount: number,ticket: st
     }
 
     const result = await response.json()
-    if(result.Status == "Success" )
+    if(result.data.Status == "Success" )
     {
         console.log(result)
         return true
@@ -69,7 +68,7 @@ export async function InReview(authcode: string,ticket: string,user_session : st
 export async function AcceptTender(companyname: string,ticket: string,user_session : string)
 {
     const data = {
-        company_name : companyname,
+        company_id : companyname,
         ticket_id : ticket,
     }
 
@@ -88,12 +87,138 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
     }
 
     const result = await response.json()
-    if(result.Status == "Success" )
+    if(result.data.Status == "Success" )
     {
         return true
     }
     else false
     
-    return true;
 
+}
+
+export async function getTicketTenders(ticket_id: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getmunicipalitytenders";
+    const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+    console.log(result)
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result.data)
+        AssignTenderNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
+export async function getCompanyTenders(companyname: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getmytenders";
+    const urlWithParams = `${apiURL}?name=${encodeURIComponent(companyname)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+    console.log(result)
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result.data)
+        AssignTenderNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
+export async function getContract(tender_id: string,user_session : string)
+{
+
+    const apiURL = "/api/tenders/getcontracts";
+    const urlWithParams = `${apiURL}?tender=${encodeURIComponent(tender_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result)
+        AssignContractNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
+function CreateTenderNumber(company_name: string): string {
+    let ticketnumber = company_name[0].toUpperCase();
+    for (let index = 0; index < 2; index++) {
+        let randint: number = Math.floor(Math.random() * company_name.length);
+        while (company_name[randint] == " " || company_name[randint] == "-" || company_name[randint] == "_") {
+            // console.log("inside loop")
+            randint = Math.floor(Math.random() * company_name.length);
+        }
+        ticketnumber += company_name[randint].toUpperCase();
+    }
+    for (let index = 0; index < 2; index++) {
+        const randint = Math.floor(Math.random() * company_name.length) + 1;
+        ticketnumber += String(randint);
+    }
+    return ticketnumber;
+}
+
+function AssignTenderNumbers(data: any[]) {
+    data.forEach((item: any) => {
+        item['tendernumber'] = CreateTenderNumber(item.companyname);
+    });
+}
+
+function AssignContractNumbers(data: any) {
+    
+    data['contractnumber'] = CreateTenderNumber(data.companyname);
 }
