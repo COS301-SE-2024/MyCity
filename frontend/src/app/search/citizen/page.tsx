@@ -35,8 +35,6 @@ export default function CreateTicket() {
 
 
   const handleSearch = async () => {
-
-    
     try {
       setHasSearched(true);
       setLoading(true);
@@ -51,9 +49,9 @@ export default function CreateTicket() {
       switch (selectedFilter) {
         case "myMunicipality": // My Municipality -> Near Me or Asset
           if (selectedSubfilter === 0) {
-            data = await searchMunicipalityTickets(user_municipality);
+            data = await searchMunicipalityTickets(user_municipality); //User's municipality tickets
           } else if (selectedSubfilter === 1) {
-            data = await searchIssue(searchTerm + ` ${user_municipality}`);
+            data = await searchIssue(searchTerm + ` ${user_municipality}`); //Filter of the above tickets based on potential asset matches
           }
           break;
         case "serviceProviders": // Service Providers
@@ -65,6 +63,9 @@ export default function CreateTicket() {
         default:
           break;
       }
+
+      console.log('Checking to see array output');
+      console.log('API Response Data:', data);
 
       const endTime = Date.now();
       setSearchTime((endTime - startTime) / 1000); // Time in seconds
