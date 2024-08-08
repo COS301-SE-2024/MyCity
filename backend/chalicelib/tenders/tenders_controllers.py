@@ -250,7 +250,7 @@ def accept_tender(sender_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
+
 
 def reject_tender(sender_data):
     try:
