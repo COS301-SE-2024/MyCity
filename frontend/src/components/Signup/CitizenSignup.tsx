@@ -264,72 +264,71 @@ export default function CitizenSignup() {
         </Autocomplete>
 
         <div className="flex justify-between gap-4">
-  <div className="relative w-1/2">
-    <Input
-      variant={"bordered"}
-      label={
-        <span className="font-semibold text-medium block mb-[0.20em]">
-          Create Password <span className="text-blue-500">*</span>
-        </span>
-      }
-      labelPlacement={"outside"}
-      classNames={{
-        inputWrapper: "h-[3em]",
-      }}
-      type={showPassword ? "text" : "password"}
-      name="password"
-      autoComplete="new-password"
-      placeholder="Password"
-      required
-      value={formData.password}
-      onChange={handleInputChange}
-    />
-    <button
-      type="button"
-      className="absolute inset-y-0 right-3 flex items-center justify-center top-1/2 transform -translate-y-1/2"
-      onClick={togglePasswordVisibility}
-    >
-      {showPassword ? (
-        <FaEyeSlash className="h-5 w-5" />
-      ) : (
-        <FaEye className="h-5 w-5" />
-      )}
-    </button>
-  </div>
-  <div className="relative w-1/2">
-    <Input
-      variant={"bordered"}
-      label={
-        <span className="font-semibold text-medium block mb-[0.20em]">
-          Confirm Password <span className="text-blue-500">*</span>
-        </span>
-      }
-      labelPlacement={"outside"}
-      classNames={{
-        inputWrapper: "h-[3em]",
-      }}
-      type={showConfirmPassword ? "text" : "password"}
-      name="confirmPassword"
-      autoComplete="new-password"
-      placeholder="Password"
-      required
-      value={formData.confirmPassword}
-      onChange={handleInputChange}
-    />
-    <button
-      type="button"
-      className="absolute inset-y-0 right-3 flex items-center justify-center top-1/2 transform -translate-y-1/2"
-      onClick={toggleConfirmPasswordVisibility}
-    >
-      {showConfirmPassword ? (
-        <FaEyeSlash className="h-5 w-5" />
-      ) : (
-        <FaEye className="h-5 w-5" />
-      )}
-    </button>
-  </div>
-</div>
-
+          <div className="relative w-1/2">
+            <Input
+              variant={"bordered"}
+              label={
+                <span className="font-semibold text-medium block mb-[0.20em]">
+                  Create Password <span className="text-blue-500">*</span>
+                </span>
+              }
+              labelPlacement={"outside"}
+              classNames={{
+                inputWrapper: "h-[3em]",
+              }}
+              type={showPassword ? "text" : "password"}
+              name="password"
+              autoComplete="new-password"
+              placeholder="Password"
+              required
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? (
+                <FaEyeSlash className="h-5 w-5" />
+              ) : (
+                <FaEye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+          <div className="relative w-1/2">
+            <Input
+              variant={"bordered"}
+              label={
+                <span className="font-semibold text-medium block mb-[0.20em]">
+                  Confirm Password <span className="text-blue-500">*</span>
+                </span>
+              }
+              labelPlacement={"outside"}
+              classNames={{
+                inputWrapper: "h-[3em]",
+              }}
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              autoComplete="new-password"
+              placeholder="Password"
+              required
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
+              onClick={toggleConfirmPasswordVisibility}
+            >
+              {showConfirmPassword ? (
+                <FaEyeSlash className="h-5 w-5" />
+              ) : (
+                <FaEye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        </div>
 
         <div className="mt-2">
           <button
