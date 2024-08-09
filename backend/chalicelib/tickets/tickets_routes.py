@@ -13,6 +13,8 @@ from chalicelib.tickets.tickets_controllers import (
     get_ticket_comments,
     get_geodata_all,
     getCompanyTicekts,
+    AcceptTicket,
+    ClosedTicket,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -23,6 +25,22 @@ def create_ticket_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
     response = create_ticket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route("/accept", methods=["POST"], cors=True)
+def accepting_ticket():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = AcceptTicket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route("/close", methods=["POST"], cors=True)
+def closing_ticket():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = ClosedTicket(ticket_data)
     return response
 
 

@@ -409,6 +409,110 @@ def getMostUpvoted():
         return {"Status": "FAILED", "Error": error_message}
 
 
+def ClosedTicket(ticket_data):
+    try:
+        required_fields = ["ticket_id"]
+
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        if not DoesTicketExist(ticket_data["ticket_id"]):
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExist",
+                    "Message": "Ticket Doesnt Exist",
+                }
+            }
+            raise ClientError(error_response, "TicketDoesntExist")
+
+        ticket_id = ticket_data["ticket_id"]
+        updateExp = "set #state=:r"
+        expattrName = {"#state": "state"}
+        expattrValue = {":r": "Closed"}
+        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Ticket_id": ticket_id,
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def AcceptTicket(ticket_data):
+    try:
+        required_fields = ["ticket_id"]
+
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        if not DoesTicketExist(ticket_data["ticket_id"]):
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExist",
+                    "Message": "Ticket Doesnt Exist",
+                }
+            }
+            raise ClientError(error_response, "TicketDoesntExist")
+
+        ticket_id = ticket_data["ticket_id"]
+        updateExp = "set #state=:r"
+        expattrName = {"#state": "state"}
+        expattrValue = {":r": "Taking Tenders"}
+        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Ticket_id": ticket_id,
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def DoesTicketExist(ticket_id):
+    checking_ticket = tickets_table.query(
+        KeyConditionExpression=Key("ticket_id").eq(ticket_id)
+    )
+    if len(checking_ticket["Items"]) <= 0:
+        return False
+    else:
+        return True
+
+
 def getCompanyTicekts(companyname):
     try:
         if companyname == None:
@@ -715,3 +819,19 @@ def get_geodata_all():
         raise BadRequestError(
             f"Failed to retrieve all tickets: {e.response['Error']['Message']}"
         )
+
+
+def updateTicketTable(
+    ticket_id,
+    update_expression,
+    expression_attribute_names,
+    expression_attribute_values,
+):
+    response = tickets_table.update_item(
+        Key={"ticket_id": ticket_id},
+        UpdateExpression=update_expression,
+        ExpressionAttributeNames=expression_attribute_names,
+        ExpressionAttributeValues=expression_attribute_values,
+    )
+
+    return response
