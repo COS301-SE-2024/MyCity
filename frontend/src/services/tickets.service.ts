@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { FaultType } from "@/types/custom.types";
+import { FaultGeoData, FaultType } from "@/types/custom.types";
 
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
@@ -27,7 +27,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
         const data = result.data as any[];
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -67,7 +67,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
         const data = result.data as any[];
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -108,7 +108,7 @@ export async function getWatchlistTickets(username: string, user_session: string
         const data = result.data as any[];
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -189,7 +189,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -273,13 +273,27 @@ function CreateTicketNumber(municipality: string): string {
     return ticketnumber;
 }
 
+function ChangeState(tickets: any[]){
+    tickets.forEach((item: any) => {
+        if(item['state'] == "Assigning Contract")
+        {
+            item['state'] = "In Progress"
+        }
+        else if(item['state']=="OPEN")
+        {
+            item['state'] == "Opened"
+        }
+
+    });
+}
+
 function AssignTicketNumbers(data: any[]) {
     data.forEach((item: any) => {
         item['ticketnumber'] = CreateTicketNumber(item.municipality_id);
     });
 }
 
-export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string,) {
+export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string) {
     try {
         const apiUrl = "/api/tickets/add-comment-with-image";
         const data = {
