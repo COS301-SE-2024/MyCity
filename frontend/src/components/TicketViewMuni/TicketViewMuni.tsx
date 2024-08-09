@@ -18,7 +18,7 @@ import MapComponent from "@/context/MapboxMap";
 
 interface TicketViewMuniProps {
   show: boolean;
-  onClose: () => void;
+  onClose: (data : number) => void;
   title: string;
   address: string;
   arrowCount: number;
@@ -73,19 +73,21 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [showMuniTenders, setShowMuniTenders] = useState(false);
   const [tenders,setTenders] = useState<any>(null)
   const [contract,setContract] = useState<any>()
+  const [ticketstatus,setTicketstatus] = useState<string>("")
 
-
-
-  const getStatusColor = () => {
-    switch (status) {
+  useEffect(()=>{
+    setTicketstatus(status)
+  },[])
+  const getStatusColor = (state : string) => {
+    switch (state) {
       case "Opened":
         return "text-green-500";
-      case "Fix in progress":
+      case "In Progress":
         return "text-blue-500";
-      case "Assigning Contract":
-        return "text-blue-500";
+      case "Closed":
+        return "text-red-500";
       case "Taking Tenders":
-        return "text-green-500";
+        return "text-purple-500";
       default:
         return "text-gray-500";
     }
@@ -110,6 +112,16 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
   function formatDate(given_date : string){
     return given_date.slice(0,given_date.indexOf('T'))
+  }
+
+  const handleApproveTicket = async () => {
+    setTicketstatus("Taking Tenders")
+    onClose(0)
+  }
+
+  const handleCloseTicket = async () => {
+    setTicketstatus("Closed")
+    onClose(0)
   }
   
 
@@ -161,6 +173,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     setShowTenderMax(false);
   };
 
+  const handleCloseClick = () => {
+    onClose(0)
+  }
+
   const handleViewTendersClick = async () => {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
@@ -178,8 +194,13 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  const handleBack = () => {
+  const handleBack = (data : number) => {
     setShowMuniTenders(false);
+    if(data == 1)
+    {
+      setTicketstatus("In Progress")
+      onClose(1)
+    }
   };
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -192,7 +213,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
           <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
             <button
               className="absolute top-2 right-2 text-gray-700"
-              onClick={onClose}
+              onClick={handleCloseClick}
             >
               <FaTimes size={24} />
             </button>
@@ -209,9 +230,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                 />
                 <div className="flex items-center justify-center mb-2">
                   <div
-                    className={`flex items-center ${getStatusColor()} border-2 rounded-full px-2 py-1`}
+                    className={`flex items-center ${getStatusColor(ticketstatus)} border-2 rounded-full px-2 py-1`}
                   >
-                    <span className="ml-1">{status}</span>
+                    <span className="ml-1">{ticketstatus}</span>
                   </div>
                 </div>
                 <div className="mt-2 mb-2 text-center">
@@ -255,7 +276,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                 <div className="mt-2 flex justify-center gap-2">
                   <button
                     className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
-                    onClick={onClose}
+                    onClick={handleCloseClick}
                   >
                     Back
                   </button>
@@ -267,13 +288,30 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {(status === "Opened" || status === "Taking Tenders") && (
+                  {( status === "Taking Tenders") && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
                     >
                       View Tenders
                     </button>
+                  )}
+                  {(status === "Opened" ) && (
+                    <>
+                      <button
+                        className="border border-red-500 text-red-500 rounded-lg px-2 py-1 hover:bg-red-500 hover:text-white"
+                        onClick={handleCloseTicket}
+                      >
+                        Close Ticket
+                      </button>
+                      <button
+                        className="border border-green-500 text-green-500 rounded-lg px-2 py-1 hover:bg-green-500 hover:text-white"
+                        onClick={handleApproveTicket}
+                      >
+                        Approve ticket
+                      </button>
+                    </>
+                    
                   )}
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TenderMax from './MuniTenderMax'; // Assuming the detailed view component is in the same directory
 import TenderContainer from './TendersTemplate';
 import { VscSymbolBoolean } from 'react-icons/vsc';
@@ -30,30 +30,46 @@ function statusStyles(status: String) {
       return 'border-blue-500 text-blue-500 bg-white';
     case 'submitted':
       return 'bg-gray-200 text-gray';
+    case 'reject':
+      return 'bg-red-200 text-red';
   }
 }
 
 
-export default function Tender({ tender }: { tender: TenderType }) {
+export default function Tender({ tender,onClose }: { tender: TenderType,onClose: (data : number) => void }) {
   const [showDetails, setShowDetails] = useState(false);
   const [rerender,setRerender] = useState<boolean>()
   const [status,setStatus] = useState<String>("")
 
-  setStatus(tender.status)
+  const datesubmitted = tender.datetimesubmitted.split('T')[0]
+
+  useEffect(()=>{
+    setStatus(tender.status)
+  },[])
 
   const handleTenderClick = () => {
     setShowDetails(true);
   };
 
-  const handleClose = (data? : number) => {
+  const handleClose = async (data : number) => {
+    console.log("Data :" + data)
     setShowDetails(false);
     if (data !== undefined) {
+      console.log("inside switch statement")
       switch (data) {
         case 1:
-          setStatus("approved")
+          {
+            setStatus("approved")
+            onClose(1)
+          }
           break;
         case 2:
-          setStatus("rejected")
+          {
+            console.log("Inside the reject switch")
+            setStatus("rejected")
+            onClose(0)
+          }
+          break;
         default:
           break;
       }
@@ -80,7 +96,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticket_id}</div>
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
-        <div className="col-span-1 flex justify-center">{tender.datetimesubmitted}</div>
+        <div className="col-span-1 flex justify-center">{datesubmitted}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{getDays(tender.estimatedTimeHours)} days</div>
       </div>

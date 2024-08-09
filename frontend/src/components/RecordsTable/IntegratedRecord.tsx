@@ -45,17 +45,28 @@ const urgencyMapping: UrgencyMappingType = {
   low: { icon: <AlertCircle className="text-green-500" />, label: 'Not Urgent' }
 };
 
-export default function Record({ record }: { record: RecordType }) {
+export default function Record({ record, refresh }: { record: RecordType , refresh : () => void}) {
   const [showTicketView, setShowTicketView] = useState(false);
   const addressRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [ticketstate,setTicketstate] = useState<string>("")
+
+  useEffect(()=>{
+    setTicketstate(record.state)
+  },[])
 
   const handleClick = () => {
     setShowTicketView(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (data : number) => {
     setShowTicketView(false);
+    if(data == 1)
+    {
+      setTicketstate("In Progress")
+
+    }
+    refresh();
   };
 
   const getUrgency = (votes : number) =>{
@@ -108,8 +119,8 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${getStateColour(record.state)}`}>
-            {record.state}
+          <span className={`px-2 py-1 rounded ${getStateColour(ticketstate)}`}>
+            {ticketstate}
           </span>
         </div>
         <div className="col-span-1 flex justify-center">{record.createdby}</div>

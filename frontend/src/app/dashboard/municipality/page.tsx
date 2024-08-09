@@ -20,23 +20,25 @@ export default function Dashboard() {
     setDropdownOpen(!dropdownOpen);
   };
 
+  ///function to call api
+  const fetchData = async () => {
+    const user_data = await userProfile.getUserProfile();
+    console.log(user_data.current)
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality)
+    setCity(String(user_data.current?.municipality))
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session,
+  
+    );
+    console.log(rspmunicipality)
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+  };
+
   useEffect(() =>{
-    const fetchData = async () => {
-      const user_data = await userProfile.getUserProfile();
-      console.log(user_data.current)
-      const user_session = String(user_data.current?.session_token);
-      const user_municipality = String(user_data.current?.municipality)
-      setCity(String(user_data.current?.municipality))
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session,
-    
-      );
-      console.log(rspmunicipality)
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-    };
     fetchData();
-  },[userProfile])
+  },[])
 
   return (
     <div>
@@ -113,7 +115,7 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="mt-8">
-              <RecordsTable records={dashMuniResults} />
+              <RecordsTable records={dashMuniResults} refresh={fetchData} />
             </div>
           </main>
         </div>

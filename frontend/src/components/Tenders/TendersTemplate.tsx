@@ -4,7 +4,7 @@ import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
-import { AcceptTender } from "@/services/tender.service";
+import { AcceptTender,RejectTender } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
@@ -47,7 +47,7 @@ const statusStyles = {
   submitted: "text-black bg-gray-200 rounded-full",
 };
 
-const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (data? : number) => void }) => {
+const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (data : number) => void }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
 
   const userProfile = useProfile();
@@ -61,7 +61,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
   };
 
   const handleDecline = () => {
-    onClose(1); // Example number to send back
+    onClose(2); // Example number to send back
   };
 
   // Map "Fix in progress" to "Active" for the tender's status
@@ -70,33 +70,58 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
   console.log(tender.company_id)
   const handleAction = async (action: string) => {
     if(action == "Accept")
+    {  
+        setDialog({ action, show: true });
+        console.log("inside true")
+    }
+    else if(action == "Decline")
     {
-        const user_data = await userProfile.getUserProfile();
-        const user_session = String(user_data.current?.session_token);
-        const accepted = await AcceptTender(tender.company_id,tender.ticket_id,user_session)
-        if(accepted == true)
-        {
-            setDialog({ action, show: true });
-            console.log("inside true")
-        }
-        else
-        {
-            toast.error("Couldnt accept this tender")
-        }
+        
+        setDialog({ action, show: true });
+        console.log("inside true")
+        
     }
   };
 
-  const confirmAction = () => {
+  const confirmAction = async () => {
     toast.success(`${dialog.action} action confirmed.`);
     setDialog({ action: "", show: false });
     switch (dialog.action) {
       case "Accept":
-        handleAccept()
+        {
+          const user_data = await userProfile.getUserProfile();
+          const user_session = String(user_data.current?.session_token);
+          const accepted = await AcceptTender(tender.company_id,tender.ticket_id,user_session)
+          if(accepted == true)
+          {
+              console.log("inside true")
+          }
+          else
+          {
+              toast.error("Couldnt accept this tender")
+          }
+          handleAccept();
+        }
         break;
       case "Decline":
-        handleDecline()
+        {
+          const user_data = await userProfile.getUserProfile();
+          const user_session = String(user_data.current?.session_token);
+          const rejected = await RejectTender(tender.company_id,tender.ticket_id,user_session)
+          if(rejected == true)
+          {
+              console.log("inside reject")
+          }
+          else
+          {
+              toast.error("Couldnt Decline this tender")
+          }
+          handleDecline();
+        }
+        console.log("inside reject")
+        break;
       default:
-        handleBack()
+        handleBack();
         break;
     }
   };
