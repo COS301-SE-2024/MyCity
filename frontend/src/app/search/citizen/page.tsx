@@ -64,12 +64,12 @@ export default function CreateTicket() {
           break;
       }
 
-      console.log('Checking to see array output');
-      console.log('API Response Data:', data);
+      //console.log('Checking to see array output');
+      //console.log('API Response Data:', data);
 
       const endTime = Date.now();
       setSearchTime((endTime - startTime) / 1000); // Time in seconds
-      setTotalResults(data.length);
+      setTotalResults(data.length); // all the tickets 
       setSearchResults(data);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
@@ -266,38 +266,21 @@ export default function CreateTicket() {
             </div>
 
             {loading ? (
-              <div className="flex justify-center items-center mt-4">
+              <div className="flex justify-center items-center mt-8">
                 <ThreeDots
-                  height="80"
+                  height="40"
                   width="80"
                   radius="9"
-                  color="white"
+                  color="#ADD8E6"
                   ariaLabel="three-dots-loading"
                   wrapperStyle={{}}
+                  wrapperClass=""
                   visible={true}
                 />
               </div>
             ) : hasSearched && searchResults.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-                {/* {currentResults.map((result, index) => (
-                  <div
-                    key={index}
-                    className="p-4 bg-white bg-opacity-80 rounded-lg shadow-md"
-                  >
-                    {selectedFilter === "myMunicipality" && (
-                      <SearchTicket tickets={result} />
-                    )}
-                    {selectedFilter === "municipalities" && (
-                      <SearchMunicipality municipalities={result} />
-                    )}
-                    {selectedFilter === "serviceProviders" && (
-                      <SearchSP serviceProviders={result} />
-                    )}
-                  </div>
-                ))} */}
-
                 <div
-                  // key={index}
                   className="p-4 bg-white bg-opacity-80 rounded-lg shadow-md"
                 >
                   {selectedFilter === "myMunicipality" && (
