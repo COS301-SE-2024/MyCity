@@ -1,6 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { FaultGeoData, FaultType } from "@/types/custom.types";
-
+import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
@@ -293,7 +292,7 @@ function AssignTicketNumbers(data: any[]) {
     });
 }
 
-export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string) {
+export async function addCommentWithImage(comment: string, ticket_id: string, image_url: string, user_id: string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-with-image";
         const data = {
@@ -324,7 +323,7 @@ export async function addCommentWithImage(comment:string, ticket_id:string, imag
     }
 }
 
-export async function addCommentWithoutImage(comment:string, ticket_id:string, user_id:string, user_session: string,) {
+export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-without-image";
         const data = {
@@ -354,7 +353,7 @@ export async function addCommentWithoutImage(comment:string, ticket_id:string, u
     }
 }
 
-export async function getTicketComments(ticket_id:string, user_session:string) {
+export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
         const apiUrl = `/api/tickets/${ticket_id}/comments`;
         const response = await fetch(apiUrl, {
@@ -378,9 +377,8 @@ export async function getTicketComments(ticket_id:string, user_session:string) {
     }
 }
 
-function formatAddress(data : any[])
-{
-    data.forEach(item  => {
+function formatAddress(data: any[]) {
+    data.forEach(item => {
         let address = String(item.address)
         item['address'] = address.split(',').slice(0, 2).join(',');
     });
@@ -409,8 +407,25 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
 
         const result = await response.json();
 
-        const data = result.data as FaultGeoData[];
-        console.log("faults geodata: ", data);
+        const rawData = result.data as UnprocessedFaultGeoData[];
+        const data: FaultGeoData[] = [];
+
+        for (const fault of rawData) {
+            let faultColor: string | undefined = undefined;
+
+            if (fault.urgency = "urgent") {
+                faultColor = "#b91c1c"; //red-ish
+            }
+            else if (fault.urgency = "semi-urgent") {
+                faultColor = "#ca8a04"; //yellow-ish
+            }
+            else if (fault.urgency = "non-urgent") {
+                faultColor = "#15803d"; //green-ish
+            }
+
+            const faultResult: FaultGeoData = { ...fault, color: faultColor };
+            data.push(faultResult);
+        }
 
         return data;
 
@@ -419,5 +434,3 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
         throw error;
     }
 }
-
-
