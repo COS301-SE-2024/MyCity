@@ -23,6 +23,7 @@
     "@placekit/autocomplete-react": "^2.2.2",
     "@types/react-modal": "^3.16.3",
     "aws-amplify": "^6.4.3",
+    "date-fns": "^3.6.0",
     "framer-motion": "^11.3.21",
     "lucide-react": "^0.424.0",
     "mapbox-gl": "^3.5.2",

@@ -4,17 +4,10 @@ import { useState } from "react";
 
 //import Navbar from "@/components/Navbar/Navbar"; implemented later
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
-import CommentComponent from "@/components/NotificationsCompany/NotificationComment";
-import CreatedComponent from "@/components/NotificationsCompany/NotificationCreated";
-import UpdateComponent from "@/components/NotificationsCompany/NotificationUpdate";
-import UpvoteComponent from "@/components/NotificationsCompany/NotificationUpvote";
-import WatchlistComponent from "@/components/NotificationsCompany/NotificationWatchlist";
+import TicketNoti from "@/components/NewNotifications/TicketNoti";
+import TenderNoti from "@/components/NewNotifications/TenderNoti";
+import Comments from "@/components/Comments/comments";
 export default function Notifications() {
-  const [notifications, setNotifications] = useState([
-    { name: 'Kyle Marshall', seen: false },
-    { name: 'Benson Boone', seen: true },
-  ]);
-
   const handleDelete = () => {
     console.log("Delete notification");
   };
@@ -41,26 +34,31 @@ export default function Notifications() {
         <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
           Notifications
         </h1>
-        <CommentComponent seen={false} />
-        <UpdateComponent
-          municipality="City of Ekurhuleni"
-          action="accepted"
-          seen={true}
-          onDelete={handleDelete}
+        <TicketNoti
+          ticketNumber="12345"
+          image="" // No image provided, so the profile icon will be shown
+          action="upvoted"
+          isNew={true} // New notification
         />
-        <UpdateComponent
-          municipality="City of Ekurhuleni"
-          action="rejected"
-          seen={false}
-          onDelete={handleDelete}
+        <TicketNoti
+          ticketNumber="67890"
+          image="https://via.placeholder.com/150" // Image provided
+          action="commented on"
+          isNew={false} // Viewed notification
         />
-        <UpvoteComponent
-          name="Kyle Marshall"
-          seen={true}
-          onDelete={handleDelete}
+        <TicketNoti
+          ticketNumber="11223"
+          image="" // No image provided, so the profile icon will be shown
+          action="watchlisted"
+          isNew={true} // New notification
         />
-        <WatchlistComponent seen={false} />
-        <CreatedComponent seen={false} />
+        <TicketNoti
+          ticketNumber="44556"
+          image="https://via.placeholder.com/150" // Image provided
+          action="updated status to:"
+          isNew={false} // Viewed notification
+        />
+        <TenderNoti />
       </main>
     </div>
   );
