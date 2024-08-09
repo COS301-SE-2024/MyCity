@@ -665,11 +665,30 @@ def get_geodata_all():
 
         # ----- retrieve geodata for all tickets up to the dynamodb limit -----
         response = tickets_table.scan(
-            ProjectionExpression="asset_id, latitude, longitude"
+            ProjectionExpression="asset_id, latitude, longitude, upvotes"
         )
-        items = response.get("Items", [])
+        fault_data = response.get("Items", [])
 
-        return items
+        for fault in fault_data:
+            # non-urgent
+            if fault["upvotes"] < 10:
+                fault["color"] = "#22c55e"  # green-ish
+
+            # semi-urgent
+            elif fault["upvotes"] >= 10 and fault["upvotes"] < 20:
+                fault["color"] = "#eab308"  # yellow-ish
+
+            # urgent
+            elif fault["upvotes"] >= 20 and fault["upvotes"] <= 40:
+                fault["color"] = "#ef4444"  # red-ish
+
+            # non-urgent
+            else:
+                fault["color"] = "#22c55e"  # green-ish
+
+            fault.pop("upvotes")
+
+        return fault_data
 
     except ClientError as e:
         raise BadRequestError(
