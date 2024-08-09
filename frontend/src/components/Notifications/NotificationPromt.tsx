@@ -1,19 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  ChakraProvider,
-  Container,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  AlertTitle,
-  Box,
-  Button,
-  theme,
-} from "@chakra-ui/react";
 
-async function notifyUser(notificationText = "Thank you for enabling notifications!") {
+async function notifyUser(
+  notificationText = "Thank you for enabling notifications!"
+) {
   if (!("Notification" in window)) {
     alert("Browser does not support notifications.");
   } else if (Notification.permission === "granted") {
@@ -47,36 +38,28 @@ export default function Promt_Popup() {
 
   if (!notificationSupported) {
     return (
-      <ChakraProvider theme={theme}>
-        <Container>
-          <Box>
-            <h1>Notifications are not supported by your browser.</h1>
-          </Box>
-        </Container>
-      </ChakraProvider>
+      <div>
+        <h1>Notifications are not supported by your browser.</h1>
+      </div>
     );
   }
 
   return !userResponded && Notification.permission !== "granted" ? (
-    // If Has not responded and notifications are not granted
-    <ChakraProvider>
-      <Container>
-        <Alert status="success">
-          <AlertIcon />
-          <Box>
-            <AlertTitle mr={2}>Notifications</AlertTitle>
-            <AlertDescription>
-              Would you like to receive notifications from MyCity?
-            </AlertDescription>
-          </Box>
-          <Button colorScheme="blue" size="sm" onClick={enableNotifsAndClose}>
-            Sure!
-          </Button>
-          <Button colorScheme="gray" size="sm" onClick={disableNotifsAndClose}>
-            No Thanks!
-          </Button>
-        </Alert>
-      </Container>
-    </ChakraProvider>
-  ) : (<></>);
+
+    <div className="bg-white">
+      <div>
+        <div>
+          <h1>Notifications</h1>
+          <h2>Would you like to receive notifications from MyCity?</h2>
+          <div>
+            <button onClick={enableNotifsAndClose}>Sure!</button>
+            <button onClick={disableNotifsAndClose}>No Thanks!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  ) : (
+    <></>
+  );
 }

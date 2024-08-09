@@ -272,12 +272,14 @@ function CreateTicketNumber(municipality: string): string {
     return ticketnumber;
 }
 
-function ChangeState(tickets: any[]) {
+function ChangeState(tickets: any[]){
     tickets.forEach((item: any) => {
-        if (item['state'] == "Assigning Contract") {
+        if(item['state'] == "Assigning Contract")
+        {
             item['state'] = "In Progress"
         }
-        else if (item['state'] == "OPEN") {
+        else if(item['state']=="OPEN")
+        {
             item['state'] == "Opened"
         }
 
@@ -431,4 +433,5 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
         console.error(error);
         throw error;
     }
+
 }
