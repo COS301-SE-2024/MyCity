@@ -1,10 +1,10 @@
-import { revalidateTag } from "next/cache";
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
+import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
     // if (revalidate) {
-    //     revalidateTag("tickets-getinarea"); //invalidate the cache
+    //     invalidateCache("tickets-getinarea"); //invalidate the cache
     // }
     try {
         const apiUrl = "/api/tickets/getUpvotes";
@@ -38,7 +38,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
     // if (revalidate) {
-    //     revalidateTag("username"); //invalidate the cache
+    //     invalidateCache("username"); //invalidate the cache
     // }
 
     try {
@@ -79,7 +79,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
     // if (revalidate) {
-    //     revalidateTag("username"); //invalidate the cache
+    //     invalidateCache("username"); //invalidate the cache
     // }
 
     try {
@@ -121,7 +121,7 @@ export async function getWatchlistTickets(username: string, user_session: string
 
 export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("tickets-view"); //invalidate the cache
+        invalidateCache("tickets-view"); //invalidate the cache
     }
 
     try {
@@ -157,7 +157,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 
     if (revalidate) {
-        revalidateTag("tickets-getinarea"); //invalidate the cache
+        invalidateCache("tickets-getinarea"); //invalidate the cache
     }
 
     try {
@@ -199,7 +199,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
 export async function getFaultTypes(revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("tickets-fault-types"); //invalidate the cache
+        invalidateCache("tickets-fault-types"); //invalidate the cache
     }
 
     try {
@@ -272,14 +272,12 @@ function CreateTicketNumber(municipality: string): string {
     return ticketnumber;
 }
 
-function ChangeState(tickets: any[]){
+function ChangeState(tickets: any[]) {
     tickets.forEach((item: any) => {
-        if(item['state'] == "Assigning Contract")
-        {
+        if (item['state'] == "Assigning Contract") {
             item['state'] = "In Progress"
         }
-        else if(item['state']=="OPEN")
-        {
+        else if (item['state'] == "OPEN") {
             item['state'] == "Opened"
         }
 
@@ -387,7 +385,7 @@ function formatAddress(data: any[]) {
 
 export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("tickets-geodata-all"); //invalidate the cache
+        invalidateCache("tickets-geodata-all"); //invalidate the cache
     }
 
     try {
