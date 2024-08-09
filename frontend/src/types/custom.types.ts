@@ -62,5 +62,13 @@ export interface FaultGeoData {
     asset_id: string;
     latitude: string;
     longitude: string;
-    color: string;
+    color?: string;
+}
+
+
+export interface UnprocessedFaultGeoData {
+    asset_id: string;
+    latitude: string;
+    longitude: string;
+    urgency: string;
 }

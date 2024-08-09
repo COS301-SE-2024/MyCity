@@ -1,11 +1,12 @@
 'use client'
 
 import { MutableRefObject, ReactNode, createContext, useRef, useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import mapboxgl, { LngLatLike, Map, Marker } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import placekit, { PKResult } from '@placekit/client-js';
 import { FaultGeoData } from '@/types/custom.types';
-import CustomMarker from '../../../public/customMarker.svg';
+import CustomMarker from '../../public/customMarker.svg';
 
 export interface MapboxContextProps {
     faultMap: MutableRefObject<mapboxgl.Map | null>;
@@ -28,6 +29,7 @@ const pk = placekit(apiKey);
 export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const map = useRef<Map | null>(null);
     const faultMap = useRef<Map | null>(null);
+    let faultMapMarkers: Marker[] = [];
 
     const faultData: FaultGeoData[] = [];
 
@@ -166,10 +168,7 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
         // event listener for when the map has finished panning and zooming
         faultMap.current.on("moveend", () => {
-            // clear all existing markers
-            document.querySelectorAll(".mapboxgl-marker").forEach(marker => marker.remove());
-
-            // now display fault markers within the new viewport bounds
+            // display fault markers within the new viewport bounds
             displayFaultMarkers();
         });
 
@@ -178,8 +177,11 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 
     const displayFaultMarkers = () => {
-        //if fault map is not initialised or its zoom level is below 9, return
+        //if fault map is not initialised or its zoom level is below 9,
+        // clear all (potentially) existing markers and then return
         if (!faultMap.current || faultMap.current.getZoom() < 9) {
+            document.querySelectorAll(".mapboxgl-marker").forEach(marker => marker.remove());
+            faultMapMarkers = [];
             return;
         }
 
@@ -190,30 +192,58 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             return;
         }
 
+        // clear all existing markers that are outside of new viewport bounds
+        const newFaultMapMarkers: Marker[] = [];
+        faultMapMarkers.forEach(marker => {
+            const markerLngLat = marker.getLngLat();
+            if (bounds.contains([markerLngLat.lng, markerLngLat.lat])) {
+                newFaultMapMarkers.push(marker);
+                return;
+            }
+            marker.remove();
+
+        });
+        faultMapMarkers = newFaultMapMarkers;
+
         // iterate over the fault data and check if the coordinates are within the bounds
         faultData.forEach(feature => {
             const [lng, lat] = [Number(feature.longitude), Number(feature.latitude)];
-            const faultMarker = createFaultMarker(feature.color); //create the relevant colour-coded marker
 
-            if (bounds.contains([lng, lat])) {
+            if (bounds.contains([lng, lat]) && !markerExistsWithCoordinates(lng, lat)) {
+                const faultMarkerIcon = createFaultMarker(feature.color); //create the relevant colour-coded marker
                 // create a new marker and add it to the map
-                new mapboxgl.Marker({
-                    element: faultMarker
+                const faultMarker = new mapboxgl.Marker({
+                    element: faultMarkerIcon
                 }).setLngLat([lng, lat])
                     .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups if needed
                         .setText(feature.asset_id))
                     .addTo(faultMap.current!);
+
+                faultMapMarkers.push(faultMarker);
             }
         });
     };
 
 
     const createFaultMarker = (color: string) => {
-        const faultMarker = document.createElement("div")
-        faultMarker.innerHTML = `<CustomMarker fill="${color}" />`;
+        const faultMarker = document.createElement("div");
+        const root = ReactDOM.createRoot(faultMarker);
+        if (color == "undefined") {
+            root.render(<CustomMarker />);
+        }
+        else {
+            root.render(<CustomMarker fill={color} />);
+        }
         return faultMarker;
     };
 
+    const markerExistsWithCoordinates = (lng: number, lat: number) => {
+        const result = faultMapMarkers.some(marker => {
+            const markerLngLat = marker.getLngLat();
+            return markerLngLat.lng === lng && markerLngLat.lat === lat;
+        });
+        return result;
+    };
 
     const handleLocationError = (browserHasGeolocation: boolean) => {
         if (browserHasGeolocation) {
