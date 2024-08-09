@@ -62,52 +62,5 @@ export interface FaultGeoData {
     asset_id: string;
     latitude: string;
     longitude: string;
+    color: string;
 }
-
-
-// interface CustomGeoJSON {
-//     type: "FeatureCollection",
-//     features: CustomGeoJSONFeature[];
-// }
-
-// interface CustomGeoJSONFeature {
-//     source: "faults";
-//     geometry: {
-//         type: "Point";
-//         coordinates: number[],
-//     },
-//     type: "Feature";
-//     properties: {
-//         title: string;
-//     };
-// };
-
-// export class FaultGeoJSON {
-//     private data: CustomGeoJSON = {
-//         type: "FeatureCollection",
-//         features: []
-//     };
-
-//     constructor(faultGeodata: FaultGeoData[]) {
-//         //create geojson from fault geodata
-//         for (let fault of faultGeodata) {
-//             const feature: CustomGeoJSONFeature = {
-//                 source: "faults",
-//                 geometry: {
-//                     type: "Point",
-//                     coordinates: [Number(fault.latitude), Number(fault.longitude)],
-//                 },
-//                 type: "Feature",
-//                 properties: {
-//                     title: fault.asset_id,
-//                 },
-//             };
-
-//             this.data.features.push(feature);
-//         }
-//     }
-
-//     getGeoJsonData() {
-//         return this.data;
-//     }
-// }

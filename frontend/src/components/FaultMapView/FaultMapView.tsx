@@ -17,15 +17,9 @@ export default function FaultMapView() {
       const sessionToken = userProfile.current?.session_token;
 
       const faultGeodata = await getTicketsGeoData(sessionToken);
-      const actualFaultGeodata: FaultGeoData[] = [];
-
-      //copy half of the faults
-      for (let i = 0; i < faultGeodata.length / 2; i++) {
-        actualFaultGeodata.push(faultGeodata[i]);
-      }
 
       if (faultMapContainer.current) {
-        initialiseFaultMap(faultMapContainer, actualFaultGeodata);
+        initialiseFaultMap(faultMapContainer, faultGeodata);
       }
 
     };
@@ -38,7 +32,7 @@ export default function FaultMapView() {
     <div className="flex flex-col md:flex-row h-full">
       {/* Map Section */}
       <div className="md:w-1/2 lg:w-1/2 md:pr-4 flex-grow flex pl-2">
-        <div className="relative w-full h-full rounded-lg shadow-md" ref={faultMapContainer}></div>
+        <div className="relative w-full h-full rounded-lg shadow-md bg-gray-200" ref={faultMapContainer}></div>
       </div>
 
       {/* Key and Regional Summary Section */}

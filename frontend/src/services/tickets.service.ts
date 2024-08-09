@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { FaultType } from "@/types/custom.types";
+import { FaultGeoData, FaultType } from "@/types/custom.types";
 
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
@@ -279,7 +279,7 @@ function AssignTicketNumbers(data: any[]) {
     });
 }
 
-export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string,) {
+export async function addCommentWithImage(comment: string, ticket_id: string, image_url: string, user_id: string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-with-image";
         const data = {
@@ -310,7 +310,7 @@ export async function addCommentWithImage(comment:string, ticket_id:string, imag
     }
 }
 
-export async function addCommentWithoutImage(comment:string, ticket_id:string, user_id:string, user_session: string,) {
+export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-without-image";
         const data = {
@@ -340,7 +340,7 @@ export async function addCommentWithoutImage(comment:string, ticket_id:string, u
     }
 }
 
-export async function getTicketComments(ticket_id:string, user_session:string) {
+export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
         const apiUrl = `/api/tickets/${ticket_id}/comments`;
         const response = await fetch(apiUrl, {
@@ -364,9 +364,8 @@ export async function getTicketComments(ticket_id:string, user_session:string) {
     }
 }
 
-function formatAddress(data : any[])
-{
-    data.forEach(item  => {
+function formatAddress(data: any[]) {
+    data.forEach(item => {
         let address = String(item.address)
         item['address'] = address.split(',').slice(0, 2).join(',');
     });
@@ -396,7 +395,6 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
         const result = await response.json();
 
         const data = result.data as FaultGeoData[];
-        console.log("faults geodata: ", data);
 
         return data;
 
