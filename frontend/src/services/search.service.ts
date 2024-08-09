@@ -1,6 +1,6 @@
 import { revalidateTag } from "next/cache";
 
-export async function searchIssue(param:string, revalidate?: boolean) {
+export async function searchIssue(param:string,user_session : string,revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("search-issues"); //invalidate the cache
     }
@@ -10,6 +10,7 @@ export async function searchIssue(param:string, revalidate?: boolean) {
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization" : user_session
                 },
             }
         );
@@ -30,7 +31,7 @@ export async function searchIssue(param:string, revalidate?: boolean) {
 }
 
 
-export async function searchServiceProvider(param:string, revalidate?: boolean) {
+export async function searchServiceProvider(param:string,user_session : string, revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("search-service-provider"); //invalidate the cache
     }
@@ -40,6 +41,7 @@ export async function searchServiceProvider(param:string, revalidate?: boolean) 
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization" : user_session,
                 },
             }
         );
@@ -60,7 +62,7 @@ export async function searchServiceProvider(param:string, revalidate?: boolean) 
 }
 
 
-export async function searchMunicipality(param:string, revalidate?: boolean) {
+export async function searchMunicipality(param:string,user_session : string, revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("search-municipality"); //invalidate the cache
     }
@@ -70,6 +72,7 @@ export async function searchMunicipality(param:string, revalidate?: boolean) {
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization" : user_session,
                 },
             }
         );
@@ -90,7 +93,7 @@ export async function searchMunicipality(param:string, revalidate?: boolean) {
 }
 
 
-export async function searchMunicipalityTickets(municipalityId:string, revalidate?: boolean) {
+export async function searchMunicipalityTickets(municipalityId:string,user_session : string, revalidate?: boolean) {
     if (revalidate) {
         revalidateTag("search-municipality-tickets"); //invalidate the cache
     }
@@ -100,6 +103,7 @@ export async function searchMunicipalityTickets(municipalityId:string, revalidat
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization" : user_session
                 },
             }
         );

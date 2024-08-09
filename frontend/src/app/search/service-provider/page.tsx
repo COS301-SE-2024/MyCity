@@ -14,6 +14,7 @@ import {
   searchMunicipalityTickets,
   searchServiceProvider,
 } from "@/services/search.service";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function CreateTicket() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,6 +32,7 @@ export default function CreateTicket() {
   const [showToast, setShowToast] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [selectedSubfilter, setSelectedSubfilter] = useState(0);
+  const userProfile = useProfile();
 
 
   const handleSearch = async () => {
@@ -40,24 +42,26 @@ export default function CreateTicket() {
       const startTime = Date.now();
       let data: any[] = [];
       let allTickets = [];
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
       switch (selectedFilter) {
         case "myLocation":
-          data = await searchIssue(searchTerm);
+          data = await searchIssue(searchTerm,user_session);
           break;
         case "serviceProviders":
-          data = await searchServiceProvider(searchTerm);
+          data = await searchServiceProvider(searchTerm,user_session);
           break;
         case "municipalities":
-          data = await searchMunicipality(searchTerm);
+          data = await searchMunicipality(searchTerm,user_session);
           break;
         case "municipalityTickets":
-          data = await searchMunicipality(searchTerm);
+          data = await searchMunicipality(searchTerm,user_session);
           const municipalityIds = data.map(
             (municipality: any) => municipality.municipality_id
           );
           const ticketsPromises = municipalityIds.map(
             (municipalityId: string) =>
-              searchMunicipalityTickets(municipalityId)
+              searchMunicipalityTickets(municipalityId,user_session)
           );
           const ticketsResponses = await Promise.all(ticketsPromises);
           allTickets = ticketsResponses.flatMap((response) => response);
