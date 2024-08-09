@@ -252,6 +252,61 @@ def accept_tender(sender_data):
         return {"Status": "FAILED", "Error": error_message}
 
 
+def reject_tender(sender_data):
+    try:
+        required_fields = ["company_id", "ticket_id"]
+
+        for field in required_fields:
+            if field not in sender_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        response_tender = tenders_table.scan(
+            FilterExpression=Attr("company_id").eq(sender_data["company_id"])
+            & Attr("ticket_id").eq(sender_data["ticket_id"])
+        )
+        tender_items = response_tender["Items"]
+        print(tender_items)
+        if len(tender_items) <= 0:  # To see that company does exist
+            error_response = {
+                "Error": {
+                    "Code": "TenderDoesntExist",
+                    "Message": "Tender Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "TenderDoesntExist")
+        tender_id = tender_items[0]["tender_id"]
+        ticket_id = tender_items[0]["ticket_id"]
+        updateExp = "set #status=:r"
+        expattrName = {"#status": "status"}
+        expattrValue = {":r": "reject"}
+        response = updateTenderTable(tender_id, updateExp, expattrName, expattrValue)
+
+        # editing ticket as well to In Progress
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Tender_id": tender_id,
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 # company tenders
 def getCompanyTenders(company_name):
     try:

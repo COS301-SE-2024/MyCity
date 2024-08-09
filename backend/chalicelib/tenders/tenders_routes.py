@@ -6,6 +6,7 @@ from chalicelib.tenders.tenders_controllers import (
     getCompanyTenders,
     getTicketTender,
     getContracts,
+    reject_tender,
 )
 
 tenders_blueprint = Blueprint(__name__)
@@ -32,6 +33,14 @@ def accepting_tenders():
     request = tenders_blueprint.current_request
     sender_data = request.json_body
     response = accept_tender(sender_data)
+    return response
+
+
+@tenders_blueprint.route("/reject", methods=["POST"], cors=True)
+def rejecting_tenders():
+    request = tenders_blueprint.current_request
+    sender_data = request.json_body
+    response = reject_tender(sender_data)
     return response
 
 
