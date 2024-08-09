@@ -61,10 +61,15 @@ export default function Record({ record, refresh }: { record: RecordType , refre
 
   const handleClose = (data : number) => {
     setShowTicketView(false);
+    console.log("Data :" + data);
     if(data == 1)
     {
       setTicketstate("In Progress")
 
+    }
+    else if(data == -1)
+    {
+      setTicketstate("Taking Tenders")
     }
     refresh();
   };

@@ -11,6 +11,7 @@ import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as n
 import MuniTenders from "../RecordsTable/MuniTenders";
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
 import { getTicketTenders,getContract } from "@/services/tender.service";
+import { AcceptTicket,CloseTicket } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import { Tenor_Sans } from "next/font/google";
 import MapComponent from "@/context/MapboxMap";
@@ -115,12 +116,35 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   }
 
   const handleApproveTicket = async () => {
-    setTicketstatus("Taking Tenders")
-    onClose(0)
+    try{
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const rspapprove = await AcceptTicket(ticket_id,user_session);
+      if(rspapprove == true)
+      {
+        setTicketstatus("Taking Tenders")
+      }
+      onClose(-1)
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
 
   const handleCloseTicket = async () => {
-    setTicketstatus("Closed")
+    try{
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const rspapprove = await CloseTicket(ticket_id,user_session);
+      if(rspapprove == true)
+      {
+        setTicketstatus("Closed")
+      }
+      onClose(0)
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
     onClose(0)
   }
   

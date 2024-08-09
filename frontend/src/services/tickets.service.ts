@@ -159,10 +159,6 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         throw new Error("Missing municipality");
     }
 
-    if (revalidate) {
-        revalidateTag("tickets-getinarea"); //invalidate the cache
-    }
-
     try {
 
         const apiUrl = "/api/tickets/getinarea";
@@ -198,6 +194,66 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         console.error("Error: " + error);
         throw error;
     }
+}
+
+export async function AcceptTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/accept";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function CloseTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/close";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
 }
 
 export async function getFaultTypes(revalidate?: boolean) {
