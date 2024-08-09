@@ -81,7 +81,7 @@ export default function Record({ record }: { record: RecordType }) {
         case "Closed":
             return 'bg-red-200 text-red-800';
         case "Taking Tenders":
-          return 'bg-green-200 text-green-800'
+          return 'bg-purple-200 text-purple-800'
         default:
             return 'bg-gray-200 text-gray-800';
     }
