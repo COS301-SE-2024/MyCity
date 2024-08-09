@@ -225,14 +225,14 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
 
-    const createFaultMarker = (color: string) => {
+    const createFaultMarker = (color: string | undefined) => {
         const faultMarker = document.createElement("div");
         const root = ReactDOM.createRoot(faultMarker);
-        if (color == "undefined") {
-            root.render(<CustomMarker />);
+        if (color) {
+            root.render(<CustomMarker fill={color} />);
         }
         else {
-            root.render(<CustomMarker fill={color} />);
+            root.render(<CustomMarker />);
         }
         return faultMarker;
     };
