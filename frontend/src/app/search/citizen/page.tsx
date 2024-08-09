@@ -265,49 +265,6 @@ export default function CreateTicket() {
               )}
             </div>
 
-            {/*loading ? (
-              <div className="flex justify-center items-center mt-8">
-                <ThreeDots
-                  height="40"
-                  width="80"
-                  radius="9"
-                  color="#ADD8E6"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                  visible={true}
-                />
-              </div>
-            ) : hasSearched && searchResults.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-                <div
-                  className="p-4 bg-white bg-opacity-80 rounded-lg shadow-md"
-                >
-                  {selectedFilter === "myMunicipality" && (
-                    <SearchTicket tickets={currentResults} />
-                  )}
-                  {selectedFilter === "municipalities" && (
-                    <SearchMunicipality municipalities={currentResults} />
-                  )}
-                  {selectedFilter === "serviceProviders" && (
-                    <SearchSP serviceProviders={currentResults} />
-                  )}
-                </div>
-              </div>
-            ) : hasSearched ? (
-              <div className="flex justify-center items-center mt-4">
-                <p className="text-white text-opacity-80">
-                  No results found for "{searchTerm}".
-                </p>
-              </div>
-            ) : (
-              <div className="flex justify-center items-center mt-4">
-                <p className="text-white text-opacity-80">
-                  Please enter a search term to begin.
-                </p>
-              </div>
-            )*/}
-
             {loading && (
               <div className="flex justify-center items-center mt-8">
                 <ThreeDots
