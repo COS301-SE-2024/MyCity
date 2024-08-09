@@ -82,7 +82,7 @@ export default function CitizenDashboard() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="flex justify-center mt-20">
-          <NotificationPromt />
+          {/* <NotificationPromt /> */}
         </div>
         <div>
           <NavbarUser />
