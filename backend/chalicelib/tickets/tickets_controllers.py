@@ -247,6 +247,55 @@ def get_in_my_municipality(tickets_data):
         return {"Status": "FAILED", "Error": error_message}
 
 
+def get_open_tickets_in_municipality(tickets_data):
+    try:
+
+        if tickets_data == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required field: municipality",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+        response = tickets_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq(tickets_data),
+        )
+        items = response["Items"]
+        if len(items) > 0:
+            for item in items:
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Key("ticket_id").eq(item["ticket_id"])
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(items)
+            filtered_items = [item for item in items if item["state"] == "Opened"]
+
+            if len(filtered_items) <= 0:
+                error_response = {
+                    "Error": {
+                        "Code": "NoTickets",
+                        "Message": "Doesnt have open tickets in municipality",
+                    }
+                }
+                raise ClientError(error_response, "NoTicket")
+
+            return filtered_items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket in municipality",
+                }
+            }
+            raise ClientError(error_response, "NoTicket")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 def get_watchlist(tickets_data):
     try:
         collective = []
@@ -558,6 +607,39 @@ def getCompanyTicekts(companyname):
             getUserprofile(top_items)
             collective.extend(top_items)
             return collective
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    ## Error Handling
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_Open_CompanyTicekts():
+    try:
+        collective = []
+
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+        filtered_items = [
+            item for item in sorted_items if item["state"] == "Taking Tenders"
+        ]
+        top_items = filtered_items[:6]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            return top_items
         else:
             error_response = {
                 "Error": {

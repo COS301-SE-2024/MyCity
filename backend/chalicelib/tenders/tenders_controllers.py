@@ -284,7 +284,7 @@ def reject_tender(sender_data):
         ticket_id = tender_items[0]["ticket_id"]
         updateExp = "set #status=:r"
         expattrName = {"#status": "status"}
-        expattrValue = {":r": "reject"}
+        expattrValue = {":r": "rejected"}
         response = updateTenderTable(tender_id, updateExp, expattrName, expattrValue)
 
         # editing ticket as well to In Progress
@@ -332,6 +332,7 @@ def getCompanyTenders(company_name):
             FilterExpression=Attr("company_id").eq(company_id)
         )
         assignCompanyName(response_tenders["Items"])
+        assignLongLat(response_tenders["Items"])
         return response_tenders["Items"]
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
