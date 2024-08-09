@@ -265,7 +265,7 @@ export default function CreateTicket() {
               )}
             </div>
 
-            {loading ? (
+            {/*loading ? (
               <div className="flex justify-center items-center mt-8">
                 <ThreeDots
                   height="40"
@@ -306,32 +306,86 @@ export default function CreateTicket() {
                   Please enter a search term to begin.
                 </p>
               </div>
+            )*/}
+
+            {loading && (
+              <div className="flex justify-center items-center mt-8">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                />
+              </div>
+            )}
+            {!loading && hasSearched && searchResults.length === 0 && (
+              <div className="flex justify-center items-center mt-4">
+                <p className="mt-16 text-white text-opacity-80">
+                  No results found. Please try a different search term.
+                </p>
+              </div>
             )}
 
-            <div className="flex justify-center mt-4">
-              {Array.from({
-                length: Math.ceil(searchResults.length / resultsPerPage),
-              }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => paginate(index + 1)}
-                  className={`px-3 py-1 mx-1 rounded-full transition duration-300 ${currentPage === index + 1
-                    ? "bg-gray-500 text-white"
-                    : "bg-transparent text-white"
-                    }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-            <div
-              className={`fixed bottom-4 left-4 bg-green-500 text-white p-3 rounded-lg shadow-lg transition-opacity duration-300 ${showToast ? "opacity-100" : "opacity-0"
-                }`}
-            >
-              <p>
-                Found {totalResults} results in {searchTime.toFixed(2)} seconds.
-              </p>
-            </div>
+            {hasSearched && !loading && (
+              <>
+                {currentResults.map((result, index) => {
+                  if (selectedFilter === "serviceProviders") {
+                    return <SearchSP key={index} serviceProviders={[result]} />;
+                  }
+                  if (selectedFilter === "municipalities") {
+                    return (
+                      <SearchMunicipality
+                        key={index}
+                        municipalities={[result]}
+                      />
+                    );
+                  }
+                  if (selectedFilter === "myMunicipality") {
+                    return <SearchTicket key={index} tickets={[result]} />;
+                  }
+                  return null;
+                })}
+                <div className="flex justify-center mt-4">
+                  <nav>
+                    <ul className="flex list-none p-0">
+                      {Array.from(
+                        {
+                          length: Math.ceil(
+                            searchResults.length / resultsPerPage
+                          ),
+                        },
+                        (_, index) => (
+                          <li key={index} className="mx-1">
+                            <button
+                              onClick={() => paginate(index + 1)}
+                              className={`px-3 py-1 rounded-full ${
+                                currentPage === index + 1
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-gray-300"
+                              }`}
+                            >
+                              {index + 1}
+                            </button>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </nav>
+                </div>
+              </>
+            )}
+            {showToast && (
+              <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded shadow-lg">
+                <span>{totalResults} results found in </span>
+                <span className="text-blue-500">{searchTime.toFixed(2)}</span>
+                <span> seconds</span>
+              </div>
+            )}
+
           </main>
         </div>
       </div>
