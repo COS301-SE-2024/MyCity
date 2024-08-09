@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { FaultType } from "@/types/custom.types";
+import { FaultGeoData, FaultType } from "@/types/custom.types";
 
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
