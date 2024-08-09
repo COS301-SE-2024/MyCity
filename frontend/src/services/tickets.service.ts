@@ -151,9 +151,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        revalidateTag("tickets-getinarea"); //invalidate the cache
-    }
+    
     if (!municipality) {
         throw new Error("Missing municipality");
     }
