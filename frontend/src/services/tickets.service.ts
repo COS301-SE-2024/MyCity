@@ -1,7 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 
-
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
     // if (revalidate) {
@@ -27,7 +26,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
         const data = result.data as any[];
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -67,7 +66,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
         const data = result.data as any[];
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -108,7 +107,7 @@ export async function getWatchlistTickets(username: string, user_session: string
         const data = result.data as any[];
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -189,7 +188,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         AssignTicketNumbers(data);
         formatAddress(data)
-
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -271,6 +270,20 @@ function CreateTicketNumber(municipality: string): string {
         ticketnumber += String(randint);
     }
     return ticketnumber;
+}
+
+function ChangeState(tickets: any[]){
+    tickets.forEach((item: any) => {
+        if(item['state'] == "Assigning Contract")
+        {
+            item['state'] = "In Progress"
+        }
+        else if(item['state']=="OPEN")
+        {
+            item['state'] == "Opened"
+        }
+
+    });
 }
 
 function AssignTicketNumbers(data: any[]) {
@@ -421,8 +434,3 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
         throw error;
     }
 }
-
-
-// #b91c1c
-// #ca8a04
-// #15803d

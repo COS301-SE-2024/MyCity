@@ -653,23 +653,63 @@ def get_geodata_all():
     try:
         # ---- retrieve geodata for ALL available tickets in the table ------
         # response = tickets_table.scan(
-        #     ProjectionExpression="asset_id, latitude, longitude"
+        #     ProjectionExpression="asset_id, latitude, longitude, upvotes"
         # )
-        # items = response.get("Items", [])
+        # fault_data = response.get("Items", [])
 
         # while "LastEvaluatedKey" in response:
         #     response = tickets_table.scan(
         #         ExclusiveStartKey=response["LastEvaluatedKey"]
         #     )
-        #     items.extend(response.get("Items", []))
+        #     fault_data.extend(response.get("Items", []))
+
+        # for fault in fault_data:
+        #     # non-urgent
+        #     if fault["upvotes"] < 10:
+        #         fault["urgency"] = "non-urgent"
+
+        #     # semi-urgent
+        #     elif fault["upvotes"] >= 10 and fault["upvotes"] < 20:
+        #         fault["urgency"] = "semi-urgent"
+
+        #     # urgent
+        #     elif fault["upvotes"] >= 20 and fault["upvotes"] <= 40:
+        #         fault["urgency"] = "urgent"
+
+        #     # non-urgent
+        #     else:
+        #         fault["urgency"] = "non-urgent"
+
+        #     fault.pop("upvotes")
+
+        # return fault_data
 
         # ----- retrieve geodata for all tickets up to the dynamodb limit -----
         response = tickets_table.scan(
-            ProjectionExpression="asset_id, latitude, longitude"
+            ProjectionExpression="asset_id, latitude, longitude, upvotes"
         )
-        items = response.get("Items", [])
+        fault_data = response.get("Items", [])
 
-        return items
+        for fault in fault_data:
+            # non-urgent
+            if fault["upvotes"] < 10:
+                fault["urgency"] = "non-urgent"
+
+            # semi-urgent
+            elif fault["upvotes"] >= 10 and fault["upvotes"] < 20:
+                fault["urgency"] = "semi-urgent"
+
+            # urgent
+            elif fault["upvotes"] >= 20 and fault["upvotes"] <= 40:
+                fault["urgency"] = "urgent"
+
+            # non-urgent
+            else:
+                fault["urgency"] = "non-urgent"
+
+            fault.pop("upvotes")
+
+        return fault_data
 
     except ClientError as e:
         raise BadRequestError(
