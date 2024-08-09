@@ -1,5 +1,5 @@
 
-import { revalidateTag } from "next/cache";
+import { invalidateCache } from "@/utils/apiUtils";
 
 
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
@@ -134,7 +134,7 @@ export async function getTicketTenders(ticket_id: string,user_session : string, 
 {
 
     if (revalidate) {
-        revalidateTag("tenders-getmunicipalitytenders"); //invalidate the cache
+        invalidateCache("tenders-getmunicipalitytenders"); //invalidate the cache
     }
 
     const apiURL = "/api/tenders/getmunicipalitytenders";
@@ -171,7 +171,7 @@ export async function getCompanyTenders(companyname: string,user_session : strin
 {
 
     if (revalidate) {
-        revalidateTag("tenders-getmytenders"); //invalidate the cache
+        invalidateCache("tenders-getmytenders"); //invalidate the cache
     }
 
     const apiURL = "/api/tenders/getmytenders";

@@ -37,8 +37,21 @@ export default function Dashboard() {
     setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
   };
 
+  const fetchDataWithoutcache = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality)
+    setCity(String(user_data.current?.municipality))
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session,
+    );
+    console.log(rspmunicipality)
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+  };
+
   useEffect(() =>{
-    fetchData();
+    fetchDataWithoutcache();
   },[])
 
   return (

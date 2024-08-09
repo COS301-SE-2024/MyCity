@@ -13,6 +13,8 @@ interface TenderType {
   ticket_id: string;
   status: Status;
   quote: number;
+  longitude : string;
+  latitude : string;
   estimatedTimeHours: number;
   upload: File | null;
   hasReportedCompletion: boolean; // New prop
@@ -80,7 +82,7 @@ export default function MuniTenders({
             </div>
             <div className="min-w-full">
               {currentTenders.map((tender) => (
-                <Tender key={tender.ticket_id} tender={tender} />
+                <Tender key={tender.ticket_id} tender={tender} onClose={onBack}/>
               ))}
             </div>
             <div className="flex justify-between mt-4 text-white">

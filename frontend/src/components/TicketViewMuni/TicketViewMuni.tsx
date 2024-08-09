@@ -154,7 +154,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspgettenders = await getTicketTenders(ticket_id,user_session);
+      const rspgettenders = await getTicketTenders(ticket_id,user_session,true);
       setTenders(rspgettenders);
       console.log(rspgettenders);
       if(rspgettenders == null)
@@ -206,8 +206,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     // console.log(user_session); //
-    const rspgettenders = await getTicketTenders(ticket_id,user_session);
-    
+    const rspgettenders = await getTicketTenders(ticket_id,user_session,true);
+    console.log(rspgettenders)
     if(rspgettenders === null)
     {
       setShowMuniTenders(false);
