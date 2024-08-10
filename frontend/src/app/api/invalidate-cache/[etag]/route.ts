@@ -16,9 +16,8 @@ export async function GET(req: NextRequest, { params }: { params: { etag: string
     throw new Error("missing etag");
   }
 
-  console.log("etag is: ", etag);
 
-  revalidateTag("tickets-getinarea"); //invalidate the cache
+  revalidateTag(etag); //invalidate the cache
 
   return Response.json({ isCacheInvalidated: true });
 

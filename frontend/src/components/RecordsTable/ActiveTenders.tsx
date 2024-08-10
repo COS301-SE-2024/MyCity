@@ -6,6 +6,7 @@ type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
   id: string;
+  tender_id : string;
   tendernumber: string;
   company_id: string;
   companyname: string;
@@ -14,13 +15,17 @@ interface TenderType {
   ticket_id: string;
   status: Status;
   quote: number;
+  latitude : string;
+  longitude : string;
   estimatedTimeHours: number;
   upload: File | null;
   hasReportedCompletion: boolean;
+
 }
 
 const tenders: TenderType[] = [
   {
+    tender_id : "jajansaossaa",
     id: "T001",
     tendernumber: "TN001",
     company_id: "C001",
@@ -33,9 +38,12 @@ const tenders: TenderType[] = [
     estimatedTimeHours: 120, // 5 days
     upload: null,
     hasReportedCompletion: false,
+    longitude: "23.44",
+    latitude : "23.55"
   },
   {
     id: "T002",
+    tender_id : "jajansaossaa",
     tendernumber: "TN002",
     company_id: "C002",
     companyname: "Service Provider B",
@@ -47,9 +55,12 @@ const tenders: TenderType[] = [
     estimatedTimeHours: 72, // 3 days
     upload: null,
     hasReportedCompletion: false,
+    longitude: "23.44",
+    latitude : "23.55"
   },
   {
     id: "T003",
+    tender_id : "jajansaossaa",
     tendernumber: "TN003",
     company_id: "C003",
     companyname: "Service Provider C",
@@ -61,9 +72,12 @@ const tenders: TenderType[] = [
     estimatedTimeHours: 96, // 4 days
     upload: null,
     hasReportedCompletion: false,
+    longitude: "23.44",
+    latitude : "23.55"
   },
   {
     id: "T004",
+    tender_id : "jajansaossaa",
     tendernumber: "TN004",
     company_id: "C004",
     companyname: "Service Provider D",
@@ -75,9 +89,12 @@ const tenders: TenderType[] = [
     estimatedTimeHours: 48, // 2 days
     upload: null,
     hasReportedCompletion: true,
+    longitude: "23.44",
+    latitude : "23.55"
   },
   {
     id: "T005",
+    tender_id : "jajansaossaa",
     tendernumber: "TN005",
     company_id: "C005",
     companyname: "Service Provider E",
@@ -89,6 +106,8 @@ const tenders: TenderType[] = [
     estimatedTimeHours: 72, // 3 days
     upload: null,
     hasReportedCompletion: false,
+    longitude: "23.44",
+    latitude : "23.55"
   },
   // ...other mock data
 ];
