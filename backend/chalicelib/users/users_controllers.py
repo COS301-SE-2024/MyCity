@@ -1,5 +1,6 @@
 from chalicelib.multipart_handler import upload_file
 
+
 def upload_profile_picture(request):
     try:
         response = upload_file(request, "profile_pictures")

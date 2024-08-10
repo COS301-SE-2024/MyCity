@@ -3,6 +3,7 @@ from chalicelib.users.users_controllers import upload_profile_picture
 
 users_blueprint = Blueprint(__name__)
 
+
 @users_blueprint.route(
     "/profile-picture/upload",
     methods=["POST"],
