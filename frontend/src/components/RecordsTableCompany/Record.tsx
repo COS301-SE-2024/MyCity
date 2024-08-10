@@ -116,7 +116,7 @@ export default function Record({ record }: { record: RecordType }) {
         arrowCount={record.upvotes}  // Update this as per your data source
         commentCount={record.commentcount} // Update this as per your data source
         viewCount={record.viewcount} // Update this as per your data source
-        ticketNumber={record.ticketnumber}
+        tenderId={record.ticket_id}
         description={record.description} // Update this as per your data source
         user_picture={record.user_picture} // Update this as per your data source
         createdBy={record.createdby}
@@ -127,7 +127,7 @@ export default function Record({ record }: { record: RecordType }) {
         latitude={record.latitude}
         longitude={record.longitude}
         urgency={record.urgency} // Pass urgency to TicketViewMuni
-        ticket_id={record.ticket_id} // Pass municipality to TicketViewCompany
+        // Pass municipality to TicketViewCompany
         />
       )}
       <style jsx>{`

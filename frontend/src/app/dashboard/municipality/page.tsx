@@ -1,8 +1,6 @@
-
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
 import { Building, ChevronDown } from "lucide-react";
@@ -37,7 +35,7 @@ export default function Dashboard() {
     setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
   };
 
-  const fetchDataWithoutcache = async () => {
+  const fetchDataWithoutcache = useCallback(async () => {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality)
@@ -48,11 +46,11 @@ export default function Dashboard() {
     );
     console.log(rspmunicipality)
     setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-  };
+  }, [userProfile]);
 
-  useEffect(() =>{
+  useEffect(() => {
     fetchDataWithoutcache();
-  },[])
+  }, [fetchDataWithoutcache]);
 
   return (
     <div>
@@ -196,12 +194,8 @@ export default function Dashboard() {
               work on it.
             </p>
           </div>
-
-
         </div>
       </div>
     </div>
   );
 }
-
-

@@ -2,15 +2,39 @@
 
 //import Navbar from "@/components/Navbar/Navbar"; implemented later
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
-import NotificationComment from "@/components/NotificationsMuni/NotificationComment";
-import NotificationUpdate from "@/components/NotificationsMuni/NotificationUpdate";
-import NotificationUpvote from "@/components/NotificationsMuni/NotificationUpvote";
-import NotificationWatchlist from "@/components/NotificationsMuni/NotificationWatchlist";
-import NotificationBid from "@/components/NotificationsMuni/NotificationBid";
-import NotificationCreated from "@/components/NotificationsMuni/NotificationCreated";
-import NotificationUrgent from "@/components/NotificationsMuni/NotificationUrgent";
-
+import TicketNoti from "@/components/NotificationsMuniNew/TicketNoti";
+import Alert from "@/components/NotificationsMuniNew/Alert";
+import TenderNoti from "@/components/NotificationsMuniNew/TenderNoti";
 export default function Notifications() {
+  const notifications = [
+    {
+      ticketNumber: "12345",
+      image: "https://via.placeholder.com/150",
+      action: "upvoted",
+      isNew: true,
+    },
+    {
+      ticketNumber: "12346",
+      image: "https://via.placeholder.com/150",
+      action: "commented on",
+      isNew: false,
+    },
+    {
+      ticketNumber: "12347",
+      image: "https://via.placeholder.com/150",
+      action: "watchlisted",
+      isNew: true,
+    },
+    {
+      ticketNumber: "12348",
+      image: "https://via.placeholder.com/150",
+      action: "updated status to:",
+      isNew: false,
+    },
+  ];
+  const alerts = [
+    { message: "this ticket has 25 upvotes.", ticketId: "TCKT-001", isNew: true, ticketNumber: "328" },
+  ];
   return (
     <div>
       {/* Desktop View */}
@@ -37,13 +61,47 @@ export default function Notifications() {
             <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
               Notifications
             </h1>
-            <NotificationComment />
-            <NotificationUpdate />
-            <NotificationUpvote />
-            <NotificationWatchlist />
-            <NotificationBid />
-            <NotificationCreated />
-            <NotificationUrgent />
+            {notifications.map((notification, index) => (
+              <TicketNoti
+                key={index}
+                ticketNumber={notification.ticketNumber}
+                image={notification.image}
+                action={notification.action}
+                isNew={notification.isNew}
+              />
+            ))}
+            {/* Example 1: Bid Accepted */}
+            <TenderNoti
+              tenderId="TND-001"
+              image="https://via.placeholder.com/150"
+              action="bid accepted"
+              isNew={true}
+            />
+
+            {/* Example 2: Bid Rejected */}
+            <TenderNoti
+              tenderId="TND-002"
+              image={null} // No image provided
+              action="bid rejected"
+              isNew={false}
+            />
+
+            {/* Example 3: Contract Terminated */}
+            <TenderNoti
+              tenderId="TND-003"
+              image="https://via.placeholder.com/150"
+              action="contract terminated"
+              isNew={true}
+            />
+
+            {/* Example 4: Contract Completed */}
+            <TenderNoti
+              tenderId="TND-004"
+              image="https://via.placeholder.com/150"
+              action="contract completed"
+              isNew={false}
+            />
+            <Alert alerts={alerts} />
           </main>
         </div>
       </div>

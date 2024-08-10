@@ -1,13 +1,19 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import Link from "next/link";
 import { Input, Button } from "@nextui-org/react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { UserRole } from "@/types/custom.types";
 import { handleGoogleSignIn, handleSignIn } from "@/services/auth.service";
-import { FcGoogle } from 'react-icons/fc';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 export default function CitizenLogin() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -32,7 +38,11 @@ export default function CitizenLogin() {
 
   return (
     <div className="px-12">
-      <form data-testid="citizen-login-form" onSubmit={handleSubmit} className="flex flex-col gap-y-8 pt-8">
+      <form
+        data-testid="citizen-login-form"
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-y-8 pt-8"
+      >
         <Input
           variant={"bordered"}
           fullWidth
@@ -52,28 +62,37 @@ export default function CitizenLogin() {
           required
         />
 
-        <Input
-          variant={"bordered"}
-          fullWidth
-          label={
-            <span className="font-semibold text-medium block mb-[0.20em]">
-              Password <span className="text-blue-500">*</span>
-            </span>
-          }
-          labelPlacement={"outside"}
-          classNames={{
-            inputWrapper: "h-[3em]",
-          }}
-          type="password"
-          name="password"
-          autoComplete="new-password"
-          placeholder="Password"
-          required
-        />
-
+        <div className="relative w-full">
+          <Input
+            variant={"bordered"}
+            fullWidth
+            label={
+              <span className="font-semibold text-medium block mb-[0.20em]">
+                Password <span className="text-blue-500">*</span>
+              </span>
+            }
+            labelPlacement={"outside"}
+            classNames={{
+              inputWrapper: "h-[3em]",
+            }}
+            type={showPassword ? "text" : "password"}
+            name="password"
+            autoComplete="new-password"
+            placeholder="Password"
+            required
+          />
+          <button
+            type="button"
+            className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+            onClick={togglePasswordVisibility}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
+        {/*}
         <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">
           Forgot password?
-        </Link>
+        </Link>*/}
 
         <Button
           name="submit"

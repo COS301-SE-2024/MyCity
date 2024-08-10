@@ -18,6 +18,7 @@ import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
+import Router from "next/router";
 
 export default function CitizenSignup() {
   const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
@@ -117,15 +118,20 @@ export default function CitizenSignup() {
     setIsLoading(true);
     const form = new FormData(event.currentTarget as HTMLFormElement);
     form.set("municipality", selectedMunicipality); // Append selected municipality to the form data
-
+  
+    const router = Router;
     try {
-      await handleSignUp(form, UserRole.CITIZEN);
+      const signedUp = await handleSignUp(form, UserRole.CITIZEN);
+      if (signedUp.isSignedIn) {
+        router.push("/dashboard/citizen");
+      }
     } catch (error: any) {
       setError(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const getAsteriskColor = (field: keyof typeof formData) => {
     return formData[field] ? "text-green-500" : "text-red-500";
