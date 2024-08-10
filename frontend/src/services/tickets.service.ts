@@ -39,7 +39,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 export async function getOpenCompanyTickets(user_session: string, revalidate?: boolean) {
 
     if (revalidate) {
-        invalidateCache("tickets-getinarea"); //invalidate the cache
+        invalidateCache("tickets-getopencompanytickets"); //invalidate the cache
     }
     try {
         const apiUrl = "/api/tickets/getopencompanytickets";
