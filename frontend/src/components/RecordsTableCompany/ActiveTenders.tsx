@@ -5,17 +5,17 @@ import { FaInfoCircle, FaTimes } from "react-icons/fa";
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  tender_id : string;
-  status : string;
-  companyname : string;
-  contractdatetime : string;
-  finalCost : number;
-  finalDuration : number;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string;
+  datetimesubmitted: string;
+  ticket_id: string;
+  status: string;
+  quote: number;
+  estimatedTimeHours: number;
+  municipality : string;
   ticketnumber : string;
-  latitude : number,
-  longitude : number,
-  completedatetime : string;
-  contractnumber : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
 }

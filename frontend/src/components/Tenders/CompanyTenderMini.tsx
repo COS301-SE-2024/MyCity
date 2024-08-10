@@ -23,16 +23,22 @@ const statusStyles = {
   'under_review': 'border-blue-500 text-blue-500 bg-white',
   'accepted': 'bg-green-200 text-green',
   'rejected': 'bg-red-200 text-red',
-  'submitted' : 'bg-red-200 text-red'
+  'submitted' : 'bg-gray-200 text-gray'
 };
 
 
 export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [contract,setContract] = useState<any>();
   const textRef = useRef<HTMLSpanElement>(null);
 
   const formateddate = tender.datetimesubmitted.split('T')[0]
+  let estimateddays = Math.ceil(tender.estimatedTimeHours/24);
+  if(estimateddays == 0)
+  {
+    estimateddays = 1;
+  }
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
 
@@ -90,8 +96,8 @@ export default function Tender({ tender }: { tender: TenderType }) {
           </span>
         </div>
         <div className="col-span-1 flex justify-center">{formateddate}</div>
-        <div className="col-span-1 flex justify-center">R{tender.finalCost.toFixed(2)}</div>
-        <div className="col-span-1 flex justify-center">{tender.finalDuration} days</div>
+        <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
+        <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
       {showDetails && <TenderMax tender={tender} onClose={handleClose} municipality={tender.municipality} />}
