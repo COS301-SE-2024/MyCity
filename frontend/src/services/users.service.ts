@@ -1,10 +1,6 @@
 import { invalidateCache } from "@/utils/apiUtils";
 
 export async function uploadProfilePicture(formData: FormData, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("users-profile-picture-upload"); // Invalidate the cache
-    }
-
     try {
         const response = await fetch("/api/users/profile-picture/upload", {
             method: "POST",

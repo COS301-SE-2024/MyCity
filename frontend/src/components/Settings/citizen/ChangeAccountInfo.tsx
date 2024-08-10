@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
+import { uploadProfilePicture } from "@/services/users.service";
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
@@ -66,14 +67,20 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
       localStorage.setItem('surname', surname);
     }
 
+    //upload profile picture
     if (file && profileData?.email) {
       const formData = new FormData();
       formData.append("username", profileData?.email);
       formData.append("file", file);
 
-      
+      try {
+        const result = uploadProfilePicture(formData);
+      } catch (error: any) {
+        console.log(error.message);
+      }
     }
 
+    //upload user new profile details
     if (updatedUserData) {
       updateUserProfile(updatedUserData);
     }
