@@ -1,9 +1,9 @@
 import { BasicMunicipality } from "@/types/custom.types";
-import { revalidateTag } from "next/cache";
+import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMunicipalityList(revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("municipalities-municipalities-list"); //invalidate the cache
+        invalidateCache("municipality-municipalities-list"); //invalidate the cache
     }
 
     try {

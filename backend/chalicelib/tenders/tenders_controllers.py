@@ -341,7 +341,7 @@ def getCompanyTenders(company_name):
 
 def getTicketTender(ticket_id):
     try:
-        if ticket_id == None:
+        if ticket_id == None or ticket_id == "":
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",
@@ -372,7 +372,7 @@ def getTicketTender(ticket_id):
 
 def getContracts(tender_id):
     try:
-        if tender_id == None:
+        if tender_id == None or tender_id == "":
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",
@@ -553,3 +553,26 @@ def assignLongLat(data):
             tickets = response["Items"][0]
             item["longitude"] = tickets["longitude"]
             item["latitude"] = tickets["latitude"]
+            item["ticketnumber"] = tickets["ticketnumber"]
+
+
+def assignMuni(data):
+    for item in data:
+        response_tender = tenders_table.query(
+            KeyConditionExpression=Key("tender_id").eq(item["tender_id"])
+        )
+        if len(response_tender["Items"]) <= 0:
+            item["municipality"] = "Stellenbosch Local"
+            item["ticketnumber"] = "MAA2-4052-8NAS"
+        else:
+            tenders = response_tender["Items"][0]
+            response_tickets = ticket_table.query(
+                KeyConditionExpression=Key("ticket_id").eq(tenders["ticket_id"])
+            )
+            if len(response_tickets["Items"]) <= 0:
+                item["municipality"] = "Stellenbosch Local"
+                item["ticketnumber"] = "MAA2-4052-8NAS"
+            else:
+                ticket_details = response_tickets["Items"][0]
+                item["municipality"] = ticket_details["municipality_id"]
+                item["ticketnumber"] = ticket_details["ticketnumber"]
