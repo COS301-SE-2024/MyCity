@@ -1,7 +1,7 @@
 'use client'
 
 import { UserData, UserRole } from '@/types/custom.types';
-import { fetchUserAttributes, getCurrentUser, updateUserAttributes,fetchAuthSession } from 'aws-amplify/auth';
+import { fetchUserAttributes, getCurrentUser, updateUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
 
 
@@ -23,7 +23,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         if (userProfile.current) {
             return userProfile;
         }
-        const {signInDetails} = await getCurrentUser();
+        const { signInDetails } = await getCurrentUser();
         const session = await fetchAuthSession();
         //otherwise get current user profile details
         const userDetails = await fetchUserAttributes();
@@ -36,8 +36,8 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             picture: userDetails.picture,
             user_role: userDetails["custom:user_role"] as UserRole,
             municipality: String(userDetails["custom:municipality"]),
-            company_name : String(userDetails["custom:company_name"]),
-            session_token : String(session.tokens?.idToken),
+            company_name: String(userDetails["custom:company_name"]),
+            session_token: String(session.tokens?.idToken),
         };
 
         //for the picture, prefer what is in local storage (just for demo 2)
@@ -61,6 +61,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             userAttributes: {
                 given_name: data.given_name,
                 family_name: data.family_name,
+                picture: data.picture,
             },
         });
     };
