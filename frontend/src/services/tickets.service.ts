@@ -1,12 +1,12 @@
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
-import { invalidateCache } from "@/utils/apiUtils";
+// import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
 
-    if (revalidate) {
-        invalidateCache("tickets-getUpvotes"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tickets-getUpvotes"); //invalidate the cache
+    // }
     try {
         const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
@@ -38,9 +38,9 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
 
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-getcompanytickets"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tickets-getcompanytickets"); //invalidate the cache
+    // }
 
 
     try {
@@ -80,9 +80,9 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-getwatchlist"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tickets-getwatchlist"); //invalidate the cache
+    // }
 
 
     try {
@@ -123,9 +123,9 @@ export async function getWatchlistTickets(username: string, user_session: string
 
 
 export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-view"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tickets-view"); //invalidate the cache
+    // }
 
     try {
         const response = await fetch(`/api/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`,
@@ -159,10 +159,10 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         throw new Error("Missing municipality");
     }
 
-    if (revalidate) {
-        console.log("Inside revalidation")
-        invalidateCache("tickets-getinarea"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     console.log("Inside revalidation")
+    //     invalidateCache("tickets-getinarea"); //invalidate the cache
+    // }
 
     try {
 
@@ -262,9 +262,9 @@ export async function CloseTicket(ticket: string,user_session : string)
 }
 
 export async function getFaultTypes(revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-fault-types"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tickets-fault-types"); //invalidate the cache
+    // }
 
     try {
 
@@ -450,9 +450,9 @@ function formatAddress(data: any[]) {
 
 
 export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-geodata-all"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tickets-geodata-all"); //invalidate the cache
+    // }
 
     try {
 
