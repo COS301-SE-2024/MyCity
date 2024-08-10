@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { invalidateCache } from "@/utils/apiUtils";
 
 /*export async function searchIssue(param:string, revalidate?: boolean) {
     if (revalidate) {
@@ -31,7 +31,7 @@ import { revalidateTag } from "next/cache";
 
 export async function searchIssue(param: string, userMunicipality: string, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("search-issues"); // Invalidate the cache
+        invalidateCache("search-issues"); // Invalidate the cache
     }
 
     try {
@@ -63,7 +63,7 @@ export async function searchIssue(param: string, userMunicipality: string, reval
 
 export async function searchServiceProvider(param:string, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("search-service-provider"); //invalidate the cache
+        invalidateCache("search-service-provider"); //invalidate the cache
     }
 
     try {
@@ -93,7 +93,7 @@ export async function searchServiceProvider(param:string, revalidate?: boolean) 
 
 export async function searchMunicipality(param:string, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("search-municipality"); //invalidate the cache
+        invalidateCache("search-municipality"); //invalidate the cache
     }
 
     try {
@@ -123,7 +123,7 @@ export async function searchMunicipality(param:string, revalidate?: boolean) {
 
 export async function searchMunicipalityTickets(municipalityId:string, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("search-municipality-tickets"); //invalidate the cache
+        invalidateCache("search-municipality-tickets"); //invalidate the cache
     }
 
     try {

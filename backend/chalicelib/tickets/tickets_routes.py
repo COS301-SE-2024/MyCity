@@ -15,6 +15,8 @@ from chalicelib.tickets.tickets_controllers import (
     getCompanyTicekts,
     AcceptTicket,
     ClosedTicket,
+    get_Open_CompanyTicekts,
+    get_open_tickets_in_municipality,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -75,6 +77,14 @@ def get_in_area():
     return response
 
 
+@tickets_blueprint.route("/getopeninarea", methods=["GET"], cors=True)
+def get_open_tickets():
+    request = tickets_blueprint.current_request
+    ticket_data = request.query_params.get("municipality")
+    response = get_open_tickets_in_municipality(ticket_data)
+    return response
+
+
 @tickets_blueprint.route("/getwatchlist", methods=["GET"], cors=True)
 def get_my_watchlist():
     request = tickets_blueprint.current_request
@@ -114,6 +124,12 @@ def get_company_tickets():
     request = tickets_blueprint.current_request
     company_name = request.query_params.get("company")
     response = getCompanyTicekts(company_name)
+    return response
+
+
+@tickets_blueprint.route("/getopencompanytickets", methods=["GET"], cors=True)
+def get_open_company_tickets():
+    response = get_Open_CompanyTicekts()
     return response
 
 
