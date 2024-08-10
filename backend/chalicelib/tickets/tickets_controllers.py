@@ -229,7 +229,7 @@ def get_in_my_municipality(tickets_data):
             for item in items:
                 response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
@@ -268,7 +268,7 @@ def get_open_tickets_in_municipality(tickets_data):
             for item in items:
                 response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
@@ -323,7 +323,9 @@ def get_watchlist(tickets_data):
                     for tckitem in ticketsItems:
                         response_item = ticketupdate_table.query(
                             IndexName="ticket_id-index",
-                            KeyConditionExpression=Key("ticket_id").eq(tckitem['ticket_id']),
+                            KeyConditionExpression=Key("ticket_id").eq(
+                                tckitem["ticket_id"]
+                            ),
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
                 else:
@@ -444,7 +446,7 @@ def getMostUpvoted():
             for item in top_items:
                 response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(top_items)
@@ -460,7 +462,6 @@ def getMostUpvoted():
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
 
 
 def ClosedTicket(ticket_data):
@@ -641,7 +642,7 @@ def get_Open_Company_Tickets():
             for item in top_items:
                 response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(top_items)
