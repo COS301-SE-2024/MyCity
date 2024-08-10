@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaArrowUp, FaComment, FaEye } from "react-icons/fa";
 import { AlertCircle } from "lucide-react";
@@ -7,12 +6,12 @@ import MuniTenders from "../RecordsTable/MuniTenders";
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { getTicketTenders, getContract } from "@/services/tender.service";
-import { AcceptTicket,CloseTicket } from "@/services/tickets.service";
+import { AcceptTicket, CloseTicket } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 
 interface TicketViewMuniProps {
   show: boolean;
-  onClose: (data : number) => void;
+  onClose: (data: number) => void;
   title: string;
   address: string;
   arrowCount: number;
@@ -62,14 +61,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [showTenderMax, setShowTenderMax] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showMuniTenders, setShowMuniTenders] = useState(false);
-  const [tenders,setTenders] = useState<any>(null)
-  const [contract,setContract] = useState<any>()
-  const [ticketstatus,setTicketstatus] = useState<string>("")
+  const [tenders, setTenders] = useState<any>(null);
+  const [contract, setContract] = useState<any>();
+  const [ticketstatus, setTicketstatus] = useState<string>("");
 
-  useEffect(()=>{
-    setTicketstatus(status)
-  },[])
-  const getStatusColor = (state : string) => {
+  useEffect(() => {
+    setTicketstatus(status);
+  }, [status]);
+
+  const getStatusColor = (state: string) => {
     switch (state) {
       case "Opened":
         return "text-green-500";
@@ -99,6 +99,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   if (!show) return null;
 
   const addressParts = address.split(",");
+  const userProfile = useProfile();
 
   const formatDate = (given_date: string) => {
     return given_date.slice(0, given_date.indexOf("T"));
@@ -106,46 +107,41 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
   const toggleComments = () => {
     setShowComments((prev) => !prev);
+  };
 
   const handleApproveTicket = async () => {
-    try{
+    try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspapprove = await AcceptTicket(ticket_id,user_session);
-      if(rspapprove == true)
-      {
-        setTicketstatus("Taking Tenders")
+      const rspapprove = await AcceptTicket(ticket_id, user_session);
+      if (rspapprove === true) {
+        setTicketstatus("Taking Tenders");
       }
-      onClose(-1)
-
+      onClose(-1);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }
+  };
 
   const handleCloseTicket = async () => {
-    try{
+    try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspapprove = await CloseTicket(ticket_id,user_session);
-      if(rspapprove == true)
-      {
-        setTicketstatus("Closed")
+      const rspapprove = await CloseTicket(ticket_id, user_session);
+      if (rspapprove === true) {
+        setTicketstatus("Closed");
       }
-      onClose(0)
-      
+      onClose(0);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-    onClose(0)
-  }
   };
 
   const handleTenderContractClick = async () => {
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspgettenders = await getTicketTenders(ticket_id,user_session,true);
+      const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
       setTenders(rspgettenders);
 
       if (!rspgettenders) return;
@@ -178,32 +174,27 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleCloseClick = () => {
-    onClose(0)
-  }
+    onClose(0);
+  };
 
   const handleViewTendersClick = async () => {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
-    // console.log(user_session); //
-    const rspgettenders = await getTicketTenders(ticket_id,user_session,true);
-    console.log(rspgettenders)
-    if(rspgettenders === null)
-    {
+    const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
+    console.log(rspgettenders);
+    if (rspgettenders === null) {
       setShowMuniTenders(false);
-    }
-    else 
-    {
-      setShowMuniTenders(true)
-      setTenders(rspgettenders)
+    } else {
+      setShowMuniTenders(true);
+      setTenders(rspgettenders);
     }
   };
 
-  const handleBack = (data : number) => {
+  const handleBack = (data: number) => {
     setShowMuniTenders(false);
-    if(data == 1)
-    {
-      setTicketstatus("In Progress")
-      onClose(1)
+    if (data === 1) {
+      setTicketstatus("In Progress");
+      onClose(1);
     }
   };
 
@@ -296,7 +287,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   >
                     Back
                   </button>
-                  {(status === "In Progress" || status === "Assigning Contract") && (
+                  {(ticketstatus === "In Progress" || ticketstatus === "Assigning Contract") && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleTenderContractClick}
@@ -304,7 +295,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {( status === "Taking Tenders") && (
+                  {(ticketstatus === "Taking Tenders") && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
@@ -312,7 +303,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       View Tenders
                     </button>
                   )}
-                  {(status === "Opened" ) && (
+                  {(ticketstatus === "Opened") && (
                     <>
                       <button
                         className="border border-red-500 text-red-500 rounded-lg px-2 py-1 hover:bg-red-500 hover:text-white"
