@@ -13,6 +13,10 @@ from chalicelib.tickets.tickets_controllers import (
     get_ticket_comments,
     get_geodata_all,
     getCompanyTicekts,
+    AcceptTicket,
+    ClosedTicket,
+    get_Open_CompanyTicekts,
+    get_open_tickets_in_municipality,
 )
 
 tickets_blueprint = Blueprint(__name__)
@@ -23,6 +27,22 @@ def create_ticket_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
     response = create_ticket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route("/accept", methods=["POST"], cors=True)
+def accepting_ticket():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = AcceptTicket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route("/close", methods=["POST"], cors=True)
+def closing_ticket():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = ClosedTicket(ticket_data)
     return response
 
 
@@ -54,6 +74,14 @@ def get_in_area():
     request = tickets_blueprint.current_request
     ticket_data = request.query_params.get("municipality")
     response = get_in_my_municipality(ticket_data)
+    return response
+
+
+@tickets_blueprint.route("/getopeninarea", methods=["GET"], cors=True)
+def get_open_tickets():
+    request = tickets_blueprint.current_request
+    ticket_data = request.query_params.get("municipality")
+    response = get_open_tickets_in_municipality(ticket_data)
     return response
 
 
@@ -96,6 +124,12 @@ def get_company_tickets():
     request = tickets_blueprint.current_request
     company_name = request.query_params.get("company")
     response = getCompanyTicekts(company_name)
+    return response
+
+
+@tickets_blueprint.route("/getopencompanytickets", methods=["GET"], cors=True)
+def get_open_company_tickets():
+    response = get_Open_CompanyTicekts()
     return response
 
 

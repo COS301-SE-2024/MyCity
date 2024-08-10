@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
-import MapPin from '../../../public/mapPin.svg';
+import CustomMarker from '../../../public/customMarker.svg';
 import { PlaceKit, PlaceKitOptions } from '@placekit/autocomplete-react';
 import { PKResult } from '@placekit/client-js';
 import '@placekit/autocomplete-js/dist/placekit-autocomplete.css';
@@ -100,7 +100,7 @@ export default function CreateTicketMap({ className, useMapboxProp }: Props) {
 
             {!isPinDropped && (
                 <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-138%] z-40 text-blue-800">
-                    <MapPin fill="#BE0505" />
+                    <CustomMarker fill="#BE0505" />
                 </div>
             )}
 

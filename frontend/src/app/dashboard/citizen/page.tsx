@@ -9,6 +9,9 @@ import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
+
+import NotificationPromt from "@/components/Notifications/NotificationPromt";
+
 import {
   getTicket,
   getTicketsInMunicipality,
@@ -57,7 +60,7 @@ export default function CitizenDashboard() {
     };
 
     fetchData();
-  }, [ userProfile]); // Add userProfile to the dependency array
+  }, [userProfile]); // Add userProfile to the dependency array
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -78,8 +81,12 @@ export default function CitizenDashboard() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
+        <div className="flex justify-center mt-20">
+          {/* <NotificationPromt /> */}
+        </div>
         <div>
           <NavbarUser />
+
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
@@ -201,7 +208,7 @@ export default function CitizenDashboard() {
 
                 <Tab key={2} title="Map">
                   <h1 className="text-4xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-80">
-                    Pretoria
+                    Faults
                   </h1>
                   <FaultMapView />
                 </Tab>
