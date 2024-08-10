@@ -1,12 +1,19 @@
-import { invalidateCache } from "@/utils/apiUtils";
+
+interface UploadProfilePictureResponse {
+    picture_url: string;
+}
 
 export async function uploadProfilePicture(formData: FormData, revalidate?: boolean) {
+    //bypass caching route and make request directly to external API
+    const API_BASE_URL = process.env.API_BASE_URL;
+
+    if (!API_BASE_URL) {
+        throw new Error("missing api base url");
+    }
+
     try {
-        const response = await fetch("/api/users/profile-picture/upload", {
+        const response = await fetch(`${API_BASE_URL}/users/profile-picture/upload`, {
             method: "POST",
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
             body: formData
         });
 
@@ -15,9 +22,10 @@ export async function uploadProfilePicture(formData: FormData, revalidate?: bool
         }
 
         const result = await response.json();
-        const data = result.data as any[];
+        const { picture_url } = result as UploadProfilePictureResponse;
 
-        return data;
+        return picture_url;
+
     } catch (error) {
         throw error;
     }

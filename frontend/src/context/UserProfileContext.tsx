@@ -14,7 +14,7 @@ export interface UserProfileContextProps {
 
 const UserProfileContext = createContext<UserProfileContextProps | undefined>(undefined);
 
-export const UserProfileProvider: React.FC<{ children: ReactNode }> = async ({ children }) => {
+export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const userProfile = useRef<UserData | null>(null);
 
 

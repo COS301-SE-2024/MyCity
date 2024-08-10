@@ -49,32 +49,34 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
     }
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
 
     let updatedUserData = data;
 
-    if (firstname) {
-      if (updatedUserData) {
-        updatedUserData.given_name = firstname;
-      }
+    if (!updatedUserData) {
+      return;
+    }
+
+
+    if (firstname && firstname != data?.given_name) {
+      updatedUserData.given_name = firstname;
       localStorage.setItem('firstName', firstname);
     }
 
-    if (surname) {
-      if (updatedUserData) {
-        updatedUserData.family_name = surname;
-      }
+    if (surname && surname != data?.family_name) {
+      updatedUserData.family_name = surname;
       localStorage.setItem('surname', surname);
     }
 
     //upload profile picture
-    if (file && profileData?.email) {
+    if (file && data?.email) {
       const formData = new FormData();
-      formData.append("username", profileData?.email);
+      formData.append("username", data?.email);
       formData.append("file", file);
 
       try {
-        const result = uploadProfilePicture(formData);
+        const pictureUrl = await uploadProfilePicture(formData);
+        updatedUserData.picture = pictureUrl;
       } catch (error: any) {
         console.log(error.message);
       }

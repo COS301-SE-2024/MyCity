@@ -52,16 +52,13 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   }
 
   const endpointUrl = req.url.replace(`${protocol}://localhost:3000/api`, API_BASE_URL);
-  // const etag = params.slug.join("-");
 
   const requestBody = await req.json();
 
   const res = await fetch(endpointUrl, {
     method: "POST",
     headers: req.headers,
-    body: JSON.stringify(requestBody),
-    // next: { tags: [etag] },
-    // cache: "force-cache"
+    body: JSON.stringify(requestBody)
   });
 
   const data = await res.json();
