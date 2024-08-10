@@ -227,7 +227,7 @@ def get_in_my_municipality(tickets_data):
         items = response["Items"]
         if len(items) > 0:
             for item in items:
-                response_item = ticketupdate_table.scan(
+                response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
                     KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
                 )
@@ -266,7 +266,7 @@ def get_open_tickets_in_municipality(tickets_data):
         items = response["Items"]
         if len(items) > 0:
             for item in items:
-                response_item = ticketupdate_table.scan(
+                response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
                     KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
                 )
@@ -442,7 +442,7 @@ def getMostUpvoted():
         top_items = sorted_items[:6]
         if len(top_items) > 0:
             for item in top_items:
-                response_item = ticketupdate_table.scan(
+                response_item = ticketupdate_table.query(
                     IndexName="ticket_id-index",
                     KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
                 )
@@ -461,31 +461,6 @@ def getMostUpvoted():
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
     
-def getTakingTendersTickets():
-    try:
-        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
-        items = response["Items"]
-        filtered_items = [item for item in items if item["state"] == "Taking Tenders"]
-        top_items = filtered_items[:8]
-        if len(top_items) > 0:
-            for item in top_items:
-                response_item = ticketupdate_table.query(
-                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
-                )
-                item["commentcount"] = len(response_item["Items"])
-            getUserprofile(top_items)
-            return top_items
-        else:
-            error_response = {
-                "Error": {
-                    "Code": "TicketDontExist",
-                    "Message": "Seems tickets dont exist",
-                }
-            }
-            raise ClientError(error_response, "NonExistence")
-    except ClientError as e:
-        error_message = e.response["Error"]["Message"]
-        return {"Status": "FAILED", "Error": error_message}
 
 
 def ClosedTicket(ticket_data):
@@ -651,7 +626,7 @@ def getCompanyTicekts(companyname):
         return {"Status": "FAILED", "Error": error_message}
 
 
-def get_Open_CompanyTicekts():
+def get_Open_Company_Tickets():
     try:
         collective = []
 
@@ -664,8 +639,9 @@ def get_Open_CompanyTicekts():
         top_items = filtered_items[:6]
         if len(top_items) > 0:
             for item in top_items:
-                response_item = ticketupdate_table.scan(
-                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(top_items)

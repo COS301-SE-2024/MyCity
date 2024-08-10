@@ -15,7 +15,7 @@ from chalicelib.tickets.tickets_controllers import (
     getCompanyTicekts,
     AcceptTicket,
     ClosedTicket,
-    get_Open_CompanyTicekts,
+    get_Open_Company_Tickets,
     get_open_tickets_in_municipality,
 )
 from chalicelib.authorisers import cognito_authorizer
@@ -131,7 +131,7 @@ def get_company_tickets():
 
 @tickets_blueprint.route("/getopencompanytickets",authorizer=cognito_authorizer, methods=["GET"], cors=True)
 def get_open_company_tickets():
-    response = get_Open_CompanyTicekts()
+    response = get_Open_Company_Tickets()
     return response
 
 
