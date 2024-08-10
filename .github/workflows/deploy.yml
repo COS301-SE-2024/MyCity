@@ -62,14 +62,28 @@ jobs:
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ secrets.AWS_REGION }}
 
-    - name: Deploy Chalice App
+
+    - name: Set API Stage Name
       working-directory: backend
       run: |
           if [ ${{ github.base_ref }} == 'main' ]; then
-            chalice deploy --stage prod
+            echo "API_STAGE_NAME=prod" >> $GITHUB_ENV
           elif [ ${{ github.base_ref }} == 'development' ]; then
-            chalice deploy --stage dev
+            echo "API_STAGE_NAME=dev" >> $GITHUB_ENV
           else
             echo "No deployment for this branch"
             exit 0
           fi
+
+
+    - name: Deploy Chalice App
+      working-directory: backend
+      run: |
+          chalice deploy --stage ${{ env.API_STAGE_NAME }}
+
+
+    - name: Update API Gateway
+      working-directory: backend/.chalice
+      env:
+        API_STAGE_NAME: ${{ env.API_STAGE_NAME }}
+      run: python update_api_gateway.py
