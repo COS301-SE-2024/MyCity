@@ -337,8 +337,6 @@ def getCompanyTenders(company_name):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
-
 
 
 def getTicketTender(ticket_id):
@@ -426,8 +424,9 @@ def getContracts(tender_id):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
-def getContracts(tender_id,company_name):
+
+
+def getCompanyContracts(tender_id, company_name):
     try:
         if tender_id == None or company_name == None:
             error_response = {
@@ -454,14 +453,15 @@ def getContracts(tender_id,company_name):
 
         contracts_items = reponse_contracts["Items"][0]
         response_tender = tenders_table.query(
-            KeyConditionExpression=Key("tender_id").eq(tender_id)&
+            KeyConditionExpression=Key("tender_id").eq(tender_id),
+            FilterExpression=Attr("company_id").eq(pid),
         )
 
         if len(response_tender["Items"]) <= 0:
             error_response = {
                 "Error": {
-                    "Code": "TenderDoesntExist",
-                    "Message": "Tender Does not Exist",
+                    "Code": "CompanyDidntBid",
+                    "Message": "Company never bid on tender",
                 }
             }
             raise ClientError(error_response, "TenderDoesntExist")
