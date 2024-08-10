@@ -6,22 +6,24 @@ import "react-toastify/dist/ReactToastify.css";
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  id: string;
-  ticketId: string;
-  status: Status;
-  municipality: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+  tender_id : string;
+  status : string;
+  companyname : string;
+  contractdatetime : string;
+  finalCost : number;
+  finalDuration : number;
+  ticketnumber : string;
+  completedatetime : string;
+  contractnumber : string;
+  municipality : string;
   upload: File | null;
-  hasReportedCompletion: boolean;
+  hasReportedCompletion: boolean | false;
 }
 
 const statusStyles = {
-  Unassigned: "text-blue-500 border-blue-500 rounded-full",
-  Active: "text-black bg-green-200 rounded-full",
-  Rejected: "text-black bg-red-200 rounded-full",
-  Closed: "text-black bg-gray-200 rounded-full",
+  in_progress: "text-blue-500 border-blue-500 rounded-full",
+  completed: "text-green bg-green-200 rounded-full",
+  closed: "text-red bg-red-200 rounded-full",
 };
 
 const TenderMax = ({
@@ -63,11 +65,27 @@ const TenderMax = ({
     }
   };
 
+  function getStatus(){
+    switch (tender.status) {
+      case "in progress":
+        return "in_progress"
+        break;
+      case "completed":
+        return "completed"
+      case "closed":
+        return "closed"
+        break;
+      default:
+        return "in_progress"
+        break;
+    }
+  }
+
   const handleConfirmClick = () => {
     confirmAction();
   };
 
-  const formattedDate = tender.issueDate.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = tender.contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -82,20 +100,20 @@ const TenderMax = ({
               <div className="absolute top-7 left-2">
                 <img src="https://via.placeholder.com/50" alt={tender.municipality} className="w-10 h-10 rounded-full mb-2" />
               </div>
-              <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.id}</div>
-              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[tenderStatus]}`}>{tenderStatus}</div>
+              <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
+              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus()]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketId}
+                <strong>Associated Ticket:</strong> {tender.ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.price.toFixed(2)}
+                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.estimatedDuration} days
+                <strong>Estimated Duration:</strong> {tender.finalDuration} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
@@ -110,15 +128,6 @@ const TenderMax = ({
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-                  {tenderStatus === "Active" ? (
-                    <span>
-                      This Tender Contract is currently <strong>{tenderStatus}</strong>. Only <strong>{municipality}</strong> can close it.
-                    </span>
-                  ) : (
-                    <span>
-                      This Tender Bid is currently <strong>{tenderStatus}</strong>. Only {tender.municipality} can accept this Tender Bid..
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -126,7 +135,7 @@ const TenderMax = ({
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
                   Back
                 </button>
-                {tenderStatus === "Active" ? (
+                {tenderStatus === "in progress" ? (
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract

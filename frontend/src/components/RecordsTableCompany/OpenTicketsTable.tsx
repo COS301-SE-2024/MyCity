@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Record from './Record';
 import CreateBid from '../Tenders/CreateBid';
+import { useProfile } from "@/hooks/useProfile";
+
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
@@ -25,9 +27,6 @@ interface RecordType {
   municipality : string;
 }
 
-interface RecordTypeProps{
-  records : RecordType[]
-}
 
 export default function OpenTicketsTable({records} : {records:RecordType[]}) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,13 +34,15 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
   const recordsPerPage = 10;
 
   // Filter records with status "Unaddressed"
-  const unaddressedRecords = records.filter(record => record.state === 'Unaddressed');
+  const unaddressedRecords = records.filter(record => record.state === 'Taking Tenders');
 
   // Calculate pagination details
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = unaddressedRecords.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(unaddressedRecords.length / recordsPerPage);
+
+
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -65,8 +66,7 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
 
   return (
     <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
-      {!selectedTicket ? (
-        <>
+     
           <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
             <div className='text-xl font-bold'>Select a Ticket to create a Tender Bid for it.</div>
             <div className="grid grid-cols-7 gap-4 items-center mb-2 px-4 py-1 font-bold text-center border-b border-gray-200 mt-6">
@@ -103,25 +103,6 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
               Next
             </button>
           </div>
-        </>
-      ) : (
-        <div className="fixed inset-0 text-black bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="transform scale-80 w-full">
-            <CreateBid
-              longitude= "23.2"
-              latitude="38"
-              ticket_id="acde812d-da20-4334-89af-35e56f580d36"
-              company_name="Tesla"
-              ticketnumber="ATR657"
-              faultType="Mislabeled streets"
-              address="R355, Cape Winelands District Municipality, Witzenberg Local Municipality, Western Cape"
-              municipalityImage="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/Makana_Local.png"
-              description="Come on municipality do better"
-              onBack={handleBack}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
