@@ -8,12 +8,14 @@ import ActiveTenders from "@/components/RecordsTableCompany/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTableCompany/OpenTicketsTable";
 import { useProfile } from "@/hooks/useProfile";
 import {
-  getOpenCompanyTickets,
+  getOpenCompanyTickets
 } from "@/services/tickets.service"
+import { getCompanyTenders } from "@/services/tender.service";
 export default function MuniTenders() {
 
   const userProfile = useProfile();
   const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
+  const [mytenders, setMytenders] = useState<any[]>([]);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -24,8 +26,10 @@ export default function MuniTenders() {
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
-      const rspmostupvotes = await getOpenCompanyTickets(user_session,true);
+      const rspmostupvotes = await getOpenCompanyTickets(user_session);
+      const rsptenders = await getCompanyTenders(user_company,user_session,true)
       setUpvoteTickets(rspmostupvotes);
+      setMytenders(rsptenders)
     };
     fetchData();
   },[userProfile])
@@ -79,7 +83,7 @@ export default function MuniTenders() {
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
-                  <ActiveTenders  />
+                  <ActiveTenders tenders={mytenders}  />
                 </Tab>
 
                 <Tab key={2} title="Closed Tenders">

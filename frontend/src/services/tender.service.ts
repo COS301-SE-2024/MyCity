@@ -237,15 +237,15 @@ export async function getContract(tender_id: string,user_session : string)
 
 }
 
-export async function getCompanyContract(company_name: string,user_session : string,revalidate? : boolean)
+export async function getCompanyContract(company_name: string,tender_id: string,user_session : string,revalidate? : boolean)
 {
     if(revalidate)
     {
-        invalidateCache("tenders-getcompantcontracts")
+        invalidateCache("tenders-getcompanycontracts")
     }
 
     const apiURL = "/api/tenders/getcompanycontracts";
-    const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}`;
+    const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}&tender=${encodeURIComponent(tender_id)}`;
     const response = await fetch(urlWithParams, {
         method: "GET",
         headers: {

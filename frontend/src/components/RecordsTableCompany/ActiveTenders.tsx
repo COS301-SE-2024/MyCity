@@ -16,6 +16,7 @@ interface TenderType {
   estimatedTimeHours: number;
   municipality : string;
   ticketnumber : string;
+  tender_id : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
 }

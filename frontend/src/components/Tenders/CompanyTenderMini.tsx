@@ -8,6 +8,7 @@ type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
 interface TenderType {
   tendernumber: string;
+  tender_id : string;
   company_id: string;
   companyname: string;
   serviceProvider: string;
@@ -25,6 +26,7 @@ interface TenderType {
 const statusStyles = {
   'under_review': 'border-blue-500 text-blue-500 bg-white',
   'accepted': 'bg-green-200 text-green',
+  'approved': 'bg-green-200 text-green',
   'rejected': 'bg-red-200 text-red',
   'submitted' : 'bg-gray-200 text-gray'
 };
@@ -53,6 +55,8 @@ export default function Tender({ tender }: { tender: TenderType }) {
         break;
       case "accepted":
         return "accepted"
+      case "approved":
+        return "approved"
         break;
       case "under review":
         return "under_review"
@@ -71,10 +75,20 @@ export default function Tender({ tender }: { tender: TenderType }) {
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
+      const compant_name = String(user_data.current?.company_name)
+      const rspcontracts = await getCompanyContract(compant_name,tender.tender_id,user_session)
+      if(rspcontracts == null)
+      {
+        setShowDetails(false)
+      }
+      else 
+      {
+        setContract(rspcontracts)
+        setShowDetails(true)
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-    setShowDetails(true);
   };
 
   const handleClose = () => {
@@ -110,7 +124,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={tender} onClose={handleClose} municipality={tender.municipality} />}
+      {showDetails && <TenderMax tender={contract} onClose={handleClose} municipality={tender.municipality} />}
 
       <style jsx>{`
         @keyframes scroll {
