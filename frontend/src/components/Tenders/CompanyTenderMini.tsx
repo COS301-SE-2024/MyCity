@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import TenderMax from './CompanyTenderMax'; // Assuming the detailed view component is in the same directory
 import { useProfile } from "@/hooks/useProfile";
+import { getContract,getCompanyContract } from '@/services/tender.service';
 
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
@@ -67,6 +68,12 @@ export default function Tender({ tender }: { tender: TenderType }) {
   
 
   const handleTenderClick = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
     setShowDetails(true);
   };
 
