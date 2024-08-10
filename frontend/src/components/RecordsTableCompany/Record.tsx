@@ -126,25 +126,25 @@ export default function Record({ record }: { record: RecordType }) {
       </div>
       {showTicketView && (
         <TicketViewCompany
-        show={showTicketView}
-        onClose={handleClose}
-        title={record.asset_id}
-        address={record.address}
-        arrowCount={record.upvotes}  // Update this as per your data source
-        commentCount={record.commentcount} // Update this as per your data source
-        viewCount={record.viewcount} // Update this as per your data source
-        tenderId={record.ticket_id}
-        description={record.description} // Update this as per your data source
-        user_picture={record.user_picture} // Update this as per your data source
-        createdBy={record.createdby}
-        imageURL={record.imageURL}
-        status={record.state}
-        municipalityImage={record.municipality_picture} // Update this as per your data source
-        upvotes={record.upvotes}
-        latitude={record.latitude}
-        longitude={record.longitude}
-        urgency={record.urgency} // Pass urgency to TicketViewMuni
-        // Pass municipality to TicketViewCompany
+          ticket_id={record.ticket_id}
+          show={showTicketView}
+          onClose={handleClose}
+          title={record.asset_id}
+          address={record.address}
+          arrowCount={record.upvotes} // Update this as per your data source
+          commentCount={record.commentcount} // Update this as per your data source
+          viewCount={record.viewcount} // Update this as per your data source
+          description={record.description} // Update this as per your data source
+          user_picture={record.user_picture} // Update this as per your data source
+          createdBy={record.createdby}
+          imageURL={record.imageURL}
+          status={record.state}
+          municipalityImage={record.municipality_picture} // Update this as per your data source
+          upvotes={record.upvotes}
+          latitude={record.latitude}
+          longitude={record.longitude}
+          urgency={record.urgency} // Pass urgency to TicketViewMuni
+          ticketNumber={record.ticketnumber}
         />
       )}
       <style jsx>{`

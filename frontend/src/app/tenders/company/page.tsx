@@ -14,7 +14,7 @@ import { getCompanyTenders } from "@/services/tender.service";
 export default function MuniTenders() {
 
   const userProfile = useProfile();
-  const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
+  const [openTickets, setOpenTickets] = useState<any[]>([]);
   const [mytenders, setMytenders] = useState<any[]>([]);
 
   const handleTabChange = (key: Key) => {
@@ -27,12 +27,17 @@ export default function MuniTenders() {
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
       const rspmostupvotes = await getOpenCompanyTickets(user_session);
-      const rsptenders = await getCompanyTenders(user_company,user_session,true)
-      setUpvoteTickets(rspmostupvotes);
+      const rsptenders = await getCompanyTenders(user_company,user_session,true);
+      setOpenTickets(rspmostupvotes);
       setMytenders(rsptenders)
+      console.log(rspmostupvotes)
     };
     fetchData();
-  },[userProfile])
+  },[])
+
+  useEffect(() => {
+    console.log(openTickets);  // This will log the updated openTickets whenever it changes
+  }, [openTickets]);
 
   return (
     <div>
@@ -79,7 +84,7 @@ export default function MuniTenders() {
               >
                 <Tab key={0} title="Open Tickets">
                   <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
-                  <OpenTicketsTable records={upvotedTickets}/>
+                  <OpenTicketsTable records={openTickets}/>
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
