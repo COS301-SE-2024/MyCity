@@ -15,6 +15,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   const [data, setData] = useState<UserData | null>(profileData);
   const [firstname, setFirstname] = useState(profileData?.given_name);
   const [surname, setSurname] = useState(profileData?.family_name);
+  const [file, setFile] = useState<File>();
 
   const { updateUserProfile } = useProfile();
 
@@ -22,6 +23,8 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+
       const reader = new FileReader();
       reader.onload = (event) => {
         const imageUrl = event.target?.result as string;
@@ -63,6 +66,13 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
       localStorage.setItem('surname', surname);
     }
 
+    if (file && profileData?.email) {
+      const formData = new FormData();
+      formData.append("username", profileData?.email);
+      formData.append("file", file);
+
+      
+    }
 
     if (updatedUserData) {
       updateUserProfile(updatedUserData);
