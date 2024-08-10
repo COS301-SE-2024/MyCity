@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import TenderMax from './CompanyTenderMax'; // Assuming the detailed view component is in the same directory
+import { useProfile } from "@/hooks/useProfile";
+
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
@@ -31,6 +33,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [contract,setContract] = useState<any>();
+  const userProfile = useProfile();
   const textRef = useRef<HTMLSpanElement>(null);
 
   const formateddate = tender.datetimesubmitted.split('T')[0]
@@ -63,7 +66,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
   }
   
 
-  const handleTenderClick = () => {
+  const handleTenderClick = async () => {
     setShowDetails(true);
   };
 
