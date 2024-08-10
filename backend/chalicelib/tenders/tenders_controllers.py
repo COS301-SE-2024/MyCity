@@ -333,6 +333,7 @@ def getCompanyTenders(company_name):
         )
         assignCompanyName(response_tenders["Items"])
         assignLongLat(response_tenders["Items"])
+        assignMuni(response_tenders["Items"])
         return response_tenders["Items"]
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -364,6 +365,7 @@ def getTicketTender(ticket_id):
         item_tender = response_tender["Items"]
         assignCompanyName(item_tender)
         assignLongLat(item_tender)
+        assignMuni(item_tender)
         return item_tender
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
