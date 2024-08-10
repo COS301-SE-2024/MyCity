@@ -79,7 +79,7 @@ export default function GuestDashboard() {
 
                 <Tab key={2} title="Map">
                   <h1 className="text-4xl font-bold mb-4 mt-2 ml-2 text-center">
-                    Pretoria
+                    Faults
                   </h1>
                   <FaultMapView />
                 </Tab>
