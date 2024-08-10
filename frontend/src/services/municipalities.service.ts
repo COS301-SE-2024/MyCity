@@ -1,10 +1,10 @@
 import { BasicMunicipality } from "@/types/custom.types";
-import { invalidateCache } from "@/utils/apiUtils";
+// import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMunicipalityList(revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("municipality-municipalities-list"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("municipality-municipalities-list"); //invalidate the cache
+    // }
 
     try {
         const response = await fetch("/api/municipality/municipalities-list",

@@ -1,4 +1,4 @@
-import { invalidateCache } from "@/utils/apiUtils";
+// import { invalidateCache } from "@/utils/apiUtils";
 
 /*export async function searchIssue(param:string, revalidate?: boolean) {
     if (revalidate) {
@@ -30,9 +30,9 @@ import { invalidateCache } from "@/utils/apiUtils";
 }*/
 
 export async function searchIssue(param: string, userMunicipality: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("search-issues"); // Invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("search-issues"); // Invalidate the cache
+    // }
 
     try {
         const response = await fetch(`/api/search/issues`, {
@@ -62,9 +62,9 @@ export async function searchIssue(param: string, userMunicipality: string, reval
 
 
 export async function searchServiceProvider(param:string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("search-service-provider"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("search-service-provider"); //invalidate the cache
+    // }
 
     try {
         const response = await fetch(`/api/search/service-provider?q=${encodeURIComponent(param)}`,
@@ -92,9 +92,9 @@ export async function searchServiceProvider(param:string, revalidate?: boolean) 
 
 
 export async function searchMunicipality(param:string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("search-municipality"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("search-municipality"); //invalidate the cache
+    // }
 
     try {
         const response = await fetch(`/api/search/municipality?q=${encodeURIComponent(param)}`,
@@ -122,9 +122,9 @@ export async function searchMunicipality(param:string, revalidate?: boolean) {
 
 
 export async function searchMunicipalityTickets(municipalityId:string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("search-municipality-tickets"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("search-municipality-tickets"); //invalidate the cache
+    // }
 
     try {
         const response = await fetch(`/api/search/municipality-tickets?q=${encodeURIComponent(municipalityId)}`,

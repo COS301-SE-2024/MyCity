@@ -27,8 +27,8 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
   const res = await fetch(endpointUrl, {
     headers: req.headers,
-    next: { tags: [etag] },
-    cache: "force-cache"
+    // next: { tags: [etag] },
+    // cache: "force-cache"
   });
 
   const data = await res.json();

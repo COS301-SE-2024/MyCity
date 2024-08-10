@@ -1,5 +1,5 @@
 
-import { invalidateCache } from "@/utils/apiUtils";
+// import { invalidateCache } from "@/utils/apiUtils";
 
 
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
@@ -133,9 +133,9 @@ export async function RejectTender(companyname: string,ticket: string,user_sessi
 export async function getTicketTenders(ticket_id: string,user_session : string, revalidate?: boolean)
 {
 
-    if (revalidate) {
-        invalidateCache("tenders-getmunicipalitytenders"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tenders-getmunicipalitytenders"); //invalidate the cache
+    // }
 
     const apiURL = "/api/tenders/getmunicipalitytenders";
     const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
@@ -170,9 +170,9 @@ export async function getTicketTenders(ticket_id: string,user_session : string, 
 export async function getCompanyTenders(companyname: string,user_session : string,revalidate?: boolean)
 {
 
-    if (revalidate) {
-        invalidateCache("tenders-getmytenders"); //invalidate the cache
-    }
+    // if (revalidate) {
+    //     invalidateCache("tenders-getmytenders"); //invalidate the cache
+    // }
 
     const apiURL = "/api/tenders/getmytenders";
     const urlWithParams = `${apiURL}?name=${encodeURIComponent(companyname)}`;
