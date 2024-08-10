@@ -1,6 +1,7 @@
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
 
+
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
     // if (revalidate) {
@@ -24,7 +25,39 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
         const result = await response.json();
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
+        formatAddress(data)
+        ChangeState(data)
+        return data;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export async function getOpenCompanyTickets(user_session: string, revalidate?: boolean) {
+
+    if (revalidate) {
+        invalidateCache("tickets-getinarea"); //invalidate the cache
+    }
+    try {
+        const apiUrl = "/api/tickets/getopencompanytickets";
+        const response = await fetch(apiUrl,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as any[];
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -64,7 +97,6 @@ export async function getCompanyTickets(companyname: string, user_session: strin
         }
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -105,7 +137,6 @@ export async function getWatchlistTickets(username: string, user_session: string
         }
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -186,7 +217,52 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         const data = result.data as any[];
 
-        AssignTicketNumbers(data);
+        formatAddress(data)
+        ChangeState(data)
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+export async function getOpenTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
+
+    if (!municipality) {
+        throw new Error("Missing municipality");
+    }
+
+    if (revalidate) {
+        invalidateCache("tickets-getinarea"); //invalidate the cache
+    }
+
+    try {
+
+        const apiUrl = "/api/tickets/getopeninarea";
+        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": user_session,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+
         formatAddress(data)
         ChangeState(data)
         return data;

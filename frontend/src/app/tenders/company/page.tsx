@@ -8,7 +8,7 @@ import ActiveTenders from "@/components/RecordsTableCompany/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTableCompany/OpenTicketsTable";
 import { useProfile } from "@/hooks/useProfile";
 import {
-  getCompanyTickets,
+  getOpenCompanyTickets,
 } from "@/services/tickets.service"
 export default function MuniTenders() {
 
@@ -24,7 +24,7 @@ export default function MuniTenders() {
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
-      const rspmostupvotes = await getCompanyTickets(user_company,user_session);
+      const rspmostupvotes = await getOpenCompanyTickets(user_session,true);
       setUpvoteTickets(rspmostupvotes);
     };
     fetchData();
@@ -79,7 +79,7 @@ export default function MuniTenders() {
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
-                  <ActiveTenders />
+                  <ActiveTenders  />
                 </Tab>
 
                 <Tab key={2} title="Closed Tenders">

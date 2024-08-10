@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Record from './Record';
 import CreateBid from '../Tenders/CreateBid';
+import { useProfile } from "@/hooks/useProfile";
+
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
@@ -30,6 +32,7 @@ interface RecordTypeProps{
 }
 
 export default function OpenTicketsTable({records} : {records:RecordType[]}) {
+  const userProfile = useProfile();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTicket, setSelectedTicket] = useState<RecordType | null>(null);
   const recordsPerPage = 10;
