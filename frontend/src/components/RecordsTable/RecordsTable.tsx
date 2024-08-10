@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Record from './IntegratedRecord';
+import Record from './Record';
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
