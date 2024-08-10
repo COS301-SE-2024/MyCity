@@ -70,6 +70,29 @@ jobs:
           elif [ ${{ github.base_ref }} == 'development' ]; then
             chalice deploy --stage dev
           else
-            echo "No deployment for this branch"
+            echo "No Chalice deployment for this branch"
+            exit 0
+          fi
+
+    - name: Set Binary Media Types for API Gateway
+      working-directory: backend
+      run: |
+            aws apigateway update-rest-api \
+              --rest-api-id $(aws apigateway get-rest-apis --query "items[?name=='mycity-api'].id" --output text) \
+              --patch-operations op=add,path=/binaryMediaTypes/multipart~1form-data
+
+
+    - name: Deploy API Gateway Stage
+      run: |
+          if [ ${{ github.base_ref }} == 'main' ]; then
+            aws apigateway create-deployment \
+          --rest-api-id ${{ secrets.API_ID }} \
+          --stage-name "prod"
+          elif [ ${{ github.base_ref }} == 'development' ]; then
+            aws apigateway create-deployment \
+          --rest-api-id ${{ secrets.API_ID }} \
+          --stage-name "dev"
+          else
+            echo "No API Gateway Stage deployment for this branch"
             exit 0
           fi

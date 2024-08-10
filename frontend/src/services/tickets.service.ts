@@ -3,6 +3,7 @@ import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
+
     if (revalidate) {
         invalidateCache("tickets-getinarea"); //invalidate the cache
     }
@@ -40,6 +41,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
     if (revalidate) {
         invalidateCache("username"); //invalidate the cache
     }
+
 
     try {
         const apiUrl = "/api/tickets/getcompanytickets";
@@ -81,6 +83,7 @@ export async function getWatchlistTickets(username: string, user_session: string
     if (revalidate) {
         invalidateCache("username"); //invalidate the cache
     }
+
 
     try {
         const apiUrl = "/api/tickets/getwatchlist";
