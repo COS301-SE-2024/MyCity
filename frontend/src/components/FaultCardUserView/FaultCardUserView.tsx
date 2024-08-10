@@ -144,14 +144,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           {/* Left Section */}
           <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
             <div className="absolute top-2 left-2">
-              {urgencyMapping[urgency].icon}
             </div>
             <div className="flex items-center">
-              <FaTicketAlt className="mr-2 text-2xl" />
               <h2 className="font-bold text-2xl">{`Ticket ${ticketNumber}`}</h2>
             </div>
             <div className="flex items-center justify-center mb-2">
-              <span className="text-red-500 ml-2">{urgencyMapping[urgency].label}</span>
+              <span className="text-red-500 ml-2"></span>
             </div>
             <div className="mt-2 mb-2 text-center">
               <h3 className="font-bold text-lg">Fault Type</h3>
