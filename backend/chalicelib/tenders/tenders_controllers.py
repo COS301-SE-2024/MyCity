@@ -307,6 +307,59 @@ def reject_tender(sender_data):
         return {"Status": "FAILED", "Error": error_message}
 
 
+def complete_contract(sender_data):
+    try:
+        required_fields = ["contract_id"]
+
+        for field in required_fields:
+            if field not in sender_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        response_contract = contract_table.query(
+            KeyConditionExpression=Key("contract_id").eq(sender_data["contract_id"])
+        )
+        contract_items = response_contract["Items"]
+        if len(contract_items) <= 0:  # To see that company does exist
+            error_response = {
+                "Error": {
+                    "Code": "ContractDoesntExist",
+                    "Message": "Contract Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "ContractDoesntExist")
+        updateExp = "set #status=:r"
+        expattrName = {"#status": "status"}
+        expattrValue = {":r": "completed"}
+        response = updateContractTable(
+            sender_data["contract_id"], updateExp, expattrName, expattrValue
+        )
+
+        # editing ticket as well to In Progress
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Contact_id": sender_data["contract_id"],
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 # company tenders
 def getCompanyTenders(company_name):
     try:
@@ -512,6 +565,22 @@ def updateTenderTable(
 ):
     response = tenders_table.update_item(
         Key={"tender_id": tender_id},
+        UpdateExpression=update_expression,
+        ExpressionAttributeNames=expression_attribute_names,
+        ExpressionAttributeValues=expression_attribute_values,
+    )
+
+    return response
+
+
+def updateContractTable(
+    contract_id,
+    update_expression,
+    expression_attribute_names,
+    expression_attribute_values,
+):
+    response = contract_table.update_item(
+        Key={"contract_id": contract_id},
         UpdateExpression=update_expression,
         ExpressionAttributeNames=expression_attribute_names,
         ExpressionAttributeValues=expression_attribute_values,
