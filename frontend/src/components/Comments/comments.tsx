@@ -4,9 +4,10 @@ import Comment from './comment'; // Adjust the import path as necessary
 
 interface CommentsProps {
   onBack: () => void;
+  isCitizen: boolean;
 }
 
-const Comments: React.FC<CommentsProps> = ({ onBack }) => {
+const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen }) => {
   const [newComment, setNewComment] = useState(''); // State for new comment input
   const [comments, setComments] = useState([
     {
@@ -28,9 +29,6 @@ const Comments: React.FC<CommentsProps> = ({ onBack }) => {
       commentText: 'This is a longer comment that demonstrates how text is handled in this layout.',
     },
   ]);
-
-  // Mocked check to see if it's a citizen logged in
-  const isCitizen = true; // Change to false to simulate a company/municipality login
 
   // Function to handle adding a new comment
   const handleNewComment = () => {
@@ -91,4 +89,3 @@ const Comments: React.FC<CommentsProps> = ({ onBack }) => {
 };
 
 export default Comments;
-

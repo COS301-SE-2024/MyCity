@@ -1,11 +1,7 @@
-'use client';
+"use client";
 
 import NavbarUser from "@/components/Navbar/NavbarUser";
-import NotificationComment from "@/components/NotificationsCitizen/NotificationComment";
-// import NotificationUpdate from "@/components/NotificationsCitizen/NotificationUpdate";
-import NotificationUpvote from "@/components/NotificationsCitizen/NotificationUpvote";
-import NotificationWatchlist from "@/components/NotificationsCitizen/NotificationWatchlist";
-import NotificationPromt from "@/components/Notifications/NotificationPromt";
+
 // import { notificationStates } from "@/components/NotificationsCitizen/states";
 // import NotificationsStatusCardContainer from "@/components/NotificationsStatusCardContainer/NotificationsStatusCardContainer";
 import React, { Key, useEffect, useRef, useState } from "react";
@@ -14,6 +10,7 @@ import React, { Key, useEffect, useRef, useState } from "react";
 // import FaultMapView from "@/components/FaultMapView/FaultMapView";
 // import { FaTimes } from "react-icons/fa";
 // import { HelpCircle } from "lucide-react";
+import TicketNoti from "@/components/NotificationsCitizenNew/TicketNoti";
 import DashboardStatusCardContainer from "@/components/StatusCardContainer/DashboardStatusCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -22,7 +19,7 @@ import {
   getTicketsInMunicipality,
   getMostUpvote,
   getWatchlistTickets,
-} from "@/services/tickets.service"; 
+} from "@/services/tickets.service";
 
 interface ScrollablePanelProps {
   title: string;
@@ -80,7 +77,6 @@ export default function Notifications() {
       // catch (error) {
       //   console.error("Error fetching data:", error);
       // }
-      
     };
 
     fetchData();
@@ -125,23 +121,40 @@ export default function Notifications() {
 
           {/* Content */}
           <div className="fixed inset-0 overflow-hidden">
-            <main className="h-full flex items-center justify-center pb-16 overflow-auto">
+            <main>
+              <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
+                Notifications
+              </h1>
+
+              <TicketNoti
+                ticketNumber="328"
+                image={null} // Or replace with an actual image URL
+                action="upvoted"
+                isNew={true}
+              />
+              <TicketNoti
+                ticketNumber="329"
+                image={null} // Or replace with an actual image URL
+                action="commented on"
+                isNew={false}
+              />
+              <TicketNoti
+                ticketNumber="330"
+                image={null} // Or replace with an actual image URL
+                action="watchlisted"
+                isNew={true}
+              />
+              <TicketNoti
+                ticketNumber="331"
+                image={null} // Or replace with an actual image URL
+                action="updated"
+                isNew={false}
+              />
               {/* Your Ticket Interactions */}
-              <ScrollablePanel title="Your Ticket Interactions">
-                <DashboardStatusCardContainer cardData={dashWatchResults}  />
-                
-                <NotificationComment />
-                <NotificationUpvote />
-                <NotificationComment />
-                <NotificationComment />
-                <NotificationUpvote />
-                <NotificationComment />
-                <NotificationUpvote />
-                <NotificationComment />
-              </ScrollablePanel>
+
               {/* Your Ticket Updates */}
               {/* <ScrollablePanel title="Your Ticket Updates"> */}
-                {/* <NotificationUpdate state="AssigningContract" />
+              {/* <NotificationUpdate state="AssigningContract" />
                 <NotificationUpdate state="Closed" />
                 <NotificationUpdate state="InProgress" />
                 <NotificationUpdate state="Closed" />
@@ -151,15 +164,15 @@ export default function Notifications() {
               {/* </ScrollablePanel> */}
               {/* Your Watchlist */}
               {/* <ScrollablePanel title="Your Watchlist"> */}
-                {/* <NotificationUpdate state="InProgress" /> */}
-                {/* <NotificationUpvote /> */}
-                {/* <NotificationComment /> */}
-                {/* <NotificationUpdate state="AssigningContract" /> */}
-                {/* <NotificationComment /> */}
-                {/* <NotificationUpdate state="InProgress" /> */}
-                {/* <NotificationUpdate state="Closed" /> */}
-                {/* <NotificationComment /> */}
-                {/* <NotificationUpdate state="Opened" /> */}
+              {/* <NotificationUpdate state="InProgress" /> */}
+              {/* <NotificationUpvote /> */}
+              {/* <NotificationComment /> */}
+              {/* <NotificationUpdate state="AssigningContract" /> */}
+              {/* <NotificationComment /> */}
+              {/* <NotificationUpdate state="InProgress" /> */}
+              {/* <NotificationUpdate state="Closed" /> */}
+              {/* <NotificationComment /> */}
+              {/* <NotificationUpdate state="Opened" /> */}
               {/* </ScrollablePanel> */}
             </main>
           </div>
@@ -230,4 +243,3 @@ export default function Notifications() {
     </div>
   );
 }
-

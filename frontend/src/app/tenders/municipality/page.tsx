@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Key, useEffect, useRef, useState } from "react";
+
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import { Tab, Tabs } from "@nextui-org/react";
 import ClosedTenders from "@/components/RecordsTable/ClosedTenders";
@@ -12,7 +13,7 @@ import {
 } from "@/services/tickets.service"
 export default function MuniTenders() {
 
-  const userProfile = useProfile();
+  const userProfile :any = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
 
 

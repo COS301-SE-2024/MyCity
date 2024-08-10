@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaCircle, FaRegCircle, FaUserCircle } from "react-icons/fa";
-import TicketViewCompany from "./TicketViewNoti"; // Adjust the import path as necessary
+import TicketViewMuni from "../TicketViewMuni/TicketViewMuni"; // Adjust the import path as necessary
 
 interface TicketNotificationProps {
   ticketNumber: string;
@@ -19,7 +19,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   const [ticketData, setTicketData] = useState<any>(null);
 
   useEffect(() => {
-    // Mock data - Replace this with actual backend call when available
+    // Mock data - Replace this with an actual backend call when available
     const fetchTicketData = async () => {
       const mockData = {
         title: "Aliens",
@@ -65,8 +65,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
     setShowTicketView(false);
   };
 
-
-  const circleStyle = isNew ? 'bg-blue-500' : 'border-2 border-blue-500';
+  const circleStyle = isNew ? "bg-blue-500" : "border-2 border-blue-500";
 
   return (
     <>
@@ -89,33 +88,34 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           </div>
         </div>
       </div>
-  
+
       {showTicketView && ticketData && (
-        <TicketViewCompany
-          show={showTicketView}
-          onClose={handleTicketViewClose}
-          title={ticketData.title}
-          address={ticketData.address}
-          arrowCount={0} // Mocked data
-          commentCount={0} // Mocked data
-          viewCount={0} // Mocked data
-          ticketNumber={ticketNumber}
-          ticket_id={ticketData.ticket_id}
-          description={ticketData.description}
-          user_picture={ticketData.user_picture}
-          createdBy={ticketData.createdBy}
-          status={ticketData.status}
-          imageURL={ticketData.imageURL}
-          municipalityImage={ticketData.municipalityImage}
-          upvotes={ticketData.upvotes}
-          latitude={ticketData.latitude}
-          longitude={ticketData.longitude}
-          urgency={ticketData.urgency}
-        />
+        <>
+          <TicketViewMuni
+            show={true}
+            onClose={handleTicketViewClose}
+            title="Road Repair"
+            address="123 Main Street, Springfield, USA"
+            arrowCount={10}
+            commentCount={3}
+            viewCount={15}
+            ticketNumber={ticketNumber}
+            ticket_id={ticketData.ticket_id}
+            description="Repair the main road."
+            user_picture="https://via.placeholder.com/150"
+            createdBy="John Doe"
+            status="Active"
+            imageURL="https://via.placeholder.com/200"
+            municipalityImage="https://via.placeholder.com/50"
+            upvotes={10} // this is being conflated with arrowCount
+            latitude="37.7749" //mock data!! all of these
+            longitude="-1.4194"
+            urgency="high"
+          />
+        </>
       )}
     </>
   );
-  
 };
 
 export default TicketNotification;

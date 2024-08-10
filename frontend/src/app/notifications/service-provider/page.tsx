@@ -4,13 +4,14 @@ import { useState } from "react";
 
 //import Navbar from "@/components/Navbar/Navbar"; implemented later
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
-import TicketNoti from "@/components/NewNotifications/TicketNoti";
-import TenderNoti from "@/components/NewNotifications/TenderNoti";
+import TicketNoti from "@/components/NotificationsCompanyNew/TicketNoti";
+import TenderNoti from "@/components/NotificationsCompanyNew/TenderNoti";
 import Comments from "@/components/Comments/comments";
 export default function Notifications() {
   const handleDelete = () => {
     console.log("Delete notification");
   };
+  
   return (
     <div>
       <NavbarCompany />
@@ -58,7 +59,30 @@ export default function Notifications() {
           action="updated status to:"
           isNew={false} // Viewed notification
         />
-        <TenderNoti />
+        <TenderNoti
+        tenderId="12345"
+        image="https://via.placeholder.com/50"
+        action="bid accepted"
+        isNew={true}
+      />
+      <TenderNoti
+        tenderId="67890"
+        image="https://via.placeholder.com/50"
+        action="bid rejected"
+        isNew={false}
+      />
+      <TenderNoti
+        tenderId="54321"
+        image={null} // No image provided
+        action="contract terminated"
+        isNew={true}
+      />
+      <TenderNoti
+        tenderId="09876"
+        image="https://via.placeholder.com/50"
+        action="contract completed"
+        isNew={false}
+      />
       </main>
     </div>
   );
