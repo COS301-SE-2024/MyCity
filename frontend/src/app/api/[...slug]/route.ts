@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { Amplify } from 'aws-amplify';
+import { revalidateTag } from "next/cache";
 
 //configure amplify for server-side rendering to enable use of Next.js api route
 Amplify.configure({},
@@ -11,6 +12,19 @@ const API_BASE_URL = process.env.API_BASE_URL;
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string[] } }) {
 
+  //the request is for invalidating the cache
+  if (params.slug[0] === "invalidate-cache") {
+    if (params.slug.length < 2) {
+      throw new Error("missing etag");
+    }
+
+    const providedEtag = params.slug[1];
+    revalidateTag(providedEtag); //invalidate the cache
+
+    return Response.json({ isCacheInvalidated: true });
+  }
+
+  //otherwise request is just a normal request
   if (!API_BASE_URL) {
     throw new Error("missing api base url");
   }
@@ -27,8 +41,8 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
   const res = await fetch(endpointUrl, {
     headers: req.headers,
-    // next: { tags: [etag] },
-    // cache: "force-cache"
+    next: { tags: [etag] },
+    cache: "force-cache"
   });
 
   const data = await res.json();
