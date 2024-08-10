@@ -58,6 +58,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   commentCount,
   viewCount,
 }) => {
+  const userProfile = useProfile();  // Hook moved to the top level
+
   const [showTenderMax, setShowTenderMax] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showMuniTenders, setShowMuniTenders] = useState(false);
@@ -99,7 +101,6 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   if (!show) return null;
 
   const addressParts = address.split(",");
-  const userProfile = useProfile();
 
   const formatDate = (given_date: string) => {
     return given_date.slice(0, given_date.indexOf("T"));
@@ -375,4 +376,3 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 };
 
 export default TicketViewMuni;
-

@@ -80,7 +80,7 @@ export default function Notifications() {
     };
 
     fetchData();
-  }, [userProfile]); // Add userProfile to the dependency array
+  }, [userProfile, dashWatchResults]); // Add userProfile to the dependency array
 
   const hasStatusFieldMuni =
     Array.isArray(dashMuniResults) &&

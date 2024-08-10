@@ -40,7 +40,7 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
     };
 
     fetchTenderData();
-  }, [tenderId]);
+  }, [tenderId, action]);
 
   const getActionText = () => {
     switch (action) {
