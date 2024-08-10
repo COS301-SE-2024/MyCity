@@ -36,6 +36,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [contract,setContract] = useState<any>();
+  const [tenderstatus, setTenderstatus] = useState<string>("")
   const userProfile = useProfile();
   const textRef = useRef<HTMLSpanElement>(null);
 
@@ -47,9 +48,12 @@ export default function Tender({ tender }: { tender: TenderType }) {
   }
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
+  useEffect(()=>{
+    setTenderstatus(tender.status)
+  },[])
 
-  function getStatus(){
-    switch (tender.status) {
+  function getStatus( status : string){
+    switch (status) {
       case "rejected":
         return "rejected"
         break;
@@ -108,8 +112,8 @@ export default function Tender({ tender }: { tender: TenderType }) {
         onClick={handleTenderClick}
       >
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded border ${statusStyles[getStatus()]}`}>
-            {tender.status}
+          <span className={`px-2 py-1 rounded border ${statusStyles[getStatus(tenderstatus)]}`}>
+            {tenderstatus}
           </span>
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
