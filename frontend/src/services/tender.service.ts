@@ -1,4 +1,7 @@
 
+import { invalidateCache } from "@/utils/apiUtils";
+
+
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
 {
     const data = {
@@ -96,8 +99,43 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
 
 }
 
-export async function getTicketTenders(ticket_id: string,user_session : string)
+export async function RejectTender(companyname: string,ticket: string,user_session : string)
 {
+    const data = {
+        company_id : companyname,
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tenders/reject";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function getTicketTenders(ticket_id: string,user_session : string, revalidate?: boolean)
+{
+
+    if (revalidate) {
+        invalidateCache("tenders-getmunicipalitytenders"); //invalidate the cache
+    }
 
     const apiURL = "/api/tenders/getmunicipalitytenders";
     const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
@@ -129,8 +167,12 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
 
 }
 
-export async function getCompanyTenders(companyname: string,user_session : string)
+export async function getCompanyTenders(companyname: string,user_session : string,revalidate?: boolean)
 {
+
+    if (revalidate) {
+        invalidateCache("tenders-getmytenders"); //invalidate the cache
+    }
 
     const apiURL = "/api/tenders/getmytenders";
     const urlWithParams = `${apiURL}?name=${encodeURIComponent(companyname)}`;

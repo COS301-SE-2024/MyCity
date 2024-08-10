@@ -3,9 +3,10 @@ import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
-    // if (revalidate) {
-    //     invalidateCache("tickets-getUpvotes"); //invalidate the cache
-    // }
+
+    if (revalidate) {
+        invalidateCache("tickets-getinarea"); //invalidate the cache
+    }
     try {
         const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
@@ -37,9 +38,10 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
 
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     invalidateCache("tickets-getcompanytickets"); //invalidate the cache
-    // }
+    if (revalidate) {
+        invalidateCache("username"); //invalidate the cache
+    }
+
 
     try {
         const apiUrl = "/api/tickets/getcompanytickets";
@@ -78,9 +80,10 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     invalidateCache("tickets-getwatchlist"); //invalidate the cache
-    // }
+    if (revalidate) {
+        invalidateCache("username"); //invalidate the cache
+    }
+
 
     try {
         const apiUrl = "/api/tickets/getwatchlist";
@@ -151,12 +154,13 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-
+    
     if (!municipality) {
         throw new Error("Missing municipality");
     }
 
     if (revalidate) {
+        console.log("Inside revalidation")
         invalidateCache("tickets-getinarea"); //invalidate the cache
     }
 
@@ -195,6 +199,66 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         console.error("Error: " + error);
         throw error;
     }
+}
+
+export async function AcceptTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/accept";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function CloseTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/close";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
 }
 
 export async function getFaultTypes(revalidate?: boolean) {
