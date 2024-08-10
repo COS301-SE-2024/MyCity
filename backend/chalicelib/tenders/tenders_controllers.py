@@ -333,6 +333,7 @@ def getCompanyTenders(company_name):
         )
         assignCompanyName(response_tenders["Items"])
         assignLongLat(response_tenders["Items"])
+        assignMuni(response_tenders["Items"])
         return response_tenders["Items"]
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -364,6 +365,7 @@ def getTicketTender(ticket_id):
         item_tender = response_tender["Items"]
         assignCompanyName(item_tender)
         assignLongLat(item_tender)
+        assignMuni(item_tender)
         return item_tender
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -426,49 +428,58 @@ def getContracts(tender_id):
         return {"Status": "FAILED", "Error": error_message}
 
 
-def getCompanyContracts(company_name):
+def getCompanyContracts(tender_id, company_name):
     try:
-        collective = []
-        if company_name == None or company_name == "":
+        if tender_id == None or company_name == None:
             error_response = {
                 "Error": {
                     "Code": "IncorrectFields",
-                    "Message": f"Missing required query: company",
+                    "Message": f"Missing required query: tender",
                 }
             }
             raise ClientError(error_response, "InvalidFields")
-        pid = getCompanIDFromName(company_name)
-        reponse_tender = tenders_table.scan(FilterExpression=Attr("company_id").eq(pid))
 
-        if len(reponse_tender["Items"]) <= 0:
+        pid = getCompanIDFromName(company_name)
+        reponse_contracts = contract_table.scan(
+            FilterExpression=Attr("tender_id").eq(tender_id)
+        )
+
+        if len(reponse_contracts["Items"]) <= 0:
             error_response = {
                 "Error": {
-                    "Code": "CompanyDoesntHaveTenders",
-                    "Message": "Contract Does not have Tenders",
+                    "Code": "ContractDoesntExist",
+                    "Message": "Contract Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "ContractDoesntExist")
+
+        contracts_items = reponse_contracts["Items"][0]
+        response_tender = tenders_table.query(
+            KeyConditionExpression=Key("tender_id").eq(tender_id),
+            FilterExpression=Attr("company_id").eq(pid),
+        )
+
+        if len(response_tender["Items"]) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "CompanyDidntBid",
+                    "Message": "Company never bid on tender",
                 }
             }
             raise ClientError(error_response, "TenderDoesntExist")
 
-        tender_items = reponse_tender["Items"]
-        for tender in tender_items:
-            response_contract = contract_table.scan(
-                FilterExpression=Attr("tender_id").eq(tender["tender_id"])
-            )
-            if len(response_contract["Items"]) > 0:
-                contract_items = response_contract["Items"]
-                for item in contract_items:
-                    item["companyname"] = company_name
-                assignMuni(contract_items)
-                collective.extend(contract_items)
-        if len(collective) <= 0:
-            error_response = {
-                "Error": {
-                    "Code": "contracts",
-                    "Message": "Contract Does not exist",
-                }
-            }
-            raise ClientError(error_response, "COntractDoesntExist")
-        return collective
+        tender_itm = response_tender["Items"][0]
+        response_name = companies_table.query(
+            KeyConditionExpression=Key("pid").eq(tender_itm["company_id"])
+        )
+
+        if len(response_name["Items"]) <= 0:
+            contracts_items["companyname"] = "Xero Industries"
+        else:
+            companies = response_name["Items"][0]
+            comp_name = companies["name"]
+            contracts_items["companyname"] = comp_name
+        return contracts_items
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]

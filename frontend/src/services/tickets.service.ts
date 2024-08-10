@@ -4,10 +4,10 @@ import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
-
     if (revalidate) {
-        invalidateCache("tickets-getinarea"); //invalidate the cache
+        invalidateCache("tickets-getUpvotes"); //invalidate the cache
     }
+
     try {
         const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
@@ -72,7 +72,7 @@ export async function getOpenCompanyTickets(user_session: string, revalidate?: b
 
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
-        invalidateCache("username"); //invalidate the cache
+        invalidateCache("tickets-getcompanytickets"); //invalidate the cache
     }
 
 
@@ -113,7 +113,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
-        invalidateCache("username"); //invalidate the cache
+        invalidateCache("tickets-getwatchlist"); //invalidate the cache
     }
 
 
@@ -191,7 +191,6 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 
     if (revalidate) {
-        console.log("Inside revalidation")
         invalidateCache("tickets-getinarea"); //invalidate the cache
     }
 

@@ -54,7 +54,7 @@ export default function Record({ record, refresh }: { record: RecordType , refre
 
   useEffect(()=>{
     setTicketstate(record.state)
-  },[])
+  },[record.state])
 
   const handleClick = () => {
     setShowTicketView(true);
