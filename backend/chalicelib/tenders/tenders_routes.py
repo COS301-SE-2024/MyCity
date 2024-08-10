@@ -72,6 +72,7 @@ def getmunitenders():
 @tenders_blueprint.route("/getcompanycontracts", methods=["GET"], cors=True)
 def getcompanycontracts():
     request = tenders_blueprint.current_request
+    tender_id = request.query_params.get("tender")
     company_name = request.query_params.get("company")
-    response = getCompanyContracts(company_name)
+    response = getCompanyContracts(tender_id, company_name)
     return response

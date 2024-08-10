@@ -242,9 +242,9 @@ export default function ActiveTenders() {
           <div className="col-span-1">Estimated Duration</div>
         </div>
         <div className="min-w-full">
-          {currentTenders.map((tender) => (
+          {/* {currentTenders.map((tender) => (
             <Tender key={tender.id} tender={tender} />
-          ))}
+          ))} */}
         </div>
         <div className="flex justify-between mt-4 text-white">
           <button
