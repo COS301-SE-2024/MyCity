@@ -228,7 +228,8 @@ def get_in_my_municipality(tickets_data):
         if len(items) > 0:
             for item in items:
                 response_item = ticketupdate_table.scan(
-                    FilterExpression=Key("ticket_id").eq(item["ticket_id"])
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
@@ -266,7 +267,8 @@ def get_open_tickets_in_municipality(tickets_data):
         if len(items) > 0:
             for item in items:
                 response_item = ticketupdate_table.scan(
-                    FilterExpression=Key("ticket_id").eq(item["ticket_id"])
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
@@ -319,8 +321,9 @@ def get_watchlist(tickets_data):
                 ticketsItems = respitem["Items"]
                 if len(ticketsItems) > 0:
                     for tckitem in ticketsItems:
-                        response_item = ticketupdate_table.scan(
-                            FilterExpression=Attr("ticket_id").eq(tckitem["ticket_id"])
+                        response_item = ticketupdate_table.query(
+                            IndexName="ticket_id-index",
+                            KeyConditionExpression=Key("ticket_id").eq(tckitem['ticket_id']),
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
                 else:
@@ -440,6 +443,33 @@ def getMostUpvoted():
         if len(top_items) > 0:
             for item in top_items:
                 response_item = ticketupdate_table.scan(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item['ticket_id']),
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            return top_items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+    
+def getTakingTendersTickets():
+    try:
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        filtered_items = [item for item in items if item["state"] == "Taking Tenders"]
+        top_items = filtered_items[:8]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.query(
                     FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
                 )
                 item["commentcount"] = len(response_item["Items"])
