@@ -73,3 +73,10 @@ jobs:
             echo "No deployment for this branch"
             exit 0
           fi
+
+    - name: Set Binary Media Types for API Gateway
+      working-directory: backend
+      run: |
+            aws apigateway update-rest-api \
+              --rest-api-id $(aws apigateway get-rest-apis --query "items[?name=='mycity-api'].id" --output text) \
+              --patch-operations op=add,path=/binaryMediaTypes/multipart~1form-data
