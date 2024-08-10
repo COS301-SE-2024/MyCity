@@ -11,7 +11,7 @@ interface TenderType {
   serviceProvider: string;
   datetimesubmitted: string;
   ticket_id: string;
-  status: Status;
+  status: string;
   quote: number;
   estimatedTimeHours: number;
   upload: File | null;

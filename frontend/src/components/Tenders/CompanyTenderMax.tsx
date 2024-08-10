@@ -6,15 +6,18 @@ import "react-toastify/dist/ReactToastify.css";
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  id: string;
-  ticketId: string;
-  status: Status;
-  municipality: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+  tender_id : string;
+  status : string;
+  companyname : string;
+  contractdatetime : string;
+  finalCost : number;
+  finalDuration : number;
+  ticketnumber : string;
+  completedatetime : string;
+  contractnumber : string;
+  municipality : string;
   upload: File | null;
-  hasReportedCompletion: boolean;
+  hasReportedCompletion: boolean | false;
 }
 
 const statusStyles = {
@@ -67,7 +70,7 @@ const TenderMax = ({
     confirmAction();
   };
 
-  const formattedDate = tender.issueDate.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = tender.contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -86,16 +89,16 @@ const TenderMax = ({
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[tenderStatus]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketId}
+                <strong>Associated Ticket:</strong> {tender.ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.price.toFixed(2)}
+                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.estimatedDuration} days
+                <strong>Estimated Duration:</strong> {tender.finalDuration} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>

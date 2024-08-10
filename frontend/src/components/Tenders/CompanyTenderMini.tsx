@@ -4,26 +4,26 @@ import TenderMax from './CompanyTenderMax'; // Assuming the detailed view compon
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
 interface TenderType {
-  tender_id : string;
-  status : string;
-  companyname : string;
-  contractdatetime : string;
-  finalCost : number;
-  finalDuration : number;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string;
+  datetimesubmitted: string;
+  ticket_id: string;
+  status: string;
+  quote: number;
+  estimatedTimeHours: number;
+  municipality : string;
   ticketnumber : string;
-  latitude : number,
-  longitude : number,
-  completedatetime : string;
-  contractnumber : string;
   upload: File | null;
-  hasReportedCompletion: boolean; // New prop
+  hasReportedCompletion: boolean | false; // New prop
 }
 
 const statusStyles = {
   'under_review': 'border-blue-500 text-blue-500 bg-white',
-  'accepted': 'bg-green-200 text-black',
-  'rejected': 'bg-red-200 text-black',
-  'submitted': 'bg-gray-200 text-black',
+  'accepted': 'bg-green-200 text-green',
+  'rejected': 'bg-red-200 text-red',
+  'submitted' : 'bg-red-200 text-red'
 };
 
 
@@ -32,7 +32,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const textRef = useRef<HTMLSpanElement>(null);
 
-  const formateddate = tender.contractdatetime.split('T')[0]
+  const formateddate = tender.datetimesubmitted.split('T')[0]
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
 
@@ -82,7 +82,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
             {tender.status}
           </span>
         </div>
-        <div className="col-span-1 flex justify-center font-bold">{tender.contractnumber}</div>
+        <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
         <div className="col-span-1 flex justify-center relative overflow-hidden">
           <span ref={textRef} className={`inline-block ${isOverflowing ? 'scrolling-text' : ''}`}>

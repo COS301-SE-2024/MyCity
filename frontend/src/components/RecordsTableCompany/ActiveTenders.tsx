@@ -51,6 +51,21 @@ export default function ActiveTenders({tenders}:{tenders : TenderType[]}) {
     }
   };
 
+  function getStatusstyle(status : string){
+    switch (status) {
+      case "in progress":
+        return "in_progress"
+      case "completed":
+        return "completed"
+      case "closed":
+        return "closed"
+        break;
+      default: 
+        return "closed"
+        break;
+    }
+  }
+
   return (
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
