@@ -81,8 +81,12 @@ jobs:
               --rest-api-id $(aws apigateway get-rest-apis --query "items[?name=='mycity-api'].id" --output text) \
               --patch-operations op=add,path=/binaryMediaTypes/multipart~1form-data
 
+    - name: Wait Before Deploying API Gateway Stage
+      working-directory: backend
+      run: sleep 30  # Wait for 30 seconds before the next step
 
     - name: Deploy API Gateway Stage
+      working-directory: backend
       run: |
           if [ ${{ github.base_ref }} == 'main' ]; then
             aws apigateway create-deployment \
