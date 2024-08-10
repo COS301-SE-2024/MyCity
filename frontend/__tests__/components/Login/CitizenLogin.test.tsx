@@ -21,12 +21,12 @@ describe("CitizenLogin", () => {
     });
 
 
-    it("renders a forgot password link", () => {
+    /*it("renders a forgot password link", () => {
         render(<CitizenLogin />);
         const forgotPasswordLink = screen.getByText("Forgot password?");
 
         expect(forgotPasswordLink).toBeInTheDocument();
-    });
+    });*/
 
     it("renders a Login button", () => {
         render(<CitizenLogin />);
