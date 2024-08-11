@@ -69,6 +69,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           image: item.imageURL,
           createdBy: item.dateOpened,
           ticketNumber: item.ticketnumber,
+          ticketId: item.ticket_id,
         }}
         onClick={() => handleCardClick(item)}
       />
@@ -113,6 +114,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           arrowCount={selectedCard.upvotes}
           commentCount={selectedCard.commentcount}
           viewCount={selectedCard.viewcount}
+          ticketId={selectedCard.ticket_id}
           ticketNumber={selectedCard.ticketnumber}
           description={selectedCard.description}
           image={selectedCard.imageURL}

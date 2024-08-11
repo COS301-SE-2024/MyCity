@@ -93,12 +93,14 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           commentCount={commentCount}
           viewCount={viewCount}
           ticketNumber={ticketNumber}
-          description={description}
-          image={image}
-          createdBy={createdBy}
-          latitude={latitude}
-          longitude={longitude}
-          urgency={urgency}
+          description={ticketData.description}
+          image={ticketData.image}
+          createdBy={ticketData.createdBy}
+          latitude={ticketData.latitude}
+          longitude={ticketData.longitude}
+          urgency={ticketData.urgency}
+          ticketId={ticketData.ticket_id}
+
         />
       )}
     </>
