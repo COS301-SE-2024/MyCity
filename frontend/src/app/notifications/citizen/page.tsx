@@ -143,6 +143,7 @@ export default function Notifications() {
           latitude={item.latitude}
           longitude={item.longitude}
           urgency={item.urgency}
+          ticket_id={item.ticket_id}
         />
       );
     });

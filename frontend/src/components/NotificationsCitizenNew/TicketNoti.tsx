@@ -4,7 +4,7 @@ import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 
 interface TicketNotificationProps {
   ticketNumber: string;
-  image: string ;
+  image: string;
   action: string;
   isNew: boolean; // Determines if the notification is new or viewed
   title: string;
@@ -16,6 +16,7 @@ interface TicketNotificationProps {
   viewCount: number;
   latitude: number;
   longitude: number;
+  ticket_id: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -34,6 +35,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   latitude,
   longitude,
   urgency,
+  ticket_id,
 }) => {
   const [showTicketView, setShowTicketView] = useState(false);
 
@@ -68,7 +70,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         className="flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleNotificationClick}
       >
-        <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
+        <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`} />
         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
           {image ? (
             <img src={image} alt="Ticket" className="w-full h-full object-cover" />
@@ -93,14 +95,13 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           commentCount={commentCount}
           viewCount={viewCount}
           ticketNumber={ticketNumber}
-          description={ticketData.description}
-          image={ticketData.image}
-          createdBy={ticketData.createdBy}
-          latitude={ticketData.latitude}
-          longitude={ticketData.longitude}
-          urgency={ticketData.urgency}
-          ticketId={ticketData.ticket_id}
-
+          description={description}
+          image={image}
+          createdBy={createdBy}
+          latitude={latitude}
+          longitude={longitude}
+          urgency={urgency}
+          ticketId={ticket_id}
         />
       )}
     </>
