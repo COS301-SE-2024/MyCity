@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.2.10",
+    "@aws-sdk/client-cognito-identity-provider": "^3.628.0",
     "@chakra-ui/react": "^2.8.2",
     "@nextui-org/react": "^2.4.6",
     "@nextui-org/system": "^2.2.5",

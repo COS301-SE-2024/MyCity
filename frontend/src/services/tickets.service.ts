@@ -1,5 +1,12 @@
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
+import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
+
+interface UserAttributes {
+  given_name?: string; // FIRSTNAME
+  family_name?: string; //SURNAME
+}
+const userPoolID = process.env.USER_POOL_ID;
 
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
@@ -515,6 +522,36 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         throw error;
     }
 }
+
+// Used for the comments to fetch citizen, muni employee and SP employee first and last name
+// Note that the username is the id that will be passed from the frontend.
+export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
+  const client = new CognitoIdentityProviderClient({ region: "eu-west-1" });
+
+  try {
+    const command = new AdminGetUserCommand({
+      UserPoolId: userPoolID ,
+      Username: username,
+    });
+
+    const response = await client.send(command);
+
+    const userAttributes: UserAttributes = {};
+
+    response.UserAttributes?.forEach(attribute => {
+      if (attribute.Name === "given_name") {
+        userAttributes.given_name = attribute.Value;
+      } else if (attribute.Name === "family_name") {
+        userAttributes.family_name = attribute.Value;
+      }
+    });
+
+    return userAttributes;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+};
 
 function formatAddress(data: any[]) {
     data.forEach(item => {
