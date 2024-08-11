@@ -22,6 +22,7 @@ interface FaultCardUserViewProps {
   municipalityImage: string;
   longitude : string;
   latitude : string;
+  user_picture : string;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
 
@@ -47,6 +48,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   municipalityImage,
   longitude,
   latitude,
+  user_picture,
   urgency
 }) => {
 
@@ -246,7 +248,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
               <div className="flex flex-col items-center justify-center">
                 <h3 className="font-bold text-md">Created By</h3>
-                <img src="https://via.placeholder.com/40" alt="Created By" className="rounded-full mb-1" />
+                <img src={user_picture} alt="Created By" className="rounded-full mb-1 object-cover w-12 h-12" />
                 <p className="text-gray-700 text-sm">{createdBy}</p>
               </div>
             </div>

@@ -17,6 +17,8 @@ interface TenderType {
   municipality : string;
   ticketnumber : string;
   tender_id : string;
+  longitude : string;
+  latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
 }

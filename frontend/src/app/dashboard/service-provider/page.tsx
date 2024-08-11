@@ -1,33 +1,34 @@
 "use client";
 
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import NavbarCompany from '@/components/Navbar/NavbarCompany';
 import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
 import { PenToolIcon, ChevronDown } from 'lucide-react';
 import { getCompanyTickets } from '@/services/tickets.service';
 import { useProfile } from "@/hooks/useProfile";
+import { ThreeDots } from 'react-loader-spinner'; // Import the loading spinner
 
 export default function Dashboard() {
   const userProfile = useProfile();
   const [company, setCompany] = useState("");
   const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true); // State to manage loading
 
   useEffect(() => {
     const fetchData = async () => {
-      // try {
+      setIsLoading(true); // Start loading
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
-      const rspmostupvotes = await getCompanyTickets(user_company,user_session);
-      console.log(user_company)
+      const rspmostupvotes = await getCompanyTickets(user_company, user_session);
       setCompany(user_company);
       setUpvoteTickets(rspmostupvotes);
+      setIsLoading(false); // Stop loading
     };
 
     fetchData();
-  }, [ userProfile]); 
+  }, [userProfile]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -60,7 +61,18 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center text-white text-opacity-80">
           <PenToolIcon size={30} className="mb-2" />
-          <span className="text-xl">{company}</span>
+          {isLoading ? (
+            <ThreeDots
+              height="40"
+              width="80"
+              radius="9"
+              color="#ADD8E6"
+              ariaLabel="three-dots-loading"
+              visible={true}
+            />
+          ) : (
+            <span className="text-xl">{company}</span>
+          )}
         </div>
         <div className="flex items-center justify-between mt-8">
           <div className="relative inline-block text-left">
@@ -90,7 +102,20 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="mt-8">
-          <RecordsTable records={upvotedTickets} />
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <ThreeDots
+                height="40"
+                width="80"
+                radius="9"
+                color="#ADD8E6"
+                ariaLabel="three-dots-loading"
+                visible={true}
+              />
+            </div>
+          ) : (
+            <RecordsTable records={upvotedTickets} />
+          )}
         </div>
       </main>
 
@@ -155,11 +180,8 @@ export default function Dashboard() {
               work on it.
             </p>
           </div>
-
         </div>
       </div>
     </div>
-
-    
   );
 }

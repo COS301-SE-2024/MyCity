@@ -11,6 +11,7 @@ interface TenderType {
   companyname : string;
   datetimesubmitted : string;
   ticket_id: string;
+  ticketnumber : string;
   status: string;
   quote: number;
   estimatedTimeHours: number;
@@ -85,7 +86,7 @@ export default function Tender({ tender,onClose }: { tender: TenderType,onClose:
   return (
     <>
       <div
-        className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 hover:bg-opacity-80 cursor-pointer"
+        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 hover:bg-opacity-80 cursor-pointer"
         onClick={handleTenderClick}
       >
         <div className="col-span-1 flex justify-center">
@@ -94,7 +95,8 @@ export default function Tender({ tender,onClose }: { tender: TenderType,onClose:
           </span>
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
-        <div className="col-span-1 flex justify-center">{tender.ticket_id}</div>
+        <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
+
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
         <div className="col-span-1 flex justify-center">{datesubmitted}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
