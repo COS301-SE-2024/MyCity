@@ -37,9 +37,10 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [selectedAddress, setSelectedAddress] = useState<PKResult | null>(null);
 
     const initialiseMap = (mapContainerRef: React.RefObject<HTMLDivElement>) => {
-        if (map.current) {
-            return map;
-        }
+        // if (map.current) {
+        //     map.current.resize();
+        //     return map;
+        // }
 
         //set max bounds to lock the map to South Africa
         const boundsSA: [LngLatLike, LngLatLike] = [
@@ -140,7 +141,9 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     const initialiseFaultMap = (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[]) => {
         if (faultMap.current) {
-            return faultMap;
+            // faultMap.current.resize();
+            // return faultMap;
+            faultMapMarkers = [];
         }
 
         //set max bounds to lock the map to South Africa
