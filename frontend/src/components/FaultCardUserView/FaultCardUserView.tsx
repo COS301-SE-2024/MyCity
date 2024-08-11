@@ -221,7 +221,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
-              <Comments onBack={toggleComments} isCitizen={false} />
+              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketNumber}/>
+              {/*Added the ticket Number for the comments */}
             </div>
           </div>
         </div>

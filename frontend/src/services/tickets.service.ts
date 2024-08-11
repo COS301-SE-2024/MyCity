@@ -501,12 +501,13 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
 
 export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
-        const apiUrl = `/api/tickets/${ticket_id}/comments`;
+        const apiUrl = `/api/tickets/comments`;
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
                 "Authorization": user_session,
                 "Content-Type": "application/json",
+                "X-Ticket-ID": ticket_id, // Add ticket_id in the headers
             },
         });
 
@@ -525,7 +526,7 @@ export async function getTicketComments(ticket_id: string, user_session: string)
 
 // Used for the comments to fetch citizen, muni employee and SP employee first and last name
 // Note that the username is the id that will be passed from the frontend.
-export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
+export const getUserFirstLastName = async (username: string): Promise<UserAttributes | null> => {
   const client = new CognitoIdentityProviderClient({ region: "eu-west-1" });
 
   try {
