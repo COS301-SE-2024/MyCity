@@ -89,7 +89,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
 
 
   // Function to handle adding a new comment
-  const handleNewComment = () => {
+  /*const handleNewComment = () => {
     if (newComment.trim() !== '') {
       const newCommentData = {
         userName: 'Current User', // Replace with actual logged-in user's name
@@ -100,7 +100,36 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
       setComments([...comments, newCommentData]); // Add new comment to the list
       setNewComment(''); // Clear the input field after submission
     }
+  };*/
+
+  const handleNewComment = async () => {
+    if (newComment.trim() !== '') {
+      try {
+        const user_data = await userProfile.getUserProfile();
+        const userName = `${user_data.current?.given_name} ${user_data.current?.family_name}`;
+        const user_picture = String(user_data.current?.picture);
+        const userSession =  String(user_data.current?.session_token);
+        const user_email = String(user_data.current?.email);
+  
+        const newCommentData = {
+          userName,
+          userImage: user_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541', // Fallback image
+          time: new Date(),
+          commentText: newComment,
+        };
+  
+        // Optionally, you can make an API call to save the comment to your backend here.
+        await addCommentWithoutImage(newCommentData.commentText,ticketId, user_email, userSession);
+  
+        // Update the UI to include the new comment
+        setComments([...comments, newCommentData]);
+        setNewComment(''); // Clear the input field after submission
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
+    }
   };
+  
 
   return (
     <div className="relative h-full flex flex-col">
