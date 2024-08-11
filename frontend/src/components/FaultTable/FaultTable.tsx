@@ -167,7 +167,9 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
           urgency={selectedIncident.urgency} // Pass urgency
           longitude={selectedIncident.longitude}
           latitude={selectedIncident.latitude} 
-          user_picture={selectedIncident.user_picture}        />
+          user_picture={selectedIncident.user_picture}   
+          ticketId={selectedIncident.ticket_id}
+          />
       )}
       <style jsx>{`
         @keyframes scroll {

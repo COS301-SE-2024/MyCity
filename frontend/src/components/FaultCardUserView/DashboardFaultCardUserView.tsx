@@ -23,6 +23,7 @@ interface FaultCardUserViewProps {
   longitude : string;
   latitude : string;
   user_picture : string;
+  ticketId: string;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
 
@@ -49,7 +50,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   longitude,
   latitude,
   user_picture,
-  urgency
+  urgency,
+  ticketId,
 }) => {
 
 

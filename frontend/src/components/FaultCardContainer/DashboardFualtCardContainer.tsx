@@ -19,7 +19,9 @@ interface CardData {
   user_picture: string;
   address: string;
   latitude: number;       // Adding latitude
-  longitude: number;      // Adding longitude
+  longitude: number; 
+  ticketID: string; 
+       // Adding longitude
   urgency: "high" | "medium" | "low"; // Adding urgency
 }
 
