@@ -51,8 +51,8 @@ export async function middleware(request: NextRequest) {
   //---- IF USER IS NOT LOGGED IN ------
   else {
 
-    //RULE 3: and is trying to access a page that is neither their home, dashboard nor about page,
-    if (!pathIs("/") && !pathIs("/dashboard/guest") && !pathIs("/about/guest")) {
+    //RULE 3: and is trying to access a page that is neither their home, dashboardd, about nor login/signup pages,
+    if (!pathStartsWith("/auth") && !pathIs("/") && !pathIs("/dashboard/guest") && !pathIs("/about/guest")) {
       //redirect to guest dashboard
       return NextResponse.redirect(new URL("/dashboard/guest", request.nextUrl));
     }
