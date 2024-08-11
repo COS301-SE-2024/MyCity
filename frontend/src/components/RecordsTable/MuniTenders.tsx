@@ -5,6 +5,7 @@ type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 interface TenderType {
   tender_id: string;
   tendernumber : string;
+  ticketnumber : string;
   company_id : string;
   companyname : string;
   datetimesubmitted : string;
