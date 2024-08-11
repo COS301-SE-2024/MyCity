@@ -2,7 +2,6 @@ import React, { FormEvent, useEffect, useState, useMemo, useCallback, useRef } f
 import { AutocompleteItem, Textarea, Button, Autocomplete } from "@nextui-org/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router";
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from "@/types/custom.types";
 import { getFaultTypes, CreatTicket } from "@/services/tickets.service";
@@ -106,8 +105,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
         if (isClient) {
-          const router = useRouter(); // Initialize useRouter only on the client-side
-          router.push("/dashboard/citizen"); // Redirect to the dashboard
+          
         }
       } else {
         throw new Error("Ticket creation failed");
