@@ -1,12 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaCircle, FaUserCircle } from "react-icons/fa";
-import FaultCardUserView from "../FaultCardUserView/FaultCardUserView"; // Adjust the import path as necessary
+import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 
 interface TicketNotificationProps {
   ticketNumber: string;
-  image: string | null;
+  image: string ;
   action: string;
   isNew: boolean; // Determines if the notification is new or viewed
+  title: string;
+  address: string;
+  description: string;
+  createdBy: string;
+  arrowCount: number;
+  commentCount: number;
+  viewCount: number;
+  latitude: number;
+  longitude: number;
+  urgency: "high" | "medium" | "low";
 }
 
 const TicketNotification: React.FC<TicketNotificationProps> = ({
@@ -14,31 +24,18 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   image,
   action,
   isNew,
+  title,
+  address,
+  description,
+  createdBy,
+  arrowCount,
+  commentCount,
+  viewCount,
+  latitude,
+  longitude,
+  urgency,
 }) => {
   const [showTicketView, setShowTicketView] = useState(false);
-  const [ticketData, setTicketData] = useState<any>(null);
-
-  useEffect(() => {
-    // Mock data - Replace this with actual backend call when available
-    const fetchTicketData = async () => {
-      const mockData = {
-        title: "Road Repair",
-        address: "123 Main Street, Springfield, USA",
-        description: "Repair the main road.",
-        image: "https://via.placeholder.com/200",
-        createdBy: "John Doe",
-        arrowCount: 10,
-        commentCount: 3,
-        viewCount: 15,
-        latitude: 37.7749,
-        longitude: -122.4194,
-        urgency: "high",
-      };
-      setTicketData(mockData);
-    };
-
-    fetchTicketData();
-  }, [ticketNumber]);
 
   const getActionText = () => {
     switch (action) {
@@ -86,15 +83,15 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         </div>
       </div>
 
-      {showTicketView && ticketData && (
+      {showTicketView && (
         <FaultCardUserView
           show={true}
           onClose={handleTicketViewClose}
-          title={ticketData.title}
-          address={ticketData.address}
-          arrowCount={ticketData.arrowCount}
-          commentCount={ticketData.commentCount}
-          viewCount={ticketData.viewCount}
+          title={title}
+          address={address}
+          arrowCount={arrowCount}
+          commentCount={commentCount}
+          viewCount={viewCount}
           ticketNumber={ticketNumber}
           description={ticketData.description}
           image={ticketData.image}
@@ -103,6 +100,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           longitude={ticketData.longitude}
           urgency={ticketData.urgency}
           ticketId={ticketData.ticket_id}
+
         />
       )}
     </>
