@@ -102,6 +102,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           latitude={ticketData.latitude}
           longitude={ticketData.longitude}
           urgency={ticketData.urgency}
+          ticketId={ticketData.ticket_id}
         />
       )}
     </>
