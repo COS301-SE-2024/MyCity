@@ -80,7 +80,7 @@ export default function MuniTenders() {
             <h2 className="text-xl font-bold mb-4">Help Menu</h2>
             <p>This page allows you to:</p>
             <ul className="list-disc list-inside">
-              <li>View and bid for open fault tickets in your company's region.</li>
+              <li>View and bid for open fault tickets in your company&apos;s region.</li>
               <li>Access active and closed tenders associated with your company.</li>
               <li>Navigate between tabs to see different sets of records.</li>
             </ul>
