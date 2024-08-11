@@ -527,7 +527,13 @@ export async function getTicketComments(ticket_id: string, user_session: string)
 // Used for the comments to fetch citizen, muni employee and SP employee first and last name
 // Note that the username is the id that will be passed from the frontend.
 export const getUserFirstLastName = async (username: string): Promise<UserAttributes | null> => {
-  const client = new CognitoIdentityProviderClient({ region: "eu-west-1" });
+  const client = new CognitoIdentityProviderClient({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    },
+  });
 
   try {
     const command = new AdminGetUserCommand({
