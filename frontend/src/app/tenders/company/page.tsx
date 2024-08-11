@@ -33,7 +33,7 @@ export default function MuniTenders() {
       console.log(rspmostupvotes)
     };
     fetchData();
-  },[])
+  },[userProfile])
 
   useEffect(() => {
     console.log(openTickets);  // This will log the updated openTickets whenever it changes
