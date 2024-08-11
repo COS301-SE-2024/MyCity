@@ -1,17 +1,19 @@
 import { useMapbox } from "@/hooks/useMapbox";
 import { useProfile } from "@/hooks/useProfile";
 import { getTicketsGeoData } from "@/services/tickets.service";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Rings } from "react-loader-spinner"; // Importing the Rings loader
 
 export default function FaultMapView() {
   const faultMapContainer = useRef<HTMLDivElement>(null);
   const { initialiseFaultMap } = useMapbox();
-
   const { getUserProfile } = useProfile();
+  const [faultCount, setFaultCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     const loadFaultMap = async () => {
+      setLoading(true);
       const userProfile = await getUserProfile();
       const sessionToken = userProfile.current?.session_token;
 
@@ -21,45 +23,52 @@ export default function FaultMapView() {
         initialiseFaultMap(faultMapContainer, faultGeodata);
       }
 
+      if (Array.isArray(faultGeodata)) {
+        setFaultCount(faultGeodata.length);
+      } else {
+        setFaultCount(0); // If no faults or an error occurs
+      }
+      setLoading(false);
     };
 
     loadFaultMap();
   }, [getUserProfile, initialiseFaultMap]);
 
-
   return (
-    <div className="flex flex-col md:flex-row h-full">
-      {/* Map Section */}
-      <div className="md:w-1/2 lg:w-1/2 md:pr-4 flex-grow flex pl-2">
-        <div className="relative w-full h-full rounded-lg shadow-md bg-gray-200" ref={faultMapContainer}></div>
-      </div>
-
-      {/* Key and Regional Summary Section */}
-      <div className="md:w-1/2 lg:w-1/2 flex flex-col">
-        <div className="bg-white p-4 rounded-lg shadow-md flex-grow bg-opacity-70 h-[27rem]">
-          <h2 className="text-lg font-bold mb-2">Key</h2>
-          <div className="flex items-center mb-2">
-            <div className="w-4 h-4 rounded-full bg-red-700 mr-2"></div>
-            <span>Urgent</span>
+    <div className="flex items-center justify-center h-full px-4">
+      <div className="flex flex-col md:flex-row w-full max-w-7xl h-[40rem] bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Key Section */}
+        <div className="w-full md:w-1/6 p-6 bg-white flex flex-col justify-center">
+          <h2 className="text-xl font-bold mb-4 text-center">Key</h2>
+          <div className="flex items-center mb-4">
+            <div className="w-6 h-6 rounded-full bg-red-700 mr-4"></div>
+            <span className="text-lg">Urgent</span>
           </div>
-          <div className="flex items-center mb-2">
-            <div className="w-4 h-4 rounded-full bg-yellow-600 mr-2"></div>
-            <span>Semi-urgent</span>
+          <div className="flex items-center mb-4">
+            <div className="w-6 h-6 rounded-full bg-yellow-600 mr-4"></div>
+            <span className="text-lg">Semi-urgent</span>
           </div>
-          <div className="flex items-center mb-2">
-            <div className="w-4 h-4 rounded-full bg-green-700 mr-2"></div>
-            <span>Non-urgent</span>
+          <div className="flex items-center mb-4">
+            <div className="w-6 h-6 rounded-full bg-green-700 mr-4"></div>
+            <span className="text-lg">Non-urgent</span>
+          </div>
+          <div className="mt-6 text-center">
+            <h2 className="text-lg font-bold">Faults Pinned</h2>
+            {loading ? (
+              <div className="flex justify-center">
+                <Rings color="#000000" height={40} width={40} />
+              </div>
+            ) : (
+              <p className="text-lg font-bold">{faultCount}</p>
+            )}
           </div>
         </div>
-        {/* <div className="bg-white p-4 rounded-lg shadow-md flex-grow bg-opacity-70">
-          <h2 className="text-lg font-bold mb-2">Regional Summary</h2>
-          <p className="mb-2">Population: ~ 2 million</p>
-          <p className="mb-2">Infrastructure faults: 154</p>
-          <p className="mb-2">Active Users: 15,029</p>
-          <p className="mb-2">Active Service Providers: 453</p>
-          <p className="mb-2">Municipality Rating (21): ★★★★☆</p>
-        </div> */}
+
+        {/* Map Section */}
+        <div className="w-full md:w-5/6 flex-grow">
+          <div className="relative w-full h-full rounded-lg bg-gray-200" ref={faultMapContainer}></div>
+        </div>
       </div>
     </div>
   );
-};
+}

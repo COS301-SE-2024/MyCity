@@ -50,7 +50,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
 
   useEffect(()=>{
     setTenderstatus(tender.status)
-  },[])
+  },[tender.status])
 
   function getStatus( status : string){
     switch (status) {
