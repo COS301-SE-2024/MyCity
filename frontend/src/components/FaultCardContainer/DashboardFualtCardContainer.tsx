@@ -113,6 +113,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           arrowCount={selectedCard.upvotes}
           commentCount={selectedCard.commentcount}
           viewCount={selectedCard.viewcount}
+          ticketId={selectedCard.ticket_id}
           ticketNumber={selectedCard.ticketnumber}
           description={selectedCard.description}
           image={selectedCard.imageURL}
