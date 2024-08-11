@@ -1,18 +1,30 @@
 "use client";
 
 import NavbarUser from "@/components/Navbar/NavbarUser";
-
-// import { notificationStates } from "@/components/NotificationsCitizen/states";
-// import NotificationsStatusCardContainer from "@/components/NotificationsStatusCardContainer/NotificationsStatusCardContainer";
 import React, { Key, useEffect, useRef, useState } from "react";
-// import { Tabs, Tab } from "@nextui-org/react";
-// import FaultTable from "@/components/FaultTable/FaultTable";
-// import FaultMapView from "@/components/FaultMapView/FaultMapView";
-// import { FaTimes } from "react-icons/fa";
-// import { HelpCircle } from "lucide-react";
 import TicketNoti from "@/components/NotificationsCitizenNew/TicketNoti";
-import DashboardStatusCardContainer from "@/components/StatusCardContainer/DashboardStatusCardContainer";
 import { useProfile } from "@/hooks/useProfile";
+
+interface CardData {
+  dateClosed: string;
+  upvotes: number;
+  ticket_id: string;
+  ticketnumber: string;
+  asset_id: string;
+  state: string;
+  dateOpened: string;
+  createdby: string;
+  imageURL: string;
+  viewcount: number;
+  description: string;
+  municipality_id: string;
+  commentcount: number;
+  user_picture: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  urgency: "high" | "medium" | "low";
+}
 
 import {
   getTicket,
@@ -39,55 +51,101 @@ const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
 );
 
 export default function Notifications() {
-  const user = useRef(null);
   const userProfile = useProfile();
-  const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 20;
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+
+  const handleCardClick = (cardData: CardData) => {
+    setSelectedCard(cardData);
+    setShowModal(true);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      // try {
-      const user_data = await userProfile.getUserProfile();
-      const user_id = user_data.current?.email;
-      const user_session = String(user_data.current?.session_token);
-      // console.log(user_session);
-      const rspmostupvotes = await getMostUpvote(user_session);
-      const rspwatchlist = await getWatchlistTickets(
-        String(user_id),
-        user_session
-      );
-      const municipality = user_data.current?.municipality;
-      const rspmunicipality = await getTicketsInMunicipality(
-        municipality,
-        user_session
-      );
-      // console.log(rspmostupvotes)
-      // const flattenedWatchlist = rspwatchlist.flat();
-      console.log(rspwatchlist);
-      setMostUpvoteResults(rspmostupvotes);
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-      if (rspwatchlist.length > 0) {
-        setDashWatchResults(rspwatchlist);
-        console.log(dashWatchResults);
-      } else setDashWatchResults([]);
-      // console.log( dashMostUpvoteResults)
-      // }
-      // catch (error) {
-      //   console.error("Error fetching data:", error);
-      // }
+      try {
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.email;
+        const user_session = String(user_data.current?.session_token);
+
+        const rspmostupvotes = await getMostUpvote(user_session);
+        const rspwatchlist = await getWatchlistTickets(
+          String(user_id),
+          user_session
+        );
+        const municipality = user_data.current?.municipality;
+        const rspmunicipality = await getTicketsInMunicipality(
+          municipality,
+          user_session
+        );
+
+        setMostUpvoteResults(rspmostupvotes);
+        setDashMuniResults(
+          Array.isArray(rspmunicipality) ? rspmunicipality : []
+        );
+        setDashWatchResults(Array.isArray(rspwatchlist) ? rspwatchlist : []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchData();
-  }, [userProfile, dashWatchResults]); // Add userProfile to the dependency array
+  }, [userProfile]);
 
-  const hasStatusFieldMuni =
-    Array.isArray(dashMuniResults) &&
-    dashMuniResults.some((item) => item.Status !== undefined);
-  const hasStatusFieldWatch =
-    Array.isArray(dashWatchResults) &&
-    dashWatchResults.some((item) => item.Status !== undefined);
+  const showNextItems = () => {
+    setStartIndex((prevIndex) =>
+      Math.min(prevIndex + itemsPerPage, allTickets.length - itemsPerPage)
+    );
+  };
+
+  const showPreviousItems = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
+  };
+
+  const allTickets = [
+    ...dashMostUpvoteResults.map((ticket) => ({
+      ...ticket,
+      action: "upvoted",
+    })),
+    ...dashMuniResults.map((ticket) => ({ ...ticket, action: "commented on" })),
+    ...dashWatchResults.map((ticket) => ({ ...ticket, action: "watchlisted" })),
+  ];
+
+  const visibleNotifications = allTickets
+    .slice(startIndex, Math.min(startIndex + itemsPerPage, allTickets.length))
+    .map((item, index) => {
+      const action = dashMostUpvoteResults.includes(item)
+        ? "upvoted"
+        : dashWatchResults.includes(item)
+        ? "watchlisted"
+        : dashMuniResults.includes(item)
+        ? "updated"
+        : "commented on"; // Example default action
+
+      return (
+        <TicketNoti
+          key={index}
+          ticketNumber={item.ticketnumber}
+          image={item.imageURL || null}
+          action={action}
+          isNew={item.isNew || false} // Assuming `isNew` is part of your item data
+          title={item.title} // Make sure these fields exist in your data
+          address={item.address}
+          description={item.description}
+          createdBy={item.createdby}
+          arrowCount={item.upvotes}
+          commentCount={item.commentcount}
+          viewCount={item.viewcount}
+          latitude={item.latitude}
+          longitude={item.longitude}
+          urgency={item.urgency}
+        />
+      );
+    });
 
   return (
     <div>
@@ -126,54 +184,9 @@ export default function Notifications() {
                 Notifications
               </h1>
 
-              <TicketNoti
-                ticketNumber="328"
-                image={null} // Or replace with an actual image URL
-                action="upvoted"
-                isNew={true}
-              />
-              <TicketNoti
-                ticketNumber="329"
-                image={null} // Or replace with an actual image URL
-                action="commented on"
-                isNew={false}
-              />
-              <TicketNoti
-                ticketNumber="330"
-                image={null} // Or replace with an actual image URL
-                action="watchlisted"
-                isNew={true}
-              />
-              <TicketNoti
-                ticketNumber="331"
-                image={null} // Or replace with an actual image URL
-                action="updated"
-                isNew={false}
-              />
-              {/* Your Ticket Interactions */}
+              {visibleNotifications}
 
-              {/* Your Ticket Updates */}
-              {/* <ScrollablePanel title="Your Ticket Updates"> */}
-              {/* <NotificationUpdate state="AssigningContract" />
-                <NotificationUpdate state="Closed" />
-                <NotificationUpdate state="InProgress" />
-                <NotificationUpdate state="Closed" />
-                <NotificationUpdate state="AssigningContract" />
-                <NotificationUpdate state="Opened" />
-                <NotificationUpdate state="TakingTenders" /> */}
-              {/* </ScrollablePanel> */}
-              {/* Your Watchlist */}
-              {/* <ScrollablePanel title="Your Watchlist"> */}
-              {/* <NotificationUpdate state="InProgress" /> */}
-              {/* <NotificationUpvote /> */}
-              {/* <NotificationComment /> */}
-              {/* <NotificationUpdate state="AssigningContract" /> */}
-              {/* <NotificationComment /> */}
-              {/* <NotificationUpdate state="InProgress" /> */}
-              {/* <NotificationUpdate state="Closed" /> */}
-              {/* <NotificationComment /> */}
-              {/* <NotificationUpdate state="Opened" /> */}
-              {/* </ScrollablePanel> */}
+              {/* Add other static TicketNoti components if needed */}
             </main>
           </div>
         </div>
