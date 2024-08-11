@@ -125,7 +125,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
           ))
         )}
       </div>
-      {isCitizen && (
+      {/*isCitizen &&*/ (
         <div className="flex items-center p-2 border-t">
           <div className="border-l-4 border-gray-200 h-full mr-4"></div> {/* Vertical separator */}
           <input
