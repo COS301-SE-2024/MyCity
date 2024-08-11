@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Tender from "../Tenders/CompanyTenderMini"; // Update the import path if necessary
-import { ThreeDots } from "react-loader-spinner"; // Assuming you're using the react-loader-spinner package
+import { ThreeDots } from "react-loader-spinner";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
@@ -36,15 +36,12 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
   const tendersPerPage = 10;
 
   useEffect(() => {
-    // Simulate a loading delay for demo purposes
-    const timer = setTimeout(() => setLoading(false), 2000); // Replace with real data fetching logic
+    const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Ensure tenders is an array
   const safeTenders = Array.isArray(tenders) ? tenders : [];
 
-  // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
   const currentTenders = safeTenders.slice(indexOfFirstTender, indexOfLastTender);
@@ -89,13 +86,13 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
         <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
-          <div className="col-span-1">Status</div>
-          <div className="col-span-1">Tender ID</div>
-          <div className="col-span-1">Ticket ID</div>
-          <div className="col-span-1">Municipality</div>
-          <div className="col-span-1">Issue Date</div>
-          <div className="col-span-1">Price</div>
-          <div className="col-span-1">Estimated Duration</div>
+          <div className="col-span-1 flex justify-center">Status</div>
+          <div className="col-span-1 flex justify-center">Tender ID</div>
+          <div className="col-span-1 flex justify-center">Ticket ID</div>
+          <div className="col-span-1 flex justify-center">Municipality</div>
+          <div className="col-span-1 flex justify-center">Issue Date</div>
+          <div className="col-span-1 flex justify-center">Price</div>
+          <div className="col-span-1 flex justify-center">Estimated Duration</div>
         </div>
         <div className="min-w-full">
           {currentTenders.map((tender) => (
