@@ -94,7 +94,7 @@ export default function CitizenDashboard() {
           ></div>
           <main>
             <div className="flex items-center mb-2 mt-2 ml-5">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 ">
+              <h1 className="text-4xl font-bold text-white text-opacity-80 text-center ">
                 Dashboard
               </h1>
             </div>

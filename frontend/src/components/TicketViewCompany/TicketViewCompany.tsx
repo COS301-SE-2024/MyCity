@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaTimes } from "react-icons/fa";
 import { AlertCircle } from "lucide-react";
-import TenderMax from "../Tenders/CompanyTenderMax"; // Adjust the import path as necessary
-import CreateBid from "../Tenders/CreateBid"; // Adjust the import path as necessary
-import ViewBid from "../Tenders/ViewBid"; // Adjust the import path as necessary
+import TenderMax from "../Tenders/CompanyTenderMax"; 
+import CreateBid from "../Tenders/CreateBid"; 
+import ViewBid from "../Tenders/ViewBid"; 
 import { useProfile } from "@/hooks/useProfile";
-import RenderMap from "@/hooks/mapboxmap";
 import MapComponent from "@/context/MapboxMap";
-
 import { getCompanyTenders } from "@/services/tender.service";
 
 interface TicketViewCompanyProps {
@@ -57,52 +55,53 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   urgency,
 }) => {
   const userProfile = useProfile();
+  const modalRef = useRef<HTMLDivElement>(null); // Create a ref for the modal
   const [showTenderMax, setShowTenderMax] = useState(false);
-  const [company,setCompany] = useState(String)
+  const [company, setCompany] = useState(String);
   const [showBid, setShowBid] = useState(false);
   const [hasBidded, setHasBidded] = useState(false);
-  const [tender,setTender] = useState<any>(null)
-  const [reRender,setReRender] = useState(Boolean)
+  const [tender, setTender] = useState<any>(null);
+  const [reRender, setReRender] = useState(Boolean);
   const [mapKey, setMapKey] = useState(0);
-  
-  console.log("ticket id: " + ticket_id)
+
   useEffect(() => {
     const fetchData = async () => {
-      // try {
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
-      const user_session = String(user_data.current?.session_token)
+      const user_session = String(user_data.current?.session_token);
       setCompany(user_company);
-      const rsptenders = await getCompanyTenders(user_company, user_session)
-      if(rsptenders == null)
-      {
+      const rsptenders = await getCompanyTenders(user_company, user_session);
+      if (rsptenders == null) {
         setHasBidded(false);
-      }
-      else {
-        rsptenders.forEach((item: { ticket_id: string; }) => {
-            console.log(item)
-            if(item.ticket_id == ticket_id)
-            {
-              setTender(item)
-            } 
+      } else {
+        rsptenders.forEach((item: { ticket_id: string }) => {
+          if (item.ticket_id == ticket_id) {
+            setTender(item);
+          }
         });
-        if(tender == null)
-        {
-            setHasBidded(false);
-        }
-        else {
-            setHasBidded(true);
-        }
+        setHasBidded(!!tender);
       }
     };
 
     fetchData();
-  }, [ userProfile, tender, ticket_id]);
+  }, [userProfile, tender, ticket_id]);
 
   useEffect(() => {
-    // Force re-render of the map when component mounts
-    setMapKey(prevKey => prevKey + 1);
+    setMapKey((prevKey) => prevKey + 1);
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose(); // Close the modal when clicking outside
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -120,74 +119,38 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   const addressParts = address.split(",");
 
   const handleTenderContractClick = () => {
-    setReRender(false)
+    setReRender(false);
     setShowTenderMax(true);
-  };
-
-  const handleTenderMaxClose = () => {
-    setShowTenderMax(false);
   };
 
   const handleBidClick = async () => {
     const user_data = await userProfile.getUserProfile();
-    const company_name = String(user_data.current?.company_name)
-    const user_session = String(user_data.current?.session_token)
-    const rsptenders = await getCompanyTenders(company_name, user_session)
-    setReRender(false)
-    if(rsptenders == null)
-    {
-      show = true;
-      setShowBid(true);
-      setHasBidded(false);
-    }
-    else {
-       rsptenders.forEach((item: { ticket_id: string; }) => {
-          console.log(item)
-          if(item.ticket_id == ticket_id)
-          {
-            setTender(item)
-          } 
-       });
-       if(tender == null)
-       {
-          show = true;
-          setShowBid(true);
-          setHasBidded(false);
-       }
-       else {
-          show = true;
-          setShowBid(true);
-          setHasBidded(true);
-       }
-    }
+    const company_name = String(user_data.current?.company_name);
+    const user_session = String(user_data.current?.session_token);
+    const rsptenders = await getCompanyTenders(company_name, user_session);
+    setReRender(false);
+    setShowBid(true);
+    setHasBidded(!!tender);
   };
 
-  const handleBidClose = () => {
-    setShowBid(false);
-  };
-
-  const getUrgency = (votes : number) =>{
+  const getUrgency = (votes: number) => {
     if (votes < 10) {
       return "low";
-  } else if (votes >= 10 && votes < 20) {
+    } else if (votes >= 10 && votes < 20) {
       return "medium";
-  } else if (votes >= 20 && votes <= 40) {
+    } else if (votes >= 20 && votes <= 40) {
       return "high";
-  } else {
-      return "low"; // Default case
-  }
-}
-
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  // RenderMap(Number(longitude),Number(latitude))
+    } else {
+      return "low";
+    }
+  };
 
   return (
     <>
       {!showTenderMax && !showBid && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
-          <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
-            <button className="absolute top-2 right-2 text-gray-700" onClick={onClose}>
+          <div ref={modalRef} className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
+            <button className="absolute top-2 right-2 text-gray-700 z-20" onClick={onClose}>
               <FaTimes size={24} />
             </button>
             <div className="flex flex-col lg:flex-row w-full overflow-auto">
@@ -265,24 +228,6 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
         </div>
       )}
 
-      {/* {showTenderMax && (
-        <TenderMax
-          tender={{
-            id: ticketNumber,
-            ticketId: ticketNumber,
-            status: status === "Fix in progress" ? "Active" : "Unassigned",
-            municipality: municipality,
-            issueDate: new Date().toISOString().split('T')[0],
-            price: 1000,
-            estimatedDuration: 5,
-            upload: null,
-            hasReportedCompletion: false,
-          }}
-          onClose={handleTenderMaxClose}
-          municipality={municipality}
-        />
-      )} */}
-
       {showBid && hasBidded && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
           <div className="transform scale-80 w-full">
@@ -302,7 +247,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
               title={title}
               address={address}
               tender_id={tender.tender_id}
-              onBack={handleBidClose}
+              onBack={onClose}
             />
           </div>
         </div>
@@ -310,7 +255,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
       {showBid && !hasBidded && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="transform scale-80 w-full">
+          <div className="transform scale-100 w-full">
             <CreateBid
               longitude={longitude}
               latitude={latitude}
@@ -321,7 +266,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
               address={address}
               municipalityImage={municipalityImage}
               description={description}
-              onBack={handleBidClose}
+              onBack={onClose}
             />
           </div>
         </div>
