@@ -3,7 +3,7 @@ interface UploadProfilePictureResponse {
     picture_url: string;
 }
 
-export async function uploadProfilePicture(formData: FormData, revalidate?: boolean) {
+export async function uploadProfilePicture(sessionToken: string | undefined, formData: FormData, revalidate?: boolean) {
     //bypass caching route and make request directly to external API
     const API_BASE_URL = process.env.API_BASE_URL;
 
@@ -14,6 +14,9 @@ export async function uploadProfilePicture(formData: FormData, revalidate?: bool
     try {
         const response = await fetch(`${API_BASE_URL}/users/profile-picture/upload`, {
             method: "POST",
+            headers: {
+                "Authorization": `Bearer ${sessionToken}`,
+            },
             body: formData
         });
 

@@ -11,6 +11,7 @@ import {
   searchMunicipality,
   searchServiceProvider,
 } from "@/services/search.service";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function CreateTicket() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,7 +28,12 @@ export default function CreateTicket() {
   const [showToast, setShowToast] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
 
+  const { getUserProfile } = useProfile();
+
   const handleSearch = async () => {
+    const userProfile = await getUserProfile();
+    const sessionToken = userProfile.current?.session_token;
+
     try {
       setHasSearched(true);
       setLoading(true);
@@ -35,10 +41,10 @@ export default function CreateTicket() {
       let data: any[] = [];
       switch (selectedFilter) {
         case "serviceProviders":
-          data = await searchServiceProvider(searchTerm);
+          data = await searchServiceProvider(sessionToken, searchTerm);
           break;
         case "municipalities":
-          data = await searchMunicipality(searchTerm);
+          data = await searchMunicipality(sessionToken, searchTerm);
           break;
         default:
           break;
@@ -191,11 +197,10 @@ export default function CreateTicket() {
               (filter) => (
                 <div
                   key={filter}
-                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${
-                    selectedFilter === filter
+                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
                       ? "bg-gray-500 text-white"
                       : "bg-transparent text-white"
-                  }`}
+                    }`}
                   onClick={() =>
                     handleFilterChange(
                       filter as "municipalities" | "serviceProviders"
@@ -257,11 +262,10 @@ export default function CreateTicket() {
                       <li key={index} className="mx-1">
                         <button
                           onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 rounded-full ${
-                            currentPage === index + 1
+                          className={`px-3 py-1 rounded-full ${currentPage === index + 1
                               ? "bg-blue-500 text-white"
                               : "bg-gray-300"
-                          }`}
+                            }`}
                         >
                           {index + 1}
                         </button>

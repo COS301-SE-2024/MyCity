@@ -1,39 +1,78 @@
-import React, { FormEvent, useState } from "react";
-import Link from "next/link";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Input, Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@/types/custom.types";
 import { handleGoogleSignIn, handleSignIn } from "@/services/auth.service";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 export default function CitizenLogin() {
   const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  useEffect(() => {
+    const { email, password } = formData;
+    const formValid = email && password && isEmailValid;
+    setIsFormValid(!!formValid);
+  }, [formData, isEmailValid]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    if (name === "email") {
+      validateEmail(value);
+    }
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsEmailValid(emailRegex.test(email));
+  };
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget as HTMLFormElement);
+    setIsLoading(true);
+    setError(null); // Clear any previous error
 
     try {
-      const { isSignedIn } = await handleSignIn(form, UserRole.CITIZEN);
+      const { isSignedIn } = await handleSignIn(new FormData(event.currentTarget as HTMLFormElement), UserRole.CITIZEN);
 
       if (isSignedIn) {
-        router.push("/dashboard");
+        router.push("/dashboard/citizen");
       } else {
-        throw "Something happened and we could not sign you in.";
+        throw new Error("Login failed. Please try again.");
       }
     } catch (error) {
-      console.log("Error: " + error);
+      setError("An error occurred during login. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const googleButtonOnClick = async () => {
-    await handleGoogleSignIn();
+    setIsLoading(true);
+    setError(null); // Clear any previous error
+
+    try {
+      await handleGoogleSignIn();
+    } catch (error) {
+      setError("An error occurred during Google login. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -53,13 +92,15 @@ export default function CitizenLogin() {
           }
           labelPlacement={"outside"}
           classNames={{
-            inputWrapper: "h-[3em]",
+            inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""}`,
           }}
           type="email"
           name="email"
           autoComplete="new-email"
           placeholder="example@mail.com"
           required
+          value={formData.email}
+          onChange={handleInputChange}
         />
 
         <div className="relative w-full">
@@ -80,6 +121,8 @@ export default function CitizenLogin() {
             autoComplete="new-password"
             placeholder="Password"
             required
+            value={formData.password}
+            onChange={handleInputChange}
           />
           <button
             type="button"
@@ -89,18 +132,19 @@ export default function CitizenLogin() {
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
-        {/*}
-        <Link href={"/forgot-password"} className="text-blue-500 underline text-right mt-[-1em]">
-          Forgot password?
-        </Link>*/}
 
         <Button
           name="submit"
           data-testid="submit-btn"
-          className="w-56 h-11 rounded-3xl m-auto bg-blue-500 text-white font-semibold"
+          className={`w-56 h-11 rounded-3xl m-auto font-semibold ${
+            isFormValid && !isLoading
+              ? "bg-blue-500 text-white"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
           type="submit"
+          disabled={!isFormValid || isLoading}
         >
-          Login
+          {isLoading ? <FaSpinner className="animate-spin" /> : "Login"}
         </Button>
 
         <div className="w-full flex flex-row items-center">
@@ -115,11 +159,26 @@ export default function CitizenLogin() {
           data-testid="google-login-btn"
           className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
           type="button"
+          disabled={isLoading}
         >
           <FcGoogle size={20} />
           <span className="ml-2">Continue with Google</span>
         </Button>
       </form>
+
+      {error && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <p className="text-black">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
