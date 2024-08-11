@@ -3,17 +3,17 @@ import Tender from "../Tenders/MuniTenderMini"; // Update the import path if nec
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 interface TenderType {
-  id: string;
   tender_id: string;
-  tendernumber: string;
-  company_id: string;
-  companyname: string;
-  serviceProvider: string; // Add serviceProvider here
-  datetimesubmitted: string;
+  tendernumber : string;
+  company_id : string;
+  companyname : string;
+  datetimesubmitted : string;
   ticket_id: string;
-  status: Status;
+  status: string;
   quote: number;
   estimatedTimeHours: number;
+  longitude : string;
+  latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean; // New prop
 }
@@ -27,7 +27,7 @@ export default function MuniTenders({
   onBack,
 }: {
   tenders: TenderType[];
-  onBack: () => void;
+  onBack: (data : number) => void;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
@@ -46,6 +46,10 @@ export default function MuniTenders({
     }
   };
 
+  const handleBack = () =>{
+    onBack(0)
+  }
+
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -57,7 +61,7 @@ export default function MuniTenders({
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
         <div className="flex justify-between items-center mb-2 px-2 py-1 font-bold text-center relative">
           <button
-            onClick={onBack}
+            onClick={handleBack}
             className="bg-white bg-opacity-70 text-black ml-2 px-3 py-1 rounded-xl focus:outline-none hover:bg-opacity-90"
           >
             Back
@@ -80,7 +84,7 @@ export default function MuniTenders({
             </div>
             <div className="min-w-full">
               {currentTenders.map((tender) => (
-                <Tender key={tender.ticket_id} tender={tender} />
+                <Tender key={tender.ticket_id} tender={tender} onClose={onBack} />
               ))}
             </div>
             <div className="flex justify-between mt-4 text-white">

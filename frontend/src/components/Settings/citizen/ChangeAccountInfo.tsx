@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Image from "next/image";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
+import { uploadProfilePicture } from "@/services/users.service";
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
@@ -15,6 +16,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   const [data, setData] = useState<UserData | null>(profileData);
   const [firstname, setFirstname] = useState(profileData?.given_name);
   const [surname, setSurname] = useState(profileData?.family_name);
+  const [file, setFile] = useState<File>();
 
   const { updateUserProfile } = useProfile();
 
@@ -22,6 +24,8 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+
       const reader = new FileReader();
       reader.onload = (event) => {
         const imageUrl = event.target?.result as string;
@@ -45,25 +49,41 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
     }
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
 
     let updatedUserData = data;
 
-    if (firstname) {
-      if (updatedUserData) {
-        updatedUserData.given_name = firstname;
-      }
+    if (!updatedUserData) {
+      return;
+    }
+
+
+    if (firstname && firstname != data?.given_name) {
+      updatedUserData.given_name = firstname;
       localStorage.setItem('firstName', firstname);
     }
 
-    if (surname) {
-      if (updatedUserData) {
-        updatedUserData.family_name = surname;
-      }
+    if (surname && surname != data?.family_name) {
+      updatedUserData.family_name = surname;
       localStorage.setItem('surname', surname);
     }
 
+    //upload profile picture
+    if (file && data?.email) {
+      const formData = new FormData();
+      formData.append("username", data?.email);
+      formData.append("file", file);
 
+      try {
+        const sessionToken = data.session_token;
+        const pictureUrl = await uploadProfilePicture(sessionToken, formData);
+        updatedUserData.picture = pictureUrl;
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    }
+
+    //upload user new profile details
     if (updatedUserData) {
       updateUserProfile(updatedUserData);
     }

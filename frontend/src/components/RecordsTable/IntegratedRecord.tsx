@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import TicketViewMuni from '../TicketViewMuni/TicketViewMuni'; // Import your TicketViewMuni component
@@ -45,17 +46,33 @@ const urgencyMapping: UrgencyMappingType = {
   low: { icon: <AlertCircle className="text-green-500" />, label: 'Not Urgent' }
 };
 
-export default function Record({ record }: { record: RecordType }) {
+export default function Record({ record, refresh }: { record: RecordType , refresh : () => void}) {
   const [showTicketView, setShowTicketView] = useState(false);
   const addressRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [ticketstate,setTicketstate] = useState<string>("")
+
+  useEffect(()=>{
+    setTicketstate(record.state)
+  },[record.state])
 
   const handleClick = () => {
     setShowTicketView(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (data : number) => {
     setShowTicketView(false);
+    console.log("Data :" + data);
+    if(data == 1)
+    {
+      setTicketstate("In Progress")
+
+    }
+    else if(data == -1)
+    {
+      setTicketstate("Taking Tenders")
+    }
+    refresh();
   };
 
   const getUrgency = (votes : number) =>{
@@ -68,7 +85,26 @@ export default function Record({ record }: { record: RecordType }) {
     } else {
         return "low"; // Default case
     }
-}
+  }
+
+  function getStateColour(state : string) {
+    switch (state) {
+        case "Opened":
+            return 'bg-green-200 text-green-800';
+        case "In Progress":
+            return 'bg-blue-200 text-blue-800';
+        case "Assigning Contract":
+            return 'bg-blue-200 text-blue-800';
+        case "Closed":
+            return 'bg-red-200 text-red-800';
+        case "Taking Tenders":
+          return 'bg-purple-200 text-purple-800'
+        default:
+            return 'bg-gray-200 text-gray-800';
+    }
+  }
+
+
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
@@ -89,8 +125,8 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.state == "Opened" ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}`}>
-            {record.state}
+          <span className={`px-2 py-1 rounded ${getStateColour(ticketstate)}`}>
+            {ticketstate}
           </span>
         </div>
         <div className="col-span-1 flex justify-center">{record.createdby}</div>

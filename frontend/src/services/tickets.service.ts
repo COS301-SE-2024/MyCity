@@ -1,18 +1,20 @@
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
 
+
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
-    // if (revalidate) {
-    //     invalidateCache("tickets-getUpvotes"); //invalidate the cache
-    // }
+    if (revalidate) {
+        invalidateCache("tickets-getUpvotes"); //invalidate the cache
+    }
+
     try {
         const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -24,7 +26,39 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
         const result = await response.json();
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
+        formatAddress(data)
+        ChangeState(data)
+        return data;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export async function getOpenCompanyTickets(user_session: string, revalidate?: boolean) {
+
+    if (revalidate) {
+        invalidateCache("tickets-getopencompanytickets"); //invalidate the cache
+    }
+    try {
+        const apiUrl = "/api/tickets/getopencompanytickets";
+        const response = await fetch(apiUrl,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${user_session}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as any[];
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -37,9 +71,10 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
 
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     invalidateCache("tickets-getcompanytickets"); //invalidate the cache
-    // }
+    if (revalidate) {
+        invalidateCache("tickets-getcompanytickets"); //invalidate the cache
+    }
+
 
     try {
         const apiUrl = "/api/tickets/getcompanytickets";
@@ -48,7 +83,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -64,7 +99,6 @@ export async function getCompanyTickets(companyname: string, user_session: strin
         }
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -78,9 +112,10 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
 
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     invalidateCache("tickets-getwatchlist"); //invalidate the cache
-    // }
+    if (revalidate) {
+        invalidateCache("tickets-getwatchlist"); //invalidate the cache
+    }
+
 
     try {
         const apiUrl = "/api/tickets/getwatchlist";
@@ -89,7 +124,7 @@ export async function getWatchlistTickets(username: string, user_session: string
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -105,7 +140,6 @@ export async function getWatchlistTickets(username: string, user_session: string
         }
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -129,7 +163,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -151,7 +185,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-
+    
     if (!municipality) {
         throw new Error("Missing municipality");
     }
@@ -168,7 +202,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -186,7 +220,6 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         const data = result.data as any[];
 
-        AssignTicketNumbers(data);
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -195,6 +228,112 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
         console.error("Error: " + error);
         throw error;
     }
+}
+
+export async function getOpenTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
+
+    if (!municipality) {
+        throw new Error("Missing municipality");
+    }
+
+    if (revalidate) {
+        invalidateCache("tickets-getinarea"); //invalidate the cache
+    }
+
+    try {
+
+        const apiUrl = "/api/tickets/getopeninarea";
+        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${user_session}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+
+        formatAddress(data)
+        ChangeState(data)
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+export async function AcceptTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/accept";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function CloseTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/close";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
 }
 
 export async function getFaultTypes(revalidate?: boolean) {
@@ -237,14 +376,14 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
         longitude: longi,
         address: fullAddress,
         username: usern,
-        state: "OPEN"
+        state: "Opened"
     }
     const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": sessiont || "",
+            "Authorization": `Bearer ${sessiont}`,
         },
         body: JSON.stringify(data),
     });
@@ -305,7 +444,7 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": user_session,
+                "Authorization": `Bearer ${user_session}`,
             },
             body: JSON.stringify(data)
         });
@@ -335,7 +474,7 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": user_session,
+                "Authorization": `Bearer ${user_session}`,
             },
             body: JSON.stringify(data)
         });
@@ -359,8 +498,8 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
-                "Authorization": user_session,
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${user_session}`,
             },
         });
 

@@ -4,17 +4,17 @@ import { Tabs, Tab } from "@nextui-org/react";
 import CitizenLogin from "@/components/Login/CitizenLogin";
 import MunicipalityLogin from "@/components/Login/MunicipalityLogin";
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Login() {
-  const formHeader: string = "Sign In.";
+  const formHeader: string = "Log In.";
 
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="relative">
-          <Navbar />
+          <NavbarGuest />
           <div
             style={{
               position: "fixed",

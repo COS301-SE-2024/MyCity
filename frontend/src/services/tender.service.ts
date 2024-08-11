@@ -1,4 +1,7 @@
 
+import { invalidateCache } from "@/utils/apiUtils";
+
+
 export async function CreatTender(companyname: string, amount: number,ticket: string,time : number, user_session : string)
 {
     const data = {
@@ -13,7 +16,7 @@ export async function CreatTender(companyname: string, amount: number,ticket: st
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -45,7 +48,7 @@ export async function InReview(authcode: string,ticket: string,user_session : st
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -77,7 +80,7 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -96,8 +99,73 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
 
 }
 
-export async function getTicketTenders(ticket_id: string,user_session : string)
+export async function RejectTender(companyname: string,ticket: string,user_session : string)
 {
+    const data = {
+        company_id : companyname,
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tenders/reject";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function CompleteContract(contract_id: string,user_session : string)
+{
+    const data = {
+        contract_id : contract_id,
+    }
+
+    const apiURL = "/api/tenders/completed";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function getTicketTenders(ticket_id: string,user_session : string, revalidate?: boolean)
+{
+
+    if (revalidate) {
+        invalidateCache("tenders-getmunicipalitytenders"); //invalidate the cache
+    }
 
     const apiURL = "/api/tenders/getmunicipalitytenders";
     const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
@@ -105,7 +173,7 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 
@@ -129,8 +197,12 @@ export async function getTicketTenders(ticket_id: string,user_session : string)
 
 }
 
-export async function getCompanyTenders(companyname: string,user_session : string)
+export async function getCompanyTenders(companyname: string,user_session : string,revalidate?: boolean)
 {
+
+    if (revalidate) {
+        invalidateCache("tenders-getmytenders"); //invalidate the cache
+    }
 
     const apiURL = "/api/tenders/getmytenders";
     const urlWithParams = `${apiURL}?name=${encodeURIComponent(companyname)}`;
@@ -138,7 +210,7 @@ export async function getCompanyTenders(companyname: string,user_session : strin
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 
@@ -171,7 +243,44 @@ export async function getContract(tender_id: string,user_session : string)
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result)
+        AssignContractNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
+export async function getCompanyContract(company_name: string,tender_id: string,user_session : string,revalidate? : boolean)
+{
+    if(revalidate)
+    {
+        invalidateCache("tenders-getcompanycontracts")
+    }
+
+    const apiURL = "/api/tenders/getcompanycontracts";
+    const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}&tender=${encodeURIComponent(tender_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 

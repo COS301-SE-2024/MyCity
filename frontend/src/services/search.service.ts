@@ -1,8 +1,8 @@
 import { invalidateCache } from "@/utils/apiUtils";
 
-/*export async function searchIssue(param:string, revalidate?: boolean) {
-    if (revalidate) {
-        revalidateTag("search-issues"); //invalidate the cache
+/*export async function searchIssue(sessionToken: string | undefined, param:string, revalidate?: boolean) {
+     if (revalidate) {
+        invalidateCache("search-issues"); // Invalidate the cache
     }
 
     try {
@@ -10,6 +10,7 @@ import { invalidateCache } from "@/utils/apiUtils";
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
                 },
             }
         );
@@ -29,7 +30,7 @@ import { invalidateCache } from "@/utils/apiUtils";
     }
 }*/
 
-export async function searchIssue(param: string, userMunicipality: string, revalidate?: boolean) {
+export async function searchIssue(sessionToken: string | undefined, param: string, userMunicipality: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-issues"); // Invalidate the cache
     }
@@ -39,6 +40,7 @@ export async function searchIssue(param: string, userMunicipality: string, reval
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionToken}`,
             },
             body: JSON.stringify({
                 q: param,
@@ -61,7 +63,7 @@ export async function searchIssue(param: string, userMunicipality: string, reval
 
 
 
-export async function searchServiceProvider(param:string, revalidate?: boolean) {
+export async function searchServiceProvider(sessionToken: string | undefined, param:string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-service-provider"); //invalidate the cache
     }
@@ -71,6 +73,7 @@ export async function searchServiceProvider(param:string, revalidate?: boolean) 
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
                 },
             }
         );
@@ -91,7 +94,7 @@ export async function searchServiceProvider(param:string, revalidate?: boolean) 
 }
 
 
-export async function searchMunicipality(param:string, revalidate?: boolean) {
+export async function searchMunicipality(sessionToken: string | undefined, param:string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-municipality"); //invalidate the cache
     }
@@ -101,6 +104,7 @@ export async function searchMunicipality(param:string, revalidate?: boolean) {
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
                 },
             }
         );
@@ -121,7 +125,7 @@ export async function searchMunicipality(param:string, revalidate?: boolean) {
 }
 
 
-export async function searchMunicipalityTickets(municipalityId:string, revalidate?: boolean) {
+export async function searchMunicipalityTickets(sessionToken: string | undefined, municipalityId:string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-municipality-tickets"); //invalidate the cache
     }
@@ -131,6 +135,7 @@ export async function searchMunicipalityTickets(municipalityId:string, revalidat
             {
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
                 },
             }
         );

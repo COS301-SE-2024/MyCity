@@ -97,7 +97,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     };
 
     fetchData();
-  }, [ userProfile]);
+  }, [ userProfile, tender, ticket_id]);
 
   useEffect(() => {
     // Force re-render of the map when component mounts

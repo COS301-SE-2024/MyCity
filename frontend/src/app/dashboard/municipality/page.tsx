@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
 import { Building, ChevronDown } from "lucide-react";
@@ -20,22 +19,38 @@ export default function Dashboard() {
     setDropdownOpen(!dropdownOpen);
   };
 
-  useEffect(() =>{
-    const fetchData = async () => {
-      const user_data = await userProfile.getUserProfile();
-      console.log(user_data.current)
-      const user_session = String(user_data.current?.session_token);
-      const user_municipality = String(user_data.current?.municipality)
-      setCity(String(user_data.current?.municipality))
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session
-      );
-      console.log(rspmunicipality)
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-    };
-    fetchData();
-  },[userProfile])
+  ///function to call api
+  const fetchData = async () => {
+    const user_data = await userProfile.getUserProfile();
+    console.log(user_data.current)
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality)
+    setCity(String(user_data.current?.municipality))
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session,
+      true,
+    );
+    console.log(rspmunicipality)
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+  };
+
+  const fetchDataWithoutcache = useCallback(async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality)
+    setCity(String(user_data.current?.municipality))
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session,
+    );
+    console.log(rspmunicipality)
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+  }, [userProfile]);
+
+  useEffect(() => {
+    fetchDataWithoutcache();
+  }, [fetchDataWithoutcache]);
 
   return (
     <div>
@@ -112,7 +127,7 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="mt-8">
-              <RecordsTable records={dashMuniResults} />
+              <RecordsTable records={dashMuniResults} refresh={fetchData} />
             </div>
           </main>
         </div>
@@ -179,11 +194,8 @@ export default function Dashboard() {
               work on it.
             </p>
           </div>
-
-
         </div>
       </div>
     </div>
   );
 }
-

@@ -25,24 +25,21 @@ interface TenderType {
 
 function getStatus(status: string) {
   switch (status) {
-    case "accepted":
-      return "accepted";
-    case "rejected":
-      return "rejected";
-    case "submitted":
-      return "submitted";
-    case "under review":
-      return "under_review";
+    case "completed":
+      return "completed";
+    case "closed":
+      return "closed";
+    case "in progress":
+      return "in_progress";
     default:
-      return "submitted";
+      return "in_progress";
   }
 }
 
 const statusStyles = {
-  under_review: "text-blue-500 border-blue-500 rounded-full",
-  accepted: "text-black bg-green-200 rounded-full",
-  rejected: "text-black bg-red-200 rounded-full",
-  submitted: "text-black bg-gray-200 rounded-full",
+  in_progress: "text-blue-500 border-blue-500 rounded-full",
+  completed: "text-green bg-green-200 rounded-full",
+  closed: "text-red bg-red-200 rounded-full",
 };
 
 const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
@@ -130,7 +127,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
                   Back
                 </button>
-                {tender.status === "Active" && (
+                {(tender.status === "in progress" || tender.status === "completed") && (
                   <>
                     <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600">
                       Terminate Contract
