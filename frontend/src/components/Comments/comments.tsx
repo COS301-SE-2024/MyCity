@@ -24,29 +24,6 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
   const [loading, setLoading] = useState(true); // State to manage loading
   const userProfile = useProfile(); 
 
-
-  /* Original Mock data to test what a comment would look like*/
-  /*const [comments, setComments] = useState([
-    {
-      userName: 'John Doe',
-      userImage: 'https://via.placeholder.com/150',
-      time: new Date(new Date().setHours(new Date().getHours() - 13)),
-      commentText: 'This is a sample comment.',
-    },
-    {
-      userName: 'Jane Smith',
-      userImage: 'https://via.placeholder.com/150',
-      time: new Date(new Date().setDate(new Date().getDate() - 3)),
-      commentText: 'Another example of a comment.',
-    },
-    {
-      userName: 'Bob Johnson',
-      userImage: 'https://via.placeholder.com/150',
-      time: new Date(new Date().setDate(new Date().getDate() - 10)),
-      commentText: 'This is a longer comment that demonstrates how text is handled in this layout.',
-    },
-  ]);*/
-
   // Function to fetch comments
   const fetchComments = async () => {
     try {
@@ -119,12 +96,14 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
           commentText: newComment,
         };
   
-        // Optionally, you can make an API call to save the comment to your backend here.
+        //console.log("Sending comment:", newCommentData.commentText, ticketId, user_email, userSession);
+        //console.log("Ticket ID: ",ticketId);
         await addCommentWithoutImage(newCommentData.commentText,ticketId, user_email, userSession);
   
         // Update the UI to include the new comment
         setComments([...comments, newCommentData]);
         setNewComment(''); // Clear the input field after submission
+        //console.log("Updated comments:", comments);
       } catch (error) {
         console.error("Error adding comment:", error);
       }

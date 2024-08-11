@@ -451,10 +451,12 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${user_session}`,
+                "Authorization": user_session,
             },
             body: JSON.stringify(data)
         });
+
+        //console.log("API response:", response);
 
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
@@ -481,10 +483,12 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${user_session}`,
+                "Authorization": user_session,
             },
             body: JSON.stringify(data)
         });
+
+        //console.log("API response:", response);
 
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
