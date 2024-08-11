@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tender from "../Tenders/CompanyTenderMini"; // Update the import path if necessary
-import { FaInfoCircle, FaTimes } from "react-icons/fa";
+import { ThreeDots } from "react-loader-spinner"; // Assuming you're using the react-loader-spinner package
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
@@ -14,16 +14,14 @@ interface TenderType {
   status: string;
   quote: number;
   estimatedTimeHours: number;
-  municipality : string;
-  ticketnumber : string;
-  tender_id : string;
-  longitude : string;
-  latitude : string;
+  municipality: string;
+  ticketnumber: string;
+  tender_id: string;
+  longitude: string;
+  latitude: string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
 }
-
-
 
 const statusStyles = {
   Unassigned: "text-blue-500 border-blue-500 rounded-full",
@@ -32,15 +30,25 @@ const statusStyles = {
   Closed: "text-black bg-gray-200 rounded-full",
 };
 
-export default function ActiveTenders({tenders}:{tenders : TenderType[]}) {
+export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const tendersPerPage = 10;
+
+  useEffect(() => {
+    // Simulate a loading delay for demo purposes
+    const timer = setTimeout(() => setLoading(false), 2000); // Replace with real data fetching logic
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Ensure tenders is an array
+  const safeTenders = Array.isArray(tenders) ? tenders : [];
 
   // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
-  const currentTenders = tenders.slice(indexOfFirstTender, indexOfLastTender);
-  const totalPages = Math.ceil(tenders.length / tendersPerPage);
+  const currentTenders = safeTenders.slice(indexOfFirstTender, indexOfLastTender);
+  const totalPages = Math.ceil(safeTenders.length / tendersPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -54,19 +62,27 @@ export default function ActiveTenders({tenders}:{tenders : TenderType[]}) {
     }
   };
 
-  function getStatusstyle(status : string){
-    switch (status) {
-      case "in progress":
-        return "in_progress"
-      case "completed":
-        return "completed"
-      case "closed":
-        return "closed"
-        break;
-      default: 
-        return "closed"
-        break;
-    }
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <ThreeDots
+          height="40"
+          width="80"
+          radius="9"
+          color="#ADD8E6"
+          ariaLabel="three-dots-loading"
+          visible={true}
+        />
+      </div>
+    );
+  }
+
+  if (safeTenders.length === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-white text-opacity-80">
+        You currently have no active tender contracts.
+      </div>
+    );
   }
 
   return (
@@ -89,9 +105,7 @@ export default function ActiveTenders({tenders}:{tenders : TenderType[]}) {
         <div className="flex justify-between mt-4 text-white">
           <button
             onClick={handlePrevPage}
-            className={`px-48 py-2 ${
-              currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-            }`}
+            className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
             disabled={currentPage === 1}
           >
             Previous
@@ -101,9 +115,7 @@ export default function ActiveTenders({tenders}:{tenders : TenderType[]}) {
           </span>
           <button
             onClick={handleNextPage}
-            className={`px-48 py-2 ${
-              currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
-            }`}
+            className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
             disabled={currentPage === totalPages}
           >
             Next
