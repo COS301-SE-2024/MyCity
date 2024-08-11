@@ -88,13 +88,13 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
         </div>
       </div>
 
-      {showTenderView && tenderData && (
+      {/* {showTenderView && tenderData && (
         <TenderMax
           onClose={handleTenderViewClose}
           municipality={tenderData.municipality}
           tender={tenderData}
         />
-      )}
+      )} */}
     </>
   );
 };
