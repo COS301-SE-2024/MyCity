@@ -143,7 +143,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                     <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600">
                       Terminate Contract
                     </button>
-                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600">
+                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600" onClick={onClose}>
                       Mark as Complete
                     </button>
                   </>

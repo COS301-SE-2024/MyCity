@@ -52,7 +52,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
 
   useEffect(()=>{
     setTenderstatus(tender.status)
-  },[tender.status])
+  },[])
 
   function getStatus( status : string){
     switch (status) {
@@ -130,7 +130,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
-      {showDetails && <TenderMax contract_id={''} 
+      {showDetails && <TenderMax contract_id={contract.contract_id} 
       status={contract.status} 
       companyname={tender.companyname} 
       contractdatetime={contract.contractdatetime} 

@@ -8,6 +8,7 @@ interface CardData {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
+  ticketId: string;
   description: string;
   image: string;
   createdBy: string;
