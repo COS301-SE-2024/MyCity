@@ -56,10 +56,16 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
       // console.log("Ticket ID: ",ticketId); //checking whether we are fetching the ticket id
       const response= await getTicketComments(ticketId, userSession);
       const commentsData = response.data;
+
+      const userPoolId = process.env.USER_POOL_ID;
+      if (!userPoolId) {
+        throw new Error("USER_POOL_ID is not defined");
+      }
       
        // Enriching the comments with user details
       const enrichedComments = await Promise.all(commentsData.map(async (comment: any) => {
-        const userAttributes = await getUserFirstLastName(comment.user_id);
+        const userAttributes = await getUserFirstLastName(comment.user_id, userPoolId);
+        //const userAttributes = await getUserFirstLastName("janedoe@example.com", "eu-west-1_xhcBZxRZk");
         return {
           ...comment,
           userName: `${userAttributes?.given_name} ${userAttributes?.family_name}`,
@@ -119,7 +125,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
           ))
         )}
       </div>
-      {isCitizen && (
+      {/*isCitizen &&*/ (
         <div className="flex items-center p-2 border-t">
           <div className="border-l-4 border-gray-200 h-full mr-4"></div> {/* Vertical separator */}
           <input

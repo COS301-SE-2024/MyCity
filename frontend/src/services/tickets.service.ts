@@ -6,7 +6,7 @@ interface UserAttributes {
   given_name?: string; // FIRSTNAME
   family_name?: string; //SURNAME
 }
-const userPoolID = process.env.USER_POOL_ID;
+//const userPoolID = process.env.USER_POOL_ID;
 
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
@@ -526,7 +526,7 @@ export async function getTicketComments(ticket_id: string, user_session: string)
 
 // Used for the comments to fetch citizen, muni employee and SP employee first and last name
 // Note that the username is the id that will be passed from the frontend.
-export const getUserFirstLastName = async (username: string): Promise<UserAttributes | null> => {
+export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
   const client = new CognitoIdentityProviderClient({
     region: process.env.AWS_REGION,
     credentials: {
