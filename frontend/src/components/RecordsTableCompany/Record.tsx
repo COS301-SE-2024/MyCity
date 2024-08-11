@@ -57,32 +57,32 @@ export default function Record({ record }: { record: RecordType }) {
     setShowTicketView(false);
   };
 
-  const getUrgency = (votes : number) =>{
-        if (votes < 5) {
-        return "low";
+  const getUrgency = (votes: number) => {
+    if (votes < 5) {
+      return "low";
     } else if (votes >= 5 && votes < 10) {
-        return "medium";
+      return "medium";
     } else if (votes >= 10 && votes <= 40) {
-        return "high";
+      return "high";
     } else {
-        return "low"; // Default case
+      return "low"; // Default case
     }
-  }
+  };
 
-  function getStateColour(state : string) {
+  function getStateColour(state: string) {
     switch (state) {
-        case "Opened":
-            return 'bg-green-200 text-green-800';
-        case "In Progress":
-            return 'bg-blue-200 text-blue-800';
-        case "Assigning Contract":
-            return 'bg-blue-200 text-blue-800';
-        case "Closed":
-            return 'bg-red-200 text-red-800';
-        case "Taking Tenders":
-          return 'bg-purple-200 text-purple-800'
-        default:
-            return 'bg-gray-200 text-gray-800';
+      case "Opened":
+        return 'bg-green-200 text-green-800';
+      case "In Progress":
+        return 'bg-blue-200 text-blue-800';
+      case "Assigning Contract":
+        return 'bg-blue-200 text-blue-800';
+      case "Closed":
+        return 'bg-red-200 text-red-800';
+      case "Taking Tenders":
+        return 'bg-purple-200 text-purple-800';
+      default:
+        return 'bg-gray-200 text-gray-800';
     }
   }
 
@@ -93,6 +93,8 @@ export default function Record({ record }: { record: RecordType }) {
       setIsOverflowing(addressRef.current.scrollWidth > addressRef.current.clientWidth);
     }
   }, []);
+
+  const truncatedAddress = record.address.split(',')[0];
 
   return (
     <>
@@ -109,17 +111,24 @@ export default function Record({ record }: { record: RecordType }) {
           </span>
         </div>
         <div className="col-span-1 flex justify-center">{record.createdby}</div>
-        <div className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap" ref={addressRef}>
+        <div
+          className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap hover:overflow-visible"
+          ref={addressRef}
+          style={{
+            position: 'relative'
+          }}
+        >
           <div
             style={{
               display: "inline-block",
+              whiteSpace: "nowrap",
               animation: isOverflowing ? "scroll 10s linear infinite" : "none",
               animationTimingFunction: "linear",
               animationDelay: "5s",
-              whiteSpace: "nowrap",
             }}
+            className="hover:animate-scroll"
           >
-            {record.address}
+            {truncatedAddress}
           </div>
         </div>
         <div className="col-span-1 flex justify-center">{record.municipality}</div>

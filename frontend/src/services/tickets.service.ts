@@ -1,6 +1,13 @@
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
+import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
+interface UserAttributes {
+    given_name?: string; // FIRSTNAME
+    family_name?: string; // SURNAME
+    picture?: string; // Profile picture URL
+}
+//const userPoolID = process.env.USER_POOL_ID;
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
@@ -494,7 +501,7 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
 
 export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
-        const apiUrl = `/api/tickets/${ticket_id}/comments`;
+        const apiUrl = `/api/tickets/comments`;
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
@@ -515,6 +522,42 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         throw error;
     }
 }
+
+export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
+    const client = new CognitoIdentityProviderClient({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+      },
+    });
+  
+    try {
+      const command = new AdminGetUserCommand({
+        UserPoolId: userPoolID ,
+        Username: username,
+      });
+  
+      const response = await client.send(command);
+  
+      const userAttributes: UserAttributes = {};
+  
+      response.UserAttributes?.forEach(attribute => {
+          if (attribute.Name === "given_name") {
+            userAttributes.given_name = attribute.Value;
+          } else if (attribute.Name === "family_name") {
+            userAttributes.family_name = attribute.Value;
+          } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
+            userAttributes.picture = attribute.Value;
+          }
+      });
+  
+      return userAttributes;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      return null;
+    }
+  };
 
 function formatAddress(data: any[]) {
     data.forEach(item => {

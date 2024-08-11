@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { FaCircle, FaRegCircle, FaUserCircle } from "react-icons/fa";
 import TenderMax from "../Tenders/CompanyTenderMax";// Adjust the import path as necessary
@@ -88,13 +89,13 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
         </div>
       </div>
 
-      {showTenderView && tenderData && (
+      {/* {showTenderView && tenderData && (
         <TenderMax
           onClose={handleTenderViewClose}
           municipality={tenderData.municipality}
           tender={tenderData}
         />
-      )}
+      )} */}
     </>
   );
 };

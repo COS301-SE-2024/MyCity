@@ -75,7 +75,7 @@ export default function NavbarUser() {
           </div>
         </Link>
 
-        <Link href="/create-ticket" passHref>
+        <Link href="/create-ticket/citizen" passHref>
           <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
             <div className="flex flex-col gap-1 items-center">
               <PlusCircle size={25} />
