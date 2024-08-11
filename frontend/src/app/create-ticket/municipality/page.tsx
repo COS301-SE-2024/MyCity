@@ -1,31 +1,47 @@
 "use client";
 
 import React from "react";
-
-import CreateTicketMap from "@/components/CreateTicket/CreateTicketMap";
-import CreateTicketForm from "@/components/CreateTicket/CreateTicketForm";
-import { useMapbox } from "@/context/MapboxContext";
+import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
+import { useMapbox } from "@/hooks/useMapbox";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 
 export default function CreateTicket() {
   return (
-    <div>
-      {/* Desktop View */}
-      <div className="hidden sm:block">
-        <div>
-          <NavbarMunicipality />
-          <main className="h-screen flex justify-center py-5">
-            <div className="flex flex-row justify-evenly w-[70em] h-screen rounded-lg border-t-0 border shadow-lg shadow-blue-800/15">
-              <CreateTicketForm
-                useMapboxProp={useMapbox}
-                className="w-full h-full"
-              />
-            </div>
-            <div className="flex flex-row justify-evenly w-[70em] h-screen rounded-lg border-t-0 border shadow-lg shadow-blue-800/15">
-              <CreateTicketMap
-                useMapboxProp={useMapbox}
-                className="w-full h-full"
-              />
+    <div className="relative min-h-screen">
+      {/* Background image */}
+      <div
+        className="absolute inset-0"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          zIndex: -1,
+        }}
+      ></div>
+
+      {/* Overlay to ensure content is on top of the background */}
+      <div className="relative z-10">
+        {/* Navbar */}
+        <NavbarMunicipality />
+
+        {/* Desktop View */}
+        <div className="hidden sm:block">
+          <main className="flex flex-col items-center justify-start py-5">
+            <h1 className="text-4xl font-bold text-white text-opacity-80 mb-5">
+              Add Ticket
+            </h1>
+            <div className="w-full max-w-7xl px-5">
+              <div className="mt-5">
+                <CreateTicketComp useMapboxProp={useMapbox} />
+              </div>
             </div>
           </main>
         </div>
@@ -62,7 +78,7 @@ export default function CreateTicket() {
                 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
+              backgroundRepeat: "repeat",
               zIndex: -1, // Ensures the background is behind other content
             }}
           ></div>
@@ -92,8 +108,6 @@ export default function CreateTicket() {
               work on it.
             </p>
           </div>
-
-
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 export enum UserRole {
     CITIZEN = "CITIZEN",
     MUNICIPALITY = "MUNICIPALITY",
@@ -12,8 +13,8 @@ export interface UserData {
     picture: string | undefined;
     user_role: UserRole | undefined;
     municipality: string | undefined;
-    session_token? : string | undefined;
-    company_name? : string | undefined
+    session_token?: string | undefined;
+    company_name?: string | undefined
 }
 
 export const USER_PATH_SUFFIX_COOKIE_NAME = "mycity.net.za.userpathsuffix";
@@ -55,4 +56,19 @@ export interface Ticket {
     state: string;
     upvotes: number;
     viewCount: number;
+}
+
+export interface FaultGeoData {
+    asset_id: string;
+    latitude: string;
+    longitude: string;
+    color?: string;
+}
+
+
+export interface UnprocessedFaultGeoData {
+    asset_id: string;
+    latitude: string;
+    longitude: string;
+    urgency: string;
 }

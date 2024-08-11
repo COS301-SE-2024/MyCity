@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import ChangeAccountInfo from "@/components/Settings/citizen/ChangeAccountInfo";
 import ChangePassword from "@/components/Settings/citizen/ChangePassword";
 import { User, HelpCircle, XCircle } from "lucide-react";
-
+import { Mail, BellOff, MapPin, Shield, Moon, Text } from "lucide-react";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -236,7 +236,9 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+          className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+        >
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
@@ -244,131 +246,162 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+          >
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
-              {/* Enable Email Notifications */}
-              <div className="flex items-center justify-between p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Enable Email Notifications
-                </span>
-                <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    emailNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                  onClick={toggleEmailNotifications}
-                >
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <Mail className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">
+                      Enable Email Notifications
+                    </span>
+                  </div>
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      emailNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
-                  ></div>
+                    className={`relative w-12 h-6 rounded-full ${
+                      emailNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
+                    onClick={toggleEmailNotifications}
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                        emailNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
+                    ></div>
+                  </div>
                 </div>
+                <p className="text-gray-600">
+                  Enable or disable email notifications for various activities.
+                </p>
               </div>
 
-              {/* Mute Notifications */}
-              <div className="flex items-center justify-between mt-4 p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Mute Notifications
-                </span>
-                <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    muteNotifications ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                  onClick={toggleMuteNotifications}
-                >
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <BellOff className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">
+                      Mute Notifications
+                    </span>
+                  </div>
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      muteNotifications ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
-                  ></div>
+                    className={`relative w-12 h-6 rounded-full ${
+                      muteNotifications ? "bg-green-400" : "bg-gray-400"
+                    }`}
+                    onClick={toggleMuteNotifications}
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                        muteNotifications ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
+                    ></div>
+                  </div>
                 </div>
+                <p className="text-gray-600">
+                  Mute notifications for a specified period or permanently.
+                </p>
               </div>
             </div>
           </div>
         );
       case "SecurityPrivacy":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
-              {/* Enable Location Access */}
-              <div className="flex items-center justify-between p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Enable Location Access
-                </span>
-                <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    locationAccess ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                  onClick={toggleLocationAccess}
-                >
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <MapPin className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">Enable Location Access</span>
+                  </div>
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      locationAccess ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
-                  ></div>
+                    className={`relative w-12 h-6 rounded-full ${locationAccess ? "bg-green-400" : "bg-gray-400"}`}
+                    onClick={toggleLocationAccess}
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${locationAccess ? "translate-x-6" : "translate-x-0"} transition-transform`}
+                    ></div>
+                  </div>
                 </div>
+                <p className="text-gray-600">Enable or disable location access for better service recommendations.</p>
               </div>
-
-              {/* Two-Factor Authentication */}
-              <div className="flex items-center justify-between mt-4 p-2 rounded">
-                <span className="text-lg font-semibold">
-                  Two-Factor Authentication
-                </span>
-                <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    twoFactorAuth ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                  onClick={toggleTwoFactorAuth}
-                >
+        
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <Shield className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">Two-Factor Authentication</span>
+                  </div>
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      twoFactorAuth ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
-                  ></div>
+                    className={`relative w-12 h-6 rounded-full ${twoFactorAuth ? "bg-green-400" : "bg-gray-400"}`}
+                    onClick={toggleTwoFactorAuth}
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${twoFactorAuth ? "translate-x-6" : "translate-x-0"} transition-transform`}
+                    ></div>
+                  </div>
                 </div>
+                <p className="text-gray-600">Add an extra layer of security to your account with two-factor authentication.</p>
               </div>
             </div>
           </div>
         );
+        
       case "Accessibility":
         return (
-          <div className="ml-6 w-full bg-white bg-opacity-70 rounded-lg shadow-md p-6">
+          <div
+            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
+          >
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
-              {/* Dark Mode */}
-              <div className="flex items-center justify-between p-2 rounded">
-                <span className="text-lg font-semibold">Dark Mode</span>
-                <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    darkMode ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                  onClick={toggleDarkMode}
-                >
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <Moon className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">Dark Mode</span>
+                  </div>
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      darkMode ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
-                  ></div>
+                    className={`relative w-12 h-6 rounded-full ${
+                      darkMode ? "bg-green-400" : "bg-gray-400"
+                    }`}
+                    onClick={toggleDarkMode}
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                        darkMode ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
+                    ></div>
+                  </div>
                 </div>
+                <p className="text-gray-600">
+                  Toggle dark mode for a better viewing experience in low light.
+                </p>
               </div>
 
-              {/* Larger Font */}
-              <div className="flex items-center justify-between mt-4 p-2 rounded">
-                <span className="text-lg font-semibold">Larger Font</span>
-                <div
-                  className={`relative w-12 h-6 rounded-full ${
-                    largerFont ? "bg-green-400" : "bg-gray-400"
-                  }`}
-                  onClick={toggleLargerFont}
-                >
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <Text className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">Larger Font</span>
+                  </div>
                   <div
-                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                      largerFont ? "translate-x-6" : "translate-x-0"
-                    } transition-transform`}
-                  ></div>
+                    className={`relative w-12 h-6 rounded-full ${
+                      largerFont ? "bg-green-400" : "bg-gray-400"
+                    }`}
+                    onClick={toggleLargerFont}
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                        largerFont ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
+                    ></div>
+                  </div>
                 </div>
+                <p className="text-gray-600">
+                  Enable larger font sizes for better readability.
+                </p>
               </div>
             </div>
           </div>
@@ -383,7 +416,7 @@ export default function Settings() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <Navbar />
+          <NavbarUser />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
@@ -443,7 +476,7 @@ export default function Settings() {
             )}
 
             <div className="flex">
-              <div className="w-64 bg-white bg-opacity-70 rounded-lg shadow-md p-4">
+            <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                 <div className="flex items-center mb-4">
                   {data?.picture ? (
                     <img

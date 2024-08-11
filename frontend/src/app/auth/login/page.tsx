@@ -4,20 +4,20 @@ import { Tabs, Tab } from "@nextui-org/react";
 import CitizenLogin from "@/components/Login/CitizenLogin";
 import MunicipalityLogin from "@/components/Login/MunicipalityLogin";
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Login() {
-  const formHeader: string = "Sign In.";
+  const formHeader: string = "Log In.";
 
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
-          <Navbar />
+        <div className="relative">
+          <NavbarGuest />
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -27,14 +27,13 @@ export default function Login() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
+              backgroundAttachment: "fixed",
+              zIndex: -1,
             }}
           ></div>
-          <main className="h-screen flex justify-center p-20">
-            <div className="flex bg-white flex-col items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[32em] h-fit py-12">
+          <main className="flex justify-center mb-8">
+            <div className="flex flex-col bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[40em] h-fit py-12 mt-12">
               <span className="text-[2.5em] font-bold">{formHeader}</span>
-
               <Tabs
                 aria-label="Login Options"
                 defaultSelectedKey={0}
@@ -51,19 +50,11 @@ export default function Login() {
                   <CitizenLogin />
                 </Tab>
 
-                <Tab
-                  key={1}
-                  title="Municipality"
-                  data-testid="municipality-tab"
-                >
+                <Tab key={1} title="Municipality" data-testid="municipality-tab">
                   <MunicipalityLogin />
                 </Tab>
 
-                <Tab
-                  key={2}
-                  title="Service Provider"
-                  data-testid="service-provider-tab"
-                >
+                <Tab key={2} title="Service Provider" data-testid="service-provider-tab">
                   <ServiceProviderLogin />
                 </Tab>
               </Tabs>
@@ -78,7 +69,7 @@ export default function Login() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
@@ -104,15 +95,13 @@ export default function Login() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
           ></div>
 
           {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction
@@ -133,7 +122,6 @@ export default function Login() {
               work on it.
             </p>
           </div>
-
         </div>
       </div>
     </div>

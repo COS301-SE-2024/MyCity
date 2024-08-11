@@ -2,50 +2,93 @@ import React, { useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CompleteContract } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
+import MapComponent from "@/context/MapboxMap";
+
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  id: string;
-  ticketId: string;
-  status: Status;
-  municipality: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+  contract_id : string;
+  status : string;
+  companyname : string;
+  contractdatetime : string;
+  finalCost : number;
+  finalDuration : number;
+  ticketnumber : string;
+  longitude : string;
+  latitude : string;
+  completedatetime : string;
+  contractnumber : string;
+  municipality : string;
   upload: File | null;
-  hasReportedCompletion: boolean;
+  hasReportedCompletion: boolean | false;
+  onClose : ()=> void;
 }
 
 const statusStyles = {
-  Unassigned: "text-blue-500 border-blue-500 rounded-full",
-  Active: "text-black bg-green-200 rounded-full",
-  Rejected: "text-black bg-red-200 rounded-full",
-  Closed: "text-black bg-gray-200 rounded-full",
+  in_progress: "text-blue-500 border-blue-500 rounded-full",
+  completed: "text-green bg-green-400 rounded-full",
+  closed: "text-red bg-red-400 rounded-full",
 };
 
-const TenderMax = ({
-  tender,
-  onClose,
+const TenderMax : React.FC<TenderType> = ({
+  contract_id,
+  status ,
+  companyname,
+  contractdatetime, 
+  finalCost,
+  finalDuration,
+  ticketnumber,
+  longitude,
+  latitude,
+  completedatetime,
+  contractnumber,
   municipality,
-}: {
-  tender: TenderType;
-  onClose: () => void;
-  municipality: string;
+  upload ,
+  onClose,
+  hasReportedCompletion,
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
-
+  const userProfile = useProfile();
   // Map "Fix in progress" to "Active" for the tender's status
-  const tenderStatus = tender.status;
+  const tenderStatus = status;
 
   const handleAction = (action: string) => {
     setDialog({ action, show: true });
   };
 
-  const confirmAction = () => {
-    toast.success(`${dialog.action} action confirmed.`);
+  const confirmAction = async () => {
+    switch (dialog.action) {
+      case "Mark as Complete":
+        {
+          const user_data = await userProfile.getUserProfile();
+          const user_session = String(user_data.current?.session_token);
+          const rspcompleted = await CompleteContract(contract_id,user_session)
+          if(rspcompleted == true)
+          {
+            toast.success(`${dialog.action} action confirmed.`);
+            onClose();
+          }
+          else {
+            toast.error(`${dialog.action} couldnt go through`)
+          }
+        }
+        
+        break;
+      case "Terminate Contract" :
+        {
+          toast.success(`${dialog.action} action confirmed.`);
+          onClose();
+        }
+    
+      default:
+        onClose();
+        break;
+    }
     setDialog({ action: "", show: false });
-    onClose();
+    onClose()
   };
 
   const getDialogText = (action: string) => {
@@ -63,11 +106,27 @@ const TenderMax = ({
     }
   };
 
+  function getStatus(){
+    switch (status) {
+      case "in progress":
+        return "in_progress"
+        break;
+      case "completed":
+        return "completed"
+      case "closed":
+        return "closed"
+        break;
+      default:
+        return "in_progress"
+        break;
+    }
+  }
+
   const handleConfirmClick = () => {
     confirmAction();
   };
 
-  const formattedDate = tender.issueDate.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -79,29 +138,29 @@ const TenderMax = ({
           <div className="flex flex-col lg:flex-row w-full overflow-auto">
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
-              <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={tender.municipality} className="w-10 h-10 rounded-full mb-2" />
-              </div>
-              <div className="text-center text-black text-2xl font-bold mb-2">Tender {tender.id}</div>
-              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[tenderStatus]}`}>{tenderStatus}</div>
+              {/* <div className="absolute top-7 left-2">
+                <img src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
+              </div> */}
+              <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
+              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus()]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketId}
+                <strong>Associated Ticket:</strong> {ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.price.toFixed(2)}
+                <strong>Proposed Price:</strong> R{finalCost.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.estimatedDuration} days
+                <strong>Estimated Duration:</strong> {finalDuration} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
-                {tender.upload ? (
-                  <a href={URL.createObjectURL(tender.upload)} download className="text-blue-500 underline ml-2">
-                    {tender.upload.name}
+                {upload ? (
+                  <a href={URL.createObjectURL(upload)} download className="text-blue-500 underline ml-2">
+                    {upload.name}
                   </a>
                 ) : (
                   "No files attached"
@@ -110,15 +169,6 @@ const TenderMax = ({
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-                  {tenderStatus === "Active" ? (
-                    <span>
-                      This Tender Contract is currently <strong>{tenderStatus}</strong>. Only <strong>{municipality}</strong> can close it.
-                    </span>
-                  ) : (
-                    <span>
-                      This Tender Bid is currently <strong>{tenderStatus}</strong>. Only {tender.municipality} can accept this Tender Bid..
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -126,7 +176,7 @@ const TenderMax = ({
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
                   Back
                 </button>
-                {tenderStatus === "Active" ? (
+                {tenderStatus === "in progress" ? (
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract
@@ -149,7 +199,9 @@ const TenderMax = ({
             </div>
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-500">Map Placeholder</div>
+              <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
+              <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+              </div>
             </div>
           </div>
         </div>

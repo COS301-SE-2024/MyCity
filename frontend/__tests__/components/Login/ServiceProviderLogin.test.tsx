@@ -28,7 +28,7 @@ describe("ServiceProviderLogin", () => {
 
         expect(submitButton).toBeInTheDocument();
 
-        expect(submitButton).toHaveTextContent("Submit");
+        expect(submitButton).toHaveTextContent("Login");
     });
 
 

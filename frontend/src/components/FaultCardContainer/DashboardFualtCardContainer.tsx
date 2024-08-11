@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
- interface CardData {
+
+interface CardData {
   dateClosed: string;
-  upvotes : number;
-  ticket_id : string;
+  upvotes: number;
+  ticket_id: string;
+  ticketnumber : string;
   asset_id: string;
   state: string;
   dateOpened: string;
-  createdby : string;
+  createdby: string;
   imageURL: string;
-  viewcount : number;
+  viewcount: number;
   description: string;
   municipality_id: string;
-  commentcount : number;
-  user_picture : string;
-  address : string ;
+  commentcount: number;
+  user_picture: string;
+  address: string;
+  latitude: number;       // Adding latitude
+  longitude: number;      // Adding longitude
+  urgency: "high" | "medium" | "low"; // Adding urgency
 }
 
 interface CardComponentProps {
@@ -38,7 +43,6 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
     setSelectedCard(null);
   };
 
-
   // Function to handle displaying the next set of items
   const showNextItems = () => {
     setStartIndex((prevIndex) => Math.min(prevIndex + itemsPerPage, cardData.length - itemsPerPage));
@@ -55,49 +59,51 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
     .map((item, index) => (
       <FaultCardUser
         key={item.ticket_id}
-        title={item.asset_id}
-        address={item.address}
-        arrowCount={item.upvotes}
-        commentCount={item.commentcount}
-        viewCount={item.viewcount}
-        description={item.description}
-        image={item.imageURL}
-        createdBy={item.dateOpened}
-        ticketNumber={item.ticket_id}
+        data={{
+          title: item.asset_id,
+          address: item.address,
+          arrowCount: item.upvotes,
+          commentCount: item.commentcount,
+          viewCount: item.viewcount,
+          description: item.description,
+          image: item.imageURL,
+          createdBy: item.dateOpened,
+          ticketNumber: item.ticketnumber,
+        }}
         onClick={() => handleCardClick(item)}
       />
     ));
 
   return (
     <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2">
-        <div
-          className="w-full overflow-x-auto custom-scrollbar"
-          style={{
-            paddingLeft: '16px',
-            paddingRight: '16px',
-            scrollbarWidth: 'thin', // For Firefox
-            scrollbarColor: 'rgba(255, 255, 255, 0.5) transparent', // For Firefox
-          }}
-        >
-          <style jsx>{`
-            ::-webkit-scrollbar {
-              height: 6px; /* Make the scrollbar smaller */
-            }
-            ::-webkit-scrollbar-thumb {
-              background: rgba(255, 255, 255, 0.5); /* Color of the scrollbar */
-              border-radius: 3px; /* Roundness of the scrollbar */
-            }
-            ::-webkit-scrollbar-track {
-              background: transparent; /* Color of the track */
-            }
-          `}</style>
-          <div className="flex justify-start">
-            <div className="flex mb-8 text-center flex-nowrap">
-          {/* Display multiple FaultCardUser components */}
-          {visibleItems}
+      <div
+        className="w-full overflow-x-auto custom-scrollbar"
+        style={{
+          paddingLeft: '16px',
+          paddingRight: '16px',
+          scrollbarWidth: 'thin', // For Firefox
+          scrollbarColor: 'rgba(255, 255, 255, 0.5) transparent', // For Firefox
+        }}
+      >
+        <style jsx>{`
+          ::-webkit-scrollbar {
+            height: 6px; /* Make the scrollbar smaller */
+          }
+          ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5); /* Color of the scrollbar */
+            border-radius: 3px; /* Roundness of the scrollbar */
+          }
+          ::-webkit-scrollbar-track {
+            background: transparent; /* Color of the track */
+          }
+        `}</style>
+        <div className="flex justify-start">
+          <div className="flex mb-8 text-center flex-nowrap">
+            {/* Display multiple FaultCardUser components */}
+            {visibleItems}
+          </div>
         </div>
       </div>
-    </div>
       {showModal && selectedCard && (
         <FaultCardUserView
           show={showModal}
@@ -107,16 +113,17 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           arrowCount={selectedCard.upvotes}
           commentCount={selectedCard.commentcount}
           viewCount={selectedCard.viewcount}
-          ticketNumber={selectedCard.asset_id}
+          ticketNumber={selectedCard.ticketnumber}
           description={selectedCard.description}
           image={selectedCard.imageURL}
           createdBy={selectedCard.createdby}
+          latitude={selectedCard.latitude} // Pass latitude
+          longitude={selectedCard.longitude} // Pass longitude
+          urgency={selectedCard.urgency} // Pass urgency
         />
       )}
     </div>
   );
 };
 
-export default DashboardFaultCardContainer
-
- 
+export default DashboardFaultCardContainer;

@@ -1,26 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
-import TicketViewMuni from '../TicketViewMuni/TicketViewMuni'; // Import your TicketViewMuni component
-
+import TicketViewMuni from '../TicketViewMuni/TicketViewMuni';
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
 
 interface RecordType {
     ticket_id: string;
-    ticketnumber : string;
+    ticketnumber: string;
     asset_id: string;
-    user_profile : string;
-    municipality_picture : string | "";
-    description : string;
+    imageURL: string;
+    user_picture: string;
+    municipality_picture: string;
+    description: string;
     state: string;
     address: string;
     createdby: string;
-    viewcount : number;
+    viewcount: number;
     commentcount: number;
-    latitude : string;
-    longitude : string;
-    upvotes : number;
+    latitude: string;
+    longitude: string;
+    upvotes: number;
     urgency: Urgency;
 }
 
@@ -44,30 +44,63 @@ const urgencyMapping: UrgencyMappingType = {
   low: { icon: <AlertCircle className="text-green-500" />, label: 'Not Urgent' }
 };
 
-export default function Record({ record }: { record: RecordType }) {
+export default function Record({ record, refresh }: { record: RecordType, refresh: () => void }) {
   const [showTicketView, setShowTicketView] = useState(false);
   const addressRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [ticketstate, setTicketstate] = useState<string>("");
+
+  useEffect(() => {
+    setTicketstate(record.state);
+  }, [record.state]);
 
   const handleClick = () => {
     setShowTicketView(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (data: number) => {
     setShowTicketView(false);
+    if (data === 1) {
+      setTicketstate("In Progress");
+    } else if (data === -1) {
+      setTicketstate("Taking Tenders");
+    }
+    refresh();
   };
 
-  const getUrgency = (votes : number) =>{
-        if (votes < 10) {
-        return "low";
+  const getUrgency = (votes: number) => {
+    if (votes < 10) {
+      return "low";
     } else if (votes >= 10 && votes < 20) {
-        return "medium";
+      return "medium";
     } else if (votes >= 20 && votes <= 40) {
-        return "high";
+      return "high";
     } else {
-        return "low"; // Default case
+      return "low"; // Default case
     }
-}
+  };
+
+  function getStateColour(state: string) {
+    switch (state) {
+      case "Opened":
+        return 'bg-green-200 text-green-800';
+      case "In Progress":
+        return 'bg-blue-200 text-blue-800';
+      case "Assigning Contract":
+        return 'bg-blue-200 text-blue-800';
+      case "Closed":
+        return 'bg-red-200 text-red-800';
+      case "Taking Tenders":
+        return 'bg-purple-200 text-purple-800';
+      default:
+        return 'bg-gray-200 text-gray-800';
+    }
+  }
+
+  const truncateAddress = (address: string) => {
+    return address.split(',')[0];
+  };
+
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
@@ -75,8 +108,6 @@ export default function Record({ record }: { record: RecordType }) {
       setIsOverflowing(addressRef.current.scrollWidth > addressRef.current.clientWidth);
     }
   }, []);
-
-
 
   return (
     <>
@@ -88,22 +119,31 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.state == "Opened" ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}`}>
-            {record.state}
+          <span className={`px-2 py-1 rounded ${getStateColour(ticketstate)}`}>
+            {ticketstate}
           </span>
         </div>
         <div className="col-span-1 flex justify-center">{record.createdby}</div>
-        <div className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap" ref={addressRef}>
+        <div
+          className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap"
+          ref={addressRef}
+        >
           <div
             style={{
               display: "inline-block",
-              animation: isOverflowing ? "scroll 10s linear infinite" : "none",
-              animationTimingFunction: "linear",
-              animationDelay: "5s",
+              animation: isOverflowing ? "none" : "none", // Disable animation initially
               whiteSpace: "nowrap",
             }}
+            onMouseEnter={() => {
+              if (isOverflowing) {
+                addressRef.current?.style.setProperty('animation', 'scroll 10s linear infinite');
+              }
+            }}
+            onMouseLeave={() => {
+              addressRef.current?.style.removeProperty('animation');
+            }}
           >
-            {record.address}
+            {truncateAddress(record.address)}
           </div>
         </div>
       </div>
@@ -112,33 +152,31 @@ export default function Record({ record }: { record: RecordType }) {
           show={showTicketView}
           onClose={handleClose}
           title={record.asset_id}
-          address={record.address}
-          arrowCount={record.upvotes}  // Update this as per your data source
-          commentCount={record.commentcount} // Update this as per your data source
-          viewCount={record.viewcount} // Update this as per your data source
+          address={truncateAddress(record.address)}
+          arrowCount={record.upvotes}
+          commentCount={record.commentcount}
+          viewCount={record.viewcount}
           ticketNumber={record.ticketnumber}
-          description={record.description} // Update this as per your data source
-          image={record.user_profile} // Update this as per your data source
+          description={record.description}
+          user_picture={record.user_picture}
           createdBy={record.createdby}
+          imageURL={record.imageURL}
           status={record.state}
-          municipalityImage={"https://via.placeholder.com/50"} // Update this as per your data source
+          municipalityImage={record.municipality_picture}
           upvotes={record.upvotes}
           latitude={record.latitude}
           longitude={record.longitude}
-          urgency={record.urgency} // Pass urgency to TicketViewMuni
+          urgency={record.urgency}
           ticket_id={record.ticket_id}
         />
       )}
       <style jsx>{`
         @keyframes scroll {
           0% {
-            transform: translateX(20%);
-          }
-          50% {
             transform: translateX(0%);
           }
           100% {
-            transform: translateX(-20%);
+            transform: translateX(-100%);
           }
         }
       `}</style>

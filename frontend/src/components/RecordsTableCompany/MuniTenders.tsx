@@ -1,267 +1,46 @@
 import React, { useState } from "react";
 import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
 
-type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
-
+type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 interface TenderType {
-  id: string;
-  ticketId: string;
+  tender_id: string;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string; // Add serviceProvider here
+  datetimesubmitted: string;
+  ticketnumber : string;
+  ticket_id: string;
   status: Status;
-  serviceProvider: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+  quote: number;
+  longitude : string;
+  latitude : string;
+  estimatedTimeHours: number;
   upload: File | null;
   hasReportedCompletion: boolean; // New prop
 }
 
-const tenders: TenderType[] = [
-  //mock data
-  {
-    id: "T001",
-    ticketId: "SA0300",
-    status: "Unassigned",
-    serviceProvider: "Service Provider A",
-    issueDate: "2023-07-01",
-    price: 1500.5,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T002",
-    ticketId: "SA0302",
-    status: "Unassigned",
-    serviceProvider: "Service Provider B",
-    issueDate: "2023-07-02",
-    price: 2000.0,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T003",
-    ticketId: "SA0304",
-    status: "Unassigned",
-    serviceProvider: "Service Provider C",
-    issueDate: "2023-07-03",
-    price: 2500.75,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T004",
-    ticketId: "SA0306",
-    status: "Unassigned",
-    serviceProvider: "Service Provider D",
-    issueDate: "2023-07-04",
-    price: 1800.0,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T005",
-    ticketId: "SA0310",
-    status: "Unassigned",
-    serviceProvider: "Service Provider E",
-    issueDate: "2023-07-05",
-    price: 2200.0,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T006",
-    ticketId: "SA0300",
-    status: "Unassigned",
-    serviceProvider: "Service Provider F",
-    issueDate: "2023-07-06",
-    price: 1700.5,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T007",
-    ticketId: "SA0304",
-    status: "Unassigned",
-    serviceProvider: "Service Provider G",
-    issueDate: "2023-07-07",
-    price: 2600.0,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T008",
-    ticketId: "SA0302",
-    status: "Unassigned",
-    serviceProvider: "Service Provider H",
-    issueDate: "2023-07-08",
-    price: 2400.75,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T009",
-    ticketId: "SA0306",
-    status: "Unassigned",
-    serviceProvider: "Service Provider I",
-    issueDate: "2023-07-09",
-    price: 2100.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T010",
-    ticketId: "SA0310",
-    status: "Unassigned",
-    serviceProvider: "Service Provider J",
-    issueDate: "2023-07-10",
-    price: 1900.5,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T011",
-    ticketId: "SA0300",
-    status: "Unassigned",
-    serviceProvider: "Service Provider K",
-    issueDate: "2023-07-11",
-    price: 2300.0,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T012",
-    ticketId: "SA0304",
-    status: "Unassigned",
-    serviceProvider: "Service Provider L",
-    issueDate: "2023-07-12",
-    price: 2500.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T013",
-    ticketId: "SA0302",
-    status: "Unassigned",
-    serviceProvider: "Service Provider M",
-    issueDate: "2023-07-13",
-    price: 2000.5,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T014",
-    ticketId: "SA0306",
-    status: "Unassigned",
-    serviceProvider: "Service Provider N",
-    issueDate: "2023-07-14",
-    price: 2200.0,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T015",
-    ticketId: "SA0310",
-    status: "Unassigned",
-    serviceProvider: "Service Provider O",
-    issueDate: "2023-07-15",
-    price: 1800.75,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T016",
-    ticketId: "SA0300",
-    status: "Unassigned",
-    serviceProvider: "Service Provider P",
-    issueDate: "2023-07-16",
-    price: 2700.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T017",
-    ticketId: "SA0304",
-    status: "Unassigned",
-    serviceProvider: "Service Provider Q",
-    issueDate: "2023-07-17",
-    price: 2600.5,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T018",
-    ticketId: "SA0302",
-    status: "Unassigned",
-    serviceProvider: "Service Provider R",
-    issueDate: "2023-07-18",
-    price: 2100.0,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T019",
-    ticketId: "SA0306",
-    status: "Unassigned",
-    serviceProvider: "Service Provider S",
-    issueDate: "2023-07-19",
-    price: 2300.75,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T020",
-    ticketId: "SA0310",
-    status: "Unassigned",
-    serviceProvider: "Service Provider T",
-    issueDate: "2023-07-20",
-    price: 2500.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-];
+interface TenderTypeProps {
+  tenders: TenderType[];
+}
 
 export default function MuniTenders({
-  ticketId,
+  tenders,
   onBack,
 }: {
-  ticketId: string;
+  tenders: TenderType[];
   onBack: () => void;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
-  // Filter tenders associated with the selected ticket ID and Unassigned status
-  const filteredTenders = tenders.filter(
-    (tender) => tender.ticketId === ticketId
-  );
-
-  // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
-  const currentTenders = filteredTenders.slice(
+  const currentTenders = tenders.slice(
     indexOfFirstTender,
     indexOfLastTender
   );
-  const totalPages = Math.ceil(filteredTenders.length / tendersPerPage);
+  const totalPages = Math.ceil(tenders.length / tendersPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -303,7 +82,7 @@ export default function MuniTenders({
             </div>
             <div className="min-w-full">
               {currentTenders.map((tender) => (
-                <Tender key={tender.id} tender={tender} />
+                <Tender key={tender.ticket_id} tender={tender} onClose={onBack}/>
               ))}
             </div>
             <div className="flex justify-between mt-4 text-white">

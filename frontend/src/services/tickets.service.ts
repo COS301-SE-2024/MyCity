@@ -1,30 +1,27 @@
-import { revalidateTag } from "next/cache";
-import { FaultType } from "@/types/custom.types";
-import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
+import { invalidateCache } from "@/utils/apiUtils";
+import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
-mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
-
-export async function DisplaySnapshotMap(latitude : number, longitude : number){
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        center: [longitude, latitude], // starting position [lng, lat]
-        zoom: 9 // starting zoom
-    });
+interface UserAttributes {
+    given_name?: string; // FIRSTNAME
+    family_name?: string; // SURNAME
+    picture?: string; // Profile picture URL
 }
+//const userPoolID = process.env.USER_POOL_ID;
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
-    // if (revalidate) {
-    //     revalidateTag("tickets-getinarea"); //invalidate the cache
-    // }
+    if (revalidate) {
+        invalidateCache("tickets-getUpvotes"); //invalidate the cache
+    }
+
     try {
         const apiUrl = "/api/tickets/getUpvotes";
         const response = await fetch(apiUrl,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -36,8 +33,41 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
         const result = await response.json();
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
+        formatAddress(data)
+        ChangeState(data)
+        return data;
 
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export async function getOpenCompanyTickets(user_session: string, revalidate?: boolean) {
+
+    if (revalidate) {
+        invalidateCache("tickets-getopencompanytickets"); //invalidate the cache
+    }
+    try {
+        const apiUrl = "/api/tickets/getopencompanytickets";
+        const response = await fetch(apiUrl,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${user_session}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result.data as any[];
+        formatAddress(data)
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -47,19 +77,20 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 }
 
 
-export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    // if (revalidate) {
-    //     revalidateTag("username"); //invalidate the cache
-    // }
+export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tickets-getcompanytickets"); //invalidate the cache
+    }
+
 
     try {
-        const apiUrl = "/api/tickets/getwatchlist";
-        const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
+        const apiUrl = "/api/tickets/getcompanytickets";
+        const urlWithParams = `${apiUrl}?company=${encodeURIComponent(companyname)}`;
         const response = await fetch(urlWithParams,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -75,8 +106,8 @@ export async function getWatchlistTickets(username: string, user_session: string
         }
 
         const data = result.data as any[];
-        AssignTicketNumbers(data);
-
+        formatAddress(data)
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -86,9 +117,52 @@ export async function getWatchlistTickets(username: string, user_session: string
 }
 
 
+
+export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tickets-getwatchlist"); //invalidate the cache
+    }
+
+
+    try {
+        const apiUrl = "/api/tickets/getwatchlist";
+        const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${user_session}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+        formatAddress(data)
+        ChangeState(data)
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+
+
+
 export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("tickets-view"); //invalidate the cache
+        invalidateCache("tickets-view"); //invalidate the cache
     }
 
     try {
@@ -96,7 +170,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -118,13 +192,13 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-
+    
     if (!municipality) {
         throw new Error("Missing municipality");
     }
 
     if (revalidate) {
-        revalidateTag("tickets-getinarea"); //invalidate the cache
+        invalidateCache("tickets-getinarea"); //invalidate the cache
     }
 
     try {
@@ -135,7 +209,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -153,8 +227,8 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         const data = result.data as any[];
 
-        AssignTicketNumbers(data);
-
+        formatAddress(data)
+        ChangeState(data)
         return data;
 
     } catch (error) {
@@ -163,9 +237,115 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 }
 
+export async function getOpenTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
+
+    if (!municipality) {
+        throw new Error("Missing municipality");
+    }
+
+    if (revalidate) {
+        invalidateCache("tickets-getinarea"); //invalidate the cache
+    }
+
+    try {
+
+        const apiUrl = "/api/tickets/getopeninarea";
+        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
+        const response = await fetch(urlWithParams,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${user_session}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+
+        const result = await response.json();
+
+        if (!Array.isArray(result.data)) {
+            return [];
+        }
+
+        const data = result.data as any[];
+
+        formatAddress(data)
+        ChangeState(data)
+        return data;
+
+    } catch (error) {
+        console.error("Error: " + error);
+        throw error;
+    }
+}
+
+export async function AcceptTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/accept";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
+export async function CloseTicket(ticket: string,user_session : string)
+{
+    const data = {
+        ticket_id : ticket,
+    }
+
+    const apiURL = "/api/tickets/close";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
 export async function getFaultTypes(revalidate?: boolean) {
     if (revalidate) {
-        revalidateTag("tickets-fault-types"); //invalidate the cache
+        invalidateCache("tickets-fault-types"); //invalidate the cache
     }
 
     try {
@@ -203,14 +383,14 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
         longitude: longi,
         address: fullAddress,
         username: usern,
-        state: "OPEN"
+        state: "Opened"
     }
     const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": sessiont || "",
+            "Authorization": `Bearer ${sessiont}`,
         },
         body: JSON.stringify(data),
     });
@@ -238,13 +418,27 @@ function CreateTicketNumber(municipality: string): string {
     return ticketnumber;
 }
 
+function ChangeState(tickets: any[]){
+    tickets.forEach((item: any) => {
+        if(item['state'] == "Assigning Contract")
+        {
+            item['state'] = "In Progress"
+        }
+        else if(item['state']=="OPEN")
+        {
+            item['state'] == "Opened"
+        }
+
+    });
+}
+
 function AssignTicketNumbers(data: any[]) {
     data.forEach((item: any) => {
         item['ticketnumber'] = CreateTicketNumber(item.municipality_id);
     });
 }
 
-export async function addCommentWithImage(comment:string, ticket_id:string, image_url:string, user_id:string, user_session: string,) {
+export async function addCommentWithImage(comment: string, ticket_id: string, image_url: string, user_id: string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-with-image";
         const data = {
@@ -257,7 +451,7 @@ export async function addCommentWithImage(comment:string, ticket_id:string, imag
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": user_session,
+                "Authorization": `Bearer ${user_session}`,
             },
             body: JSON.stringify(data)
         });
@@ -275,7 +469,7 @@ export async function addCommentWithImage(comment:string, ticket_id:string, imag
     }
 }
 
-export async function addCommentWithoutImage(comment:string, ticket_id:string, user_id:string, user_session: string,) {
+export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-without-image";
         const data = {
@@ -287,7 +481,7 @@ export async function addCommentWithoutImage(comment:string, ticket_id:string, u
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": user_session,
+                "Authorization": `Bearer ${user_session}`,
             },
             body: JSON.stringify(data)
         });
@@ -305,14 +499,14 @@ export async function addCommentWithoutImage(comment:string, ticket_id:string, u
     }
 }
 
-export async function getTicketComments(ticket_id:string, user_session:string) {
+export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
-        const apiUrl = `/api/tickets/${ticket_id}/comments`;
+        const apiUrl = `/api/tickets/comments`;
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
-                "Authorization": user_session,
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${user_session}`,
             },
         });
 
@@ -327,4 +521,99 @@ export async function getTicketComments(ticket_id:string, user_session:string) {
         console.error("Error:", error);
         throw error;
     }
+}
+
+export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
+    const client = new CognitoIdentityProviderClient({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+      },
+    });
+  
+    try {
+      const command = new AdminGetUserCommand({
+        UserPoolId: userPoolID ,
+        Username: username,
+      });
+  
+      const response = await client.send(command);
+  
+      const userAttributes: UserAttributes = {};
+  
+      response.UserAttributes?.forEach(attribute => {
+          if (attribute.Name === "given_name") {
+            userAttributes.given_name = attribute.Value;
+          } else if (attribute.Name === "family_name") {
+            userAttributes.family_name = attribute.Value;
+          } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
+            userAttributes.picture = attribute.Value;
+          }
+      });
+  
+      return userAttributes;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      return null;
+    }
+  };
+
+function formatAddress(data: any[]) {
+    data.forEach(item => {
+        let address = String(item.address)
+        item['address'] = address.split(',').slice(0, 2).join(',');
+    });
+}
+
+
+export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tickets-geodata-all"); //invalidate the cache
+    }
+
+    try {
+
+        const response = await fetch("/api/tickets/geodata/all",
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const rawData = result.data as UnprocessedFaultGeoData[];
+        const data: FaultGeoData[] = [];
+
+        for (const fault of rawData) {
+            let faultColor: string | undefined = undefined;
+
+            if (fault.urgency = "urgent") {
+                faultColor = "#b91c1c"; //red-ish
+            }
+            else if (fault.urgency = "semi-urgent") {
+                faultColor = "#ca8a04"; //yellow-ish
+            }
+            else if (fault.urgency = "non-urgent") {
+                faultColor = "#15803d"; //green-ish
+            }
+
+            const faultResult: FaultGeoData = { ...fault, color: faultColor };
+            data.push(faultResult);
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+
 }

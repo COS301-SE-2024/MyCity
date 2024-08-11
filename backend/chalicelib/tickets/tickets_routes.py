@@ -12,12 +12,21 @@ from chalicelib.tickets.tickets_controllers import (
     add_ticket_comment_without_image,
     get_ticket_comments,
     get_geodata_all,
+    getCompanyTicekts,
+    AcceptTicket,
+    ClosedTicket,
+    get_Open_Company_Tickets,
+    get_open_tickets_in_municipality,
 )
+from chalicelib.authorisers import cognito_authorizer
+
 
 tickets_blueprint = Blueprint(__name__)
 
 
-@tickets_blueprint.route("/create", methods=["POST"], cors=True)
+@tickets_blueprint.route(
+    "/create", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
 def create_ticket_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
@@ -25,7 +34,29 @@ def create_ticket_route():
     return response
 
 
-@tickets_blueprint.route("/view", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/accept", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
+def accepting_ticket():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = AcceptTicket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route(
+    "/close", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
+def closing_ticket():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = ClosedTicket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route(
+    "/view", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def view_ticket_route():
     request = tickets_blueprint.current_request
     ticket_id = request.query_params.get("ticket_id")
@@ -40,7 +71,9 @@ def get_fault_types_route():
     return fault_types
 
 
-@tickets_blueprint.route("/getmytickets", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/getmytickets", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_my_tickets():
     request = tickets_blueprint.current_request
     ticket_data = request.query_params.get("username")
@@ -48,7 +81,9 @@ def get_my_tickets():
     return response
 
 
-@tickets_blueprint.route("/getinarea", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/getinarea", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_in_area():
     request = tickets_blueprint.current_request
     ticket_data = request.query_params.get("municipality")
@@ -56,7 +91,19 @@ def get_in_area():
     return response
 
 
-@tickets_blueprint.route("/getwatchlist", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/getopeninarea", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
+def get_open_tickets():
+    request = tickets_blueprint.current_request
+    ticket_data = request.query_params.get("municipality")
+    response = get_open_tickets_in_municipality(ticket_data)
+    return response
+
+
+@tickets_blueprint.route(
+    "/getwatchlist", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_my_watchlist():
     request = tickets_blueprint.current_request
     ticket_data = request.query_params.get("username")
@@ -76,7 +123,9 @@ def format_response(response):
     )
 
 
-@tickets_blueprint.route("/interact", methods=["POST"], cors=True)
+@tickets_blueprint.route(
+    "/interact", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
 def get_my_tickets():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
@@ -84,13 +133,38 @@ def get_my_tickets():
     return response
 
 
-@tickets_blueprint.route("/getUpvotes", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/getUpvotes", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_Upvote_tickets():
     tickets = getMostUpvoted()
     return tickets
 
 
-@tickets_blueprint.route("/add-comment-with-image", methods=["POST"], cors=True)
+@tickets_blueprint.route(
+    "/getcompanytickets", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
+def get_company_tickets():
+    request = tickets_blueprint.current_request
+    company_name = request.query_params.get("company")
+    response = getCompanyTicekts(company_name)
+    return response
+
+
+@tickets_blueprint.route(
+    "/getopencompanytickets", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
+def get_open_company_tickets():
+    response = get_Open_Company_Tickets()
+    return response
+
+
+@tickets_blueprint.route(
+    "/add-comment-with-image",
+    authorizer=cognito_authorizer,
+    methods=["POST"],
+    cors=True,
+)
 def add_comment_with_image_route():
     request = tickets_blueprint.current_request
     comment = request.json_body.get("comment")
@@ -107,7 +181,12 @@ def add_comment_with_image_route():
     return response
 
 
-@tickets_blueprint.route("/add-comment-without-image", methods=["POST"], cors=True)
+@tickets_blueprint.route(
+    "/add-comment-without-image",
+    authorizer=cognito_authorizer,
+    methods=["POST"],
+    cors=True,
+)
 def add_comment_without_image_route():
     request = tickets_blueprint.current_request
     comment = request.json_body.get("comment")
@@ -121,7 +200,9 @@ def add_comment_without_image_route():
     return response
 
 
-@tickets_blueprint.route("/comments", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/comments", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_ticket_comments_route():
     request = tickets_blueprint.current_request
     ticket_id = request.headers.get("X-Ticket-ID")
@@ -134,7 +215,9 @@ def get_ticket_comments_route():
 
 # endpoint should retrieve geodata for all unclosed tickets
 # NOTE: tests still need to be written for this endpoint
-@tickets_blueprint.route("/geodata/all", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/geodata/all", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_geodata_route():
     response = get_geodata_all()
     return response

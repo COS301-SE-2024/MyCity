@@ -14,6 +14,7 @@ from boto3.dynamodb.conditions import Attr
 import re
 import json
 import logging
+import string
 
 # import requests
 import random
@@ -22,6 +23,8 @@ import random
 dynamodb = boto3.resource("dynamodb")
 tickets_table = dynamodb.Table("tickets")
 assets_table = dynamodb.Table("asset")
+tenders_table = dynamodb.Table("tenders")
+companies_table = dynamodb.Table("private_companies")
 cognito_cient = boto3.client("cognito-idp")
 load_dotenv()
 user_poolid = os.getenv("USER_POOL_ID")
@@ -120,6 +123,8 @@ def create_ticket(ticket_data):
 
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
 
+        ticketnumber = generate_ticket_number(municipality_id)
+
         # Create the ticket item
         ticket_item = {
             "ticket_id": ticket_id,
@@ -136,6 +141,7 @@ def create_ticket(ticket_data):
             "state": ticket_data["state"],  # do not hard code, want to extend in future
             "upvotes": 0,
             "viewcount": 0,
+            "ticketnumber": ticketnumber,
         }
 
         # Put the ticket item into the tickets table
@@ -186,8 +192,9 @@ def getMyTickets(tickets_data):
                 }
             }
             raise ClientError(error_response, "InvalideFields")
-        response = tickets_table.scan(
-            FilterExpression=Attr("username").eq(tickets_data)
+        response = tickets_table.query(
+            IndexName="username-index",
+            KeyConditionExpression=Key("username").eq(tickets_data),
         )
         items = response["Items"]
         if len(items) > 0:
@@ -217,18 +224,70 @@ def get_in_my_municipality(tickets_data):
                 }
             }
             raise ClientError(error_response, "InvalideFields")
-        response = tickets_table.scan(
-            FilterExpression=Attr("municipality_id").eq(tickets_data)
+        response = tickets_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
         if len(items) > 0:
             for item in items:
-                response_item = ticketupdate_table.scan(
-                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
                 )
                 item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
             return items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket in municipality",
+                }
+            }
+            raise ClientError(error_response, "NoTicket")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_open_tickets_in_municipality(tickets_data):
+    try:
+
+        if tickets_data == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required field: municipality",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+        response = tickets_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq(tickets_data),
+        )
+        items = response["Items"]
+        if len(items) > 0:
+            for item in items:
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(items)
+            filtered_items = [item for item in items if item["state"] == "Opened"]
+
+            if len(filtered_items) <= 0:
+                error_response = {
+                    "Error": {
+                        "Code": "NoTickets",
+                        "Message": "Doesnt have open tickets in municipality",
+                    }
+                }
+                raise ClientError(error_response, "NoTicket")
+
+            return filtered_items
         else:
             error_response = {
                 "Error": {
@@ -266,8 +325,11 @@ def get_watchlist(tickets_data):
                 ticketsItems = respitem["Items"]
                 if len(ticketsItems) > 0:
                     for tckitem in ticketsItems:
-                        response_item = ticketupdate_table.scan(
-                            FilterExpression=Attr("ticket_id").eq(tckitem["ticket_id"])
+                        response_item = ticketupdate_table.query(
+                            IndexName="ticket_id-index",
+                            KeyConditionExpression=Key("ticket_id").eq(
+                                tckitem["ticket_id"]
+                            ),
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
                 else:
@@ -278,8 +340,10 @@ def get_watchlist(tickets_data):
                         }
                     }
                     raise ClientError(error_response, "Inconsistencies")
-            getUserprofile(ticketsItems)
-            return ticketsItems
+                getUserprofile(ticketsItems)
+                collective.extend(ticketsItems)
+            return collective
+
         else:
             error_response = {
                 "Error": {
@@ -377,18 +441,238 @@ def interact_ticket(ticket_data):
 
 
 def getMostUpvoted():
-    response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
-    items = response["Items"]
-    sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
-    top_items = sorted_items[:6]
-    if len(top_items) > 0:
-        for item in top_items:
-            response_item = ticketupdate_table.scan(
-                FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
-            )
-            item["commentcount"] = len(response_item["Items"])
-        getUserprofile(top_items)
-        return top_items
+    try:
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+        top_items = sorted_items[:6]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            return top_items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def ClosedTicket(ticket_data):
+    try:
+        required_fields = ["ticket_id"]
+
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        if not DoesTicketExist(ticket_data["ticket_id"]):
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExist",
+                    "Message": "Ticket Doesnt Exist",
+                }
+            }
+            raise ClientError(error_response, "TicketDoesntExist")
+
+        ticket_id = ticket_data["ticket_id"]
+        updateExp = "set #state=:r"
+        expattrName = {"#state": "state"}
+        expattrValue = {":r": "Closed"}
+        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Ticket_id": ticket_id,
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def AcceptTicket(ticket_data):
+    try:
+        required_fields = ["ticket_id"]
+
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        if not DoesTicketExist(ticket_data["ticket_id"]):
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExist",
+                    "Message": "Ticket Doesnt Exist",
+                }
+            }
+            raise ClientError(error_response, "TicketDoesntExist")
+
+        ticket_id = ticket_data["ticket_id"]
+        updateExp = "set #state=:r"
+        expattrName = {"#state": "state"}
+        expattrValue = {":r": "Taking Tenders"}
+        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Ticket_id": ticket_id,
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def DoesTicketExist(ticket_id):
+    checking_ticket = tickets_table.query(
+        KeyConditionExpression=Key("ticket_id").eq(ticket_id)
+    )
+    if len(checking_ticket["Items"]) <= 0:
+        return False
+    else:
+        return True
+
+
+def getCompanyTicekts(companyname):
+    try:
+        if companyname == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required query: company",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+
+        collective = []
+        company_id = getCompanIDFromName(companyname)
+        response_tender = tenders_table.scan(
+            FilterExpression=Attr("company_id").eq(company_id)
+        )
+
+        ###For all the tickets they have tenders for
+        if len(response_tender["Items"]) > 0:
+            Items = response_tender["Items"]
+            for item in Items:
+                response_company_tickets = tickets_table.query(
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
+                )
+                company_tickets = response_company_tickets["Items"]
+                if len(company_tickets) > 0:
+                    getUserprofile(company_tickets)
+                    collective.extend(company_tickets)
+
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+        filtered_items = [
+            item for item in sorted_items if item["state"] == "Taking Tenders"
+        ]
+        top_items = filtered_items[:6]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.scan(
+                    FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            collective.extend(top_items)
+            return collective
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    ## Error Handling
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_Open_Company_Tickets():
+    try:
+        collective = []
+
+        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        items = response["Items"]
+        sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
+        filtered_items = [
+            item for item in sorted_items if item["state"] == "Taking Tenders"
+        ]
+        top_items = filtered_items[:6]
+        if len(top_items) > 0:
+            for item in top_items:
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(top_items)
+            return top_items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDontExist",
+                    "Message": "Seems tickets dont exist",
+                }
+            }
+            raise ClientError(error_response, "NonExistence")
+    ## Error Handling
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def getCompanIDFromName(company_name):
+    response = companies_table.scan()
+    response_items = response["Items"]
+    company_id = ""
+    for item in response_items:
+        if company_name.lower() == item["name"].lower():
+            company_id = item["pid"]
+    return company_id
 
 
 def getUserprofile(ticket_data):
@@ -408,7 +692,18 @@ def getUserprofile(ticket_data):
                     user_name = attr["Value"]
             username["user_picture"] = user_image
             username["createdby"] = user_name
-            username["municipality_picture"] = ""
+            response_municipality = municipality_table.query(
+                KeyConditionExpression=Key("municipality_id").eq(
+                    username["municipality_id"]
+                )
+            )
+            if len(response_municipality["Items"]) > 0:
+                logo = response_municipality["Items"][0]
+                username["municipality_picture"] = logo["municipalityLogo"]
+                username["municipality"] = logo["municipality_id"]
+            else:
+                username["municipality_picture"] = ""
+                username["municipality"] = ""
 
     except cognito_cient.exceptions.UserNotFoundException:
         print(f"User {username['username']} not found.")
@@ -557,25 +852,116 @@ def get_geodata_all():
     try:
         # ---- retrieve geodata for ALL available tickets in the table ------
         # response = tickets_table.scan(
-        #     ProjectionExpression="asset_id, latitude, longitude"
+        #     ProjectionExpression="asset_id, latitude, longitude, upvotes"
         # )
-        # items = response.get("Items", [])
+        # fault_data = response.get("Items", [])
 
         # while "LastEvaluatedKey" in response:
         #     response = tickets_table.scan(
         #         ExclusiveStartKey=response["LastEvaluatedKey"]
         #     )
-        #     items.extend(response.get("Items", []))
+        #     fault_data.extend(response.get("Items", []))
+
+        # for fault in fault_data:
+        #     # non-urgent
+        #     if fault["upvotes"] < 10:
+        #         fault["urgency"] = "non-urgent"
+
+        #     # semi-urgent
+        #     elif fault["upvotes"] >= 10 and fault["upvotes"] < 20:
+        #         fault["urgency"] = "semi-urgent"
+
+        #     # urgent
+        #     elif fault["upvotes"] >= 20 and fault["upvotes"] <= 40:
+        #         fault["urgency"] = "urgent"
+
+        #     # non-urgent
+        #     else:
+        #         fault["urgency"] = "non-urgent"
+
+        #     fault.pop("upvotes")
+
+        # return fault_data
 
         # ----- retrieve geodata for all tickets up to the dynamodb limit -----
         response = tickets_table.scan(
-            ProjectionExpression="asset_id, latitude, longitude"
+            ProjectionExpression="asset_id, latitude, longitude, upvotes"
         )
-        items = response.get("Items", [])
+        fault_data = response.get("Items", [])
 
-        return items
+        for fault in fault_data:
+            # non-urgent
+            if fault["upvotes"] < 10:
+                fault["urgency"] = "non-urgent"
+
+            # semi-urgent
+            elif fault["upvotes"] >= 10 and fault["upvotes"] < 20:
+                fault["urgency"] = "semi-urgent"
+
+            # urgent
+            elif fault["upvotes"] >= 20 and fault["upvotes"] <= 40:
+                fault["urgency"] = "urgent"
+
+            # non-urgent
+            else:
+                fault["urgency"] = "non-urgent"
+
+            fault.pop("upvotes")
+
+        return fault_data
 
     except ClientError as e:
         raise BadRequestError(
             f"Failed to retrieve all tickets: {e.response['Error']['Message']}"
         )
+
+
+def updateTicketTable(
+    ticket_id,
+    update_expression,
+    expression_attribute_names,
+    expression_attribute_values,
+):
+    response = tickets_table.update_item(
+        Key={"ticket_id": ticket_id},
+        UpdateExpression=update_expression,
+        ExpressionAttributeNames=expression_attribute_names,
+        ExpressionAttributeValues=expression_attribute_values,
+    )
+
+    return response
+
+
+def generate_ticket_number(municipality_name):
+    # Extract the first 3 letters and convert them to uppercase
+    municipality_code = municipality_name[:1]
+    valid_char = [char.upper() for char in municipality_name if char not in (" ", "-")]
+    muni = "".join(random.choices(valid_char, k=2))
+    municipality_code = municipality_code + muni
+
+    # Get the current date
+    now = datetime.now()
+    year = now.strftime("%y")  # Last two digits of the year
+    month = now.strftime("%m")  # Month in two digits
+    day = now.strftime("%d")  # Day in two digits
+
+    year1 = year[:1]
+    rest_of_the_year = year[1:]
+
+    # Generate the 3 random digits or letters in uppercase
+
+    random_item = "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+
+    # Construct the ticket number according to the format mmmY-YMMD-DRRR
+    ticket_number = (
+        municipality_code
+        + year1
+        + "-"
+        + rest_of_the_year
+        + month
+        + day
+        + "-"
+        + random_item
+    )
+
+    return ticket_number

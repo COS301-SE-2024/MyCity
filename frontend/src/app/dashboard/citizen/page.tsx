@@ -4,15 +4,16 @@ import React, { Key, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
-import Navbar from "@/components/Navbar/Navbar";
+import NavbarUser from "@/components/Navbar/NavbarUser";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
+import { ThreeDots } from "react-loader-spinner";
+
 import {
-  getTicket,
-  getTicketsInMunicipality,
   getMostUpvote,
+  getTicketsInMunicipality,
   getWatchlistTickets,
 } from "@/services/tickets.service";
 
@@ -23,41 +24,39 @@ export default function CitizenDashboard() {
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      // try {
-      const user_data = await userProfile.getUserProfile();
-      const user_id = user_data.current?.email;
-      const user_session = String(user_data.current?.session_token);
-      // console.log(user_session);
-      const rspmostupvotes = await getMostUpvote(user_session);
-      const rspwatchlist = await getWatchlistTickets(
-        String(user_id),
-        user_session
-      );
-      const municipality = user_data.current?.municipality;
-      const rspmunicipality = await getTicketsInMunicipality(
-        municipality,
-        user_session
-      );
-      // console.log(rspmostupvotes)
-      // const flattenedWatchlist = rspwatchlist.flat();
-      // console.log(rspwatchlist);
-      setMostUpvoteResults(rspmostupvotes);
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-      if (rspwatchlist.length > 0) {
-        setDashWatchResults(rspwatchlist);
-      } else setDashWatchResults([]);
-      // console.log( dashMostUpvoteResults)
-      // }
-      // catch (error) {
-      //   console.error("Error fetching data:", error);
-      // }
+      try {
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.email;
+        const user_session = String(user_data.current?.session_token);
+        const rspmostupvotes = await getMostUpvote(user_session);
+        const rspwatchlist = await getWatchlistTickets(
+          String(user_id),
+          user_session
+        );
+        const municipality = user_data.current?.municipality;
+        const rspmunicipality = await getTicketsInMunicipality(
+          municipality,
+          user_session
+        );
+
+        setMostUpvoteResults(rspmostupvotes);
+        setDashMuniResults(
+          Array.isArray(rspmunicipality) ? rspmunicipality : []
+        );
+        setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchData();
-  }, [ userProfile]); // Add userProfile to the dependency array
+  }, [userProfile]);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -67,22 +66,19 @@ export default function CitizenDashboard() {
     setIsHelpOpen(!isHelpOpen);
   };
 
-  const hasStatusFieldMuni =
-    Array.isArray(dashMuniResults) &&
-    dashMuniResults.some((item) => item.Status !== undefined);
-  const hasStatusFieldWatch =
-    Array.isArray(dashWatchResults) &&
-    dashWatchResults.some((item) => item.Status !== undefined);
-
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
+        <div className="flex justify-center mt-5">
+          {/* <NotificationPromt /> */}
+        </div>
         <div>
-          <Navbar />
+          <NavbarUser />
+
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -92,17 +88,16 @@ export default function CitizenDashboard() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
+              backgroundAttachment: "fixed",
+              zIndex: -1,
             }}
           ></div>
           <main>
-            <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 ">
+            <div className="flex items-center mb-2 mt-2 ml-5">
+              <h1 className="text-4xl font-bold text-white text-opacity-80 text-center ">
                 Dashboard
               </h1>
             </div>
-            {/* Persistent Help Icon */}
             <div className="fixed bottom-4 right-4">
               <HelpCircle
                 data-testid="open-help-menu"
@@ -149,11 +144,11 @@ export default function CitizenDashboard() {
                 defaultSelectedKey={0}
                 className="mt-5 flex justify-center w-full"
                 classNames={{
-                  tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
+                  tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black",
                   panel: "w-full",
                   cursor: "w-full border-3 border-blue-700/40",
                   tabContent:
-                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
                 }}
                 onSelectionChange={handleTabChange}
               >
@@ -168,11 +163,28 @@ export default function CitizenDashboard() {
                       Based on votes from the community in your area.
                     </h1>
                   </div>
-                  <div className="justify-center text-center">
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  ) : dashMostUpvoteResults.length > 0 ? (
                     <DashboardFaultCardContainer
                       cardData={dashMostUpvoteResults}
                     />
-                  </div>
+                  ) : (
+                    <p className="text-center text-white text-opacity-60 text-sm">
+                      There are no faults to display.
+                    </p>
+                  )}
 
                   <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
                     Nearest to you
@@ -181,7 +193,26 @@ export default function CitizenDashboard() {
                     Based on your proximity to the issue.
                   </h1>
 
-                  <DashboardFaultCardContainer cardData={dashMuniResults} />
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  ) : dashMuniResults.length > 0 ? (
+                    <DashboardFaultCardContainer cardData={dashMuniResults} />
+                  ) : (
+                    <p className="text-center text-sm text-opacity-60 text-white">
+                      There are no faults to display.
+                    </p>
+                  )}
 
                   <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
                     Watchlist
@@ -191,17 +222,35 @@ export default function CitizenDashboard() {
                     All of the issues you have added to your watchlist.
                   </h1>
 
-                  <DashboardFaultCardContainer cardData={dashWatchResults} />
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  ) : dashWatchResults.length > 0 ? (
+                    <DashboardFaultCardContainer cardData={dashWatchResults} />
+                  ) : (
+                    <p className="text-center text-white text-opacity-60 text-sm">
+                      There are no faults to display.
+                    </p>
+                  )}
                 </Tab>
 
                 <Tab key={1} title="List">
-                  {/*<FaultTable tableitems={dashMostUpvoteResults}/>*/}
                   <FaultTable tableitems={dashMostUpvoteResults} />
                 </Tab>
 
                 <Tab key={2} title="Map">
-                  <h1 className="text-4xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-80">
-                    Pretoria
+                  <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
+                    Faults Near You
                   </h1>
                   <FaultMapView />
                 </Tab>
@@ -217,7 +266,7 @@ export default function CitizenDashboard() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
@@ -243,7 +292,7 @@ export default function CitizenDashboard() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
           ></div>
 
@@ -251,7 +300,6 @@ export default function CitizenDashboard() {
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
             {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction

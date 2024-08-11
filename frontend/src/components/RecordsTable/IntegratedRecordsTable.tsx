@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Record from './IntegratedRecord';
 
@@ -8,9 +9,10 @@ interface RecordType {
   ticket_id: string;
   ticketnumber : string;
   asset_id: string;
-  user_profile : string;
-  municipality_picture : string | "";
+  user_picture : string;
+  municipality_picture : string ;
   description : string;
+  imageURL : string;
   state: string;
   address: string;
   createdby: string;
@@ -24,11 +26,12 @@ interface RecordType {
 
 
 interface RecordTypeProps {
-    records : RecordType[]
+    records : RecordType[];
+    refresh : () => void;
 }
 
 
-const RecordsTable: React.FC<RecordTypeProps> = ({records = []}) => {
+const RecordsTable: React.FC<RecordTypeProps> = ({records = [],refresh}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
@@ -64,7 +67,7 @@ const RecordsTable: React.FC<RecordTypeProps> = ({records = []}) => {
       </div>
       <div className="min-w-full">
         {currentRecords.map(record => (
-          <Record key={record.ticket_id} record={record} />
+          <Record key={record.ticket_id} record={record} refresh={refresh} />
         ))}
       </div>
       <div className="flex justify-between mt-4 text-white">

@@ -1,28 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, FormEvent } from "react";
-//import Navbar from "@/components/Navbar/Navbar";
+import React, { useState, FormEvent } from "react";
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
-import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
+import SearchTicket from "@/components/Search/SearchTicket";
 import { HelpCircle, X } from "lucide-react";
 import { ThreeDots } from "react-loader-spinner";
 import {
-  searchIssue,
   searchMunicipality,
-  searchMunicipalityTickets,
   searchServiceProvider,
 } from "@/services/search.service";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function CreateTicket() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<
-    "myLocation" | "serviceProviders" | "municipalities" | "municipalityTickets"
-  >("myLocation");
+    "serviceProviders" | "municipalities"
+  >("serviceProviders");
   const [hasSearched, setHasSearched] = useState(false);
-  const [municipalityTickets, setMunicipalityTickets] = useState<any[]>([]);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,52 +27,32 @@ export default function CreateTicket() {
   const [searchTime, setSearchTime] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
-  const [selectedSubfilter, setSelectedSubfilter] = useState(0);
 
+  const { getUserProfile } = useProfile();
 
   const handleSearch = async () => {
+    const userProfile = await getUserProfile();
+    const sessionToken = userProfile.current?.session_token;
+
     try {
       setHasSearched(true);
       setLoading(true);
       const startTime = Date.now();
       let data: any[] = [];
-      let allTickets = [];
       switch (selectedFilter) {
-        case "myLocation":
-          data = await searchIssue(searchTerm);
-          break;
         case "serviceProviders":
-          data = await searchServiceProvider(searchTerm);
+          data = await searchServiceProvider(sessionToken, searchTerm);
           break;
         case "municipalities":
-          data = await searchMunicipality(searchTerm);
-          break;
-        case "municipalityTickets":
-          data = await searchMunicipality(searchTerm);
-          const municipalityIds = data.map(
-            (municipality: any) => municipality.municipality_id
-          );
-          const ticketsPromises = municipalityIds.map(
-            (municipalityId: string) =>
-              searchMunicipalityTickets(municipalityId)
-          );
-          const ticketsResponses = await Promise.all(ticketsPromises);
-          allTickets = ticketsResponses.flatMap((response) => response);
-          setMunicipalityTickets(allTickets);
+          data = await searchMunicipality(sessionToken, searchTerm);
           break;
         default:
           break;
       }
       const endTime = Date.now();
       setSearchTime((endTime - startTime) / 1000); // Time in seconds
-      setTotalResults(
-        selectedFilter === "municipalityTickets"
-          ? allTickets.length
-          : data.length
-      );
-      setSearchResults(
-        selectedFilter === "municipalityTickets" ? allTickets : data
-      );
+      setTotalResults(data.length);
+      setSearchResults(data);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
       setLoading(false);
@@ -86,16 +63,11 @@ export default function CreateTicket() {
   };
 
   const handleFilterChange = (
-    filter:
-      | "myLocation"
-      | "serviceProviders"
-      | "municipalities"
-      | "municipalityTickets"
+    filter: "serviceProviders" | "municipalities"
   ) => {
     setSelectedFilter(filter);
     setSearchResults([]);
     setHasSearched(false);
-    setMunicipalityTickets([]);
     setCurrentPage(1); // Reset to the first page on filter change
   };
 
@@ -174,8 +146,7 @@ export default function CreateTicket() {
               <p>This page allows you to:</p>
               <ul className="list-disc list-inside">
                 <li>
-                  Search for tickets based on different criteria such as
-                  location, service providers, or municipalities.
+                  Search for service providers or municipalities.
                 </li>
                 <li>
                   Use the filter button to select your preferred search
@@ -222,52 +193,28 @@ export default function CreateTicket() {
           </form>
 
           <div className="flex mt-4 relative">
-  {["myLocation", "municipalities", "municipalityTickets", "serviceProviders"].map(
-    (filter) => (
-      <div
-        key={filter}
-        className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
-          ? "bg-gray-500 text-white"
-          : "bg-transparent text-white"
-          }`}
-        onClick={() =>
-          handleFilterChange(
-            filter as
-            | "myLocation"
-            | "municipalities"
-            | "municipalityTickets"
-            | "serviceProviders"
-          )
-        }
-      >
-        {filter === "myLocation"
-          ? "Current Municipality"
-          : filter === "municipalities"
-            ? "Municipalities"
-            : filter === "municipalityTickets"
-              ? "Tickets"
-              : "Service Providers"}
-      </div>
-    )
-  )}
-</div>
-{selectedFilter === "municipalityTickets" && (
-  <div className="flex mt-6">
-    {["Type", "Urgency", "Status"].map((subfilter, index) => (
-      <div
-        key={subfilter}
-        className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedSubfilter === index
-          ? "bg-gray-500 text-white"
-          : "bg-transparent text-gray-300 border border-gray-300"
-          }`}
-        onClick={() => setSelectedSubfilter(index)}
-      >
-        {subfilter}
-      </div>
-    ))}
-  </div>
-)}
-</div>
+            {["municipalities", "serviceProviders"].map(
+              (filter) => (
+                <div
+                  key={filter}
+                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
+                      ? "bg-gray-500 text-white"
+                      : "bg-transparent text-white"
+                    }`}
+                  onClick={() =>
+                    handleFilterChange(
+                      filter as "municipalities" | "serviceProviders"
+                    )
+                  }
+                >
+                  {filter === "municipalities"
+                    ? "Municipalities"
+                    : "Service Providers"}
+                </div>
+              )
+            )}
+          </div>
+        </div>
 
         {loading && (
           <div className="flex justify-center items-center mt-8">
@@ -302,9 +249,6 @@ export default function CreateTicket() {
                   <SearchMunicipality key={index} municipalities={[result]} />
                 );
               }
-              if (selectedFilter === "municipalityTickets") {
-                return <SearchTicket key={index} tickets={[result]} />;
-              }
               return null;
             })}
             <div className="flex justify-center mt-4">
@@ -318,11 +262,10 @@ export default function CreateTicket() {
                       <li key={index} className="mx-1">
                         <button
                           onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 rounded-full ${
-                            currentPage === index + 1
+                          className={`px-3 py-1 rounded-full ${currentPage === index + 1
                               ? "bg-blue-500 text-white"
                               : "bg-gray-300"
-                          }`}
+                            }`}
                         >
                           {index + 1}
                         </button>

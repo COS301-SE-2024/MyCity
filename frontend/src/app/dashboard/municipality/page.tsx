@@ -1,17 +1,17 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
 import { Building, ChevronDown } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
-import {
-  getTicketsInMunicipality,
-} from "@/services/tickets.service";
+import { getTicketsInMunicipality } from "@/services/tickets.service";
+import { ThreeDots } from "react-loader-spinner";
 
 export default function Dashboard() {
-  const [city, setCity] = useState(String);
+  const [city, setCity] = useState<string | null>(null);
+  const [cityLoading, setCityLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -20,21 +20,38 @@ export default function Dashboard() {
     setDropdownOpen(!dropdownOpen);
   };
 
-  useEffect(() =>{
-    const fetchData = async () => {
-      const user_data = await userProfile.getUserProfile();
-      console.log(user_data.current)
-      const user_session = String(user_data.current?.session_token);
-      const user_municipality = String(user_data.current?.municipality)
-      setCity(String(user_data.current?.municipality))
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session
-      );
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-    };
-    fetchData();
-  },[userProfile])
+  const fetchData = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality);
+    setCity(String(user_data.current?.municipality));
+    setCityLoading(false);
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session,
+      true
+    );
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    setTableLoading(false);
+  };
+
+  const fetchDataWithoutCache = useCallback(async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality);
+    setCity(String(user_data.current?.municipality));
+    setCityLoading(false);
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session
+    );
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    setTableLoading(false);
+  }, [userProfile]);
+
+  useEffect(() => {
+    fetchDataWithoutCache();
+  }, [fetchDataWithoutCache]);
 
   return (
     <div>
@@ -66,7 +83,20 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <Building size={30} className="mb-2" />
-              <span className="text-xl">{city}</span>
+              {cityLoading ? (
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                />
+              ) : (
+                <span className="text-xl">{city}</span>
+              )}
             </div>
             <div className="flex items-center justify-between mt-8">
               <div className="relative inline-block text-left">
@@ -111,7 +141,22 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="mt-8">
-              <RecordsTable records={dashMuniResults} />
+              {tableLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <ThreeDots
+                    height="40"
+                    width="80"
+                    radius="9"
+                    color="#ADD8E6"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <RecordsTable records={dashMuniResults} refresh={fetchData} />
+              )}
             </div>
           </main>
         </div>
@@ -178,11 +223,8 @@ export default function Dashboard() {
               work on it.
             </p>
           </div>
-
-
         </div>
       </div>
     </div>
   );
 }
-

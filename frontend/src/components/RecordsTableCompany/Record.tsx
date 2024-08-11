@@ -6,13 +6,23 @@ type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
 
 interface RecordType {
-  id: string;
-  faultType: string;
-  status: Status;
-  createdBy: string;
-  address: string;
-  urgency: Urgency;
-  municipality: string;
+    ticket_id: string;
+    ticketnumber : string;
+    asset_id: string;
+    imageURL : string;
+    user_picture : string;
+    municipality_picture : string ;
+    description : string;
+    state: string;
+    address: string;
+    createdby: string;
+    viewcount : number;
+    commentcount: number;
+    latitude : string;
+    longitude : string;
+    upvotes : number;
+    urgency: Urgency;
+    municipality : string;
 }
 
 interface UrgencyMappingType {
@@ -47,7 +57,36 @@ export default function Record({ record }: { record: RecordType }) {
     setShowTicketView(false);
   };
 
-  const urgency = urgencyMapping[record.urgency] || urgencyMapping.low;
+  const getUrgency = (votes: number) => {
+    if (votes < 5) {
+      return "low";
+    } else if (votes >= 5 && votes < 10) {
+      return "medium";
+    } else if (votes >= 10 && votes <= 40) {
+      return "high";
+    } else {
+      return "low"; // Default case
+    }
+  };
+
+  function getStateColour(state: string) {
+    switch (state) {
+      case "Opened":
+        return 'bg-green-200 text-green-800';
+      case "In Progress":
+        return 'bg-blue-200 text-blue-800';
+      case "Assigning Contract":
+        return 'bg-blue-200 text-blue-800';
+      case "Closed":
+        return 'bg-red-200 text-red-800';
+      case "Taking Tenders":
+        return 'bg-purple-200 text-purple-800';
+      default:
+        return 'bg-gray-200 text-gray-800';
+    }
+  }
+
+  const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
     if (addressRef.current) {
@@ -55,49 +94,66 @@ export default function Record({ record }: { record: RecordType }) {
     }
   }, []);
 
+  const truncatedAddress = record.address.split(',')[0];
+
   return (
     <>
       <div
-        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleClick}
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
-        <div className="col-span-1 flex justify-center font-bold">{record.id}</div>
-        <div className="col-span-1 flex justify-center">{record.faultType}</div>
+        <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
+        <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.status === 'Unaddressed' ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}`}>
-            {record.status}
+          <span className={`px-2 py-1 rounded ${getStateColour(record.state)}`}>
+            {record.state}
           </span>
         </div>
-        <div className="col-span-1 flex justify-center">{record.createdBy}</div>
-        <div className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap" ref={addressRef}>
+        <div className="col-span-1 flex justify-center">{record.createdby}</div>
+        <div
+          className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap hover:overflow-visible"
+          ref={addressRef}
+          style={{
+            position: 'relative'
+          }}
+        >
           <div
             style={{
               display: "inline-block",
+              whiteSpace: "nowrap",
               animation: isOverflowing ? "scroll 10s linear infinite" : "none",
               animationTimingFunction: "linear",
               animationDelay: "5s",
-              whiteSpace: "nowrap",
             }}
+            className="hover:animate-scroll"
           >
-            {record.address}
+            {truncatedAddress}
           </div>
         </div>
+        <div className="col-span-1 flex justify-center">{record.municipality}</div>
       </div>
       {showTicketView && (
         <TicketViewCompany
+          ticket_id={record.ticket_id}
           show={showTicketView}
           onClose={handleClose}
-          title={record.faultType}
+          title={record.asset_id}
           address={record.address}
-          ticketNumber={record.id}
-          description={"Add the description here"} // Update this as per your data source
-          image={"https://via.placeholder.com/150"} // Update this as per your data source
-          createdBy={record.createdBy}
-          status={record.status}
-          municipalityImage={"https://via.placeholder.com/50"} // Update this as per your data source
-          urgency={record.urgency} // Pass urgency to TicketViewCompany
-          municipality={record.municipality} // Pass municipality to TicketViewCompany
+          arrowCount={record.upvotes} // Update this as per your data source
+          commentCount={record.commentcount} // Update this as per your data source
+          viewCount={record.viewcount} // Update this as per your data source
+          description={record.description} // Update this as per your data source
+          user_picture={record.user_picture} // Update this as per your data source
+          createdBy={record.createdby}
+          imageURL={record.imageURL}
+          status={record.state}
+          municipalityImage={record.municipality_picture} // Update this as per your data source
+          upvotes={record.upvotes}
+          latitude={record.latitude}
+          longitude={record.longitude}
+          urgency={record.urgency} // Pass urgency to TicketViewMuni
+          ticketNumber={record.ticketnumber}
         />
       )}
       <style jsx>{`
