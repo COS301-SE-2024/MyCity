@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CompleteContract } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
+
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  tender_id : string;
+  contract_id : string;
   status : string;
   companyname : string;
   contractdatetime : string;
@@ -36,7 +39,7 @@ const TenderMax = ({
   municipality: string;
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
-
+  const userProfile = useProfile();
   // Map "Fix in progress" to "Active" for the tender's status
   const tenderStatus = tender.status;
 
@@ -44,10 +47,36 @@ const TenderMax = ({
     setDialog({ action, show: true });
   };
 
-  const confirmAction = () => {
-    toast.success(`${dialog.action} action confirmed.`);
+  const confirmAction = async () => {
+    switch (dialog.action) {
+      case "Mark as Complete":
+        {
+          const user_data = await userProfile.getUserProfile();
+          const user_session = String(user_data.current?.session_token);
+          const rspcompleted = await CompleteContract(tender.contract_id,user_session)
+          if(rspcompleted == true)
+          {
+            toast.success(`${dialog.action} action confirmed.`);
+            onClose();
+          }
+          else {
+            toast.error(`${dialog.action} couldnt go through`)
+          }
+        }
+        
+        break;
+      case "Terminate Contract" :
+        {
+          toast.success(`${dialog.action} action confirmed.`);
+          onClose();
+        }
+    
+      default:
+        onClose();
+        break;
+    }
     setDialog({ action: "", show: false });
-    onClose();
+    onClose()
   };
 
   const getDialogText = (action: string) => {
