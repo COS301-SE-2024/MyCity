@@ -5,7 +5,9 @@ const nextConfig = {
         USER_POOL_CLIENT_ID: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
         MAPBOX_ACCESS_TOKEN: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
         PLACEKIT_API_KEY: process.env.NEXT_PUBLIC_PLACEKIT_API_KEY,
-        API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
+        API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+
+        FIREBASE_VAPID_KEY: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
     },
 
     // images: {

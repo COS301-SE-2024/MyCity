@@ -10,7 +10,7 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 
-import NotificationPromt from "@/components/Notifications/NotificationPromt";
+import Notification from "@/components/Notifications/Notification";
 
 import {
   getTicket,
@@ -18,6 +18,13 @@ import {
   getMostUpvote,
   getWatchlistTickets,
 } from "@/services/tickets.service";
+// import {
+//   // toastNotification,
+//   sendNativeNotification,
+// } from "@/components/Notifications/notificationHelpers";
+
+import { register } from "../../../../public/worker";
+register();
 
 export default function CitizenDashboard() {
   const user = useRef(null);
@@ -57,6 +64,7 @@ export default function CitizenDashboard() {
       // catch (error) {
       //   console.error("Error fetching data:", error);
       // }
+      // Prompt_Popup();
     };
 
     fetchData();
@@ -82,7 +90,9 @@ export default function CitizenDashboard() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="flex justify-center mt-20">
-          {/* <NotificationPromt /> */}
+          <React.Fragment>
+            {/* <Notification /> */}
+          </React.Fragment>
         </div>
         <div>
           <NavbarUser />
