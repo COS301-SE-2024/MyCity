@@ -159,7 +159,12 @@ def get_open_company_tickets():
     return response
 
 
-@tickets_blueprint.route("/add-comment-with-image", methods=["POST"], cors=True)
+@tickets_blueprint.route(
+    "/add-comment-with-image",
+    authorizer=cognito_authorizer,
+    methods=["POST"],
+    cors=True,
+)
 def add_comment_with_image_route():
     request = tickets_blueprint.current_request
     comment = request.json_body.get("comment")
@@ -176,7 +181,12 @@ def add_comment_with_image_route():
     return response
 
 
-@tickets_blueprint.route("/add-comment-without-image", methods=["POST"], cors=True)
+@tickets_blueprint.route(
+    "/add-comment-without-image",
+    authorizer=cognito_authorizer,
+    methods=["POST"],
+    cors=True,
+)
 def add_comment_without_image_route():
     request = tickets_blueprint.current_request
     comment = request.json_body.get("comment")
@@ -190,7 +200,9 @@ def add_comment_without_image_route():
     return response
 
 
-@tickets_blueprint.route("/comments", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/comments", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_ticket_comments_route():
     request = tickets_blueprint.current_request
     ticket_id = request.headers.get("X-Ticket-ID")
@@ -203,7 +215,9 @@ def get_ticket_comments_route():
 
 # endpoint should retrieve geodata for all unclosed tickets
 # NOTE: tests still need to be written for this endpoint
-@tickets_blueprint.route("/geodata/all", methods=["GET"], cors=True)
+@tickets_blueprint.route(
+    "/geodata/all", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def get_geodata_route():
     response = get_geodata_all()
     return response

@@ -51,7 +51,7 @@ export default function CitizenLogin() {
       const { isSignedIn } = await handleSignIn(new FormData(event.currentTarget as HTMLFormElement), UserRole.CITIZEN);
 
       if (isSignedIn) {
-        router.push("/dashboard");
+        router.push("/dashboard/citizen");
       } else {
         throw new Error("Login failed. Please try again.");
       }

@@ -44,22 +44,22 @@ export default function CreateTicket() {
       // Get user profile and municipality
       const user_data = await userProfile.getUserProfile();
       const user_municipality = String(user_data.current?.municipality);
-      const user_session = String(user_data.current?.session_token);
+      const sessionToken = String(user_data.current?.session_token);
 
       switch (selectedFilter) {
         case "myMunicipality": // My Municipality -> Near Me or Asset
           if (selectedSubfilter === 0) {
-            data = await searchMunicipalityTickets(user_municipality); //User's municipality tickets
+            data = await searchMunicipalityTickets(sessionToken, user_municipality); //User's municipality tickets
           } else if (selectedSubfilter === 1) {
             //data = await searchIssue(searchTerm, user_municipality); //Filter of the above tickets based on potential asset matches
-            data = await searchMunicipalityTickets(user_municipality); //User's municipality tickets (this is just temporary)
+            data = await searchMunicipalityTickets(sessionToken, user_municipality); //User's municipality tickets (this is just temporary)
           }
           break;
         case "serviceProviders": // Service Providers
-          data = await searchServiceProvider(searchTerm);
+          data = await searchServiceProvider(sessionToken, searchTerm);
           break;
         case "municipalities": // Municipalities
-          data = await searchMunicipality(searchTerm);
+          data = await searchMunicipality(sessionToken, searchTerm);
           break;
         default:
           break;
@@ -321,11 +321,10 @@ export default function CreateTicket() {
                           <li key={index} className="mx-1">
                             <button
                               onClick={() => paginate(index + 1)}
-                              className={`px-3 py-1 rounded-full ${
-                                currentPage === index + 1
+                              className={`px-3 py-1 rounded-full ${currentPage === index + 1
                                   ? "bg-blue-500 text-white"
                                   : "bg-gray-300"
-                              }`}
+                                }`}
                             >
                               {index + 1}
                             </button>
