@@ -23,7 +23,7 @@ export default function CitizenLogin() {
       const { isSignedIn } = await handleSignIn(form, UserRole.CITIZEN);
 
       if (isSignedIn) {
-        router.push("/dashboard");
+        router.push("/dashboard/citizen");
       } else {
         throw "Something happened and we could not sign you in.";
       }

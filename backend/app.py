@@ -1,7 +1,6 @@
 from chalice import Chalice, CORSConfig
 
 from chalicelib.auth.auth_routes import auth_routes
-from chalicelib.issues.issues_routes import issues_routes
 from chalicelib.tickets.tickets_routes import tickets_blueprint
 from chalicelib.searching.searching_routes import searching_blueprint
 from chalicelib.municipalities.municipalities_routes import municipalities_blueprint
@@ -20,8 +19,6 @@ cors_config = CORSConfig(
 
 
 app.register_blueprint(auth_routes, "Auth", "/auth")
-
-app.register_blueprint(issues_routes, "Issues", "/issues")
 
 app.register_blueprint(tickets_blueprint, "Tickets", "/tickets")
 

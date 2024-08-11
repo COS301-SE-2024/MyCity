@@ -14,7 +14,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -47,7 +47,7 @@ export async function getOpenCompanyTickets(user_session: string, revalidate?: b
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -83,7 +83,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -124,7 +124,7 @@ export async function getWatchlistTickets(username: string, user_session: string
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -163,7 +163,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -202,7 +202,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -248,7 +248,7 @@ export async function getOpenTicketsInMunicipality(municipality: string | undefi
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -287,7 +287,7 @@ export async function AcceptTicket(ticket: string,user_session : string)
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -317,7 +317,7 @@ export async function CloseTicket(ticket: string,user_session : string)
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -383,7 +383,7 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": sessiont || "",
+            "Authorization": `Bearer ${sessiont}`,
         },
         body: JSON.stringify(data),
     });
@@ -444,7 +444,7 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": user_session,
+                "Authorization": `Bearer ${user_session}`,
             },
             body: JSON.stringify(data)
         });
@@ -474,7 +474,7 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": user_session,
+                "Authorization": `Bearer ${user_session}`,
             },
             body: JSON.stringify(data)
         });
@@ -498,8 +498,8 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
-                "Authorization": user_session,
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${user_session}`,
             },
         });
 

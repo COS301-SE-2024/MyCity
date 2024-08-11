@@ -16,7 +16,7 @@ export async function CreatTender(companyname: string, amount: number,ticket: st
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -48,7 +48,7 @@ export async function InReview(authcode: string,ticket: string,user_session : st
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -80,7 +80,7 @@ export async function AcceptTender(companyname: string,ticket: string,user_sessi
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -111,7 +111,7 @@ export async function RejectTender(companyname: string,ticket: string,user_sessi
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -141,7 +141,7 @@ export async function CompleteContract(contract_id: string,user_session : string
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -173,7 +173,7 @@ export async function getTicketTenders(ticket_id: string,user_session : string, 
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 
@@ -210,7 +210,7 @@ export async function getCompanyTenders(companyname: string,user_session : strin
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 
@@ -243,7 +243,7 @@ export async function getContract(tender_id: string,user_session : string)
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 
@@ -280,7 +280,7 @@ export async function getCompanyContract(company_name: string,tender_id: string,
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
     });
 
