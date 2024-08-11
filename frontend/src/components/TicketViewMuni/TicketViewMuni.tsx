@@ -157,21 +157,23 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleTenderContractClick = async () => {
+    setIsLoading(true); // Start loading
+  
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
       setTenders(rspgettenders);
-
+  
       if (!rspgettenders) return;
-
+  
       let tender_contract = "";
       rspgettenders.forEach((item: { status: string; tender_id: string }) => {
         if (item.status === "accepted" || item.status === "approved") {
           tender_contract = item.tender_id;
         }
       });
-
+  
       if (!tender_contract) {
         setShowTenderMax(false);
       } else {
@@ -185,10 +187,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false); // Stop loading after the operation is complete
     }
   };
+  
 
   const handleTenderMaxClose = () => {
+    setTicketstatus("Closed");
+    onClose(-2)
     setShowTenderMax(false);
   };
 

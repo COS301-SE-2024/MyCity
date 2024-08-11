@@ -84,7 +84,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
 
   useEffect(() => {
     fetchComments();
-  }, []);
+  }, [fetchComments]);
 
 
 
