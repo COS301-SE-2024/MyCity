@@ -361,7 +361,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   }`}
                   style={{ pointerEvents: showComments ? "auto" : "none" }}
                 >
-                  <Comments onBack={toggleComments} isCitizen={false} />
+                  <Comments ticketId={ticket_id} onBack={toggleComments} isCitizen={false} />
                 </div>
               </div>
             </div>
