@@ -37,8 +37,8 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL(`/dashboard/${userPathSuffix}`, request.nextUrl));
     }
 
-    //RULE 2: and tries to access an unauthorised page of another user type,
-    if (!pathEndsWith(userPathSuffix)) {
+    //RULE 2: and tries to access an unauthorised page of another user type (with the exception of the home page),
+    if (!pathEndsWith(userPathSuffix) && !pathIs("/")) {
       //redirect them to their own equivalent of the page
       const lastSeparator = path.lastIndexOf("/");
       const pathPrefix = path.substring(0, lastSeparator);
