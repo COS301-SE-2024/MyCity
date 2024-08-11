@@ -376,7 +376,7 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
         longitude: longi,
         address: fullAddress,
         username: usern,
-        state: "OPEN"
+        state: "Opened"
     }
     const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
