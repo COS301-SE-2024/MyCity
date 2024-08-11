@@ -53,7 +53,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
       const user_data = await userProfile.getUserProfile();
       const user_picture = String(user_data.current?.picture);
       const userSession =  String(user_data.current?.session_token); // verification and will be used for new comments
-      // console.log("Ticket ID: ",ticketId); //checking whether we are fetching the ticket id
+      console.log("Ticket ID: ",ticketId); //checking whether we are fetching the ticket id
       const response= await getTicketComments(ticketId, userSession);
       console.log("Response: ",response);
       const commentsData = response.data;

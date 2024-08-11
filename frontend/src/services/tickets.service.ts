@@ -505,8 +505,8 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
+                "Authorization": user_session,
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${user_session}`,
                 "X-Ticket-ID": ticket_id, // Add ticket_id in the headers
             },
         });
