@@ -146,7 +146,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div className="absolute top-2 left-2">
             </div>
             <div className="flex items-center">
-              <h2 className="font-bold text-2xl">{`Ticket ${ticketNumber}`}</h2>
+              <h2 className="font-bold text-2xl">{`Ticket`}</h2>
             </div>
             <div className="flex items-center justify-center mb-2">
               <span className="text-red-500 ml-2"></span>

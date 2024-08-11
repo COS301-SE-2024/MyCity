@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CompleteContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
+import MapComponent from "@/context/MapboxMap";
 
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
@@ -16,32 +17,43 @@ interface TenderType {
   finalCost : number;
   finalDuration : number;
   ticketnumber : string;
+  longitude : string;
+  latitude : string;
   completedatetime : string;
   contractnumber : string;
   municipality : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
+  onClose : ()=> void;
 }
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-green bg-green-200 rounded-full",
-  closed: "text-red bg-red-200 rounded-full",
+  completed: "text-green bg-green-400 rounded-full",
+  closed: "text-red bg-red-400 rounded-full",
 };
 
-const TenderMax = ({
-  tender,
-  onClose,
+const TenderMax : React.FC<TenderType> = ({
+  contract_id,
+  status ,
+  companyname,
+  contractdatetime, 
+  finalCost,
+  finalDuration,
+  ticketnumber,
+  longitude,
+  latitude,
+  completedatetime,
+  contractnumber,
   municipality,
-}: {
-  tender: TenderType;
-  onClose: () => void;
-  municipality: string;
+  upload ,
+  onClose,
+  hasReportedCompletion,
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
   const userProfile = useProfile();
   // Map "Fix in progress" to "Active" for the tender's status
-  const tenderStatus = tender.status;
+  const tenderStatus = status;
 
   const handleAction = (action: string) => {
     setDialog({ action, show: true });
@@ -53,7 +65,7 @@ const TenderMax = ({
         {
           const user_data = await userProfile.getUserProfile();
           const user_session = String(user_data.current?.session_token);
-          const rspcompleted = await CompleteContract(tender.contract_id,user_session)
+          const rspcompleted = await CompleteContract(contract_id,user_session)
           if(rspcompleted == true)
           {
             toast.success(`${dialog.action} action confirmed.`);
@@ -95,7 +107,7 @@ const TenderMax = ({
   };
 
   function getStatus(){
-    switch (tender.status) {
+    switch (status) {
       case "in progress":
         return "in_progress"
         break;
@@ -114,7 +126,7 @@ const TenderMax = ({
     confirmAction();
   };
 
-  const formattedDate = tender.contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
+  const formattedDate = contractdatetime.split('T')[0]; // Format date to YYYY-MM-DD
 
   return (
     <>
@@ -126,29 +138,29 @@ const TenderMax = ({
           <div className="flex flex-col lg:flex-row w-full overflow-auto">
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
-              <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={tender.municipality} className="w-10 h-10 rounded-full mb-2" />
-              </div>
+              {/* <div className="absolute top-7 left-2">
+                <img src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
+              </div> */}
               <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus()]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketnumber}
+                <strong>Associated Ticket:</strong> {ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
+                <strong>Proposed Price:</strong> R{finalCost.toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.finalDuration} days
+                <strong>Estimated Duration:</strong> {finalDuration} days
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
-                {tender.upload ? (
-                  <a href={URL.createObjectURL(tender.upload)} download className="text-blue-500 underline ml-2">
-                    {tender.upload.name}
+                {upload ? (
+                  <a href={URL.createObjectURL(upload)} download className="text-blue-500 underline ml-2">
+                    {upload.name}
                   </a>
                 ) : (
                   "No files attached"
@@ -187,7 +199,9 @@ const TenderMax = ({
             </div>
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-500">Map Placeholder</div>
+              <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
+              <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+              </div>
             </div>
           </div>
         </div>

@@ -19,6 +19,8 @@ interface TenderType {
   estimatedTimeHours: number;
   municipality : string;
   ticketnumber : string;
+  longitude : string;
+  latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean | false; // New prop
 }
@@ -128,7 +130,21 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={contract} onClose={handleClose} municipality={tender.municipality} />}
+      {showDetails && <TenderMax contract_id={''} 
+      status={contract.status} 
+      companyname={tender.companyname} 
+      contractdatetime={contract.contractdatetime} 
+      finalCost={contract.finalCost} 
+      finalDuration={contract.finalDuration} 
+      ticketnumber={tender.ticketnumber} 
+      longitude={tender.longitude} 
+      latitude={tender.latitude} 
+      completedatetime={contract.completedatetime} 
+      contractnumber={contract.contractnumber} 
+      municipality={tender.municipality} 
+      upload={null} 
+      hasReportedCompletion={false} 
+      onClose={handleClose}  />}
 
       <style jsx>{`
         @keyframes scroll {
