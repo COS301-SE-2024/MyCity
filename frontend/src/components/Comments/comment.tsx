@@ -18,7 +18,8 @@ const Comment: React.FC<CommentProps> = ({ userName, userImage, time, commentTex
         <div className="font-bold">{userName}</div>
         <div className="text-gray-800">{commentText}</div>
         <div className="text-xs text-gray-500 mt-1">
-          {formatDistanceToNow(new Date(time), { addSuffix: true })}
+          {/*formatDistanceToNow(new Date(time), { addSuffix: true })*/}
+          {formatDistanceToNow(time, { addSuffix: true })} {/* Use Date object directly */}
         </div>
       </div>
     </div>
