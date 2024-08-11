@@ -14,6 +14,7 @@ from boto3.dynamodb.conditions import Attr
 import re
 import json
 import logging
+import string
 
 # import requests
 import random
@@ -122,6 +123,8 @@ def create_ticket(ticket_data):
 
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
 
+        ticketnumber = generate_ticket_number(municipality_id)
+
         # Create the ticket item
         ticket_item = {
             "ticket_id": ticket_id,
@@ -138,6 +141,7 @@ def create_ticket(ticket_data):
             "state": ticket_data["state"],  # do not hard code, want to extend in future
             "upvotes": 0,
             "viewcount": 0,
+            "ticketnumber": ticketnumber
         }
 
         # Put the ticket item into the tickets table
@@ -926,3 +930,29 @@ def updateTicketTable(
     )
 
     return response
+
+def generate_ticket_number(municipality_name):
+    # Extract the first 3 letters and convert them to uppercase
+    municipality_code = municipality_name[:1]
+    valid_char = [char.upper() for char in municipality_name if char not in (' ', '-')]
+    muni = ''.join(random.choices(valid_char, k=2))
+    municipality_code = municipality_code + muni
+
+
+    # Get the current date
+    now = datetime.now()
+    year = now.strftime("%y")  # Last two digits of the year
+    month = now.strftime("%m")  # Month in two digits
+    day = now.strftime("%d")    # Day in two digits
+    
+    year1 = year[:1]
+    rest_of_the_year = year[1:]
+    
+    # Generate the 3 random digits or letters in uppercase
+    
+    random_item = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+       
+    # Construct the ticket number according to the format mmmY-YMMD-DRRR
+    ticket_number = municipality_code + year1 + "-" + rest_of_the_year + month + day + "-" + random_item
+    
+    return ticket_number
