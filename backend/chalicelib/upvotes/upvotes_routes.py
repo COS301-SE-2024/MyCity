@@ -7,7 +7,9 @@ from chalicelib.authorisers import cognito_authorizer
 upvotes_blueprint = Blueprint(__name__)
 
 
-@upvotes_blueprint.route("/upvotes", authorizer=cognito_authorizer, methods=["GET"], cors=True)
+@upvotes_blueprint.route(
+    "/upvotes", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
 def search_upvotes_route():
     request = upvotes_blueprint.current_request
     search_term = request.query_params.get("q")
