@@ -98,10 +98,10 @@ export default function CitizenDashboard() {
                 Dashboard
               </h1>
             </div>
-            <div className="fixed bottom-4 right-4">
+            <div className="fixed bottom-4 left-4 z-20">
               <HelpCircle
                 data-testid="open-help-menu"
-                className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
+                className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
                 size={24}
                 onClick={toggleHelpMenu}
               />
@@ -138,7 +138,7 @@ export default function CitizenDashboard() {
               </div>
             )}
 <button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg z-20"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-4 right-4 shadow-lg z-20"
                 onClick={() =>
                   (window.location.href = "/create-ticket/citizen")
                 }

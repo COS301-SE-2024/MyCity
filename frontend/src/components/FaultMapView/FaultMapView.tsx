@@ -36,9 +36,9 @@ export default function FaultMapView() {
 
   return (
     <div className="flex items-center justify-center h-full px-4">
-      <div className="flex flex-col md:flex-row w-full max-w-7xl h-[40rem] bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="flex flex-col md:flex-row w-full max-w-7xl h-[40rem] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
         {/* Key Section */}
-        <div className="w-full md:w-1/6 p-6 bg-white flex flex-col justify-center">
+        <div className="w-full md:w-1/6 p-6 bg-white bg-opacity-80 flex flex-col justify-center">
           <h2 className="text-xl font-bold mb-4 text-center">Key</h2>
           <div className="flex items-center mb-4">
             <div className="w-6 h-6 rounded-full bg-red-700 mr-4"></div>
