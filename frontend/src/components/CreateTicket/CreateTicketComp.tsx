@@ -2,7 +2,7 @@ import React, { FormEvent, useEffect, useState, useMemo, useCallback, useRef } f
 import { AutocompleteItem, Textarea, Button, Autocomplete } from "@nextui-org/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useRouter } from "next/router"; // Import the useRouter hook
+import { useRouter } from "next/router";
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from "@/types/custom.types";
 import { getFaultTypes, CreatTicket } from "@/services/tickets.service";
@@ -21,7 +21,6 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const { selectedAddress, map, initialiseMap, dropPin, panMapTo, panToCurrentLocation } = useMapboxProp();
   const { getUserProfile } = useProfile();
-  const router = useRouter(); // Initialize the useRouter hook
   const formRef = useRef<HTMLFormElement>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
 
@@ -31,6 +30,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [isPinDropped, setIsPinDropped] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
+  const [isClient, setIsClient] = useState(false); // State to check if running on client-side
 
   const memoizedApiKey = useMemo(() => String(process.env.PLACEKIT_API_KEY), []);
 
@@ -45,6 +45,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   };
 
   useEffect(() => {
+    setIsClient(true); // Set the client-side flag when the component mounts
+
     async function fetchFaultTypes() {
       try {
         const data = await getFaultTypes();
@@ -103,7 +105,10 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       );
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
-        router.push("/dashboard/citizen"); // Redirect to the dashboard
+        if (isClient) {
+          const router = useRouter(); // Initialize useRouter only on the client-side
+          router.push("/dashboard/citizen"); // Redirect to the dashboard
+        }
       } else {
         throw new Error("Ticket creation failed");
       }
