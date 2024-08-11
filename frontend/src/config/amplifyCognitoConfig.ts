@@ -20,8 +20,8 @@ Amplify.configure({
             'profile',
             'aws.cognito.signin.user.admin'
           ],
-          redirectSignIn: ['http://localhost:3000'],
-          redirectSignOut: ['http://localhost:3000'],
+          redirectSignIn: ['https://www.dev.mycity.net.za'],
+          redirectSignOut: ['https://www.dev.mycity.net.za'],
           responseType: 'token'
         }
       }
