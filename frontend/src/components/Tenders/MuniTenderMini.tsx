@@ -45,7 +45,7 @@ export default function Tender({ tender,onClose }: { tender: TenderType,onClose:
 
   useEffect(()=>{
     setStatus(tender.status)
-  },[])
+  },[tender.status])
 
   const handleTenderClick = () => {
     setShowDetails(true);

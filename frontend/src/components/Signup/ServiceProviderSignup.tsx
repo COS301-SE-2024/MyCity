@@ -113,7 +113,7 @@ export default function ServiceProviderSignup() {
     try {
       const signedUp = await handleSignUp(form, UserRole.PRIVATE_COMPANY);
       if (signedUp.isSignedIn == true) {
-        router.push('/tenders/company');
+        router.push('/dashboard/service-provider');
       }
     } catch (error) {
       setError(`Error: ${error}`);

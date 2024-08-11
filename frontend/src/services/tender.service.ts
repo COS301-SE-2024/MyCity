@@ -130,6 +130,36 @@ export async function RejectTender(companyname: string,ticket: string,user_sessi
 
 }
 
+export async function CompleteContract(contract_id: string,user_session : string)
+{
+    const data = {
+        contract_id : contract_id,
+    }
+
+    const apiURL = "/api/tenders/completed";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
 export async function getTicketTenders(ticket_id: string,user_session : string, revalidate?: boolean)
 {
 
@@ -209,6 +239,43 @@ export async function getContract(tender_id: string,user_session : string)
 
     const apiURL = "/api/tenders/getcontracts";
     const urlWithParams = `${apiURL}?tender=${encodeURIComponent(tender_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        console.log(result)
+        AssignContractNumbers(result.data)
+        return result.data
+    }
+    
+
+}
+
+export async function getCompanyContract(company_name: string,tender_id: string,user_session : string,revalidate? : boolean)
+{
+    if(revalidate)
+    {
+        invalidateCache("tenders-getcompanycontracts")
+    }
+
+    const apiURL = "/api/tenders/getcompanycontracts";
+    const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}&tender=${encodeURIComponent(tender_id)}`;
     const response = await fetch(urlWithParams, {
         method: "GET",
         headers: {

@@ -69,6 +69,23 @@ export default function Record({ record }: { record: RecordType }) {
     }
   }
 
+  function getStateColour(state : string) {
+    switch (state) {
+        case "Opened":
+            return 'bg-green-200 text-green-800';
+        case "In Progress":
+            return 'bg-blue-200 text-blue-800';
+        case "Assigning Contract":
+            return 'bg-blue-200 text-blue-800';
+        case "Closed":
+            return 'bg-red-200 text-red-800';
+        case "Taking Tenders":
+          return 'bg-purple-200 text-purple-800'
+        default:
+            return 'bg-gray-200 text-gray-800';
+    }
+  }
+
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
@@ -87,7 +104,7 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.state === 'Opened' ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
+          <span className={`px-2 py-1 rounded ${getStateColour(record.state)}`}>
             {record.state}
           </span>
         </div>
@@ -109,25 +126,25 @@ export default function Record({ record }: { record: RecordType }) {
       </div>
       {showTicketView && (
         <TicketViewCompany
-        show={showTicketView}
-        onClose={handleClose}
-        title={record.asset_id}
-        address={record.address}
-        arrowCount={record.upvotes}  // Update this as per your data source
-        commentCount={record.commentcount} // Update this as per your data source
-        viewCount={record.viewcount} // Update this as per your data source
-        ticketNumber={record.ticketnumber}
-        description={record.description} // Update this as per your data source
-        user_picture={record.user_picture} // Update this as per your data source
-        createdBy={record.createdby}
-        imageURL={record.imageURL}
-        status={record.state}
-        municipalityImage={record.municipality_picture} // Update this as per your data source
-        upvotes={record.upvotes}
-        latitude={record.latitude}
-        longitude={record.longitude}
-        urgency={record.urgency} // Pass urgency to TicketViewMuni
-        ticket_id={record.ticket_id} // Pass municipality to TicketViewCompany
+          ticket_id={record.ticket_id}
+          show={showTicketView}
+          onClose={handleClose}
+          title={record.asset_id}
+          address={record.address}
+          arrowCount={record.upvotes} // Update this as per your data source
+          commentCount={record.commentcount} // Update this as per your data source
+          viewCount={record.viewcount} // Update this as per your data source
+          description={record.description} // Update this as per your data source
+          user_picture={record.user_picture} // Update this as per your data source
+          createdBy={record.createdby}
+          imageURL={record.imageURL}
+          status={record.state}
+          municipalityImage={record.municipality_picture} // Update this as per your data source
+          upvotes={record.upvotes}
+          latitude={record.latitude}
+          longitude={record.longitude}
+          urgency={record.urgency} // Pass urgency to TicketViewMuni
+          ticketNumber={record.ticketnumber}
         />
       )}
       <style jsx>{`

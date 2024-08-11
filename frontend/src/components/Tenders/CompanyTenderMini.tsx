@@ -1,34 +1,98 @@
 import React, { useEffect, useRef, useState } from 'react';
 import TenderMax from './CompanyTenderMax'; // Assuming the detailed view component is in the same directory
+import { useProfile } from "@/hooks/useProfile";
+import { getContract,getCompanyContract } from '@/services/tender.service';
+
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 
 interface TenderType {
-  id: string;
-  ticketId: string;
-  status: Status;
-  municipality: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+  tendernumber: string;
+  tender_id : string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string;
+  datetimesubmitted: string;
+  ticket_id: string;
+  status: string;
+  quote: number;
+  estimatedTimeHours: number;
+  municipality : string;
+  ticketnumber : string;
   upload: File | null;
-  hasReportedCompletion: boolean; // New prop
+  hasReportedCompletion: boolean | false; // New prop
 }
 
 const statusStyles = {
-  'Unassigned': 'border-blue-500 text-blue-500 bg-white',
-  'Active': 'bg-green-200 text-black',
-  'Rejected': 'bg-red-200 text-black',
-  'Closed': 'bg-gray-200 text-black',
+  'under_review': 'border-blue-500 text-blue-500 bg-white',
+  'accepted': 'bg-green-200 text-green',
+  'approved': 'bg-green-200 text-green',
+  'rejected': 'bg-red-200 text-red',
+  'submitted' : 'bg-gray-200 text-gray'
 };
+
 
 export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [contract,setContract] = useState<any>();
+  const [tenderstatus, setTenderstatus] = useState<string>("")
+  const userProfile = useProfile();
   const textRef = useRef<HTMLSpanElement>(null);
 
-  const handleTenderClick = () => {
-    setShowDetails(true);
+  const formateddate = tender.datetimesubmitted.split('T')[0]
+  let estimateddays = Math.ceil(tender.estimatedTimeHours/24);
+  if(estimateddays == 0)
+  {
+    estimateddays = 1;
+  }
+  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+
+  useEffect(()=>{
+    setTenderstatus(tender.status)
+  },[])
+
+  function getStatus( status : string){
+    switch (status) {
+      case "rejected":
+        return "rejected"
+        break;
+      case "accepted":
+        return "accepted"
+      case "approved":
+        return "approved"
+        break;
+      case "under review":
+        return "under_review"
+        break;
+      case "submitted":
+        return "submitted"
+        break;
+      default:
+        return "submitted"
+        break;
+    }
+  }
+  
+
+  const handleTenderClick = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const compant_name = String(user_data.current?.company_name)
+      const rspcontracts = await getCompanyContract(compant_name,tender.tender_id,user_session)
+      if(rspcontracts == null)
+      {
+        setShowDetails(false)
+      }
+      else 
+      {
+        setContract(rspcontracts)
+        setShowDetails(true)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleClose = () => {
@@ -39,7 +103,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
     if (textRef.current) {
       setIsOverflowing(textRef.current.scrollWidth > textRef.current.clientWidth);
     }
-  }, [tender.municipality]);
+  }, []);
 
   return (
     <>
@@ -48,23 +112,23 @@ export default function Tender({ tender }: { tender: TenderType }) {
         onClick={handleTenderClick}
       >
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded border ${statusStyles[tender.status]}`}>
-            {tender.status}
+          <span className={`px-2 py-1 rounded border ${statusStyles[getStatus(tenderstatus)]}`}>
+            {tenderstatus}
           </span>
         </div>
-        <div className="col-span-1 flex justify-center font-bold">{tender.id}</div>
-        <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
+        <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
+        <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
         <div className="col-span-1 flex justify-center relative overflow-hidden">
           <span ref={textRef} className={`inline-block ${isOverflowing ? 'scrolling-text' : ''}`}>
             {tender.municipality}
           </span>
         </div>
-        <div className="col-span-1 flex justify-center">{tender.issueDate}</div>
-        <div className="col-span-1 flex justify-center">R{tender.price.toFixed(2)}</div>
-        <div className="col-span-1 flex justify-center">{tender.estimatedDuration} days</div>
+        <div className="col-span-1 flex justify-center">{formateddate}</div>
+        <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
+        <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={tender} onClose={handleClose} municipality={tender.municipality} />}
+      {showDetails && <TenderMax tender={contract} onClose={handleClose} municipality={tender.municipality} />}
 
       <style jsx>{`
         @keyframes scroll {

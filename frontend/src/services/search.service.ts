@@ -1,8 +1,8 @@
 import { invalidateCache } from "@/utils/apiUtils";
 
 /*export async function searchIssue(param:string, revalidate?: boolean) {
-    if (revalidate) {
-        revalidateTag("search-issues"); //invalidate the cache
+     if (revalidate) {
+        invalidateCache("search-issues"); // Invalidate the cache
     }
 
     try {
