@@ -130,6 +130,36 @@ export async function RejectTender(companyname: string,ticket: string,user_sessi
 
 }
 
+export async function CompleteContract(contract_id: string,user_session : string)
+{
+    const data = {
+        contract_id : contract_id,
+    }
+
+    const apiURL = "/api/tenders/completed";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": user_session ,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if(result.data.Status == "Success" )
+    {
+        return true
+    }
+    else false
+    
+
+}
+
 export async function getTicketTenders(ticket_id: string,user_session : string, revalidate?: boolean)
 {
 
