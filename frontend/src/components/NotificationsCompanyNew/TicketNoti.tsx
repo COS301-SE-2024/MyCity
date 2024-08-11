@@ -99,7 +99,6 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
             arrowCount={10}
             commentCount={3}
             viewCount={15}
-            tenderId="TND-001"
             description="Repair the main road."
             user_picture="https://via.placeholder.com/150"
             createdBy="John Doe"
@@ -109,8 +108,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
             upvotes={10} //this is being conflated with arrowCount
             latitude="37.7749"
             longitude="-122.4194"
-            urgency="high"
-          />
+            urgency="high" ticketNumber={""} ticket_id={""}          />
         </>
       )}
     </>
