@@ -2,6 +2,7 @@ import React, { FormEvent, useEffect, useState, useMemo, useCallback, useRef } f
 import { AutocompleteItem, Textarea, Button, Autocomplete } from "@nextui-org/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router"; // Import the useRouter hook
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from "@/types/custom.types";
 import { getFaultTypes, CreatTicket } from "@/services/tickets.service";
@@ -20,6 +21,7 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const { selectedAddress, map, initialiseMap, dropPin, panMapTo, panToCurrentLocation } = useMapboxProp();
   const { getUserProfile } = useProfile();
+  const router = useRouter(); // Initialize the useRouter hook
   const formRef = useRef<HTMLFormElement>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
 
@@ -101,6 +103,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       );
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
+        router.push("/dashboard/citizen"); // Redirect to the dashboard
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -274,10 +277,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       </div>
     </div>
   );
-  
-  
-
-
 };
 
 export default CreateTicketComp;

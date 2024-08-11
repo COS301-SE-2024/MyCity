@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useProfile } from "@/hooks/useProfile";
 import { CreatTender } from '@/services/tender.service';
 import { FaInfoCircle } from 'react-icons/fa';
+import { ThreeDots } from "react-loader-spinner";
 import RenderMap from '@/hooks/mapboxmap';
 
 interface TicketProps {
@@ -17,13 +18,13 @@ interface TicketProps {
   onBack: () => void;
 }
 
-
 const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company_name, ticketnumber, faultType,description,address,municipalityImage, onBack }) => {
   const userProfile = useProfile();
   const [proposedPrice, setProposedPrice] = useState<string>('0.00');
   const [jobDuration, setJobDuration] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -32,21 +33,17 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
   };
 
   const handleSubmit = async () => {
-    console.log("inside");
+    setLoading(true); // Start loading
     let price = Number(proposedPrice);
     let duration = Number(jobDuration);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
-    const mock_ticket = "b591aa60-9403-40d6-8175-f6988402e45f";
-    const company_name = String(user_data.current?.company_name);
-    console.log(user_data.current);
-    console.log("Company name : " + company_name);
     const response_submit = await CreatTender(company_name, price, ticket_id, duration, user_session);
+    setLoading(false); // Stop loading
     if (response_submit === true) {
-      console.log("success");
       onBack(); // Go back to the previous state on success
     } else {
-      // rejecting toaster
+      // Handle error with a toast notification or any other method
     }
   };
 
@@ -172,6 +169,12 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <ThreeDots height="40" width="80" radius="9" color="#ADD8E6" ariaLabel="three-dots-loading" visible={true} />
         </div>
       )}
     </>
