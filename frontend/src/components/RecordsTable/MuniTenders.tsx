@@ -69,7 +69,7 @@ export default function MuniTenders({
           </button>
 
           <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl">
-            Showing Tender Bids for Ticket: {currentTenders[0]?.ticket_id} {/* This could be very wrong */} 
+            Showing Tender Bids for Ticket: {currentTenders[0]?.ticketnumber} {/* This could be very wrong */} 
           </div>
         </div>
         {currentTenders.length > 0 ? (
