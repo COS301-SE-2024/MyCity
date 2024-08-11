@@ -55,6 +55,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
       const userSession =  String(user_data.current?.session_token); // verification and will be used for new comments
       // console.log("Ticket ID: ",ticketId); //checking whether we are fetching the ticket id
       const response= await getTicketComments(ticketId, userSession);
+      console.log("Response: ",response);
       const commentsData = response.data;
 
       const userPoolId = process.env.USER_POOL_ID;
