@@ -5,6 +5,7 @@ import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/cli
 interface UserAttributes {
   given_name?: string; // FIRSTNAME
   family_name?: string; //SURNAME
+  picture?: string; //PROFILE PICTURE URL
 }
 //const userPoolID = process.env.USER_POOL_ID;
 
@@ -546,11 +547,13 @@ export const getUserFirstLastName = async (username: string, userPoolID :string)
     const userAttributes: UserAttributes = {};
 
     response.UserAttributes?.forEach(attribute => {
-      if (attribute.Name === "given_name") {
-        userAttributes.given_name = attribute.Value;
-      } else if (attribute.Name === "family_name") {
-        userAttributes.family_name = attribute.Value;
-      }
+        if (attribute.Name === "given_name") {
+          userAttributes.given_name = attribute.Value;
+        } else if (attribute.Name === "family_name") {
+          userAttributes.family_name = attribute.Value;
+        } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
+          userAttributes.picture = attribute.Value;
+        }
     });
 
     return userAttributes;

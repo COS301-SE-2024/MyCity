@@ -69,6 +69,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         return {
           ...comment,
           userName: `${userAttributes?.given_name} ${userAttributes?.family_name}`,
+          userImage: userAttributes?.picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
           time: new Date(comment.date) // Ensure time is a Date object
         };
       }));
@@ -118,7 +119,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
               key={index}
               userName={comment.userName}
               //userImage={comment.userImage || 'https://via.placeholder.com/150'}
-              userImage= {'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'}
+              userImage= {comment.userImage}
               time={new Date(comment.time)}
               commentText={comment.comment}
             />
