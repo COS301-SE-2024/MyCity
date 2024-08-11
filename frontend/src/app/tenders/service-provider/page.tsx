@@ -33,7 +33,7 @@ export default function MuniTenders() {
       console.log(rspmostupvotes)
     };
     fetchData();
-  },[userProfile])
+  },[])
 
   useEffect(() => {
     console.log(openTickets);  // This will log the updated openTickets whenever it changes
@@ -83,7 +83,7 @@ export default function MuniTenders() {
                 onSelectionChange={handleTabChange}
               >
                 <Tab key={0} title="Open Tickets">
-                  <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
+                  <div className="p-4 text-center font-bold text-xl text-opacity-80"></div>
                   <OpenTicketsTable records={openTickets}/>
                 </Tab>
 

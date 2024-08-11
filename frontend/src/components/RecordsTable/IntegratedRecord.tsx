@@ -65,6 +65,10 @@ export default function Record({ record, refresh }: { record: RecordType, refres
     } else if (data === -1) {
       setTicketstate("Taking Tenders");
     }
+    else if(data == -2)
+    {
+      setTicketstate("Closed")
+    }
     refresh();
   };
 

@@ -11,6 +11,7 @@ interface FaultCardUserViewProps {
   arrowCount: number;
   commentCount: number;
   viewCount: number;
+  ticketId: string;
   ticketNumber: string;
   description: string;
   image: string;
@@ -34,6 +35,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   arrowCount,
   commentCount,
   viewCount,
+  ticketId,
   ticketNumber,
   description,
   image,
@@ -221,7 +223,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
-              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketNumber}/>
+              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId}/>
               {/*Added the ticket Number for the comments */}
             </div>
           </div>

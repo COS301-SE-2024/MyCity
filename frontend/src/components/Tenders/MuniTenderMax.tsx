@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MapComponent from "@/context/MapboxMap";
-import { record } from "aws-amplify/analytics";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  tender_id : string;
-  status : string;
-  companyname : string;
-  contractdatetime : string;
-  finalCost : number;
-  finalDuration : number;
-  ticketnumber : string;
-  latitude : number,
-  longitude : number,
-  completedatetime : string;
-  contractnumber : string;
+  tender_id: string;
+  status: string;
+  companyname: string;
+  contractdatetime: string;
+  finalCost: number | null;
+  finalDuration: number;
+  ticketnumber: string;
+  latitude: number;
+  longitude: number;
+  completedatetime: string;
+  contractnumber: string;
   upload: File | null;
   hasReportedCompletion: boolean;
 }
@@ -44,8 +43,22 @@ const statusStyles = {
 
 const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => void }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
 
   const handleAction = (action: string) => {
     setDialog({ action, show: true });
@@ -81,7 +94,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
-        <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
+        <div ref={modalRef} className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
           <button className="absolute top-2 right-2 text-gray-700" onClick={onClose}>
             <FaTimes size={24} />
           </button>
@@ -95,13 +108,13 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
               <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus(tender.status)]}`}>{tenderStatus}</div>
 
               <div className="text-gray-700 mb-2">
-                <strong>Associated Ticket:</strong> {tender.ticketnumber}
+                <strong>Ticket:</strong> {tender.ticketnumber}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{tender.finalCost.toFixed(2)}
+                <strong>Proposed Price:</strong> R{(tender.finalCost || 0).toFixed(2)}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Estimated Duration:</strong> {tender.finalDuration} days
@@ -132,7 +145,7 @@ const TenderMax = ({ tender, onClose }: { tender: TenderType; onClose: () => voi
                     <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600">
                       Terminate Contract
                     </button>
-                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600">
+                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600" onClick={onClose}>
                       Mark as Complete
                     </button>
                   </>

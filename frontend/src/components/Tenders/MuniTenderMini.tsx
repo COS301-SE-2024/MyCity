@@ -95,8 +95,6 @@ export default function Tender({ tender,onClose }: { tender: TenderType,onClose:
           </span>
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
-        <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
-
         <div className="col-span-1 flex justify-center">{tender.companyname}</div>
         <div className="col-span-1 flex justify-center">{datesubmitted}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>

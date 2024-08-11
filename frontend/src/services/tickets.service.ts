@@ -451,10 +451,12 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${user_session}`,
+                "Authorization": user_session,
             },
             body: JSON.stringify(data)
         });
+
+        //console.log("API response:", response);
 
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
@@ -481,10 +483,12 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${user_session}`,
+                "Authorization": user_session,
             },
             body: JSON.stringify(data)
         });
+
+        //console.log("API response:", response);
 
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
@@ -505,8 +509,9 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
+                "Authorization": user_session,
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${user_session}`,
+                "X-Ticket-ID": ticket_id, // Add ticket_id in the headers
             },
         });
 
