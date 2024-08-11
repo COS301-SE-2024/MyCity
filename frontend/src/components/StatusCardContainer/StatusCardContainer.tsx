@@ -68,6 +68,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           image: item.imageURL,
           createdBy: item.dateOpened,
           ticketNumber: item.ticket_id,
+          ticketId: item.ticket_id,
         }}
         onClick={() => handleCardClick(item)}
       />
@@ -119,6 +120,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           latitude={selectedCard.latitude} // Pass latitude
           longitude={selectedCard.longitude} // Pass longitude
           urgency={selectedCard.urgency} // Pass urgency
+          ticketId={selectedCard.ticket_id}
         />
       )}
     </div>

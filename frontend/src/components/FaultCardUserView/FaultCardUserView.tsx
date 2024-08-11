@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt, FaTimes } from "react-icons/fa";
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
-import { Route } from "lucide-react";
-import { Button } from "@nextui-org/react";
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -13,6 +11,7 @@ interface FaultCardUserViewProps {
   arrowCount: number;
   commentCount: number;
   viewCount: number;
+  ticketId: string;
   ticketNumber: string;
   description: string;
   image: string;
@@ -36,6 +35,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   arrowCount,
   commentCount,
   viewCount,
+  ticketId,
   ticketNumber,
   description,
   image,
@@ -48,13 +48,13 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     return data
       ? JSON.parse(data)
       : {
-        arrowCount,
-        commentCount,
-        viewCount,
-        arrowColor: "black",
-        commentColor: "black",
-        eyeColor: "black",
-      };
+          arrowCount,
+          commentCount,
+          viewCount,
+          arrowColor: "black",
+          commentColor: "black",
+          eyeColor: "black",
+        };
   };
 
   const initialData = getLocalStorageData();
@@ -128,30 +128,19 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     }
   };
 
-  const showDirections = () => {
-    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`;
-    window.open(googleMapsUrl, "_blank", "noopener,noreferrer");
-  };
-
   if (!show) return null;
 
   const addressParts = address.split(",");
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 overflow-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
       <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
         <button
-          className="absolute z-40 top-2 right-2 text-gray-700"
+          className="absolute top-2 right-2 text-gray-700"
           onClick={onClose}
         >
-          <FaTimes size={25} />
+          <FaTimes size={24} />
         </button>
-
-        <div className="absolute bottom-6 right-5 z-40">
-          <Button className="min-w-fit h-fit p-2 bg-white" onClick={showDirections}>
-            <Route size={23} />
-          </Button>
-        </div>
 
         <div className="flex flex-col lg:flex-row w-full overflow-auto">
           {/* Left Section */}
@@ -229,11 +218,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Comments Section with Slide Animation */}
             <div
-              className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${showComments ? "translate-x-0" : "translate-x-full"
-                }`}
+              className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${
+                showComments ? "translate-x-0" : "translate-x-full"
+              }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
-              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketNumber} />
+              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId}/>
               {/*Added the ticket Number for the comments */}
             </div>
           </div>
