@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt, FaTimes } from "react-icons/fa";
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
+import { Button } from "@nextui-org/react";
+import { Route } from "lucide-react";
 
 interface FaultCardUserViewProps {
   show: boolean;
