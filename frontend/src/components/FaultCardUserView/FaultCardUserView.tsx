@@ -50,13 +50,13 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     return data
       ? JSON.parse(data)
       : {
-          arrowCount,
-          commentCount,
-          viewCount,
-          arrowColor: "black",
-          commentColor: "black",
-          eyeColor: "black",
-        };
+        arrowCount,
+        commentCount,
+        viewCount,
+        arrowColor: "black",
+        commentColor: "black",
+        eyeColor: "black",
+      };
   };
 
   const initialData = getLocalStorageData();
@@ -128,6 +128,11 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       setEyeColor("black");
       setCurrentViewCount((prevCount: number) => prevCount - 1);
     }
+  };
+
+  const showDirections = () => {
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`;
+    window.open(googleMapsUrl, "_blank", "noopener,noreferrer");
   };
 
   if (!show) return null;
@@ -226,12 +231,11 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Comments Section with Slide Animation */}
             <div
-              className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${
-                showComments ? "translate-x-0" : "translate-x-full"
-              }`}
+              className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${showComments ? "translate-x-0" : "translate-x-full"
+                }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
-              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId}/>
+              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId} />
               {/*Added the ticket Number for the comments */}
             </div>
           </div>
