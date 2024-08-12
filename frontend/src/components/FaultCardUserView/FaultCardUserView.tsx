@@ -141,14 +141,14 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 overflow-auto">
       <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
         <button
-          className="absolute z-40 top-2 right-2 text-gray-700"
+          className="absolute z-40 top-2 right-3 text-gray-700"
           onClick={onClose}
         >
           <FaTimes size={25} />
         </button>
 
-        <div className="absolute bottom-6 right-5 z-40">
-          <Button className="min-w-fit h-fit p-2 bg-white" onClick={showDirections}>
+        <div className="absolute bottom-6 right-8 z-40">
+          <Button className="min-w-fit h-fit p-2 bg-gray-500" onClick={showDirections}>
             <Route size={23} />
           </Button>
         </div>
