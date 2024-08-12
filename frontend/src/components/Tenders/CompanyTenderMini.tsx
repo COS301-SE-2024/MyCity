@@ -52,7 +52,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
 
   useEffect(()=>{
     setTenderstatus(tender.status)
-  },[tender.status])
+  },[])
 
   function getStatus( status : string){
     switch (status) {
@@ -120,17 +120,17 @@ export default function Tender({ tender }: { tender: TenderType }) {
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
-        <div className="col-span-1 flex justify-center relative overflow-hidden">
-          <span ref={textRef} className={`inline-block ${isOverflowing ? 'scrolling-text' : ''}`}>
+        <div className="col-span-1 flex justify-center">
+          
             {tender.municipality}
-          </span>
+          
         </div>
         <div className="col-span-1 flex justify-center">{formateddate}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
-      {showDetails && <TenderMax contract_id={''} 
+      {showDetails && <TenderMax contract_id={contract.contract_id} 
       status={contract.status} 
       companyname={tender.companyname} 
       contractdatetime={contract.contractdatetime} 

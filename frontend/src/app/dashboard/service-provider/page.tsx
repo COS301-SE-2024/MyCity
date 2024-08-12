@@ -6,25 +6,28 @@ import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
 import { PenToolIcon, ChevronDown } from 'lucide-react';
 import { getCompanyTickets } from '@/services/tickets.service';
 import { useProfile } from "@/hooks/useProfile";
-import { ThreeDots } from 'react-loader-spinner'; // Import the loading spinner
+import { ThreeDots } from 'react-loader-spinner';
+import { FaTimes } from 'react-icons/fa';
+import { HelpCircle } from 'lucide-react';
 
 export default function Dashboard() {
   const userProfile = useProfile();
   const [company, setCompany] = useState("");
   const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // State to manage loading
+  const [isLoading, setIsLoading] = useState(true);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
       const rspmostupvotes = await getCompanyTickets(user_company, user_session);
       setCompany(user_company);
       setUpvoteTickets(rspmostupvotes);
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     };
 
     fetchData();
@@ -34,8 +37,50 @@ export default function Dashboard() {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const toggleHelpMenu = () => {
+    setIsHelpOpen(!isHelpOpen);
+  };
+
   return (
     <div>
+      {/* Help Menu Button */}
+      <div className="fixed bottom-4 left-4 z-20">
+        <HelpCircle
+          data-testid="open-help-menu"
+          className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
+          size={24}
+          onClick={toggleHelpMenu}
+        />
+      </div>
+
+      {isHelpOpen && (
+        <div
+          data-testid="help"
+          className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
+        >
+          <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
+            <button
+              data-testid="close-help-menu"
+              className="absolute top-2 right-2 text-gray-700"
+              onClick={toggleHelpMenu}
+            >
+              <FaTimes size={24} />
+            </button>
+            <h2 className="text-xl font-bold mb-4">Help Menu</h2>
+            <p>This dashboard allows you to:</p>
+            <ul className="list-disc list-inside">
+              <li>View all tickets in your companies region that urgently need to be addressed.</li>
+              <li>Sort tickets by various criteria such as urgency, status, or fault type.</li>
+              <li>Keep track of tickets that are upvoted or have high importance.</li>
+            </ul>
+            <p>
+              Use the dropdown menu to sort tickets, and click on any ticket to view more details or take action.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop View */}
       <div
         style={{
           position: "fixed",

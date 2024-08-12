@@ -157,21 +157,23 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleTenderContractClick = async () => {
+    setIsLoading(true); // Start loading
+  
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
       setTenders(rspgettenders);
-
+  
       if (!rspgettenders) return;
-
+  
       let tender_contract = "";
       rspgettenders.forEach((item: { status: string; tender_id: string }) => {
         if (item.status === "accepted" || item.status === "approved") {
           tender_contract = item.tender_id;
         }
       });
-
+  
       if (!tender_contract) {
         setShowTenderMax(false);
       } else {
@@ -185,10 +187,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false); // Stop loading after the operation is complete
     }
   };
+  
 
   const handleTenderMaxClose = () => {
+    setTicketstatus("Closed");
+    onClose(-2)
     setShowTenderMax(false);
   };
 
@@ -235,11 +242,6 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                 <div className="absolute top-2 left-2 z-10">
                   {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
-                <img
-                  src={municipalityImage}
-                  alt="Municipality"
-                  className="w-16 h-16 mb-2 rounded-full z-10"
-                />
                 <div className="flex items-center justify-center mb-2">
                   <div
                     className={`flex items-center ${getStatusColor(ticketstatus)} border-2 rounded-full px-2 py-1`}
@@ -320,7 +322,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
                     >
-                      View Tenders
+                      View Bids
                     </button>
                   )}
                   {(ticketstatus === "Opened") && (

@@ -255,7 +255,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
       {showBid && !hasBidded && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="transform scale-100 w-full">
+          <div className=" text-black transform scale-100 w-full">
             <CreateBid
               longitude={longitude}
               latitude={latitude}
