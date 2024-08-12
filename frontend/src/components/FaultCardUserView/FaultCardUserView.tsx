@@ -142,6 +142,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           <FaTimes size={24} />
         </button>
 
+        <div className="absolute bottom-6 right-8 z-40">
+          <Button className="min-w-fit h-fit p-2 bg-gray-200" onClick={showDirections}>
+            <Route size={23} />
+          </Button>
+        </div>
+
         <div className="flex flex-col lg:flex-row w-full overflow-auto">
           {/* Left Section */}
           <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
