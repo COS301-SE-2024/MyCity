@@ -29,6 +29,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [isPinDropped, setIsPinDropped] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
+  const [isClient, setIsClient] = useState(false); // State to check if running on client-side
 
   const memoizedApiKey = useMemo(() => String(process.env.PLACEKIT_API_KEY), []);
 
@@ -43,6 +44,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   };
 
   useEffect(() => {
+    setIsClient(true); // Set the client-side flag when the component mounts
+
     async function fetchFaultTypes() {
       try {
         const data = await getFaultTypes();
@@ -101,6 +104,9 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       );
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
+        if (isClient) {
+          
+        }
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -274,10 +280,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       </div>
     </div>
   );
-  
-  
-
-
 };
 
 export default CreateTicketComp;
