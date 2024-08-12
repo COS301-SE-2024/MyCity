@@ -1,6 +1,7 @@
-import { precacheAndRoute } from 'workbox-precaching';
-precacheAndRoute(self.__WB_MANIFEST);
+// import { precacheAndRoute } from 'workbox-precaching';
+// precacheAndRoute(self.__WB_MANIFEST);
 
+//PWA INSTALLATION
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open('my-cache').then((cache) => {
@@ -13,6 +14,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
+// PWA CACHE
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((response) => {
@@ -20,3 +22,17 @@ self.addEventListener('fetch', (event) => {
         })
     );
 });
+
+//FIREBASE NOTIFICATION
+export const register = () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+            .register('/firebase-messaging-sw.js')
+            .then(function (registration) {
+                console.log('Service Worker registration successful with scope: ', registration.scope);
+            })
+            .catch(function (err) {
+                console.log('Service Worker registration failed: ', err);
+            });
+    }
+};
