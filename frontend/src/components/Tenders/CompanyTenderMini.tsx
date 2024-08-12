@@ -19,6 +19,8 @@ interface TenderType {
   estimatedTimeHours: number;
   municipality : string;
   ticketnumber : string;
+  longitude : string;
+  latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean | false; // New prop
 }
@@ -118,17 +120,31 @@ export default function Tender({ tender }: { tender: TenderType }) {
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
-        <div className="col-span-1 flex justify-center relative overflow-hidden">
-          <span ref={textRef} className={`inline-block ${isOverflowing ? 'scrolling-text' : ''}`}>
+        <div className="col-span-1 flex justify-center">
+          
             {tender.municipality}
-          </span>
+          
         </div>
         <div className="col-span-1 flex justify-center">{formateddate}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
         <div className="col-span-1 flex justify-center">{estimateddays} days</div>
       </div>
 
-      {showDetails && <TenderMax tender={contract} onClose={handleClose} municipality={tender.municipality} />}
+      {showDetails && <TenderMax contract_id={contract.contract_id} 
+      status={contract.status} 
+      companyname={tender.companyname} 
+      contractdatetime={contract.contractdatetime} 
+      finalCost={contract.finalCost} 
+      finalDuration={contract.finalDuration} 
+      ticketnumber={tender.ticketnumber} 
+      longitude={tender.longitude} 
+      latitude={tender.latitude} 
+      completedatetime={contract.completedatetime} 
+      contractnumber={contract.contractnumber} 
+      municipality={tender.municipality} 
+      upload={null} 
+      hasReportedCompletion={false} 
+      onClose={handleClose}  />}
 
       <style jsx>{`
         @keyframes scroll {

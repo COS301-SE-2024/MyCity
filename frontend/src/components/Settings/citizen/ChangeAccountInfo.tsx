@@ -75,7 +75,8 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
       formData.append("file", file);
 
       try {
-        const pictureUrl = await uploadProfilePicture(formData);
+        const sessionToken = data.session_token;
+        const pictureUrl = await uploadProfilePicture(sessionToken, formData);
         updatedUserData.picture = pictureUrl;
       } catch (error: any) {
         console.log(error.message);

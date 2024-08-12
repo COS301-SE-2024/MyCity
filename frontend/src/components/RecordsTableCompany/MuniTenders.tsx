@@ -3,13 +3,13 @@ import Tender from "../Tenders/MuniTenderMini"; // Update the import path if nec
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 interface TenderType {
-  id: string;
   tender_id: string;
   tendernumber: string;
   company_id: string;
   companyname: string;
   serviceProvider: string; // Add serviceProvider here
   datetimesubmitted: string;
+  ticketnumber : string;
   ticket_id: string;
   status: Status;
   quote: number;

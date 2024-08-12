@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaArrowUp, FaComment, FaEye } from "react-icons/fa";
+import { ThreeDots } from "react-loader-spinner"
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTable/MuniTenders";
@@ -59,7 +60,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   viewCount,
 }) => {
   const userProfile = useProfile();  // Hook moved to the top level
-
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const [showTenderMax, setShowTenderMax] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showMuniTenders, setShowMuniTenders] = useState(false);
@@ -67,9 +68,26 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [contract, setContract] = useState<any>();
   const [ticketstatus, setTicketstatus] = useState<string>("");
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setTicketstatus(status);
   }, [status]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose(0);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
+  
 
   const getStatusColor = (state: string) => {
     switch (state) {
@@ -139,21 +157,23 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleTenderContractClick = async () => {
+    setIsLoading(true); // Start loading
+  
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
       setTenders(rspgettenders);
-
+  
       if (!rspgettenders) return;
-
+  
       let tender_contract = "";
       rspgettenders.forEach((item: { status: string; tender_id: string }) => {
         if (item.status === "accepted" || item.status === "approved") {
           tender_contract = item.tender_id;
         }
       });
-
+  
       if (!tender_contract) {
         setShowTenderMax(false);
       } else {
@@ -167,10 +187,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false); // Stop loading after the operation is complete
     }
   };
+  
 
   const handleTenderMaxClose = () => {
+    setTicketstatus("Closed");
+    onClose(-2)
     setShowTenderMax(false);
   };
 
@@ -179,10 +204,11 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleViewTendersClick = async () => {
+    setIsLoading(true); // Start loading
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
-    console.log(rspgettenders);
+    setIsLoading(false); // Stop loading
     if (rspgettenders === null) {
       setShowMuniTenders(false);
     } else {
@@ -203,9 +229,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     <>
       {!showTenderMax && !showMuniTenders && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
-          <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
+          <div ref={modalRef} className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
             <button
-              className="absolute top-2 right-2 text-gray-700"
+              className="absolute top-2 right-2 text-gray-700 z-20"
               onClick={handleCloseClick}
             >
               <FaTimes size={24} />
@@ -213,14 +239,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
             <div className="flex flex-col lg:flex-row w-full overflow-auto">
               {/* Left Section */}
               <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
-                <div className="absolute top-2 left-2">
+                <div className="absolute top-2 left-2 z-10">
                   {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
-                <img
-                  src={municipalityImage}
-                  alt="Municipality"
-                  className="w-16 h-16 mb-2 rounded-full"
-                />
                 <div className="flex items-center justify-center mb-2">
                   <div
                     className={`flex items-center ${getStatusColor(ticketstatus)} border-2 rounded-full px-2 py-1`}
@@ -301,34 +322,40 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleViewTendersClick}
                     >
-                      View Tenders
+                      View Bids
                     </button>
                   )}
                   {(ticketstatus === "Opened") && (
                     <>
-                      <button
-                        className="border border-red-500 text-red-500 rounded-lg px-2 py-1 hover:bg-red-500 hover:text-white"
-                        onClick={handleCloseTicket}
-                      >
-                        Close Ticket
-                      </button>
-                      <button
-                        className="border border-green-500 text-green-500 rounded-lg px-2 py-1 hover:bg-green-500 hover:text-white"
-                        onClick={handleApproveTicket}
-                      >
-                        Approve ticket
-                      </button>
-                    </>
+                    <button
+                      className="bg-red-500 text-white rounded-lg px-2 py-1 hover:bg-red-600"
+                      onClick={handleCloseTicket}
+                    >
+                      Close Ticket
+                    </button>
+                    <button
+                      className="bg-blue-500 text-white rounded-lg px-2 py-1 hover:bg-blue-600"
+                      onClick={handleApproveTicket}
+                    >
+                      Take Tender Bids
+                    </button>
+                  </>
+                  
                     
                   )}
                 </div>
               </div>
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center relative overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-                  <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
-                </div>
-
+              {isLoading ? (
+                  <div className="flex items-center justify-center w-full h-full">
+                    <ThreeDots height="40" width="80" radius="9" color="#ADD8E6" ariaLabel="three-dots-loading" visible={true} />
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
+                    <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+                  </div>
+                )}
                 {/* Comments Section with Slide Animation */}
                 <div
                   className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${
@@ -336,7 +363,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   }`}
                   style={{ pointerEvents: showComments ? "auto" : "none" }}
                 >
-                  <Comments onBack={toggleComments} isCitizen={false} />
+                  <Comments ticketId={ticket_id} onBack={toggleComments} isCitizen={false} />
                 </div>
               </div>
             </div>

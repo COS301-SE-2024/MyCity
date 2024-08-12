@@ -5,55 +5,101 @@ import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
 import { Building, ChevronDown } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
-import {
-  getTicketsInMunicipality,
-} from "@/services/tickets.service";
+import { getTicketsInMunicipality } from "@/services/tickets.service";
+import { ThreeDots } from "react-loader-spinner";
+import { FaTimes } from "react-icons/fa";
+import { HelpCircle } from "lucide-react";
 
 export default function Dashboard() {
-  const [city, setCity] = useState(String);
+  const [city, setCity] = useState<string | null>(null);
+  const [cityLoading, setCityLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  ///function to call api
-  const fetchData = async () => {
-    const user_data = await userProfile.getUserProfile();
-    console.log(user_data.current)
-    const user_session = String(user_data.current?.session_token);
-    const user_municipality = String(user_data.current?.municipality)
-    setCity(String(user_data.current?.municipality))
-    const rspmunicipality = await getTicketsInMunicipality(
-      user_municipality,
-      user_session,
-      true,
-    );
-    console.log(rspmunicipality)
-    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+  const toggleHelpMenu = () => {
+    setIsHelpOpen(!isHelpOpen);
   };
 
-  const fetchDataWithoutcache = useCallback(async () => {
+  const fetchData = async () => {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
-    const user_municipality = String(user_data.current?.municipality)
-    setCity(String(user_data.current?.municipality))
+    const user_municipality = String(user_data.current?.municipality);
+    setCity(String(user_data.current?.municipality));
+    setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
       user_session,
+      true
     );
-    console.log(rspmunicipality)
     setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    setTableLoading(false);
+  };
+
+  const fetchDataWithoutCache = useCallback(async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality);
+    setCity(String(user_data.current?.municipality));
+    setCityLoading(false);
+    const rspmunicipality = await getTicketsInMunicipality(
+      user_municipality,
+      user_session
+    );
+    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    setTableLoading(false);
   }, [userProfile]);
 
   useEffect(() => {
-    fetchDataWithoutcache();
-  }, [fetchDataWithoutcache]);
+    fetchDataWithoutCache();
+  }, [fetchDataWithoutCache]);
 
   return (
     <div>
+      {/* Help Menu Button */}
+      <div className="fixed bottom-4 left-4 z-20">
+        <HelpCircle
+          data-testid="open-help-menu"
+          className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
+          size={24}
+          onClick={toggleHelpMenu}
+        />
+      </div>
+
+      {isHelpOpen && (
+        <div
+          data-testid="help"
+          className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
+        >
+          <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
+            <button
+              data-testid="close-help-menu"
+              className="absolute top-2 right-2 text-gray-700"
+              onClick={toggleHelpMenu}
+            >
+              <FaTimes size={24} />
+            </button>
+            <h2 className="text-xl font-bold mb-4">Help Menu</h2>
+            <p>This dashboard allows you to:</p>
+            <ul className="list-disc list-inside">
+              <li>View all tickets submitted within your municipality.</li>
+              <li>Sort tickets by different criteria such as urgency, ticket number, or status.</li>
+              <li>Create new tickets directly from this dashboard.</li>
+              <li>Refresh the data to see the most up-to-date information.</li>
+            </ul>
+            <p>
+              Use the dropdown menu to sort tickets, and click on any ticket to view more details or take action.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
@@ -82,7 +128,20 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <Building size={30} className="mb-2" />
-              <span className="text-xl">{city}</span>
+              {cityLoading ? (
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                  visible={true}
+                />
+              ) : (
+                <span className="text-xl">{city}</span>
+              )}
             </div>
             <div className="flex items-center justify-between mt-8">
               <div className="relative inline-block text-left">
@@ -118,7 +177,7 @@ export default function Dashboard() {
                 )}
               </div>
               <button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg z-20"
                 onClick={() =>
                   (window.location.href = "/create-ticket/municipality")
                 }
@@ -127,7 +186,22 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="mt-8">
-              <RecordsTable records={dashMuniResults} refresh={fetchData} />
+              {tableLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <ThreeDots
+                    height="40"
+                    width="80"
+                    radius="9"
+                    color="#ADD8E6"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <RecordsTable records={dashMuniResults} refresh={fetchData} />
+              )}
             </div>
           </main>
         </div>

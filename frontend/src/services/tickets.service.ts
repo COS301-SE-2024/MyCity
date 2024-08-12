@@ -1,6 +1,13 @@
 import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
+import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
+interface UserAttributes {
+    given_name?: string; // FIRSTNAME
+    family_name?: string; // SURNAME
+    picture?: string; // Profile picture URL
+}
+//const userPoolID = process.env.USER_POOL_ID;
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
 
@@ -14,7 +21,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -47,7 +54,7 @@ export async function getOpenCompanyTickets(user_session: string, revalidate?: b
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -83,7 +90,7 @@ export async function getCompanyTickets(companyname: string, user_session: strin
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -124,7 +131,7 @@ export async function getWatchlistTickets(username: string, user_session: string
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -163,7 +170,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -202,7 +209,7 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -248,7 +255,7 @@ export async function getOpenTicketsInMunicipality(municipality: string | undefi
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": user_session,
+                    "Authorization": `Bearer ${user_session}`,
                 },
             }
         );
@@ -287,7 +294,7 @@ export async function AcceptTicket(ticket: string,user_session : string)
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -317,7 +324,7 @@ export async function CloseTicket(ticket: string,user_session : string)
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": user_session ,
+            "Authorization": `Bearer ${user_session}`,
         },
         body: JSON.stringify(data),
     });
@@ -376,14 +383,14 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
         longitude: longi,
         address: fullAddress,
         username: usern,
-        state: "OPEN"
+        state: "Opened"
     }
     const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": sessiont || "",
+            "Authorization": `Bearer ${sessiont}`,
         },
         body: JSON.stringify(data),
     });
@@ -449,6 +456,8 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
             body: JSON.stringify(data)
         });
 
+        //console.log("API response:", response);
+
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
         }
@@ -479,6 +488,8 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
             body: JSON.stringify(data)
         });
 
+        //console.log("API response:", response);
+
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
         }
@@ -494,12 +505,13 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
 
 export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
-        const apiUrl = `/api/tickets/${ticket_id}/comments`;
+        const apiUrl = `/api/tickets/comments`;
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
                 "Authorization": user_session,
                 "Content-Type": "application/json",
+                "X-Ticket-ID": ticket_id, // Add ticket_id in the headers
             },
         });
 
@@ -515,6 +527,42 @@ export async function getTicketComments(ticket_id: string, user_session: string)
         throw error;
     }
 }
+
+export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
+    const client = new CognitoIdentityProviderClient({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+      },
+    });
+  
+    try {
+      const command = new AdminGetUserCommand({
+        UserPoolId: userPoolID ,
+        Username: username,
+      });
+  
+      const response = await client.send(command);
+  
+      const userAttributes: UserAttributes = {};
+  
+      response.UserAttributes?.forEach(attribute => {
+          if (attribute.Name === "given_name") {
+            userAttributes.given_name = attribute.Value;
+          } else if (attribute.Name === "family_name") {
+            userAttributes.family_name = attribute.Value;
+          } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
+            userAttributes.picture = attribute.Value;
+          }
+      });
+  
+      return userAttributes;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      return null;
+    }
+  };
 
 function formatAddress(data: any[]) {
     data.forEach(item => {

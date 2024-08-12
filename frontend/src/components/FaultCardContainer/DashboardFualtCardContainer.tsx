@@ -6,6 +6,7 @@ interface CardData {
   dateClosed: string;
   upvotes: number;
   ticket_id: string;
+  ticketnumber : string;
   asset_id: string;
   state: string;
   dateOpened: string;
@@ -18,7 +19,9 @@ interface CardData {
   user_picture: string;
   address: string;
   latitude: number;       // Adding latitude
-  longitude: number;      // Adding longitude
+  longitude: number; 
+  ticketID: string; 
+       // Adding longitude
   urgency: "high" | "medium" | "low"; // Adding urgency
 }
 
@@ -67,7 +70,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           description: item.description,
           image: item.imageURL,
           createdBy: item.dateOpened,
-          ticketNumber: item.ticket_id,
+          ticketNumber: item.ticketnumber,
+          ticketId: item.ticket_id,
         }}
         onClick={() => handleCardClick(item)}
       />
@@ -112,7 +116,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           arrowCount={selectedCard.upvotes}
           commentCount={selectedCard.commentcount}
           viewCount={selectedCard.viewcount}
-          ticketNumber={selectedCard.ticket_id}
+          ticketId={selectedCard.ticket_id}
+          ticketNumber={selectedCard.ticketnumber}
           description={selectedCard.description}
           image={selectedCard.imageURL}
           createdBy={selectedCard.createdby}

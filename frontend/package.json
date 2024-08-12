@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.2.10",
+    "@aws-sdk/client-cognito-identity-provider": "^3.628.0",
     "@chakra-ui/react": "^2.8.2",
     "@firebase/app": "^0.10.8",
     "@firebase/messaging": "^0.12.10",

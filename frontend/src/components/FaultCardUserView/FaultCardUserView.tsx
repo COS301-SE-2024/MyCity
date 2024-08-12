@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt, FaTimes } from "react-icons/fa";
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
+import { Button } from "@nextui-org/react";
+import { Route } from "lucide-react";
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -11,6 +13,7 @@ interface FaultCardUserViewProps {
   arrowCount: number;
   commentCount: number;
   viewCount: number;
+  ticketId: string;
   ticketNumber: string;
   description: string;
   image: string;
@@ -34,6 +37,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   arrowCount,
   commentCount,
   viewCount,
+  ticketId,
   ticketNumber,
   description,
   image,
@@ -46,13 +50,13 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     return data
       ? JSON.parse(data)
       : {
-          arrowCount,
-          commentCount,
-          viewCount,
-          arrowColor: "black",
-          commentColor: "black",
-          eyeColor: "black",
-        };
+        arrowCount,
+        commentCount,
+        viewCount,
+        arrowColor: "black",
+        commentColor: "black",
+        eyeColor: "black",
+      };
   };
 
   const initialData = getLocalStorageData();
@@ -126,6 +130,11 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     }
   };
 
+  const showDirections = () => {
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&travelmode=driving`;
+    window.open(googleMapsUrl, "_blank", "noopener,noreferrer");
+  };
+
   if (!show) return null;
 
   const addressParts = address.split(",");
@@ -140,13 +149,19 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           <FaTimes size={24} />
         </button>
 
+        <div className="absolute bottom-6 right-8 z-40">
+          <Button className="min-w-fit h-fit p-2 bg-gray-200" onClick={showDirections}>
+            <Route size={23} />
+          </Button>
+        </div>
+
         <div className="flex flex-col lg:flex-row w-full overflow-auto">
           {/* Left Section */}
           <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
             <div className="absolute top-2 left-2">
             </div>
             <div className="flex items-center">
-              <h2 className="font-bold text-2xl">{`Ticket ${ticketNumber}`}</h2>
+              <h2 className="font-bold text-2xl">{`Ticket`}</h2>
             </div>
             <div className="flex items-center justify-center mb-2">
               <span className="text-red-500 ml-2"></span>
@@ -216,12 +231,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Comments Section with Slide Animation */}
             <div
-              className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${
-                showComments ? "translate-x-0" : "translate-x-full"
-              }`}
+              className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${showComments ? "translate-x-0" : "translate-x-full"
+                }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
-              <Comments onBack={toggleComments} isCitizen={false} />
+              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId} />
+              {/*Added the ticket Number for the comments */}
             </div>
           </div>
         </div>
