@@ -10,21 +10,12 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
-import Notification from "@/components/Notifications/Notification";
-
 
 import {
   getMostUpvote,
   getTicketsInMunicipality,
   getWatchlistTickets,
 } from "@/services/tickets.service";
-// import {
-//   // toastNotification,
-//   sendNativeNotification,
-// } from "@/components/Notifications/notificationHelpers";
-
-import { register } from "../../../../public/worker";
-register();
 
 export default function CitizenDashboard() {
   const user = useRef(null);
@@ -37,7 +28,6 @@ export default function CitizenDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-
       try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.email;
@@ -63,7 +53,6 @@ export default function CitizenDashboard() {
       } finally {
         setIsLoading(false);
       }
-
     };
 
     fetchData();
@@ -81,10 +70,8 @@ export default function CitizenDashboard() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex justify-center mt-20">
-          <React.Fragment>
-            {/* <Notification /> */}
-          </React.Fragment>
+        <div className="flex justify-center mt-5">
+          {/* <NotificationPromt /> */}
         </div>
         <div>
           <NavbarUser />
