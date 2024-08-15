@@ -665,57 +665,6 @@ def get_Open_Company_Tickets():
         return {"Status": "FAILED", "Error": error_message}
 
 
-def Close_Tickets(ticket_data):
-    try:
-        required_fields = ["ticket_id"]
-
-        for field in required_fields:
-            if field not in ticket_data:
-                error_response = {
-                    "Error": {
-                        "Code": "IncorrectFields",
-                        "Message": f"Missing required field: {field}",
-                    }
-                }
-                raise ClientError(error_response, "InvalideFields")
-
-        response_ticket = tickets_table.query(
-            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"]),
-        )
-        if len(response_ticket["Items"]) <= 0:
-            error_response = {
-                "Error": {
-                    "Code": "TicketDoesntExist",
-                    "Message": f"Ticket doesnt exist",
-                }
-            }
-            raise ClientError(error_response, "TicketDoesntExist")
-
-        updateExp = "set #state=:r"
-        expattrName = {"#state": "state"}
-        expattrValue = {":r": "Closed"}
-        response_update = updateTicketTable(
-            ticket_data["ticket_id"], updateExp, expattrName, expattrValue
-        )
-        if response_update["ResponseMetadata"]:
-            return {
-                "Status": "Success",
-                "Ticket_id": ticket_data["ticket_id"],
-            }
-        else:
-            error_response = {
-                "Error": {
-                    "Code": "UpdateError",
-                    "Message": "Error occured trying to update",
-                }
-            }
-            raise ClientError(error_response, "UpdateError")
-
-    except ClientError as e:
-        error_message = e.response["Error"]["Message"]
-        return {"Status": "FAILED", "Error": error_message}
-
-
 def getCompanIDFromName(company_name):
     response = companies_table.scan()
     response_items = response["Items"]

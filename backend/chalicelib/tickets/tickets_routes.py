@@ -17,7 +17,6 @@ from chalicelib.tickets.tickets_controllers import (
     ClosedTicket,
     get_Open_Company_Tickets,
     get_open_tickets_in_municipality,
-    Close_Tickets,
 )
 from chalicelib.authorisers import cognito_authorizer
 
@@ -44,15 +43,6 @@ def accepting_ticket():
     response = AcceptTicket(ticket_data)
     return response
 
-
-@tickets_blueprint.route(
-    "/closed", authorizer=cognito_authorizer, methods=["POST"], cors=True
-)
-def closing_ticket():
-    request = tickets_blueprint.current_request
-    ticket_data = request.json_body
-    response = Close_Tickets(ticket_data)
-    return response
 
 
 @tickets_blueprint.route(
