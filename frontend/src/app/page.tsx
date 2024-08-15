@@ -2,37 +2,22 @@
 
 import Home from "./home/page";
 import React, { useEffect } from "react";
-// import { setupNotifications } from "@/components/Notifications/firebase";
+import { generateToken, messaging } from "@/components/Notifications/firebase";
+import { onMessage } from "@firebase/messaging";
 
 import useVisibilityChange from "@/hooks/useVisibilityChange";
 
-// root.render(
-//   <App/>
-// );
 
 
 
 function App() {
-  // const isForeground = useVisibilityChange();
+  useEffect(() => {
+    generateToken();
+    onMessage(messaging, (payload) => {
+      console.log("Message received. ", payload);
+    });
+  }, []);
 
-  // if (isForeground) {
-  //   // App is in the foreground, show toast notification
-  //   toastNotification({
-  //     title,
-  //     description: body,
-  //     status: "info",
-  //   });
-  // } else {
-  // App is in the background, show native notification
-
-  // useEffect(() => {
-  //   const title = "";
-  //   const body = "";
-  //   sendNativeNotification({
-  //     title,
-  //     body,
-  //   });
-  // });
   return (
     <React.Fragment>
       <Home />
