@@ -44,7 +44,6 @@ def accepting_ticket():
     return response
 
 
-
 @tickets_blueprint.route(
     "/close", authorizer=cognito_authorizer, methods=["POST"], cors=True
 )
