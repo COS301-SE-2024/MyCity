@@ -663,10 +663,10 @@ def get_Open_Company_Tickets():
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
-    
+
 
 def Close_Tickets(ticket_data):
-    try :
+    try:
         required_fields = ["ticket_id"]
 
         for field in required_fields:
@@ -678,11 +678,11 @@ def Close_Tickets(ticket_data):
                     }
                 }
                 raise ClientError(error_response, "InvalideFields")
-        
+
         response_ticket = tickets_table.query(
-            KeyConditionExpression=Key("ticket_id").eq(ticket_data['ticket_id']),
+            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"]),
         )
-        if(len(response_ticket['Items']) <= 0):
+        if len(response_ticket["Items"]) <= 0:
             error_response = {
                 "Error": {
                     "Code": "TicketDoesntExist",
@@ -690,15 +690,17 @@ def Close_Tickets(ticket_data):
                 }
             }
             raise ClientError(error_response, "TicketDoesntExist")
-        
+
         updateExp = "set #state=:r"
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Closed"}
-        response_update = updateTicketTable(ticket_data['ticket_id'],updateExp,expattrName,expattrValue)
+        response_update = updateTicketTable(
+            ticket_data["ticket_id"], updateExp, expattrName, expattrValue
+        )
         if response_update["ResponseMetadata"]:
             return {
                 "Status": "Success",
-                "Ticket_id": ticket_data['ticket_id'],
+                "Ticket_id": ticket_data["ticket_id"],
             }
         else:
             error_response = {
@@ -708,7 +710,7 @@ def Close_Tickets(ticket_data):
                 }
             }
             raise ClientError(error_response, "UpdateError")
-        
+
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
