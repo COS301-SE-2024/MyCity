@@ -51,6 +51,7 @@ const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
 );
 
 export default function Notifications() {
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const userProfile = useProfile();
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
@@ -64,6 +65,12 @@ export default function Notifications() {
     setSelectedCard(cardData);
     setShowModal(true);
   };
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,7 +166,7 @@ export default function Notifications() {
             overflow: "hidden",
           }}
         >
-          <NavbarUser />
+          <NavbarUser unreadNotifications={unreadNotifications} />
 
           {/* Background image */}
           <div

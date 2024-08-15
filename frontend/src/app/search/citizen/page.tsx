@@ -31,8 +31,13 @@ export default function CreateTicket() {
   const [selectedSubfilter, setSelectedSubfilter] = useState(0);
   const userProfile = useProfile();
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   const handleSearch = async () => {
     try {
@@ -128,7 +133,7 @@ export default function CreateTicket() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarUser />
+        <NavbarUser unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed",

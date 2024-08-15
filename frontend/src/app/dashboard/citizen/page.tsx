@@ -24,6 +24,13 @@ export default function CitizenDashboard() {
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,7 +99,7 @@ export default function CitizenDashboard() {
           {/* <NotificationPromt /> */}
         </div>
         <div>
-          <NavbarUser />
+        <NavbarUser unreadNotifications={unreadNotifications} />
 
           <div
             style={{

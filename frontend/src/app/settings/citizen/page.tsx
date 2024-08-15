@@ -15,7 +15,7 @@ type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 export default function Settings() {
   const { getUserProfile } = useProfile();
   const [data, setData] = useState<UserData | null>(null);
-
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -32,6 +32,12 @@ export default function Settings() {
   // const [surname, setSurname] = useState<string>("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   useEffect(() => {
     const getProfileData = async () => {
@@ -416,7 +422,7 @@ export default function Settings() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarUser />
+        <NavbarUser unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'

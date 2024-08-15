@@ -6,7 +6,7 @@ import ConfigureAmplifyClientSide from "../config/amplifyCognitoConfig";
 import * as React from "react";
 import { UserProfileProvider } from "@/context/UserProfileContext";
 import { MapboxProvider } from "@/context/MapboxContext";
-
+import NavbarUser from "@/components/Navbar/NavbarUser"; // Import the NavbarUser component
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +20,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Mock unread notifications
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <html lang="en">
       <head>
@@ -32,12 +35,17 @@ export default function RootLayout({
           <ConfigureAmplifyClientSide />
           <UserProfileProvider>
             <MapboxProvider>
-              {children}
+              <div className="relative z-50"> {/* Ensure navbar is above all other content */}
+                <NavbarUser unreadNotifications={unreadNotifications} />
+              </div>
+              <div className="relative z-10"> {/* Children content below the navbar */}
+                {children}
+              </div>
             </MapboxProvider>
           </UserProfileProvider>
         </NextUIProvider>
       </body>
-    </html >
+    </html>
   );
 }
 
