@@ -10,7 +10,6 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
-
 import {
   getMostUpvote,
   getTicketsInMunicipality,
@@ -43,6 +42,15 @@ export default function CitizenDashboard() {
           user_session
         );
 
+        // Preload images for all the fetched results
+        const imagesToPreload = [
+          ...rspmostupvotes,
+          ...rspwatchlist,
+          ...rspmunicipality,
+        ].map((item) => item.image);
+
+        preloadImages(imagesToPreload);
+
         setMostUpvoteResults(rspmostupvotes);
         setDashMuniResults(
           Array.isArray(rspmunicipality) ? rspmunicipality : []
@@ -57,6 +65,16 @@ export default function CitizenDashboard() {
 
     fetchData();
   }, [userProfile]);
+
+  const preloadImages = (srcs: string[]) => {
+    srcs.forEach((src) => {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = src;
+      document.head.appendChild(link);
+    });
+  };
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -137,14 +155,12 @@ export default function CitizenDashboard() {
                 </div>
               </div>
             )}
-<button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-4 right-4 shadow-lg z-20"
-                onClick={() =>
-                  (window.location.href = "/create-ticket/citizen")
-                }
-              >
-                + New Ticket
-              </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-4 right-4 shadow-lg z-20"
+              onClick={() => (window.location.href = "/create-ticket/citizen")}
+            >
+              + New Ticket
+            </button>
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
               <Tabs
                 aria-label="Signup Options"
