@@ -9,6 +9,7 @@ from chalicelib.tenders.tenders_controllers import (
     reject_tender,
     getCompanyContracts,
     complete_contract,
+    getMunicipalityTenders,
 )
 
 from chalicelib.authorisers import cognito_authorizer
@@ -73,6 +74,16 @@ def getmytenders():
     request = tenders_blueprint.current_request
     company_name = request.query_params.get("name")
     response = getCompanyTenders(company_name)
+    return response
+
+
+@tenders_blueprint.route(
+    "/getmunitenders", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
+def getmytenders():
+    request = tenders_blueprint.current_request
+    municipality = request.query_params.get("municipality")
+    response = getMunicipalityTenders(municipality)
     return response
 
 
