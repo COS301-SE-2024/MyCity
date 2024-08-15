@@ -6,13 +6,13 @@ importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compa
 // import { getMessaging, getToken } from "firebase/messaging";
 
 const firebaseConfig = {
-apikey: String(process.env.FIREBASE_API_KEY),
-authDomain: String(process.env.FIREBASE_AUTH_DOMAIN),
-projectId: String(process.env.FIREBASE_PROJECT_ID),
-storageBucket: String(process.env.FIREBASE_STORAGE_BUCKET),
-messagingSenderId: String(process.env.FIREBASE_MESSAGING_SENDER_ID),
-appId: String(process.env.FIREBASE_APP_ID),
-measurementId: String(process.env.FIREBASE_MEASUREMENT_ID)
+apikey: 'AIzaSyB1BJuObiD_QbZpWaAdsPL7DDOselHVrSE',
+authDomain: 'mycity-ffe84.firebaseapp.com',
+projectId: 'mycity-ffe84',
+storageBucket: 'mycity-ffe84.appspot.com' ,
+messagingSenderId: '135040867606',
+appId: '1:135040867606:web:d2943820994c8c9e37c437',
+measurementId: 'G-W2SVBQX1EY'
 };
 
 firebase.initializeApp(firebaseConfig);
