@@ -358,6 +358,51 @@ def complete_contract(sender_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+    
+#get active tenders in municipality
+def getMunicipalityTenders(municipality):
+    try:
+        if municipality == None or municipality=="":
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required query: municipality",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+        
+        response_tickets = ticket_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq(municipality),
+        )
+        if len(response_tickets['Item']) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "TicketsDontExist",
+                    "Message": "There are no tickets in this municipality",
+                }
+            }
+            raise ClientError(error_response, "TicketsDontExist")
+        
+        collective = []
+        tickets = response_tickets['Items']
+        for item in tickets:
+            response_tender = tenders_table.scan(
+                FilterExpression=Attr("ticket_id").eq(item['ticket_id'])
+            )
+            if(len(response_tender['Items']) > 0):
+                assignMuni(response_tender['Items'])
+                assignLongLat(response_tender['Items'])
+                assignCompanyName(response_tender['Items'])
+                collective.extend(response_tender['Items'])
+        
+        return collective
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+    
 
 
 # company tenders
