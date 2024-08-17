@@ -119,7 +119,6 @@ def inreview(sender_data):
             raise ClientError(error_response, "CompanyDoesntExist")
 
         company_id = company_items[0]["pid"]
-        print("Companyid: " + company_id)
         response_tender = tenders_table.scan(
             FilterExpression=Attr("company_id").eq(company_id)
             & Attr("ticket_id").eq(sender_data["ticket_id"]),
@@ -175,7 +174,6 @@ def accept_tender(sender_data):
             & Attr("ticket_id").eq(sender_data["ticket_id"])
         )
         tender_items = response_tender["Items"]
-        print(tender_items)
         if len(tender_items) <= 0:  # To see that company does exist
             error_response = {
                 "Error": {
@@ -271,7 +269,6 @@ def reject_tender(sender_data):
             & Attr("ticket_id").eq(sender_data["ticket_id"])
         )
         tender_items = response_tender["Items"]
-        print(tender_items)
         if len(tender_items) <= 0:  # To see that company does exist
             error_response = {
                 "Error": {
@@ -360,6 +357,50 @@ def complete_contract(sender_data):
         return {"Status": "FAILED", "Error": error_message}
 
 
+# get active tenders in municipality
+def getMunicipalityTenders(municipality):
+    try:
+        if municipality == None or municipality == "":
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required query: municipality",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+
+        response_tickets = ticket_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq(municipality),
+        )
+        if len(response_tickets["Items"]) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "TicketsDontExist",
+                    "Message": "There are no tickets in this municipality",
+                }
+            }
+            raise ClientError(error_response, "TicketsDontExist")
+
+        collective = []
+        tickets = response_tickets["Items"]
+        for item in tickets:
+            response_tender = tenders_table.scan(
+                FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
+            )
+            if len(response_tender["Items"]) > 0:
+                assignMuni(response_tender["Items"])
+                assignLongLat(response_tender["Items"])
+                assignCompanyName(response_tender["Items"])
+                collective.extend(response_tender["Items"])
+
+        return collective
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 # company tenders
 def getCompanyTenders(company_name):
     try:
@@ -372,7 +413,6 @@ def getCompanyTenders(company_name):
             }
             raise ClientError(error_response, "InvalideFields")
         company_id = getCompanIDFromName(company_name)
-        print(company_id)
         if company_id == "":
             error_response = {
                 "Error": {
@@ -620,7 +660,6 @@ def assignLongLat(data):
             item["longitude"] = "26.5623685320641"
             item["latitude"] = "-32.90383"
         else:
-            print(response["Items"][0])
             tickets = response["Items"][0]
             item["longitude"] = tickets["longitude"]
             item["latitude"] = tickets["latitude"]
