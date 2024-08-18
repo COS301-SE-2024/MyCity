@@ -1,25 +1,27 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Home, PlusCircle, Bell, Search, FileText } from 'lucide-react';
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { useProfile } from '@/hooks/useProfile';
 import { UserData } from '@/types/custom.types';
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { handleSignOut } from '@/services/auth.service';
 
-export default function NavbarMunicipality() {
-  const router = useRouter();
+export default function NavbarMunicipality({ unreadNotifications = 0 }) {
+  const pathname = usePathname(); // Get the current pathname
   const [data, setData] = useState<UserData | null>(null);
   const { getUserProfile } = useProfile();
 
   const onLogout = async () => {
     await handleSignOut();
-    router.push("/");
+    window.location.href = "/";
   };
 
   useEffect(() => {
     const getProfileData = async () => {
-      const userData = await getUserProfile(); //this logic might change because this is the municipality user
+      const userData = await getUserProfile();
 
       if (userData.current) {
         const storedProfileImage = localStorage.getItem('profileImage') ? localStorage.getItem('profileImage')! : undefined;
@@ -39,8 +41,14 @@ export default function NavbarMunicipality() {
     };
 
     getProfileData();
-
   }, [getUserProfile]);
+
+  // Function to apply blue highlight effect to the selected item
+  const getNavItemClass = (path: string) => {
+    return pathname === path
+      ? "text-blue-400 cursor-pointer transform hover:scale-105 transition-transform duration-200"
+      : "text-white cursor-pointer transform hover:scale-105 transition-transform duration-200";
+  };
 
   return (
     <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
@@ -52,7 +60,7 @@ export default function NavbarMunicipality() {
 
       <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
         <Link href="/dashboard/municipality" passHref>
-          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+          <div className={getNavItemClass("/dashboard/municipality")}>
             <div className="flex flex-col gap-1 items-center">
               <Home size={25} />
               <span>Dashboard</span>
@@ -60,8 +68,8 @@ export default function NavbarMunicipality() {
           </div>
         </Link>
 
-        <Link href="/create-ticket/municipality" passHref> {/*same for each user type I believe*/}
-          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+        <Link href="/create-ticket/municipality" passHref>
+          <div className={getNavItemClass("/create-ticket/municipality")}>
             <div className="flex flex-col gap-1 items-center">
               <PlusCircle size={25} />
               <span>Add Ticket</span>
@@ -70,16 +78,21 @@ export default function NavbarMunicipality() {
         </Link>
 
         <Link href="/notifications/municipality" passHref> 
-          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
-            <div className="flex flex-col gap-1 items-center">
+          <div className={getNavItemClass("/notifications/municipality")}>
+            <div className="relative flex flex-col gap-1 items-center">
               <Bell size={25} />
+              {unreadNotifications > 0 && (
+                <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
+                  {unreadNotifications}
+                </div>
+              )}
               <span>Notifications</span>
             </div>
           </div>
         </Link>
 
         <Link href="/search/municipality" passHref> 
-          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+          <div className={getNavItemClass("/search/municipality")}>
             <div className="flex flex-col gap-1 items-center">
               <Search size={25} />
               <span>Search</span>
@@ -88,7 +101,7 @@ export default function NavbarMunicipality() {
         </Link>
 
         <Link href="/tenders/municipality" passHref>
-          <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+          <div className={getNavItemClass("/tenders/municipality")}>
             <div className="flex flex-col gap-1 items-center">
               <FileText size={25} />
               <span>Tenders</span>

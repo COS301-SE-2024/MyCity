@@ -11,10 +11,11 @@ export default function Notifications() {
   const handleDelete = () => {
     console.log("Delete notification");
   };
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
   
   return (
     <div>
-      <NavbarCompany />
+      <NavbarCompany unreadNotifications={unreadNotifications} />
       <div
         style={{
           position: "fixed", // Change position to 'fixed'

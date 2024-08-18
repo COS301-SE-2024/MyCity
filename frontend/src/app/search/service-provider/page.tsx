@@ -97,9 +97,11 @@ export default function CreateTicket() {
     indexOfLastResult
   );
 
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
-      <NavbarCompany />
+      <NavbarCompany unreadNotifications={unreadNotifications} />
       <div
         style={{
           position: "fixed",

@@ -52,6 +52,8 @@ export default function MuniTenders() {
     console.log(openTickets); // This will log the updated openTickets whenever it changes
   }, [openTickets]);
 
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
       {/* Help Menu Button */}
@@ -94,7 +96,7 @@ export default function MuniTenders() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarCompany />
+        <NavbarCompany unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'

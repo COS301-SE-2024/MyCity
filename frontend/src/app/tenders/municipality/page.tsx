@@ -36,13 +36,13 @@ export default function MuniTenders() {
     };
     fetchData();
   },[userProfile])
-
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarMunicipality />
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'

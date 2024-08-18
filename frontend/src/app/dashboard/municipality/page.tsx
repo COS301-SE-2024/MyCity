@@ -60,6 +60,8 @@ export default function Dashboard() {
     fetchDataWithoutCache();
   }, [fetchDataWithoutCache]);
 
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
       {/* Help Menu Button */}
@@ -119,7 +121,7 @@ export default function Dashboard() {
               zIndex: -1,
             }}
           ></div>
-          <NavbarMunicipality />
+          <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <main className="p-8 relative">
             <div className="flex items-center mb-2 mt-2 ml-2">
               <h1 className="text-4xl font-bold text-white text-opacity-80">

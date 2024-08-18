@@ -329,13 +329,13 @@ export default function Settings() {
         return null;
     }
   };
-
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarMunicipality />
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed",

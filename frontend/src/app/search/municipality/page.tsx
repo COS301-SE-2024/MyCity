@@ -122,6 +122,8 @@ export default function CreateTicket() {
     indexOfFirstResult,
     indexOfLastResult
   );
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  
 
   return (
     <div>
@@ -129,7 +131,7 @@ export default function CreateTicket() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarMunicipality />
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed",

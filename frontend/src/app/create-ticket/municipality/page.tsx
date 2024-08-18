@@ -6,6 +6,7 @@ import { useMapbox } from "@/hooks/useMapbox";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 
 export default function CreateTicket() {
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
   return (
     <div className="relative min-h-screen">
       {/* Background image */}
@@ -30,7 +31,7 @@ export default function CreateTicket() {
       {/* Overlay to ensure content is on top of the background */}
       <div className="relative z-10">
         {/* Navbar */}
-        <NavbarMunicipality />
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
 
         {/* Desktop View */}
         <div className="hidden sm:block">

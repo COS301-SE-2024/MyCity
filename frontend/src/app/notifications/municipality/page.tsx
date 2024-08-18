@@ -35,12 +35,14 @@ export default function Notifications() {
   const alerts = [
     { message: "this ticket has 25 upvotes.", ticketId: "TCKT-001", isNew: true, ticketNumber: "328" },
   ];
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarMunicipality />
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
