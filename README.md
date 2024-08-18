@@ -9,31 +9,47 @@
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
 <p align="center">
-    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square">
-    <img alt="Code_Coverage" src="https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square"> 
-    <img alt="GitHub_License" src="https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=flat-square">
-    <img alt="GitHub_repo_size" src="https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=flat-square">
-    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/MyCity/.github%2Fworkflows%2Ftest.yml?style=flat-square">
-    <img alt="Commit_Activity" src="https://img.shields.io/github/issues/COS301-SE-2024/MyCity.svg?style=flat-square">
-    <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=flat-square">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/last-commit/COS301-SE-2024/MyCity?style=plastic">   
+    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/w/COS301-SE-2024/MyCity?style=plastic">      
+    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/t/COS301-SE-2024/MyCity?style=plastic"> 
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues/COS301-SE-2024/MyCity.svg?style=plastic">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=plastic">
+    </br> 
+    <img alt="GitHub_License" src="https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=plastic">
+    <img alt="GitHub_repo_size" src="https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=plastic">
 </p>
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
-# MyCity PWA
+# Get Connected!
 
-<p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features: 
-  <a href="https://www.mycity.net.za" >
-    https://www.mycity.net.za
-  </a>
-  <br/> 
-  <a href="https://www.mycity.net.za">
-    <img style="width: 200px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
-  </a>
-  <br/> 
-</p>
-
-<p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
+<table>
+    <tr>
+      <td>
+        <div align="center">
+        <a href="https://www.mycity.net.za">
+              <img height="auto"  src="/images/TryPWA.png" alt="Our PWA"/>
+            </div>
+            </a>
+      </td>
+      <td>
+        <div align="center">
+                <a href="https://forms.gle/PM9EN4EEMb61GkwU6">
+              <img height="auto" src="/images/UXTestser.png" alt="UX Tester"/>
+              </a>
+            </div>
+      </td>
+    </tr>
+  <tr>
+     <td colspan="2">
+        <div align="center">
+              <a href="https://www.mycity.net.za">
+              <img height="auto" src="/images/Compatibility.png" alt="Compatibility"/>
+            </a>
+            </div>
+      </td>
+  </tr>
+  </table>
 
 # Table of contents
 
@@ -66,8 +82,6 @@
 # Project Board
 
 <p> You can track the progress of our project on the <a href="https://github.com/orgs/COS301-SE-2024/projects/95/views/1">Project Board</a> for MyCity.</p>
-
-# Features (a short summary of the user's functionality)
 
 # Demo Content
 
@@ -177,65 +191,110 @@
 
 # Our Tech stack
 
-<p align="center">
-  <a href="https://nextjs.org/">
-    <img src="/images/icon_nextjs.png" alt="Next.js" style="width: 60px; height: auto;"/>
+<table>
+  <tr>
+    <td>
+      <h1>Hosting</h1>
+    </td>
+    <td>
+    <a href="https://aws.amazon.com/dynamodb/">
+    <img src="/images/icon_amplify.png" alt="Amazon DynamoDB" style="width: 80px; height: auto;"/>
+        <a href="https://aws.amazon.com/dynamodb/">
+    <img src="/images/icon_cloudfront.png" alt="Amazon DynamoDB" style="width: 80px; height: auto;"/>
+    </td>
+  </tr> 
+  <tr>
+    <td>
+      <h1>Frontend</h1>
+    </td>
+    <td>  
+      <a href="https://nextjs.org/">
+        <img src="/images/icon_nextjs.png" alt="Next.js" style="width: 80px; height: auto;"/>
+      </a>
+        <a href="https://reactjs.org/">
+    <img src="/images/icon_react.png" alt="React" style="width: 80px; height: auto;"/>
   </a>
-  <a href="https://reactjs.org/">
-    <img src="/images/icon_react.png" alt="React" style="width: 60px; height: auto;"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h1>Backend</h1>
+    </td>
+    <td>  
+    <a href="https://www.python.org/">
+    <img src="/images/icon_python.png" alt="Python" style="width: 80px; height: auto;"/>
   </a>
-  <a href="https://www.python.org/">
-    <img src="/images/icon_python.png" alt="Python" style="width: 60px; height: auto;"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h1>Storage</h1>
+    </td>
+    <td>  
+    <a href="https://aws.amazon.com/dynamodb/">
+    <img src="/images/icon_dynamoDB.png" alt="Amazon DynamoDB" style="width: 80px; height: auto;"/>
   </a>
   <a href="https://aws.amazon.com/dynamodb/">
-    <img src="/images/icon_dynamoDB.png" alt="Amazon DynamoDB" style="width: 60px; height: auto;"/>
+    <img src="/images/icon_s3.png" alt="Amazon DynamoDB" style="width: 80px; height: auto;"/>
   </a>
-  <a href="https://aws.amazon.com/ec2/">
-    <img src="/images/icon_aws.png" alt="AWS EC2" style="width: 60px; height: auto;"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h1>API's</h1>
+    </td>
+    <td>   
+    <a href="https://aws.amazon.com/lambda/">
+    <img src="/images/icon_lambda.png" alt="AWS Lambda" style="width: 80px; height: auto;"/>
   </a>
-  <a href="https://developers.google.com/maps/documentation/javascript/overview">
-    <img src="/images/icon_maps.png" alt="Google Maps Javascript API" style="width: 60px; height: auto;"/>
+     <a href="https://developers.google.com/maps/documentation/javascript/overview">
+    <img src="/images/icon_maps.png" alt="Google Maps Javascript API" style="width: 80px; height: auto;"/>
   </a>
-  <a href="https://aws.amazon.com/lambda/">
-    <img src="/images/icon_lambda.png" alt="AWS Lambda" style="width: 60px; height: auto;"/>
-  </a>
-  <a href="https://www.overleaf.com/">
-    <img src="/images/icon_overleaf.png" alt="Overleaf" style="width: 60px; height: auto;"/>
-  </a>
-  <a href="https://www.markdownguide.org/">
-    <img src="/images/icon_md.png" alt="Markdown" style="width: 60px; height: auto;"/>
-  </a>
-  <!--<a href="https://github.com/Kotlin/dokka">
-    <img src="/images/icon_dokka.png" alt="Dokka" style="width: 60px; height: auto;"/>
-  </a>-->
-  <a href="https://jestjs.io/">
-    <img src="/images/icon_jest.png" alt="Jest" style="width: 60px; height: auto;"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h1>Testing</h1>
+    </td>
+    <td>   
+      <a href="https://jestjs.io/">
+    <img src="/images/icon_jest.png" alt="Jest" style="width: 80px; height: auto;"/>
   </a>
   <a href="https://pytest.org/">
-    <img src="/images/icon_pytest.png" alt="PyTest" style="width: 60px; height: auto;"/>
+    <img src="/images/icon_pytest.png" alt="PyTest" style="width: 80px; height: auto;"/>
   </a>
-  <!--<a href="https://aws.github.io/chalice/topics/testing.html">
-    <img src="/images/icon_chalice.png" alt="Chalice's Test Client" style="width: 60px; height: auto;"/>
-  </a>-->
-  <a href="https://discord.com/">
-    <img src="/images/icon_discord.png" alt="Discord" style="width: 60px; height: auto;"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h1>Documentation</h1>
+    </td>
+    <td>   
+  <a href="https://www.overleaf.com/">
+    <img src="/images/icon_overleaf.png" alt="Overleaf" style="width: 80px; height: auto;"/>
   </a>
-  <a href="https://calendar.google.com/">
-    <img src="/images/icon_calendar.png" alt="Google Calendar" style="width: 60px; height: auto;"/>
+  <a href="https://www.markdownguide.org/">
+    <img src="/images/icon_md.png" alt="Markdown" style="width: 80px; height: auto;"/>
   </a>
-</p>
-
-<p align="center">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <h1>Github Stratergy</h1>
+    </td>
+    <td>   
   <a href="https://github.com/">
-    <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
+    <img src="/images/icon_github.png" alt="GitHub" style="width: 80px; height: auto;"/>
   </a>
   <a href="https://www.gitkraken.com/gitlens">
-    <img src="/images/icon_gitlens.png" alt="GitLens" style="width: 60px; height: auto;"/>
+    <img src="/images/icon_gitlens.png" alt="GitLens" style="width: 80px; height: auto;"/>
   </a>
   <a href="https://github.com/features/actions">
-    <img src="/images/icon_actions.png" alt="GitHub Actions" style="width: 60px; height: auto;"/>
+    <img src="/images/icon_actions.png" alt="GitHub Actions" style="width: 80px; height: auto;"/>
   </a>
-</p>
+    </td>
+  </tr>
+</table>
 
 # Meet Team LAN Lords
 
@@ -307,8 +366,7 @@
           </td>
           <td align="left" colspan="2">
             <h4>Bio: <h4>
-            <h6 >My superpower? Rapid learning. This means I cannot only adapt to diverse scenarios but also excel in them. The result is then the ability to not only meet but exceed set objectives effectively. Driven by challenges, I possess the patience and resilience to see tasks through to completion.
-</h6>
+            <h6 >My superpower? Rapid learning. This means I cannot only adapt to diverse scenarios but also excel in them. The result is then the ability to not only meet but exceed set objectives effectively. Driven by challenges, I possess the patience and resilience to see tasks through to completion.</h6>
             <h4>Project Contributions: <h4>
             <h6></h6>
           </td>
