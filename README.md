@@ -9,13 +9,14 @@
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
 <p align="center">
-    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/y/COS301-SE-2024/MyCity?style=flat-square">
-    <img alt="Code_Coverage" src="https://img.shields.io/codecov/c/github/COS301-SE-2024/MyCity?style=flat-square"> 
-    <img alt="GitHub_License" src="https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=flat-square">
-    <img alt="GitHub_repo_size" src="https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=flat-square">
-    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/COS301-SE-2024/MyCity/.github%2Fworkflows%2Ftest.yml?style=flat-square">
-    <img alt="Commit_Activity" src="https://img.shields.io/github/issues/COS301-SE-2024/MyCity.svg?style=flat-square">
-    <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=flat-square">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/last-commit/COS301-SE-2024/MyCity?style=plastic">   
+    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/w/COS301-SE-2024/MyCity?style=plastic">      
+    <img alt="Commit_Activity" src="https://img.shields.io/github/commit-activity/t/COS301-SE-2024/MyCity?style=plastic"> 
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues/COS301-SE-2024/MyCity.svg?style=plastic">
+    <img alt="Commit_Activity" src="https://img.shields.io/github/issues-closed/COS301-SE-2024/MyCity.svg?style=plastic">
+    </br> 
+    <img alt="GitHub_License" src="https://img.shields.io/github/license/COS301-SE-2024/MyCity?style=plastic">
+    <img alt="GitHub_repo_size" src="https://img.shields.io/github/repo-size/COS301-SE-2024/MyCity?style=plastic">
 </p>
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
@@ -288,7 +289,6 @@
     </td>
   </tr>
 </table>
-
 
 # Meet Team LAN Lords
 
