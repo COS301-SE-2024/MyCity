@@ -99,7 +99,7 @@ export default function CitizenDashboard() {
           {/* <NotificationPromt /> */}
         </div>
         <div>
-        <NavbarUser unreadNotifications={unreadNotifications} />
+          <NavbarUser unreadNotifications={unreadNotifications} />
 
           <div
             style={{
@@ -118,11 +118,12 @@ export default function CitizenDashboard() {
             }}
           ></div>
           <main>
-            <div className="flex items-center mb-2 mt-2 ml-5">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 text-center ">
+            <div className="relative">
+              <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
                 Dashboard
               </h1>
             </div>
+
             <div className="fixed bottom-4 left-4 z-20">
               <HelpCircle
                 data-testid="open-help-menu"

@@ -46,6 +46,11 @@ export default function CreateTicket() {
       <div className="relative z-10">
         {/* Navbar */}
         <NavbarUser unreadNotifications={unreadNotifications} />
+        <div className="relative">
+              <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+                Add Ticket
+              </h1>
+            </div>
 
         {/* Help Menu Button */}
         <div className="fixed bottom-4 left-4 z-20">
@@ -86,9 +91,7 @@ export default function CreateTicket() {
         {/* Desktop View */}
         <div className="hidden sm:block">
           <main className="flex flex-col items-center justify-start py-5">
-            <h1 className="text-4xl font-bold text-white text-opacity-80 mb-5">
-              Add Ticket
-            </h1>
+            
             <div className="w-full max-w-7xl px-5">
               <div className="mt-5">
                 <CreateTicketComp useMapboxProp={useMapbox} />

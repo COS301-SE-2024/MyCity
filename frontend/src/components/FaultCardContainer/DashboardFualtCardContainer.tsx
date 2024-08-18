@@ -6,7 +6,7 @@ interface CardData {
   dateClosed: string;
   upvotes: number;
   ticket_id: string;
-  ticketnumber : string;
+  ticketnumber: string;
   asset_id: string;
   state: string;
   dateOpened: string;
@@ -18,11 +18,10 @@ interface CardData {
   commentcount: number;
   user_picture: string;
   address: string;
-  latitude: number;       // Adding latitude
-  longitude: number; 
-  ticketID: string; 
-       // Adding longitude
-  urgency: "high" | "medium" | "low"; // Adding urgency
+  latitude: number;
+  longitude: number;
+  ticketID: string;
+  urgency: "high" | "medium" | "low";
 }
 
 interface CardComponentProps {
@@ -30,8 +29,8 @@ interface CardComponentProps {
 }
 
 const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = [] }) => {
-  const [startIndex, setStartIndex] = useState(0); // Index to track the starting point of displayed items
-  const itemsPerPage = 7; // Number of items to display per page
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 7;
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
@@ -45,20 +44,17 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
     setSelectedCard(null);
   };
 
-  // Function to handle displaying the next set of items
   const showNextItems = () => {
     setStartIndex((prevIndex) => Math.min(prevIndex + itemsPerPage, cardData.length - itemsPerPage));
   };
 
-  // Function to handle displaying the previous set of items
   const showPreviousItems = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
   };
 
-  // Calculate which items to display based on startIndex and itemsPerPage
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
-    .map((item, index) => (
+    .map((item) => (
       <FaultCardUser
         key={item.ticket_id}
         data={{
@@ -84,25 +80,26 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
         style={{
           paddingLeft: '16px',
           paddingRight: '16px',
-          scrollbarWidth: 'thin', // For Firefox
-          scrollbarColor: 'rgba(255, 255, 255, 0.5) transparent', // For Firefox
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(255, 255, 255, 0.3) transparent',
         }}
       >
         <style jsx>{`
           ::-webkit-scrollbar {
-            height: 6px; /* Make the scrollbar smaller */
+            height: 4px; /* Smaller height for the scrollbar */
           }
           ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.5); /* Color of the scrollbar */
-            border-radius: 3px; /* Roundness of the scrollbar */
+            background: rgba(255, 255, 255, 0.7); /* Lighter color */
+            border-radius: 9999px; /* Fully rounded scrollbar */
+            min-width: 20px; /* Minimum width to reduce the scrollbar thumb size */
           }
           ::-webkit-scrollbar-track {
-            background: transparent; /* Color of the track */
+            background: transparent;
+            margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
           }
         `}</style>
-        <div className="flex justify-start">
-          <div className="flex mb-8 text-center flex-nowrap">
-            {/* Display multiple FaultCardUser components */}
+        <div className="flex justify-start mb-4">
+          <div className="flex text-center flex-nowrap">
             {visibleItems}
           </div>
         </div>
@@ -121,9 +118,9 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           description={selectedCard.description}
           image={selectedCard.imageURL}
           createdBy={selectedCard.createdby}
-          latitude={selectedCard.latitude} // Pass latitude
-          longitude={selectedCard.longitude} // Pass longitude
-          urgency={selectedCard.urgency} // Pass urgency
+          latitude={selectedCard.latitude}
+          longitude={selectedCard.longitude}
+          urgency={selectedCard.urgency}
         />
       )}
     </div>
