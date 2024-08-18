@@ -27,19 +27,19 @@
     <tr>
       <td>
         <div align="center">
-              <img height="auto" href="https://drive.google.com/drive/folders/1avFWB9kwlpBMzTB_sf69hy4mYV0fVZ-2?usp=sharing" src="/images/TryPWA.png" alt="Demo 1" href=""/>
+              <img height="auto" href="https://www.mycity.net.za" src="/images/TryPWA.png" alt="Our PWA"/>
             </div>
       </td>
       <td>
         <div align="center">
-              <img height="auto" href="https://drive.google.com/drive/folders/1nmr4Iq4ge30EMOy7w8KVYFfUuLLCCS6w?usp=sharing" src="/images/UXTestser.png" alt="Demo 2" href=""/><br/>
+              <img height="auto" href="https://forms.gle/PM9EN4EEMb61GkwU6" src="/images/UXTestser.png" alt="UX Tester"/><br/>
             </div>
       </td>
     </tr>
   <tr>
      <td colspan="2">
         <div align="center">
-              <img height="auto" href="https://drive.google.com/drive/folders/1GOX9lom3t0gnMyl04yL4d1E94AdjlQXV?usp=sharing" src="/images/Compatibility.png" alt="Demo 3" href=""/><br/>
+              <img height="auto" href="https:www.mycity.net.za" src="/images/Compatibility.png" alt="Compatibility"/><br/>
             </div>
       </td>
   </tr>
