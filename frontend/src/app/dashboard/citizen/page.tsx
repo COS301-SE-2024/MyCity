@@ -220,7 +220,7 @@ export default function CitizenDashboard() {
                   <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
                     Nearest to you
                   </h1>
-                  <h1 className="text-center text-white mb-4 ml-2">
+                  <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
                     Based on your proximity to the issue.
                   </h1>
 

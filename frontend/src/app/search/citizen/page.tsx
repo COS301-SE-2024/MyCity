@@ -45,46 +45,48 @@ export default function CreateTicket() {
       setLoading(true);
       const startTime = Date.now();
       let data: any[] = [];
-
-      // Get user profile and municipality
+  
+      // Fetch user profile and data
       const user_data = await userProfile.getUserProfile();
       const user_municipality = String(user_data.current?.municipality);
       const sessionToken = String(user_data.current?.session_token);
-
+  
       switch (selectedFilter) {
-        case "myMunicipality": // My Municipality -> Near Me or Asset
+        case "myMunicipality":
           if (selectedSubfilter === 0) {
-            data = await searchMunicipalityTickets(sessionToken, user_municipality); //User's municipality tickets
+            data = await searchMunicipalityTickets(sessionToken, user_municipality);
           } else if (selectedSubfilter === 1) {
-            //data = await searchIssue(searchTerm, user_municipality); //Filter of the above tickets based on potential asset matches
-            data = await searchMunicipalityTickets(sessionToken, user_municipality); //User's municipality tickets (this is just temporary)
+            data = await searchMunicipalityTickets(sessionToken, user_municipality); // This is just temporary
           }
           break;
-        case "serviceProviders": // Service Providers
+        case "serviceProviders":
           data = await searchServiceProvider(sessionToken, searchTerm);
           break;
-        case "municipalities": // Municipalities
+        case "municipalities":
           data = await searchMunicipality(sessionToken, searchTerm);
           break;
         default:
           break;
       }
-
-      //console.log('Checking to see array output');
-      //console.log('API Response Data:', data);
-
+  
+      // Ensure `data` is an array
+      if (!Array.isArray(data)) {
+        data = [];
+      }
+  
       const endTime = Date.now();
       setSearchTime((endTime - startTime) / 1000); // Time in seconds
-      setTotalResults(data.length); // all the tickets 
+      setTotalResults(data.length);
       setSearchResults(data);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000); // Hide toast after 3 seconds
+      setTimeout(() => setShowToast(false), 5000);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching search results:", error);
       setLoading(false);
     }
   };
+  
 
   const handleFilterChange = (
     filter: "myMunicipality" | "serviceProviders" | "municipalities"
@@ -151,7 +153,7 @@ export default function CreateTicket() {
             }}
           ></div>
           <main>
-            <div className="flex items-center mb-2 mt-2 ml-2">
+            <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
               <h1 className="text-4xl font-bold text-white text-opacity-80">
                 Search
               </h1>
@@ -342,7 +344,7 @@ export default function CreateTicket() {
               </>
             )}
             {showToast && (
-              <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded shadow-lg">
+              <div className="fixed bottom-4 left-4 bg-white b-opacity-70 text-black px-4 py-2 rounded-3xl shadow-lg">
                 <span>{totalResults} results found in </span>
                 <span className="text-blue-500">{searchTime.toFixed(2)}</span>
                 <span> seconds</span>

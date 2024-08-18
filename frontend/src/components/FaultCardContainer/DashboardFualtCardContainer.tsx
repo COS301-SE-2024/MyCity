@@ -30,7 +30,7 @@ interface CardComponentProps {
 
 const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = [] }) => {
   const [startIndex, setStartIndex] = useState(0);
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
@@ -55,28 +55,29 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
     .map((item) => (
-      <FaultCardUser
-        key={item.ticket_id}
-        data={{
-          title: item.asset_id,
-          address: item.address,
-          arrowCount: item.upvotes,
-          commentCount: item.commentcount,
-          viewCount: item.viewcount,
-          description: item.description,
-          image: item.imageURL,
-          createdBy: item.dateOpened,
-          ticketNumber: item.ticketnumber,
-          ticketId: item.ticket_id,
-        }}
-        onClick={() => handleCardClick(item)}
-      />
+      <div key={item.ticket_id} className="mr-4"> {/* Added margin-right for spacing */}
+        <FaultCardUser
+          data={{
+            title: item.asset_id,
+            address: item.address,
+            arrowCount: item.upvotes,
+            commentCount: item.commentcount,
+            viewCount: item.viewcount,
+            description: item.description,
+            image: item.imageURL,
+            createdBy: item.dateOpened,
+            ticketNumber: item.ticketnumber,
+            ticketId: item.ticket_id,
+          }}
+          onClick={() => handleCardClick(item)}
+        />
+      </div>
     ));
 
   return (
-    <div className="flex flex-col items-center w-full rounded-lg shadow-md overflow-hidden m-2">
+    <div className="flex flex-col items-center w-full rounded-3xl shadow-md overflow-hidden m-2">
       <div
-        className="w-full overflow-x-auto custom-scrollbar"
+        className="w-full overflow-x-auto custom-scrollbar rounded-3xl"
         style={{
           paddingLeft: '16px',
           paddingRight: '16px',
