@@ -20,20 +20,28 @@
 
 <img src="/images/styling_bar.png" alt="Alt text" title="bar">
 
-# MyCity PWA
-
-<p>Visit our official website to learn more about the MyCity project,<br/> access the application, and explore its features: 
-  <a href="https://www.mycity.net.za" >
-    https://www.mycity.net.za
-  </a>
-  <br/> 
-  <a href="https://www.mycity.net.za">
-    <img style="width: 200px; height: auto;" src="/images//qr_MyCity.png" alt="MyCity QR" />
-  </a>
-  <br/> 
-</p>
-
-<p>Stay updated with the latest news, updates, and enhancements. <br> Your feedback is valuable to us!</p>
+# Get Connected!
+<table>
+    <tr>
+      <td>
+        <div align="center">
+              <img height="auto" href="https://drive.google.com/drive/folders/1avFWB9kwlpBMzTB_sf69hy4mYV0fVZ-2?usp=sharing" src="/images/TryPWA.png" alt="Demo 1" href=""/>
+            </div>
+      </td>
+      <td>
+        <div align="center">
+              <img height="auto" href="https://drive.google.com/drive/folders/1nmr4Iq4ge30EMOy7w8KVYFfUuLLCCS6w?usp=sharing" src="/images/UXTestser.png" alt="Demo 2" href=""/><br/>
+            </div>
+      </td>
+    </tr>
+  <tr>
+     <td colspan="2">
+        <div align="center">
+              <img height="auto" href="https://drive.google.com/drive/folders/1GOX9lom3t0gnMyl04yL4d1E94AdjlQXV?usp=sharing" src="/images/Compatibility.png" alt="Demo 3" href=""/><br/>
+            </div>
+      </td>
+  </tr>
+  </table>
 
 # Table of contents
 
