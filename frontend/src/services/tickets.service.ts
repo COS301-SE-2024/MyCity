@@ -406,7 +406,6 @@ function CreateTicketNumber(municipality: string): string {
     for (let index = 0; index < 2; index++) {
         let randint: number = Math.floor(Math.random() * municipality.length);
         while (municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_") {
-            // console.log("inside loop")
             randint = Math.floor(Math.random() * municipality.length);
         }
         ticketnumber += municipality[randint].toUpperCase();
