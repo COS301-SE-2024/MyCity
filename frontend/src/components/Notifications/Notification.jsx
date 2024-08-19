@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { requestForToken, onMessageListener } from './firebase';
-import { ToastContainer, toast } from 'react-toastify';
+// import { ToastContainer, toast } from 'react-toastify';
 
-function notifyUser(notificationTitle = "Thank you for subscribing!") {
-    if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-        const notification = new Notification(notificationTitle);
+// function notifyUser(notificationTitle = "Thank you for subscribing!") {
+//     if (!("Notification" in window)) {
+//         alert("This browser does not support desktop notification");
+//     } else if (Notification.permission === "granted") {
+//         const notification = new Notification(notificationTitle);
 
-    } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(function (permission){
-            if (permission === "granted") {
-                const notification = new Notification(notificationTitle);
-            }
-        });
-    }
-}
+//     } else if (Notification.permission !== "denied") {
+//         Notification.requestPermission().then(function (permission){
+//             if (permission === "granted") {
+//                 const notification = new Notification(notificationTitle);
+//             }
+//         });
+//     }
+// }
 
 const Notification = () => {
     const [notification, setNotification] = useState({ title: '', body: '' });

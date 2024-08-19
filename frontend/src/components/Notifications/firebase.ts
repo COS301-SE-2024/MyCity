@@ -32,18 +32,22 @@ export const generateToken = async () => {
     return;
   }
 
-  const permission = await Notification.requestPermission();
+  if (typeof window !== "undefined" && "Notification" in window) {
+    const permission = await Notification.requestPermission();
 
-  if (permission === 'granted') {
-    try {
-      const token = await getToken(messaging, {
-        vapidKey: process.env.FIREBASE_VAPID_KEY || ""
-      });
-      console.log("Token generated: ", token);
-    } catch (error) {
-      console.error("Error getting token: ", error);
+    if (permission === 'granted') {
+      try {
+        const token = await getToken(messaging, {
+          vapidKey: process.env.FIREBASE_VAPID_KEY || ""
+        });
+        // console.log("Token generated: ", token);
+        return token;
+      } catch (error) {
+        console.error("Error getting token: ", error);
+      }
+
+    } else {
+      console.warn("Notification permission not granted");
     }
-  } else {
-    console.warn("Notification permission not granted");
   }
 }

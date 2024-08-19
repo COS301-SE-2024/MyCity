@@ -2,16 +2,16 @@
 
 import Home from "./home/page";
 import React, { useEffect } from "react";
-import { generateToken, messaging } from "@/components/Notifications/firebase";
-import { onMessage } from "@firebase/messaging";
+// import { generateToken, messaging } from "@/components/Notifications/firebase";
+// import { onMessage } from "@firebase/messaging";
 
 function App() {
-  useEffect(() => {
-    generateToken();
-    onMessage(messaging, (payload) => {
-      console.log("Message received. ", payload);
-    });
-  }, []);
+  // useEffect(() => {
+  //   generateToken();
+  //   onMessage(messaging, (payload) => {
+  //     console.log("Message received. ", payload);
+  //   });
+  // }, []);
 
   return (
     <React.Fragment>
