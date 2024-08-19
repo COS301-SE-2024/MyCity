@@ -16,6 +16,8 @@ import {
   getWatchlistTickets,
 } from "@/services/tickets.service";
 
+import NotificationPromt from "@/components/Notifications/NotificationPromt";
+
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
@@ -88,11 +90,11 @@ export default function CitizenDashboard() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex justify-center mt-5">
-          {/* <NotificationPromt /> */}
-        </div>
-        <div>
-          <NavbarUser />
+        <div className="flex flex-col">
+            <NavbarUser />
+          <div className="flex justify-center z-50 pt-8">
+            <NotificationPromt />
+          </div>
 
           <div
             style={{

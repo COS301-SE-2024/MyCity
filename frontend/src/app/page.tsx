@@ -5,11 +5,6 @@ import React, { useEffect } from "react";
 import { generateToken, messaging } from "@/components/Notifications/firebase";
 import { onMessage } from "@firebase/messaging";
 
-import useVisibilityChange from "@/hooks/useVisibilityChange";
-
-
-
-
 function App() {
   useEffect(() => {
     generateToken();
