@@ -11,10 +11,12 @@ import { useProfile } from "@/hooks/useProfile";
 import {
   getTicketsInMunicipality,
 } from "@/services/tickets.service"
+import { getMunicipalityTenders } from "@/services/tender.service";
 export default function MuniTenders() {
 
   const userProfile :any = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [muniTenders, setMuniTenders] = useState<any[]>([]);
 
 
   const handleTabChange = (key: Key) => {
@@ -27,12 +29,14 @@ export default function MuniTenders() {
       console.log(user_data.current)
       const user_session = String(user_data.current?.session_token);
       const user_municipality = String(user_data.current?.municipality)
+      const rspmunitenders = await getMunicipalityTenders(user_municipality,user_session);
       const rspmunicipality = await getTicketsInMunicipality(
         user_municipality,
         user_session
       );
       console.log(rspmunicipality)
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+      setMuniTenders(rspmunitenders)
     };
     fetchData();
   },[userProfile])
@@ -86,7 +90,7 @@ export default function MuniTenders() {
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
-                  <ActiveTenders />
+                  <ActiveTenders tenders={muniTenders} />
                 </Tab>
 
                 <Tab key={2} title="Closed Tenders">
