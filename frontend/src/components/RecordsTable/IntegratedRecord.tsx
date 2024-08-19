@@ -87,18 +87,19 @@ export default function Record({ record, refresh }: { record: RecordType, refres
   function getStateColour(state: string) {
     switch (state) {
       case "Opened":
-        return 'bg-transparent text-black border-green-400 font-bold';
+        return "bg-green-200 text-black";
       case "In Progress":
       case "Assigning Contract":
-        return 'bg-transparent text-black border-blue-400 font-bold';
+        return "bg-blue-200 text-black";
       case "Closed":
-        return 'bg-transparent text-black border-red-400 font-bold';
+        return "bg-red-200 text-black";
       case "Taking Tenders":
-        return 'bg-transparent text-black border-purple-400 font-bold';
+        return "bg-purple-200 text-black";
       default:
-        return 'bg-transparent text-gray-800 border-gray-800';
+        return "bg-gray-200 text-black";
     }
   }
+  
   
   const truncateAddress = (address: string) => {
     return address.split(',')[0];
@@ -115,15 +116,16 @@ export default function Record({ record, refresh }: { record: RecordType, refres
   return (
     <>
       <div
-        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="grid grid-cols-6 gap-4 items-center mt-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b z-50 border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleClick}
+        
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
           <span 
-            className={`py-1 rounded-3xl text-center border-3 ${getStateColour(ticketstate)}`} 
+            className={`py-1 rounded-3xl text-center font-bold ${getStateColour(ticketstate)}`} 
             style={{ minWidth: '150px' }} // Normalizing dimensions based on 'Taking Tenders'
           >
             {ticketstate}
@@ -180,5 +182,6 @@ export default function Record({ record, refresh }: { record: RecordType, refres
       `}</style>
     </>
   );
+  
 }
 

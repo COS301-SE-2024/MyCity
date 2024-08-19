@@ -68,6 +68,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 }) => {
   const userProfile = useProfile(); // Hook moved to the top level
   const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [imageLoading, setImageLoading] = useState(true);
   const [showTenderMax, setShowTenderMax] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showMuniTenders, setShowMuniTenders] = useState(false);
@@ -217,21 +218,20 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     onClose(0);
   };
 
-
   const handleViewTendersClick = async () => {
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
-    setIsLoading(false); // Stop loading
+    setIsLoading(false);
 
-    
-      setShowMuniTenders(true);
+    if (!rspgettenders || rspgettenders.length === 0) {
+      setTenders(null);
+    } else {
       setTenders(rspgettenders);
-    
+    }
+    setShowMuniTenders((prev) => !prev); // Toggle the dropdown
   };
-
-  
 
   const handleBack = (data: number) => {
     setShowMuniTenders(false);
@@ -280,10 +280,24 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
                 {imageURL && (
                   <div className="mb-2 flex justify-center">
+                    {imageLoading && (
+                      <div className="flex items-center justify-center w-48 h-36">
+                        <ThreeDots
+                          height="20"
+                          width="20"
+                          radius="9"
+                          color="#000000"
+                          ariaLabel="loading"
+                          visible={true}
+                        />
+                      </div>
+                    )}
                     <img
                       src={imageURL}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
+                      onLoad={() => setImageLoading(false)}
+                      style={{ display: imageLoading ? "none" : "block" }}
                     />
                   </div>
                 )}
@@ -433,10 +447,14 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         />
       )}
 
-
-
-
-      {showMuniTenders && <MuniTenders tenders={tenders} onBack={handleBack} />}
+      {showMuniTenders && (
+        <div className="mt-4">
+          <MuniTenders
+            tenders={tenders}
+            onBack={() => setShowMuniTenders(false)}
+          />
+        </div>
+      )}
     </>
   );
 };
