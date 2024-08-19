@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTimes } from "react-icons/fa";
+import { FaArrowUp, FaComment, FaEye, FaExclamationTriangle, FaTimes } from "react-icons/fa";
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
@@ -188,7 +188,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               className="flex items-center cursor-pointer transform transition-transform hover:scale-105"
               onClick={toggleComments}
             >
-              <FaCommentAlt
+              <FaComment
                 className="text-gray-600 mr-2"
                 style={{ color: commentColor }}
               />

@@ -87,20 +87,19 @@ export default function Record({ record, refresh }: { record: RecordType, refres
   function getStateColour(state: string) {
     switch (state) {
       case "Opened":
-        return 'bg-green-200 text-green-800';
+        return 'bg-transparent text-black border-green-400 font-bold';
       case "In Progress":
-        return 'bg-blue-200 text-blue-800';
       case "Assigning Contract":
-        return 'bg-blue-200 text-blue-800';
+        return 'bg-transparent text-black border-blue-400 font-bold';
       case "Closed":
-        return 'bg-red-200 text-red-800';
+        return 'bg-transparent text-black border-red-400 font-bold';
       case "Taking Tenders":
-        return 'bg-purple-200 text-purple-800';
+        return 'bg-transparent text-black border-purple-400 font-bold';
       default:
-        return 'bg-gray-200 text-gray-800';
+        return 'bg-transparent text-gray-800 border-gray-800';
     }
   }
-
+  
   const truncateAddress = (address: string) => {
     return address.split(',')[0];
   };
@@ -116,14 +115,17 @@ export default function Record({ record, refresh }: { record: RecordType, refres
   return (
     <>
       <div
-        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleClick}
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${getStateColour(ticketstate)}`}>
+          <span 
+            className={`py-1 rounded-3xl text-center border-3 ${getStateColour(ticketstate)}`} 
+            style={{ minWidth: '150px' }} // Normalizing dimensions based on 'Taking Tenders'
+          >
             {ticketstate}
           </span>
         </div>
@@ -135,16 +137,8 @@ export default function Record({ record, refresh }: { record: RecordType, refres
           <div
             style={{
               display: "inline-block",
-              animation: isOverflowing ? "none" : "none", // Disable animation initially
+              animation: isOverflowing ? "scroll 10s linear infinite" : "none",
               whiteSpace: "nowrap",
-            }}
-            onMouseEnter={() => {
-              if (isOverflowing) {
-                addressRef.current?.style.setProperty('animation', 'scroll 10s linear infinite');
-              }
-            }}
-            onMouseLeave={() => {
-              addressRef.current?.style.removeProperty('animation');
             }}
           >
             {truncateAddress(record.address)}
@@ -187,3 +181,4 @@ export default function Record({ record, refresh }: { record: RecordType, refres
     </>
   );
 }
+
