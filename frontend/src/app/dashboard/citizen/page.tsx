@@ -96,7 +96,7 @@ export default function CitizenDashboard() {
             <NavbarUser />
           <div className="flex justify-center z-50 pt-8">
             
-            {/* <NotificationPromt userEmail={userEmail}/> */}
+            <NotificationPromt userEmail={userEmail}/>
           </div>
 
           <div
