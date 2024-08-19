@@ -9,9 +9,31 @@ export default function About() {
       <div className="hidden sm:block">
         <div>
           <Navbar />
-          <main>
-            <div className="flex items-center justify-center">
-              <span className="text-[4rem]">About MyCity...</span>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundImage:
+                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundAttachment: "fixed",
+              zIndex: -1,
+            }}
+          ></div>
+          <div className="relative">
+              <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+                About Us
+              </h1>
+            </div>
+          <main className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              
+              <p className="text-white text-2xl text-opacity-80 mt-4">Come back soon!</p>
             </div>
           </main>
         </div>

@@ -88,9 +88,9 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         <button className="text-gray-700 mr-4" onClick={onBack}>
           <FaArrowLeft size={24} />
         </button>
-        <h2 className="text-xl font-bold">Comments</h2>
+        <h2 className="text-xl text-black font-bold">Comments</h2>
       </div>
-      <div className="flex-grow overflow-auto mb-4">
+      <div className="flex-grow text-black overflow-auto mb-4">
         {loading ? (
           <p>Loading comments...</p>
         ) : comments.length > 0 ? (
