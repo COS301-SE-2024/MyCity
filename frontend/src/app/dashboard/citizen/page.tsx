@@ -16,6 +16,8 @@ import {
   getWatchlistTickets,
 } from "@/services/tickets.service";
 
+import NotificationPromt from "@/components/Notifications/NotificationPromt";
+
 export default function CitizenDashboard() {
   const user = useRef(null);
   const userProfile = useProfile();
@@ -24,12 +26,14 @@ export default function CitizenDashboard() {
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email;
+        const user_id = user_data.current?.email?? "";
+        setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
         const rspmostupvotes = await getMostUpvote(user_session);
         const rspwatchlist = await getWatchlistTickets(
@@ -88,11 +92,12 @@ export default function CitizenDashboard() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex justify-center mt-5">
-          {/* <NotificationPromt /> */}
-        </div>
-        <div>
-          <NavbarUser />
+        <div className="flex flex-col">
+            <NavbarUser />
+          <div className="flex justify-center z-50 pt-8">
+            
+            <NotificationPromt userEmail={userEmail}/>
+          </div>
 
           <div
             style={{

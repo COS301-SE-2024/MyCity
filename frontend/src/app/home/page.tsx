@@ -107,27 +107,30 @@ export default function Home() {
           {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
+            <h1 className="text-4xl text-white font-bold mb-4">
+              Be the change in your city <br />
+              with <span className="text-blue-200">MyCity.</span>
             </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
-            </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
+            <p className="text-lg text-gray-200 mb-4">
+              MyCity connects citizens with municipalities and third-party
+              businesses <br></br>
+              to identify and solve problems in your city - fast.
             </p>
+            <div className="flex flex-row gap-12">
+              <Link href="/auth/signup">
+                <Button className="bg-white text-blue-600 border-2 px-4 py-2 font-bold rounded-3xl">
+                  Sign Up
+                </Button>
+              </Link>
+
+              <Link href="/auth/login" data-testid="login-btn">
+                <Button className="bg-blue-500 text-white px-4 py-2 font-bold rounded-3xl">
+                  Log In
+                </Button>
+              </Link>
+            </div>
+
+            <NavbarGuest />
           </div>
         </div>
       </div>
