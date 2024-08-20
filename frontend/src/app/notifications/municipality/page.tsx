@@ -10,25 +10,25 @@ export default function Notifications() {
   const notifications = [
     {
       ticketNumber: "12345",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "upvoted",
       isNew: true,
     },
     {
       ticketNumber: "12346",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "commented on",
       isNew: false,
     },
     {
       ticketNumber: "12347",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "watchlisted",
       isNew: true,
     },
     {
       ticketNumber: "12348",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "updated status to:",
       isNew: false,
     },
@@ -94,13 +94,13 @@ export default function Notifications() {
 
                 <TenderNoti
                   tenderId="TND-001"
-                  image="https://via.placeholder.com/150"
+                  image=""
                   action="bid received"
                   isNew={true}
                 />
                 <TenderNoti
                   tenderId="TND-002"
-                  image="https://via.placeholder.com/150"
+                  image=""
                   action="completion report received"
                   isNew={true}
                 />

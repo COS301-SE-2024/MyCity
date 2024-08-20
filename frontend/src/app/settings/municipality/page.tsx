@@ -185,9 +185,7 @@ export default function Settings() {
     switch (activeTab) {
       case "MunicipalityInformation":
         return (
-          <div
-            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-          >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">
               Municipality Information
             </h2>
@@ -197,9 +195,7 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div
-            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-          >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -259,9 +255,7 @@ export default function Settings() {
 
       case "Municode":
         return (
-          <div
-            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-          >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Municode</h2>
             {renderSubPageContent()}
           </div>
@@ -269,9 +263,7 @@ export default function Settings() {
 
       case "Accessibility":
         return (
-          <div
-            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-          >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -335,7 +327,7 @@ export default function Settings() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-        <NavbarMunicipality unreadNotifications={unreadNotifications} />
+          <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed",
@@ -354,9 +346,11 @@ export default function Settings() {
           ></div>
           <main>
             <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80">
-                Settings
-              </h1>
+              <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Settings
+                </h1>
+              </div>
               <button data-testid="open-help-menu" onClick={toggleHelpMenu}>
                 <HelpCircle
                   className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
@@ -395,7 +389,7 @@ export default function Settings() {
             )}
 
             <div className="flex">
-            <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
+              <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                 <div className="flex items-center mb-4">
                   <User className="w-12 h-12 rounded-full mr-4" />
                   <div>
