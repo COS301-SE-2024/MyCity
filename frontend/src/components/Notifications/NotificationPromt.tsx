@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { generateToken, messaging } from "@/components/Notifications/firebase";
 import { onMessage } from "@firebase/messaging";
+import { useProfile } from "@/hooks/useProfile";
 
+import { StoreToken } from "@/services/notification.service";
 declare global {
   interface Navigator {
     brave?: {
@@ -17,6 +19,7 @@ interface NotificationPromtProps {
 
 export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
   const [userResponded, setUserResponded] = useState(false);
+  const { getUserProfile } = useProfile();
 
   // async function notifyUser(
   //   notificationText = "Thank you for enabling notifications!"
@@ -50,17 +53,24 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
   }
 
   async function storeToken() {
+    const user_data = await getUserProfile();
     console.log("User: ", userEmail);
     console.log("Browser: ", getBrowserInfo());
 
-    const token = await generateToken();
+    const token = await generateToken()?? " ";
     console.log("Token generated: ", token);
 
-    const subscriptions = ["status", "upvotes", "comments"];
-    console.log("Subscriptions: ", subscriptions);
+    // const date = new Date();
+    // console.log("Date: ", date);
 
-    const date = new Date();
-    console.log("Date: ", date);
+    try {
+      const sessiont = user_data.current?.session_token || " ";
+      const isAdded = await StoreToken(sessiont, userEmail, getBrowserInfo(), token);
+      console.log("Token stored: ", isAdded);
+    }catch (error: any) {
+      console.error("Error:", error);
+
+    }
   }
 
   async function handleEnableNotifications() {
