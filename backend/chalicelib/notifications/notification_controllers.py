@@ -9,10 +9,12 @@ import json
 dynamodb = boto3.resource("dynamodb")
 notifications_table = dynamodb.Table("notifications")
 
+
 def convert_decimal_to_float(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
+
 
 def format_response(status_code, body):
     return Response(
@@ -25,14 +27,14 @@ def format_response(status_code, body):
         },
     )
 
+
 def insert_notification_token(token_data):
     reuired_fields = ["username ", "deviceID", "token"]
-    
 
     for field in reuired_fields:
         if field not in token_data:
             raise BadRequestError(f"{field} is required")
-        
+
     username = token_data["username"]
     deviceID = token_data["deviceID"]
     token = token_data["token"]
