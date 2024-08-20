@@ -51,10 +51,10 @@ const Alert: React.FC<AlertProps> = ({ alerts }) => {
           ticketNumber={selectedTicket}
           ticket_id={selectedTicket}
           description="Repair the main road."
-          user_picture="https://via.placeholder.com/150"
+          user_picture=""
           createdBy="John Doe"
           status="Active"
-          imageURL="https://via.placeholder.com/200"
+          imageURL=""
           municipalityImage="https://via.placeholder.com/50"
           upvotes={10}
           latitude="37.7749"

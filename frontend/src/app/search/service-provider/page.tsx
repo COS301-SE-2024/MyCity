@@ -92,10 +92,9 @@ export default function CreateTicket() {
 
   const indexOfLastResult = currentPage * resultsPerPage;
   const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-  const currentResults = searchResults.slice(
-    indexOfFirstResult,
-    indexOfLastResult
-  );
+  const currentResults = Array.isArray(searchResults)
+    ? searchResults.slice(indexOfFirstResult, indexOfLastResult)
+    : [];
 
   const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 
@@ -147,9 +146,7 @@ export default function CreateTicket() {
               <h2 className="text-xl font-bold mb-4">Help Menu</h2>
               <p>This page allows you to:</p>
               <ul className="list-disc list-inside">
-                <li>
-                  Search for service providers or municipalities.
-                </li>
+                <li>Search for service providers or municipalities.</li>
                 <li>
                   Use the filter button to select your preferred search
                   criterion.
@@ -195,26 +192,25 @@ export default function CreateTicket() {
           </form>
 
           <div className="flex mt-4 relative">
-            {["municipalities", "serviceProviders"].map(
-              (filter) => (
-                <div
-                  key={filter}
-                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
-                      ? "bg-gray-500 text-white"
-                      : "bg-transparent text-white"
-                    }`}
-                  onClick={() =>
-                    handleFilterChange(
-                      filter as "municipalities" | "serviceProviders"
-                    )
-                  }
-                >
-                  {filter === "municipalities"
-                    ? "Municipalities"
-                    : "Service Providers"}
-                </div>
-              )
-            )}
+            {["municipalities", "serviceProviders"].map((filter) => (
+              <div
+                key={filter}
+                className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${
+                  selectedFilter === filter
+                    ? "bg-gray-500 text-white"
+                    : "bg-transparent text-white"
+                }`}
+                onClick={() =>
+                  handleFilterChange(
+                    filter as "municipalities" | "serviceProviders"
+                  )
+                }
+              >
+                {filter === "municipalities"
+                  ? "Municipalities"
+                  : "Service Providers"}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -240,47 +236,45 @@ export default function CreateTicket() {
           </div>
         )}
 
-        {hasSearched && !loading && (
-          <>
-            {currentResults.map((result, index) => {
-              if (selectedFilter === "serviceProviders") {
-                return <SearchSP key={index} serviceProviders={[result]} />;
-              }
-              if (selectedFilter === "municipalities") {
-                return (
-                  <SearchMunicipality key={index} municipalities={[result]} />
-                );
-              }
-              return null;
-            })}
-            <div className="flex justify-center mt-4">
-              <nav>
-                <ul className="flex list-none p-0">
-                  {Array.from(
-                    {
-                      length: Math.ceil(searchResults.length / resultsPerPage),
-                    },
-                    (_, index) => (
-                      <li key={index} className="mx-1">
-                        <button
-                          onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 rounded-full ${currentPage === index + 1
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-300"
-                            }`}
-                        >
-                          {index + 1}
-                        </button>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </nav>
-            </div>
-          </>
-        )}
+{hasSearched && !loading && (
+  <>
+    {currentResults.map((result, index) => {
+      if (selectedFilter === "serviceProviders") {
+        return <SearchSP key={index} serviceProviders={[result]} />;
+      }
+      if (selectedFilter === "municipalities") {
+        return (
+          <SearchMunicipality key={index} municipalities={[result]} />
+        );
+      }
+      return null;
+    })}
+
+    {/* Only show pagination if there are results */}
+    {searchResults.length > 0 && (
+      <div className="flex justify-between mt-4 text-white">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          className={`px-48 py-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {Math.ceil(searchResults.length / resultsPerPage)}</span>
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          className={`px-48 py-2 ${currentPage === Math.ceil(searchResults.length / resultsPerPage) ? 'cursor-not-allowed opacity-50' : ''}`}
+          disabled={currentPage === Math.ceil(searchResults.length / resultsPerPage)}
+        >
+          Next
+        </button>
+      </div>
+    )}
+  </>
+)}
+
         {showToast && (
-          <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded shadow-lg">
+          <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded-3xl shadow-lg">
             <span>{totalResults} results found in </span>
             <span className="text-blue-500">{searchTime.toFixed(2)}</span>
             <span> seconds</span>

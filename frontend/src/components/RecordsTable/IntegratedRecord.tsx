@@ -57,20 +57,18 @@ export default function Record({ record, refresh }: { record: RecordType, refres
   const handleClick = () => {
     setShowTicketView(true);
   };
-
   const handleClose = (data: number) => {
     setShowTicketView(false);
     if (data === 1) {
       setTicketstate("In Progress");
     } else if (data === -1) {
       setTicketstate("Taking Tenders");
-    }
-    else if(data == -2)
-    {
-      setTicketstate("Closed")
+    } else if (data === -2) {
+      setTicketstate("Closed");
     }
     refresh();
   };
+
 
   const getUrgency = (votes: number) => {
     if (votes < 10) {

@@ -10,6 +10,8 @@ import { getTicketTenders, getContract } from "@/services/tender.service";
 import { AcceptTicket, CloseTicket } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import Modal from "react-modal";
+import { Image as ImageIcon } from "lucide-react";
+import { User as UserIcon } from "lucide-react";
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -209,8 +211,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleTenderMaxClose = () => {
-    setTicketstatus("Closed");
-    onClose(-2);
+    //setTicketstatus("Closed");
+    //onClose(-2);
     setShowTenderMax(false);
   };
 
@@ -278,7 +280,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   <p className="text-gray-700 text-sm">{description}</p>
                 </div>
 
-                {imageURL && (
+                {imageURL ? (
                   <div className="mb-2 flex justify-center">
                     {imageLoading && (
                       <div className="flex items-center justify-center w-48 h-36">
@@ -299,6 +301,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       onLoad={() => setImageLoading(false)}
                       style={{ display: imageLoading ? "none" : "block" }}
                     />
+                  </div>
+                ) : (
+                  <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                    <ImageIcon size={48} color="#6B7280" />
                   </div>
                 )}
                 <div className="mb-4 flex justify-between w-full px-4">
@@ -329,11 +335,17 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   </div>
                   <div className="flex flex-col items-center justify-center">
                     <h3 className="font-bold text-sm">Created By</h3>
-                    <img
-                      src={user_picture}
-                      alt="Created By"
-                      className="rounded-full mb-1 object-cover w-12 h-12"
-                    />
+                    {user_picture ? (
+                      <img
+                        src={user_picture}
+                        alt="Created By"
+                        className="rounded-full mb-1 object-cover w-12 h-12"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center">
+                        <UserIcon size={24} color="#6B7280" />
+                      </div>
+                    )}
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
                 </div>
