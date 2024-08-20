@@ -1,5 +1,5 @@
 from chalice import Blueprint, BadRequestError
-from chalicelib.notification.notification_controllers import (
+from chalicelib.notifications.notification_controllers import (
     search_notification,
 )
 from chalicelib.authorisers import cognito_authorizer
