@@ -150,7 +150,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       if (rspapprove === true) {
         setTicketstatus("Closed");
       }
-      onClose(0);
+      onClose(-2);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
