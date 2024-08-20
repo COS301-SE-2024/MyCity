@@ -1,6 +1,6 @@
 from chalice import Blueprint, BadRequestError
 from chalicelib.notifications.notification_controllers import (
-    search_notification,
+    store_token,
 )
 from chalicelib.authorisers import cognito_authorizer
 
@@ -10,9 +10,8 @@ notification_blueprint = Blueprint(__name__)
 @notification_blueprint.route(
     "/notification", authorizer=cognito_authorizer, methods=["GET"], cors=True
 )
-def search_notification_route():
+def Store_Token_route():
     request = notification_blueprint.current_request
-    search_term = request.query_params.get("q")
-    if not search_term:
-        raise BadRequestError("Search term is required")
-    return search_notification(search_term)
+    ticket_data = request.json_body
+    response = store_token(ticket_data)
+    return response
