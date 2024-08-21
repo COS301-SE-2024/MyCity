@@ -1,260 +1,99 @@
 import React, { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
+import { AlertCircle } from 'lucide-react';
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
+type Urgency = 'high' | 'medium' | 'low';
 
-interface TenderType {
-  id: string;
-  ticketId: string;
-  status: Status;
-  serviceProvider: string;
-  issueDate: string;
-  price: number;
-  estimatedDuration: number;
+interface TicketType {
+  ticket_id: string;
+  ticketnumber : string;
+  asset_id: string;
+  user_picture : string;
+  municipality_picture : string ;
+  description : string;
+  imageURL : string;
+  state: string;
+  address: string;
+  createdby: string;
+  viewcount : number;
+  commentcount: number;
+  latitude : string;
+  longitude : string;
+  upvotes : number;
+  municipality : string;
   upload: File | null;
   hasReportedCompletion: boolean;
 }
 
-const tenders: TenderType[] = [
-  //mock data
-  {
-    id: "T001",
-    ticketId: "SA0300",
-    status: "Closed",
-    serviceProvider: "Service Provider A",
-    issueDate: "2023-07-01",
-    price: 1500.5,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T002",
-    ticketId: "SA0302",
-    status: "Closed",
-    serviceProvider: "Service Provider B",
-    issueDate: "2023-07-02",
-    price: 2000.0,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T003",
-    ticketId: "SA0304",
-    status: "Rejected",
-    serviceProvider: "Service Provider C",
-    issueDate: "2023-07-03",
-    price: 2500.75,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T004",
-    ticketId: "SA0306",
-    status: "Closed",
-    serviceProvider: "Service Provider D",
-    issueDate: "2023-07-04",
-    price: 1800.0,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T005",
-    ticketId: "SA0310",
-    status: "Rejected",
-    serviceProvider: "Service Provider E",
-    issueDate: "2023-07-05",
-    price: 2200.0,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T006",
-    ticketId: "SA0300",
-    status: "Closed",
-    serviceProvider: "Service Provider F",
-    issueDate: "2023-07-06",
-    price: 1700.5,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T007",
-    ticketId: "SA0304",
-    status: "Closed",
-    serviceProvider: "Service Provider G",
-    issueDate: "2023-07-07",
-    price: 2600.0,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T008",
-    ticketId: "SA0302",
-    status: "Rejected",
-    serviceProvider: "Service Provider H",
-    issueDate: "2023-07-08",
-    price: 2400.75,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T009",
-    ticketId: "SA0306",
-    status: "Closed",
-    serviceProvider: "Service Provider I",
-    issueDate: "2023-07-09",
-    price: 2100.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T010",
-    ticketId: "SA0310",
-    status: "Rejected",
-    serviceProvider: "Service Provider J",
-    issueDate: "2023-07-10",
-    price: 1900.5,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T011",
-    ticketId: "SA0300",
-    status: "Closed",
-    serviceProvider: "Service Provider K",
-    issueDate: "2023-07-11",
-    price: 2300.0,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T012",
-    ticketId: "SA0304",
-    status: "Rejected",
-    serviceProvider: "Service Provider L",
-    issueDate: "2023-07-12",
-    price: 2500.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T013",
-    ticketId: "SA0302",
-    status: "Closed",
-    serviceProvider: "Service Provider M",
-    issueDate: "2023-07-13",
-    price: 2000.5,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T014",
-    ticketId: "SA0306",
-    status: "Closed",
-    serviceProvider: "Service Provider N",
-    issueDate: "2023-07-14",
-    price: 2200.0,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T015",
-    ticketId: "SA0310",
-    status: "Closed",
-    serviceProvider: "Service Provider O",
-    issueDate: "2023-07-15",
-    price: 1800.75,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-  {
-    id: "T016",
-    ticketId: "SA0300",
-    status: "Rejected",
-    serviceProvider: "Service Provider P",
-    issueDate: "2023-07-16",
-    price: 2700.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T017",
-    ticketId: "SA0304",
-    status: "Closed",
-    serviceProvider: "Service Provider Q",
-    issueDate: "2023-07-17",
-    price: 2600.5,
-    estimatedDuration: 3,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T018",
-    ticketId: "SA0302",
-    status: "Rejected",
-    serviceProvider: "Service Provider R",
-    issueDate: "2023-07-18",
-    price: 2100.0,
-    estimatedDuration: 2,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T019",
-    ticketId: "SA0306",
-    status: "Closed",
-    serviceProvider: "Service Provider S",
-    issueDate: "2023-07-19",
-    price: 2300.75,
-    estimatedDuration: 5,
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    id: "T020",
-    ticketId: "SA0310",
-    status: "Rejected",
-    serviceProvider: "Service Provider T",
-    issueDate: "2023-07-20",
-    price: 2500.0,
-    estimatedDuration: 4,
-    upload: null,
-    hasReportedCompletion: true,
-  },
-];
+interface UrgencyMappingType {
+  [key: string]: { icon: JSX.Element, label: string };
+}
 
-const statusStyles = {
-  Unassigned: "text-blue-500 border-blue-500 rounded-full",
-  Active: "text-black bg-green-200 rounded-full",
-  Rejected: "text-black bg-red-200 rounded-full",
-  Closed: "text-black bg-gray-200 rounded-full",
+const urgencyMapping: UrgencyMappingType = {
+  high: { icon: <AlertCircle className="text-red-500" />, label: 'Urgent' },
+  medium: { icon: <AlertCircle className="text-yellow-500" />, label: 'Moderate' },
+  low: { icon: <AlertCircle className="text-green-500" />, label: 'Not Urgent' }
 };
 
-export default function ClosedTenders() {
+
+  //mock data
+  
+
+const statusStyles = {
+  Opened : "text-green-500 bg-green-200 bg-green-200 rounded-full",
+  In_Progress: "text-blue-500 bg-blue-200 bg-blue-200 rounded-full",
+  Assigning_Contract: "text-blue-500 bg-blue-200 bg-blue-200 rounded-full",
+  Closed: "text-red-500 bg-red-200 border-red-200 rounded-full",
+};
+
+export default function ClosedTenders({tickets} : {tickets : TicketType[]}) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
-  // Calculate pagination details
+  // Calculate pagination detail
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
-  const currentTenders = tenders.slice(indexOfFirstTender, indexOfLastTender);
-  const totalPages = Math.ceil(tenders.length / tendersPerPage);
+  const currentTickets = tickets.slice(indexOfFirstTender, indexOfLastTender);
+  const totalPages = Math.ceil(tickets.length / tendersPerPage);
+  const Closedtickets = currentTickets.filter(ticket => ticket.state == "Closed");
+
+  function getStatus(state : string){
+    switch (state) {
+      case "Closed":
+        return "Closed"
+        break;
+      case "Opened":
+        return "Opened";
+        break;
+      case "In Progress":
+        return "In_Progress";
+        break;
+      case "Assigning Contract":
+        return "Assigning_Contract";
+        break;
+      default:
+        return "Closed"
+        break;
+    }
+  }
+
+  function UrgencyIcon(votes : number) {
+    const urgency = urgencyMapping[getUrgency(votes)] || urgencyMapping.low;
+    return urgency.icon;
+  }
+
+  const getUrgency = (votes : number) =>{
+        if (votes < 10) {
+        return "low";
+      } else if (votes >= 10 && votes < 20) {
+          return "medium";
+      } else if (votes >= 20 && votes <= 40) {
+          return "high";
+      } else {
+          return "low"; // Default case
+      }
+  }
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -271,32 +110,31 @@ export default function ClosedTenders() {
   return (
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+        <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+          <div className="col-span-1">Urgency</div>
           <div className="col-span-1">Status</div>
-          <div className="col-span-1">Tender ID</div>
-          <div className="col-span-1">Ticket ID</div>
-          <div className="col-span-1">Service Provider</div>
-          <div className="col-span-1">Issue Date</div>
-          <div className="col-span-1">Price</div>
-          <div className="col-span-1">Estimated Duration</div>
+          <div className="col-span-1">Fault Type</div>
+          <div className="col-span-1">Ticket number</div>
+          <div className="col-span-1">Created By</div>
+          <div className="col-span-1">Address</div>
         </div>
         <div className="min-w-full">
-          {currentTenders.map((tender) => (
+          {Closedtickets.map((ticket) => (
             <div
-              key={tender.id}
+              key={ticket.ticket_id}
               className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200"
             >
+              <div className="col-span-1 flex justify-center">{UrgencyIcon(ticket.upvotes)}</div>
               <div className="col-span-1 flex justify-center">
-                <span className={`px-2 py-1 rounded border ${statusStyles[tender.status]}`}>
-                  {tender.status}
+                <span className={`px-2 py-1 rounded border ${statusStyles[getStatus(ticket.state)]}`}>
+                  {ticket.state}
                 </span>
               </div>
-              <div className="col-span-1 flex justify-center font-bold">{tender.id}</div>
-              <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
-              <div className="col-span-1 flex justify-center">{tender.serviceProvider}</div>
-              <div className="col-span-1 flex justify-center">{tender.issueDate}</div>
-              <div className="col-span-1 flex justify-center">R{tender.price.toFixed(2)}</div>
-              <div className="col-span-1 flex justify-center">{tender.estimatedDuration} days</div>
+              <div className="col-span-1 flex justify-center">{ticket.asset_id}</div>
+              <div className="col-span-1 flex justify-center">{ticket.ticketnumber}</div>
+              <div className="col-span-1 flex justify-center">{ticket.createdby}</div>
+              <div className="col-span-1 flex justify-center">{ticket.address}</div>
+
             </div>
           ))}
         </div>

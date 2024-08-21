@@ -23,8 +23,17 @@ export default function MuniTenders() {
     const index = Number(key);
   };
 
+  const fetchTendersData = async () => {
+    const user_data = await userProfile.getUserProfile();
+    console.log(user_data.current)
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality)
+    const rspmunitenders = await getMunicipalityTenders(user_municipality,user_session,true);
+    setMuniTenders(rspmunitenders)
+  };
+
   useEffect(() =>{
-    const fetchData = async () => {
+    const fetchDataWithCache = async () => {
       const user_data = await userProfile.getUserProfile();
       console.log(user_data.current)
       const user_session = String(user_data.current?.session_token);
@@ -38,7 +47,7 @@ export default function MuniTenders() {
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
       setMuniTenders(rspmunitenders)
     };
-    fetchData();
+    fetchDataWithCache();
   },[userProfile])
 
   return (
@@ -90,11 +99,11 @@ export default function MuniTenders() {
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
-                  <ActiveTenders tenders={muniTenders} />
+                  <ActiveTenders tenders={muniTenders} refresh={fetchTendersData} />
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
-                  <ClosedTenders />
+                <Tab key={2} title="Closed Tickets">
+                  <ClosedTenders tickets={dashMuniResults}/>
                 </Tab>
               </Tabs>
             </div>

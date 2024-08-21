@@ -35,7 +35,7 @@ const statusStyles = {
 
 
 
-export default function ActiveTenders({tenders} : {tenders: TenderType[]}) {
+export default function ActiveTenders({tenders,refresh} : {tenders: TenderType[], refresh : ()=> void}) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
@@ -58,15 +58,15 @@ export default function ActiveTenders({tenders} : {tenders: TenderType[]}) {
   };
 
   const handleClose = (data: number) => {
+    refresh();
   }
 
   return (
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+        <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
           <div className="col-span-1">Status</div>
           <div className="col-span-1">Tender ID</div>
-          <div className="col-span-1">Ticket ID</div>
           <div className="col-span-1">Service Provider</div>
           <div className="col-span-1">Issue Date</div>
           <div className="col-span-1">Price</div>
