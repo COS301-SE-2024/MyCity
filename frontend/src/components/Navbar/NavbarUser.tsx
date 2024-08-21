@@ -88,7 +88,7 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
           <div className={getNavItemClass("/create-ticket/citizen")}>
             <div className="flex flex-col gap-1 items-center">
               <PlusCircle size={25} />
-              <span>Add Ticket</span>
+              <span>Report Fault</span>
             </div>
           </div>
         </Link>

@@ -172,7 +172,7 @@ export default function CitizenDashboard() {
               className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg z-20"
               onClick={() => (window.location.href = "/create-ticket/citizen")}
             >
-              + New Ticket
+              + Report Fault
             </button>
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
               <Tabs

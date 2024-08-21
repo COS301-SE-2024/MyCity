@@ -187,7 +187,7 @@ export default function Dashboard() {
                   (window.location.href = "/create-ticket/municipality")
                 }
               >
-                + New Ticket
+                + Report Fault
               </button>
             </div>
             <div className="mt-8">
