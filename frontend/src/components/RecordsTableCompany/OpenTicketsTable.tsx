@@ -73,8 +73,8 @@ export default function OpenTicketsTable({ records }: { records: RecordType[] })
   return (
     <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
-        <div className='text-xl font-bold'>Select a Ticket to create a Tender Bid for it.</div>
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-4 py-1 font-bold text-center border-b border-gray-200 mt-6">
+        <div className='text-xl font-bold my-4'>Select a Ticket to create a Tender Bid for it.</div>
+        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-4 py-1 font-bold text-center border-b border-gray-200">
           <div className="col-span-1">Urgency</div>
           <div className="col-span-1">Ticket Number</div>
           <div className="col-span-1">Fault Type</div>

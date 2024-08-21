@@ -177,7 +177,7 @@ export default function MuniTenders() {
                     </div>
                   ) : (
                     <div>
-                      <div className="p-4 text-center font-bold text-xl text-opacity-80"></div>
+                      <div className=""></div>
                       <OpenTicketsTable records={openTickets} />
                     </div>
                   )}

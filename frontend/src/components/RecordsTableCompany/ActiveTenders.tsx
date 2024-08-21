@@ -65,9 +65,10 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
   }
 
   return (
-    <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
-      <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+    <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
+      <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
+        <div className='text-xl my-4 font-bold'>Select a Tender Contract to view its details.</div>
+        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-6 py-1 font-bold text-center border-b border-gray-200">
           <div className="col-span-1 flex justify-center">Status</div>
           <div className="col-span-1 flex justify-center">Tender ID</div>
           <div className="col-span-1 flex justify-center">Ticket ID</div>
@@ -76,7 +77,7 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
           <div className="col-span-1 flex justify-center">Price</div>
           <div className="col-span-1 flex justify-center">Estimated Duration</div>
         </div>
-        <div className="min-w-full">
+        <div className="min-w-full px-6">
           {currentTenders.map((tender) => (
             <Tender key={tender.ticket_id} tender={tender} />
           ))}
