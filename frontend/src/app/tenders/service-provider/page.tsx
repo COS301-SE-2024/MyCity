@@ -74,7 +74,7 @@ export default function MuniTenders() {
 
   useEffect(() => {
     fetchDataForTab("openTickets");
-  }, [userProfile]);
+  }, [userProfile, fetchDataForTab]);
 
   const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 

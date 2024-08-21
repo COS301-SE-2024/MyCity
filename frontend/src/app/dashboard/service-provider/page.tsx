@@ -71,7 +71,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-bold mb-4">Help Menu</h2>
             <p>This dashboard allows you to:</p>
             <ul className="list-disc list-inside">
-              <li>View all tickets in your company's region that urgently need to be addressed.</li>
+              <li>View all tickets in your company&apos;s region that urgently need to be addressed.</li>
               <li>Sort tickets by various criteria such as urgency, status, or fault type.</li>
               <li>Keep track of tickets that are upvoted or have high importance.</li>
             </ul>
