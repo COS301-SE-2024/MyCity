@@ -47,7 +47,7 @@ export default function CreateTicket() {
         {/* Navbar */}
         <NavbarUser unreadNotifications={unreadNotifications} />
         <div className="relative">
-              <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+              <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-10">
                 Add Ticket
               </h1>
             </div>

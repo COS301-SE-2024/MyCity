@@ -117,8 +117,8 @@ export default function CreateTicket() {
         }}
       ></div>
       <main>
-        <div className="flex items-center mb-2 mt-2 ml-2">
-          <h1 className="text-4xl font-bold text-white text-opacity-80">
+      <div className="relative pt-8">
+          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
             Search
           </h1>
           <button

@@ -3,7 +3,7 @@ import { FaArrowUp, FaComment, FaEye, FaExclamationTriangle, FaTimes } from "rea
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
-import { MapPin } from "lucide-react"; // Changed to a more map-related icon
+import { MapPin, Image as ImageIcon } from "lucide-react"; // Added ImageIcon from lucide-react
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -16,7 +16,7 @@ interface FaultCardUserViewProps {
   ticketId: string;
   ticketNumber: string;
   description: string;
-  image: string;
+  image: string | null; // Updated to allow null
   createdBy: string;
   latitude: number;
   longitude: number;
@@ -54,29 +54,14 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   longitude,
   urgency
 }) => {
-  const getLocalStorageData = () => {
-    const data = localStorage.getItem(`ticket-${ticketNumber}`);
-    return data
-      ? JSON.parse(data)
-      : {
-        arrowCount,
-        commentCount,
-        viewCount,
-        arrowColor: "black",
-        commentColor: "black",
-        eyeColor: "black",
-      };
-  };
-
-  const initialData = getLocalStorageData();
-
-  const [currentArrowCount, setCurrentArrowCount] = useState(initialData.arrowCount);
-  const [currentCommentCount, setCurrentCommentCount] = useState(initialData.commentCount);
-  const [currentViewCount, setCurrentViewCount] = useState(initialData.viewCount);
-  const [arrowColor, setArrowColor] = useState(initialData.arrowColor);
-  const [commentColor, setCommentColor] = useState(initialData.commentColor);
-  const [eyeColor, setEyeColor] = useState(initialData.eyeColor);
+  const [currentArrowCount, setCurrentArrowCount] = useState(arrowCount);
+  const [currentCommentCount, setCurrentCommentCount] = useState(commentCount);
+  const [currentViewCount, setCurrentViewCount] = useState(viewCount);
+  const [arrowColor, setArrowColor] = useState("black");
+  const [commentColor, setCommentColor] = useState("black");
+  const [eyeColor, setEyeColor] = useState("black");
   const [showComments, setShowComments] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const data = {
@@ -170,9 +155,18 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <h3 className="font-bold text-black text-lg">Description</h3>
             <p className="text-gray-700">{description}</p>
           </div>
-          {image && (
+          {image && !imageError ? (
             <div className="mb-2 flex justify-center">
-              <img src={image} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
+              <img
+                src={image}
+                alt="Fault"
+                className="rounded-lg w-48 h-36 object-cover"
+                onError={() => setImageError(true)} // Set error state if image fails to load
+              />
+            </div>
+          ) : (
+            <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+              <ImageIcon size={48} color="#6B7280" />
             </div>
           )}
           <div className="mb-4 flex justify-between w-full px-4">

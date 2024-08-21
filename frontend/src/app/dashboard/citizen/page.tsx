@@ -174,11 +174,11 @@ export default function CitizenDashboard() {
             >
               + Report Fault
             </button>
-            <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
+            <div className="flex flex-col items-center justify-center rounded-3xl h-fit py-1">
               <Tabs
                 aria-label="Signup Options"
                 defaultSelectedKey={0}
-                className="mt-5 flex justify-center w-full"
+                className="mt-5 flex justify-center w-full rounded-3xl"
                 classNames={{
                   tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black",
                   panel: "w-full",

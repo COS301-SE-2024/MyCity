@@ -143,12 +143,13 @@ export default function MuniTenders() {
             }}
           ></div>
           <main>
-            <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 ">
-                Tenders
-              </h1>
+          <div className="flex items-center mb-2 mt-2 ml-2">
+              <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Tenders
+                </h1>
+              </div>
             </div>
-
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
               <Tabs
                 aria-label="Signup Options"

@@ -158,10 +158,10 @@ export default function CreateTicket() {
           }}
         ></div>
         <main>
-          <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
-            <h1 className="text-4xl font-bold text-white text-opacity-80">
-              Search
-            </h1>
+        <div className="relative pt-8">
+          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+            Search
+          </h1>
             <button
               className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
               onClick={() => setIsHelpModalOpen(true)}

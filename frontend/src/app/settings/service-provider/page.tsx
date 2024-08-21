@@ -352,10 +352,16 @@ export default function Settings() {
             }}
           ></div>
           <main>
+          <div className="flex items-center mb-2 mt-2 ml-2">
+              <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Settings
+                </h1>
+              </div>
+            </div>
+            
             <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80">
-                Settings
-              </h1>
+            
               <button data-testid="open-help-menu" onClick={toggleHelpMenu}>
                 <HelpCircle
                   className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
