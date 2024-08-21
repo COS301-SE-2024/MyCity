@@ -83,7 +83,7 @@ export default function Tender({
   return (
     <>
       <div
-        className="grid grid-cols-6 gap-4 items-center px-2 py-1 text-black border-b border-gray-200 hover:bg-gray-100 cursor-pointer transition duration-200"
+        className="grid grid-cols-6 gap-4 items-center mb-2 rounded-3xl py-1 text-black bg-white bg-opacity-80 hover:bg-gray-100 cursor-pointer transition duration-200"
         onClick={handleTenderClick}
         style={{ boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}
       >

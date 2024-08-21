@@ -19,7 +19,12 @@ export default function MuniTenders() {
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
-    // Add logic to fetch data for other tabs if needed and update the loading state accordingly
+    // Depending on the selected tab, trigger the loading state for the first load
+    if (index === 1 && loadingActiveTenders) {
+      setLoadingActiveTenders(false); // Assumes component loads quickly after mount
+    } else if (index === 2 && loadingClosedTenders) {
+      setLoadingClosedTenders(false); // Assumes component loads quickly after mount
+    }
   };
 
   useEffect(() => {

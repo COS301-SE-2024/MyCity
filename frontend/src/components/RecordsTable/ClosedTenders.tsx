@@ -240,10 +240,10 @@ const tenders: TenderType[] = [
 ];
 
 const statusStyles = {
-  Unassigned: "text-blue-500 border-blue-500 rounded-full",
-  Active: "text-black bg-green-200 rounded-full",
-  Rejected: "text-black bg-red-200 rounded-full",
-  Closed: "text-black bg-gray-200 rounded-full",
+  Unassigned: "text-black bg-blue-200 border-blue-200 rounded-full",
+  Active: "text-black bg-green-200 border-green-200 rounded-full",
+  Rejected: "text-black bg-red-200 border-red-200 rounded-full",
+  Closed: "text-black bg-gray-200 border-gray-200 rounded-full",
 };
 
 export default function ClosedTenders() {
@@ -280,23 +280,41 @@ export default function ClosedTenders() {
           <div className="col-span-1">Price</div>
           <div className="col-span-1">Estimated Duration</div>
         </div>
-        <div className="min-w-full">
+        <div className="min-w-full px-6">
           {currentTenders.map((tender) => (
             <div
               key={tender.id}
-              className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200"
+              className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200"
             >
               <div className="col-span-1 flex justify-center">
-                <span className={`px-2 py-1 rounded border ${statusStyles[tender.status]}`}>
+                <span
+                  className={`py-1 rounded-3xl text-center font-bold ${
+                    statusStyles[tender.status]
+                  }`}
+                  style={{ minWidth: "150px" }} // Normalizing dimensions based on 'Taking Tenders'
+                >
                   {tender.status}
                 </span>
               </div>
-              <div className="col-span-1 flex justify-center font-bold">{tender.id}</div>
-              <div className="col-span-1 flex justify-center">{tender.ticketId}</div>
-              <div className="col-span-1 flex justify-center">{tender.serviceProvider}</div>
-              <div className="col-span-1 flex justify-center">{tender.issueDate}</div>
-              <div className="col-span-1 flex justify-center">R{tender.price.toFixed(2)}</div>
-              <div className="col-span-1 flex justify-center">{tender.estimatedDuration} days</div>
+
+              <div className="col-span-1 flex justify-center font-bold">
+                {tender.id}
+              </div>
+              <div className="col-span-1 flex justify-center">
+                {tender.ticketId}
+              </div>
+              <div className="col-span-1 flex justify-center">
+                {tender.serviceProvider}
+              </div>
+              <div className="col-span-1 flex justify-center">
+                {tender.issueDate}
+              </div>
+              <div className="col-span-1 flex justify-center">
+                R{tender.price.toFixed(2)}
+              </div>
+              <div className="col-span-1 flex justify-center">
+                {tender.estimatedDuration} days
+              </div>
             </div>
           ))}
         </div>
@@ -316,9 +334,7 @@ export default function ClosedTenders() {
           <button
             onClick={handleNextPage}
             className={`px-48 py-2 ${
-              currentPage === totalPages
-                ? "cursor-not-allowed opacity-50"
-                : ""
+              currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
             }`}
             disabled={currentPage === totalPages}
           >

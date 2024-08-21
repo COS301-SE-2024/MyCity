@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
@@ -33,6 +33,9 @@ export default function CreateTicket() {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const handleSearch = async () => {
+    // Prevent searching if the search term is empty
+    if (searchTerm.trim() === "") return;
+
     try {
       setHasSearched(true);
       setLoading(true);
@@ -224,7 +227,12 @@ export default function CreateTicket() {
                 <button
                   data-testid="search-btn"
                   type="submit"
-                  className="ml-2 px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-300"
+                  className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${
+                    searchTerm.trim() === ""
+                      ? "bg-gray-400 text-gray-300 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                  disabled={searchTerm.trim() === ""}
                 >
                   Search
                 </button>
@@ -300,7 +308,7 @@ export default function CreateTicket() {
             </div>
           )}
 
-          {hasSearched && !loading && (
+          {hasSearched && !loading && searchResults.length > 0 && (
             <>
               {currentResults.map((result, index) => {
                 if (selectedFilter === "serviceProviders") {
@@ -348,7 +356,7 @@ export default function CreateTicket() {
               </div>
             </>
           )}
-          {showToast && (
+          {showToast && totalResults > 0 && (
             <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded-3xl shadow-lg">
               <span>{totalResults} results found in </span>
               <span className="text-blue-500">{searchTime.toFixed(2)}</span>
