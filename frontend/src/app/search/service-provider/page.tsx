@@ -4,7 +4,6 @@ import React, { useState, FormEvent } from "react";
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
-import SearchTicket from "@/components/Search/SearchTicket";
 import { HelpCircle, X } from "lucide-react";
 import { ThreeDots } from "react-loader-spinner";
 import {
@@ -83,7 +82,7 @@ export default function CreateTicket() {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && searchTerm.trim().length > 0) {
       handleSearch();
     }
   };
@@ -184,7 +183,12 @@ export default function CreateTicket() {
               <button
                 data-testid="search-btn"
                 type="submit"
-                className="ml-2 px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-300"
+                disabled={searchTerm.trim().length === 0}
+                className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${
+                  searchTerm.trim().length > 0
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               >
                 Search
               </button>
@@ -236,42 +240,55 @@ export default function CreateTicket() {
           </div>
         )}
 
-{hasSearched && !loading && (
-  <>
-    {currentResults.map((result, index) => {
-      if (selectedFilter === "serviceProviders") {
-        return <SearchSP key={index} serviceProviders={[result]} />;
-      }
-      if (selectedFilter === "municipalities") {
-        return (
-          <SearchMunicipality key={index} municipalities={[result]} />
-        );
-      }
-      return null;
-    })}
+        {hasSearched && !loading && (
+          <>
+            {currentResults.map((result, index) => {
+              if (selectedFilter === "serviceProviders") {
+                return <SearchSP key={index} serviceProviders={[result]} />;
+              }
+              if (selectedFilter === "municipalities") {
+                return (
+                  <SearchMunicipality key={index} municipalities={[result]} />
+                );
+              }
+              return null;
+            })}
 
-    {/* Only show pagination if there are results */}
-    {searchResults.length > 0 && (
-      <div className="flex justify-between mt-4 text-white">
-        <button
-          onClick={() => paginate(currentPage - 1)}
-          className={`px-48 py-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span>Page {currentPage} of {Math.ceil(searchResults.length / resultsPerPage)}</span>
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          className={`px-48 py-2 ${currentPage === Math.ceil(searchResults.length / resultsPerPage) ? 'cursor-not-allowed opacity-50' : ''}`}
-          disabled={currentPage === Math.ceil(searchResults.length / resultsPerPage)}
-        >
-          Next
-        </button>
-      </div>
-    )}
-  </>
-)}
+            {/* Only show pagination if there are results */}
+            {searchResults.length > 0 && (
+              <div className="flex justify-between mt-4 text-white">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  className={`px-48 py-2 ${
+                    currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of{" "}
+                  {Math.ceil(searchResults.length / resultsPerPage)}
+                </span>
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  className={`px-48 py-2 ${
+                    currentPage ===
+                    Math.ceil(searchResults.length / resultsPerPage)
+                      ? "cursor-not-allowed opacity-50"
+                      : ""
+                  }`}
+                  disabled={
+                    currentPage ===
+                    Math.ceil(searchResults.length / resultsPerPage)
+                  }
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        )}
 
         {showToast && (
           <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded-3xl shadow-lg">

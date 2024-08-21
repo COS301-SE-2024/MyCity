@@ -68,20 +68,7 @@ export default function OpenTicketsTable({ records }: { records: RecordType[] })
     setSelectedTicket(null);
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <ThreeDots
-          height="40"
-          width="80"
-          radius="9"
-          color="#ADD8E6"
-          ariaLabel="three-dots-loading"
-          visible={true}
-        />
-      </div>
-    );
-  }
+  
 
   return (
     <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">

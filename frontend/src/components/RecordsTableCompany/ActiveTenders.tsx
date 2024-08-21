@@ -32,13 +32,8 @@ const statusStyles = {
 
 export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  
   const tendersPerPage = 10;
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const safeTenders = Array.isArray(tenders) ? tenders : [];
 
@@ -59,20 +54,7 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <ThreeDots
-          height="40"
-          width="80"
-          radius="9"
-          color="#ADD8E6"
-          ariaLabel="three-dots-loading"
-          visible={true}
-        />
-      </div>
-    );
-  }
+  
 
   if (safeTenders.length === 0) {
     return (
