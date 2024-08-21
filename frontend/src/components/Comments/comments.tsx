@@ -1,16 +1,14 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaPaperPlane } from 'react-icons/fa';
 import Comment from './comment'; // Adjust the import path as necessary
 import { useProfile } from "@/hooks/useProfile";
 import { 
-  addCommentWithImage,
   addCommentWithoutImage,
   getTicketComments,
   getUserFirstLastName,
 } from '@/services/tickets.service';
-
 
 interface CommentsProps {
   onBack: () => void;
@@ -24,34 +22,28 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
   const [loading, setLoading] = useState(true); // State to manage loading
   const userProfile = useProfile(); 
 
-  // Function to fetch comments
   const fetchComments = async () => {
     try {
       const user_data = await userProfile.getUserProfile();
-      const user_picture = String(user_data.current?.picture);
-      const userSession =  String(user_data.current?.session_token); // verification and will be used for new comments
-      console.log("Ticket ID: ",ticketId); //checking whether we are fetching the ticket id
-      const response= await getTicketComments(ticketId, userSession);
-      console.log("Response: ",response);
+      const userSession = String(user_data.current?.session_token);
+      const response = await getTicketComments(ticketId, userSession);
       const commentsData = response.data;
 
       const userPoolId = process.env.USER_POOL_ID;
       if (!userPoolId) {
         throw new Error("USER_POOL_ID is not defined");
       }
-      
-       // Enriching the comments with user details
+
       const enrichedComments = await Promise.all(commentsData.map(async (comment: any) => {
         const userAttributes = await getUserFirstLastName(comment.user_id, userPoolId);
-        //const userAttributes = await getUserFirstLastName("janedoe@example.com", "eu-west-1_xhcBZxRZk");
         return {
           ...comment,
           userName: `${userAttributes?.given_name} ${userAttributes?.family_name}`,
           userImage: userAttributes?.picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
-          time: new Date(comment.date) // Ensure time is a Date object
+          time: new Date(comment.date)
         };
       }));
-      
+
       setComments(enrichedComments);
       setLoading(false);
     } catch (error) {
@@ -64,52 +56,31 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
     fetchComments();
   }, [fetchComments]);
 
-
-
-  // Function to handle adding a new comment
-  /*const handleNewComment = () => {
-    if (newComment.trim() !== '') {
-      const newCommentData = {
-        userName: 'Current User', // Replace with actual logged-in user's name
-        userImage: 'https://via.placeholder.com/150',
-        time: new Date(),
-        commentText: newComment,
-      };
-      setComments([...comments, newCommentData]); // Add new comment to the list
-      setNewComment(''); // Clear the input field after submission
-    }
-  };*/
-
   const handleNewComment = async () => {
     if (newComment.trim() !== '') {
       try {
         const user_data = await userProfile.getUserProfile();
         const userName = `${user_data.current?.given_name} ${user_data.current?.family_name}`;
         const user_picture = String(user_data.current?.picture);
-        const userSession =  String(user_data.current?.session_token);
+        const userSession = String(user_data.current?.session_token);
         const user_email = String(user_data.current?.email);
-  
+
         const newCommentData = {
           userName,
-          userImage: user_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541', // Fallback image
+          userImage: user_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
           time: new Date(),
           commentText: newComment,
         };
-  
-        //console.log("Sending comment:", newCommentData.commentText, ticketId, user_email, userSession);
-        //console.log("Ticket ID: ",ticketId);
-        await addCommentWithoutImage(newCommentData.commentText,ticketId, user_email, userSession);
-  
-        // Update the UI to include the new comment
+
+        await addCommentWithoutImage(newCommentData.commentText, ticketId, user_email, userSession);
+
         setComments([...comments, newCommentData]);
-        setNewComment(''); // Clear the input field after submission
-        //console.log("Updated comments:", comments);
+        setNewComment('');
       } catch (error) {
         console.error("Error adding comment:", error);
       }
     }
   };
-  
 
   return (
     <div className="relative h-full flex flex-col">
@@ -117,45 +88,44 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         <button className="text-gray-700 mr-4" onClick={onBack}>
           <FaArrowLeft size={24} />
         </button>
-        <h2 className="text-xl font-bold">Comments</h2>
+        <h2 className="text-xl text-black font-bold">Comments</h2>
       </div>
-      <div className="flex-grow overflow-auto mb-4">
+      <div className="flex-grow text-black overflow-auto mb-4">
         {loading ? (
           <p>Loading comments...</p>
-        ) : (
+        ) : comments.length > 0 ? (
           comments.map((comment, index) => (
             <Comment
               key={index}
               userName={comment.userName}
-              //userImage={comment.userImage || 'https://via.placeholder.com/150'}
-              userImage= {comment.userImage}
+              userImage={comment.userImage}
               time={new Date(comment.time)}
               commentText={comment.comment}
             />
           ))
+        ) : (
+          <p>No comments to display.</p> // Display this message when there are no comments
         )}
       </div>
-      {/*isCitizen &&*/ (
-        <div className="flex items-center p-2 border-t">
-          <div className="border-l-4 border-gray-200 h-full mr-4"></div> {/* Vertical separator */}
-          <input
-            type="text"
-            className="flex-grow border rounded-3xl px-2 py-1 mr-2"
-            placeholder="Write a comment..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button
-            className={`flex items-center justify-center p-2 rounded-full ${
-              newComment.trim() ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
-            onClick={handleNewComment}
-            disabled={!newComment.trim()}
-          >
-            <FaPaperPlane />
-          </button>
-        </div>
-      )}
+      <div className="flex items-center p-2 border-t">
+        <div className="border-l-4 border-gray-200 h-full mr-4"></div> {/* Vertical separator */}
+        <input
+          type="text"
+          className="flex-grow border rounded-3xl px-2 py-1 mr-2"
+          placeholder="Write a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <button
+          className={`flex items-center justify-center p-2 rounded-full ${
+            newComment.trim() ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+          onClick={handleNewComment}
+          disabled={!newComment.trim()}
+        >
+          <FaPaperPlane />
+        </button>
+      </div>
     </div>
   );
 };

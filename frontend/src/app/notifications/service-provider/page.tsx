@@ -11,10 +11,11 @@ export default function Notifications() {
   const handleDelete = () => {
     console.log("Delete notification");
   };
-  
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
-      <NavbarCompany />
+      <NavbarCompany unreadNotifications={unreadNotifications} />
       <div
         style={{
           position: "fixed", // Change position to 'fixed'
@@ -32,9 +33,12 @@ export default function Notifications() {
         }}
       ></div>
       <main>
-        <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
-          Notifications
-        </h1>
+        <div className="relative pt-8">
+          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+            Notifications
+          </h1>
+        </div>
+        <div className="pt-20 px-6 rounded-3xl">
         <TicketNoti
           ticketNumber="12345"
           image="" // No image provided, so the profile icon will be shown
@@ -60,29 +64,30 @@ export default function Notifications() {
           isNew={false} // Viewed notification
         />
         <TenderNoti
-        tenderId="12345"
-        image="https://via.placeholder.com/50"
-        action="bid accepted"
-        isNew={true}
-      />
-      <TenderNoti
-        tenderId="67890"
-        image="https://via.placeholder.com/50"
-        action="bid rejected"
-        isNew={false}
-      />
-      <TenderNoti
-        tenderId="54321"
-        image={null} // No image provided
-        action="contract terminated"
-        isNew={true}
-      />
-      <TenderNoti
-        tenderId="09876"
-        image="https://via.placeholder.com/50"
-        action="contract completed"
-        isNew={false}
-      />
+          tenderId="12345"
+          image="https://via.placeholder.com/50"
+          action="bid accepted"
+          isNew={true}
+        />
+        <TenderNoti
+          tenderId="67890"
+          image="https://via.placeholder.com/50"
+          action="bid rejected"
+          isNew={false}
+        />
+        <TenderNoti
+          tenderId="54321"
+          image={null} // No image provided
+          action="contract terminated"
+          isNew={true}
+        />
+        <TenderNoti
+          tenderId="09876"
+          image="https://via.placeholder.com/50"
+          action="contract completed"
+          isNew={false}
+        />
+        </div>
       </main>
     </div>
   );

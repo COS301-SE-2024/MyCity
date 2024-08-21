@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaArrowUp } from "react-icons/fa";
-import DashboardFaultCardUserView from "@/components/FaultCardUserView/DashboardFaultCardUserView";
+import { ThreeDots } from "react-loader-spinner"; // Import the loading spinner
+import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView"; // Updated import
 import { AlertCircle } from "lucide-react";
 
 interface Incident {
-  ticket_id : string
+  ticket_id: string;
   ticketnumber: string;
   asset_id: string;
   upvotes: number;
@@ -12,20 +13,18 @@ interface Incident {
   commentcount: number;
   address: string;
   description: string;
-  user_picture: string;
   username: string;
-  state: string;
-  imageURL : string;
-  municipality_picture: string;
-  createdby : string;
-  latitude : string;
-  longitude : string;
+  imageURL: string;
+  createdby: string;
+  latitude: number;
+  longitude: number;
   urgency: "high" | "medium" | "low"; // Added urgency field
 }
 
-interface IncidentProps{
-  tableitems : Incident[]
+interface IncidentProps {
+  tableitems: Incident[];
 }
+
 const urgencyMapping = {
   high: { icon: <AlertCircle className="text-red-500" />, label: "Urgent" },
   medium: {
@@ -38,14 +37,11 @@ const urgencyMapping = {
   },
 };
 
-const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
+const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const [isOverflowing, setIsOverflowing] = useState<{ [key: number]: boolean }>({});
   const addressRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const incidents: Incident[] = [
-    
-  ];
 
   useEffect(() => {
     const overflowState: { [key: number]: boolean } = {};
@@ -57,6 +53,13 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
     setIsOverflowing(overflowState);
   }, [addressRefs]);
 
+  useEffect(() => {
+    // Simulate a delay for loading (e.g., fetching data)
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Adjust the delay as needed
+  }, []);
+
   const handleRowClick = (incident: Incident) => {
     setSelectedIncident(incident);
   };
@@ -65,92 +68,99 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
     setSelectedIncident(null);
   };
 
-  const getUrgency = (votes : number) =>{
-      if (votes < 10) {
-        return "low";
+  const getUrgency = (votes: number) => {
+    if (votes < 10) {
+      return "low";
     } else if (votes >= 10 && votes < 20) {
-        return "medium";
+      return "medium";
     } else if (votes >= 20 && votes <= 40) {
-        return "high";
+      return "high";
     } else {
-        return "low"; // Default case
+      return "low"; // Default case
     }
-  }
+  };
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + "M";
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(1) + "k";
+    }
+    return num.toString();
+  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Opened':
-        return 'bg-red-200 text-red-800';
-      case 'In Progress':
-        return 'bg-blue-200 text-blue-800';
-      case 'Taking Tenders':
-        return 'bg-blue-200 text-blue-800';
-      case 'Assigning Contract':
-        return 'bg-blue-200 text-blue-800';
-      case 'Closed':
-        return 'bg-green-200 text-green-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
-    }
+  const truncateAddress = (address: string) => {
+    const [firstPart] = address.split(",");
+    return firstPart.length > 20 ? `${firstPart.slice(0, 20)}...` : firstPart;
   };
 
   return (
     <div className="text-white text-opacity-80 p-10">
-      <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 text-white text-opacity-80 font-bold border-b border-gray-200">
-        <div className="col-span-1 flex justify-center">Urgency</div>
-        <div className="col-span-1 flex justify-center">Ticket Number</div>
-        <div className="col-span-1 flex justify-center">Fault Type</div>
-        <div className="col-span-1 flex justify-center">Status</div>
-        <div className="col-span-1 flex justify-center">Upvotes</div>
-        <div className="col-span-1 flex justify-center">Address</div>
-      </div>
-      {tableitems.map((incident, index) => (
-        
-        <div
-          key={index}
-          className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
-          onClick={() => handleRowClick(incident)}
-        >
-          <div className="col-span-1 flex justify-center">
-            {  
-            urgencyMapping[getUrgency(incident.upvotes)].icon}
-          </div>
-          <div className="col-span-1 flex justify-center font-bold">
-            {incident.ticketnumber}
-          </div>
-          <div className="col-span-1 flex justify-center">
-            {incident.asset_id}
-          </div>
-          <div className="col-span-1 flex justify-center">
-            <span className={`px-2 py-1 rounded ${getStatusColor(incident.state)}`}>
-              {incident.state}
-            </span>
-          </div>
-          <div className="col-span-1 flex justify-center text-center">
-            <div className="flex flex-col items-center">
-              <div>
-                <FaArrowUp />
-              </div>
-              <div>{incident.upvotes}</div>
-            </div>
-          </div>
-          <div className="col-span-1 flex justify-center overflow-hidden whitespace-nowrap" ref={(el) => { addressRefs.current[index] = el; }}>
-            <div
-              style={{
-                display: "inline-block",
-                animation: isOverflowing[index] ? "scroll 10s linear infinite" : "none",
-                animationTimingFunction: "linear",
-                animationDelay: "5s",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {incident.address}
-            </div>
-          </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <ThreeDots
+            height="80"
+            width="80"
+            radius="9"
+            color="#ADD8E6"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
         </div>
-      ))}
+      ) : (
+        <>
+          <div className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 text-white text-opacity-80 font-bold border-b border-gray-200">
+            <div className="col-span-1 flex justify-center">Urgency</div>
+            <div className="col-span-1 flex justify-center">Ticket Number</div>
+            <div className="col-span-1 flex justify-center">Fault Type</div>
+            <div className="col-span-1 flex justify-center">Upvotes</div>
+            <div className="col-span-1 flex justify-center">Address</div>
+          </div>
+          {tableitems.map((incident, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
+              onClick={() => handleRowClick(incident)}
+            >
+              <div className="col-span-1 flex justify-center">
+                {urgencyMapping[getUrgency(incident.upvotes)].icon}
+              </div>
+              <div className="col-span-1 flex justify-center font-bold">
+                {incident.ticketnumber}
+              </div>
+              <div className="col-span-1 flex justify-center">
+                {incident.asset_id}
+              </div>
+              <div className="col-span-1 flex justify-center text-center">
+                <div className="flex flex-col items-center">
+                  <div>
+                    <FaArrowUp />
+                  </div>
+                  <div>{formatNumber(incident.upvotes)}</div>
+                </div>
+              </div>
+              <div
+                className="col-span-1 flex justify-center overflow-hidden whitespace-nowrap"
+                ref={(el) => {
+                  addressRefs.current[index] = el;
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {truncateAddress(incident.address)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
       {selectedIncident && (
-        <DashboardFaultCardUserView
+        <FaultCardUserView
           show={!!selectedIncident}
           onClose={handleClose}
           title={selectedIncident.asset_id}
@@ -162,34 +172,17 @@ const IncidentTable : React.FC<IncidentProps> = ({ tableitems = [] }) => {
           description={selectedIncident.description}
           image={selectedIncident.imageURL}
           createdBy={selectedIncident.createdby}
-          status={selectedIncident.state}
-          municipalityImage={selectedIncident.municipality_picture} // Pass municipality image
-          urgency={selectedIncident.urgency} // Pass urgency
+          urgency={selectedIncident.urgency}
           longitude={selectedIncident.longitude}
-          latitude={selectedIncident.latitude} 
-          user_picture={selectedIncident.user_picture}   
+          latitude={selectedIncident.latitude}
           ticketId={selectedIncident.ticket_id}
-          />
+        />
       )}
-      <style jsx>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(20%);
-          }
-          50% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-20%);
-          }
-        }
-      `}</style>
     </div>
   );
 };
 
 export default IncidentTable;
-
 
 
 //Previous version of this in development

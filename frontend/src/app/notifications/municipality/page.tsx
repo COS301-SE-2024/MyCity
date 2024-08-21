@@ -1,49 +1,65 @@
 "use client";
 
-//import Navbar from "@/components/Navbar/Navbar"; implemented later
+import React, { useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import TicketNoti from "@/components/NotificationsMuniNew/TicketNoti";
 import Alert from "@/components/NotificationsMuniNew/Alert";
 import TenderNoti from "@/components/NotificationsMuniNew/TenderNoti";
+
 export default function Notifications() {
   const notifications = [
     {
       ticketNumber: "12345",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "upvoted",
       isNew: true,
     },
     {
       ticketNumber: "12346",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "commented on",
       isNew: false,
     },
     {
       ticketNumber: "12347",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "watchlisted",
       isNew: true,
     },
     {
       ticketNumber: "12348",
-      image: "https://via.placeholder.com/150",
+      image: "",
       action: "updated status to:",
       isNew: false,
     },
   ];
   const alerts = [
-    { message: "this ticket has 25 upvotes.", ticketId: "TCKT-001", isNew: true, ticketNumber: "328" },
+    {
+      message: "this ticket has 25 upvotes.",
+      ticketId: "TCKT-001",
+      isNew: true,
+      ticketNumber: "328",
+    },
   ];
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
-          <NavbarMunicipality />
+        <div
+          style={{
+            position: "relative",
+            height: "100vh",
+            overflow: "hidden",
+          }}
+        >
+          <NavbarMunicipality unreadNotifications={unreadNotifications} />
+
+          {/* Background image */}
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -53,56 +69,45 @@ export default function Notifications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
-          ></div>
-          <main>
-            <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
-              Notifications
-            </h1>
-            {notifications.map((notification, index) => (
-              <TicketNoti
-                key={index}
-                ticketNumber={notification.ticketNumber}
-                image={notification.image}
-                action={notification.action}
-                isNew={notification.isNew}
-              />
-            ))}
-            {/* Example 1: Bid Accepted */}
-            <TenderNoti
-              tenderId="TND-001"
-              image="https://via.placeholder.com/150"
-              action="bid accepted"
-              isNew={true}
-            />
+          />
 
-            {/* Example 2: Bid Rejected */}
-            <TenderNoti
-              tenderId="TND-002"
-              image={null} // No image provided
-              action="bid rejected"
-              isNew={false}
-            />
+          {/* Content */}
+          <div className="fixed inset-0 overflow-y-auto">
+            <main>
+              <div className="relative pt-8">
+                <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+                  Notifications
+                </h1>
+              </div>
+              <div className="pt-20 px-6 rounded-3xl">
+                {notifications.map((notification, index) => (
+                  <TicketNoti
+                    key={index}
+                    ticketNumber={notification.ticketNumber}
+                    image={notification.image}
+                    action={notification.action}
+                    isNew={notification.isNew}
+                  />
+                ))}
 
-            {/* Example 3: Contract Terminated */}
-            <TenderNoti
-              tenderId="TND-003"
-              image="https://via.placeholder.com/150"
-              action="contract terminated"
-              isNew={true}
-            />
-
-            {/* Example 4: Contract Completed */}
-            <TenderNoti
-              tenderId="TND-004"
-              image="https://via.placeholder.com/150"
-              action="contract completed"
-              isNew={false}
-            />
-            <Alert alerts={alerts} />
-          </main>
+                <TenderNoti
+                  tenderId="TND-001"
+                  image=""
+                  action="bid received"
+                  isNew={true}
+                />
+                <TenderNoti
+                  tenderId="TND-002"
+                  image=""
+                  action="completion report received"
+                  isNew={true}
+                />
+                <Alert alerts={alerts} />
+              </div>
+            </main>
+          </div>
         </div>
       </div>
 
@@ -112,7 +117,7 @@ export default function Notifications() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
@@ -138,15 +143,13 @@ export default function Notifications() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
-          ></div>
+          />
 
           {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction

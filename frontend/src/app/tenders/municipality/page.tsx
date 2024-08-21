@@ -1,51 +1,59 @@
 "use client";
 
-import React, { Key, useEffect, useRef, useState } from "react";
-
+import React, { Key, useEffect, useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import { Tab, Tabs } from "@nextui-org/react";
 import ClosedTenders from "@/components/RecordsTable/ClosedTenders";
 import ActiveTenders from "@/components/RecordsTable/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTable/OpenTicketsTable";
 import { useProfile } from "@/hooks/useProfile";
-import {
-  getTicketsInMunicipality,
-} from "@/services/tickets.service"
+import { getTicketsInMunicipality } from "@/services/tickets.service";
+import { ThreeDots } from "react-loader-spinner";
+
 export default function MuniTenders() {
-
-  const userProfile :any = useProfile();
+  const userProfile: any = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
-
+  const [loadingOpenTickets, setLoadingOpenTickets] = useState(true);
+  const [loadingActiveTenders, setLoadingActiveTenders] = useState(true);
+  const [loadingClosedTenders, setLoadingClosedTenders] = useState(true);
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
+    // Depending on the selected tab, trigger the loading state for the first load
+    if (index === 1 && loadingActiveTenders) {
+      setLoadingActiveTenders(false); // Assumes component loads quickly after mount
+    } else if (index === 2 && loadingClosedTenders) {
+      setLoadingClosedTenders(false); // Assumes component loads quickly after mount
+    }
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     const fetchData = async () => {
+      setLoadingOpenTickets(true);
       const user_data = await userProfile.getUserProfile();
-      console.log(user_data.current)
       const user_session = String(user_data.current?.session_token);
-      const user_municipality = String(user_data.current?.municipality)
+      const user_municipality = String(user_data.current?.municipality);
       const rspmunicipality = await getTicketsInMunicipality(
         user_municipality,
         user_session
       );
-      console.log(rspmunicipality)
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+      setLoadingOpenTickets(false);
     };
     fetchData();
-  },[userProfile])
+  }, [userProfile]);
+
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 
   return (
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarMunicipality />
+          <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <div
             style={{
-              position: "fixed", // Change position to 'fixed'
+              position: "fixed",
               top: 0,
               left: 0,
               width: "100%",
@@ -55,15 +63,17 @@ export default function MuniTenders() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-              zIndex: -1, // Ensures the background is behind other content
+              backgroundAttachment: "fixed",
+              zIndex: -1,
             }}
           ></div>
           <main>
             <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 ">
-                Tenders
-              </h1>
+              <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Tenders
+                </h1>
+              </div>
             </div>
 
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
@@ -72,25 +82,69 @@ export default function MuniTenders() {
                 defaultSelectedKey={0}
                 className="mt-5 flex justify-center w-full"
                 classNames={{
-                  tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
+                  tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black",
                   panel: "w-full",
                   cursor: "w-full border-3 border-blue-700/40",
                   tabContent:
-                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
                 }}
                 onSelectionChange={handleTabChange}
               >
                 <Tab key={0} title="Open Tickets">
-                  <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
-                  <OpenTicketsTable records={dashMuniResults} />
+                  {loadingOpenTickets ? (
+                    <div className="flex justify-center items-center">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <OpenTicketsTable records={dashMuniResults} />
+                  )}
                 </Tab>
 
                 <Tab key={1} title="Active Tenders">
-                  <ActiveTenders />
+                  {loadingActiveTenders ? (
+                    <div className="flex justify-center items-center">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <ActiveTenders />
+                  )}
                 </Tab>
 
                 <Tab key={2} title="Closed Tenders">
-                  <ClosedTenders />
+                  {loadingClosedTenders ? (
+                    <div className="flex justify-center items-center">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <ClosedTenders />
+                  )}
                 </Tab>
               </Tabs>
             </div>
@@ -104,7 +158,7 @@ export default function MuniTenders() {
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            overflow: "hidden",
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
@@ -117,7 +171,6 @@ export default function MuniTenders() {
             />
           </div>
 
-          {/* Background image */}
           <div
             style={{
               position: "absolute",
@@ -130,15 +183,12 @@ export default function MuniTenders() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
           ></div>
 
-          {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction
@@ -159,35 +209,6 @@ export default function MuniTenders() {
               work on it.
             </p>
           </div>
-
-          {/* <!--         <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
-          <Tabs
-            aria-label="Signup Options"
-            defaultSelectedKey={0}
-            className="mt-5 flex justify-center w-full"
-            classNames={{
-              tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
-              panel: "w-full",
-              cursor: "w-full border-3 border-blue-700/40",
-              tabContent:
-                "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
-            }}
-            onSelectionChange={handleTabChange}
-          >
-            
-            <Tab key={0} title="Open Tickets">
-            <div className="text-white p-4 text-center font-bold text-xl text-opacity-80"></div>
-              <OpenTicketsTable />
-            </Tab>
-
-            <Tab key={1} title="Active Tenders">
-              <ActiveTenders />
-            </Tab>
-
-            <Tab key={2} title="Closed Tenders">
-            <ClosedTenders />
-            </Tab>
-          </Tabs> --> */}
         </div>
       </div>
     </div>

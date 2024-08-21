@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { FaCircle, FaUserCircle } from "react-icons/fa";
+import { FaCircle } from "react-icons/fa";
+import { Image as ImageIcon } from "lucide-react"; 
 import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 
 interface TicketNotificationProps {
   ticketNumber: string;
   image: string;
   action: string;
-  isNew: boolean; // Determines if the notification is new or viewed
+  isNew: boolean;
   title: string;
   address: string;
   description: string;
@@ -38,6 +39,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   ticket_id,
 }) => {
   const [showTicketView, setShowTicketView] = useState(false);
+  const [imageError, setImageError] = useState(false); // State to track image loading error
 
   const getActionText = () => {
     switch (action) {
@@ -72,10 +74,15 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
       >
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`} />
         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
-          {image ? (
-            <img src={image} alt="Ticket" className="w-full h-full object-cover" />
+          {image && !imageError ? (
+            <img
+              src={image}
+              alt="Ticket"
+              className="w-full h-full object-cover"
+              onError={() => setImageError(true)} // Set error state if image fails to load
+            />
           ) : (
-            <FaUserCircle size={32} color="#6B7280" />
+            <ImageIcon size={32} color="#6B7280" />
           )}
         </div>
         <div className="flex-1 text-center overflow-hidden whitespace-nowrap">

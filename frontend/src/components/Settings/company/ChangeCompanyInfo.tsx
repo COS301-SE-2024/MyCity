@@ -81,7 +81,7 @@ const ChangeCompanyInfo: React.FC<ChangeCompanyInfoProps> = ({ onBack }) => {
             value={company}
             name="company"
             onChange={(event) => setCompany(event.target.value)}
-            className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+            className="border-b-2 border-gray-300 focus:outline-none rounded-3xl focus:border-blue-500"
           />
           <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
         </div>
@@ -89,7 +89,7 @@ const ChangeCompanyInfo: React.FC<ChangeCompanyInfoProps> = ({ onBack }) => {
       <div className="flex justify-center">
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600"
           onClick={handleSaveChanges}
         >
           Save Changes
