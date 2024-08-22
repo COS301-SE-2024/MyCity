@@ -369,12 +369,27 @@ def validate_ticket_id(ticket_id):
 def view_ticket_data(ticket_id):
     ticket_id = validate_ticket_id(ticket_id)
     try:
-        response = tickets_table.scan()
+        response = tickets_table.query(KeyConditionExpression=Key("ticket_id").eq(ticket_id))
         items = response.get("Items", [])
-        filtered_items = [
-            item for item in items if ticket_id in item.get("ticket_id", "")
-        ]
-        return filtered_items
+        
+        if len(items) > 0:
+            for item in items:
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(items)
+            return items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket in municipality",
+                }
+            }
+            raise ClientError(error_response, "NoTicket")
+
     except ClientError as e:
         raise BadRequestError(
             f"Failed to get Ticket data: {e.response['Error']['Message']}"
