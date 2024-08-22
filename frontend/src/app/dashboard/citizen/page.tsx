@@ -12,14 +12,18 @@ import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
 import {
   getMostUpvote,
+  getTicket,
   getTicketsInMunicipality,
   getWatchlistTickets,
 } from "@/services/tickets.service";
 
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
+import { useSearchParams } from "next/navigation";
+import { DashboardTicket } from "@/types/custom.types";
+
+import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 
 export default function CitizenDashboard() {
-  const user = useRef(null);
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
@@ -27,6 +31,11 @@ export default function CitizenDashboard() {
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  const [deeplinkTicket, setDeeplinkTicket] = useState<DashboardTicket | undefined>();
+  const searchParams = useSearchParams();
+
+
 
   useEffect(() => {
     // Mock the unread notifications count with a random number
@@ -36,10 +45,38 @@ export default function CitizenDashboard() {
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
+    const getDeeplinkTicket = async () => {
+      console.log("function entry");
+
+      const user_data = await userProfile.getUserProfile();
+      console.log("user profile extracted");
+      const userSession = String(user_data.current?.session_token);
+
+
+      //check if the ticket id query parameter is present
+      if (!searchParams.has('t_id')) {
+        //return if not present
+        console.log("search param not present");
+        return;
+      }
+
+      // get the parameter
+      const ticketId = searchParams.get('t_id');
+
+      console.log("attempting to get ticket with id ", ticketId);
+
+      //get the ticket
+      const deepTicket = await getTicket(ticketId!, userSession);
+      if (deepTicket.length == 1) {
+        setDeeplinkTicket(deepTicket[0]);
+      }
+      console.log("ticket has been retrieved: ", JSON.stringify(deepTicket));
+    };
+
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email?? "";
+        const user_id = user_data.current?.email ?? "";
         setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
         const rspmostupvotes = await getMostUpvote(user_session);
@@ -67,6 +104,8 @@ export default function CitizenDashboard() {
           Array.isArray(rspmunicipality) ? rspmunicipality : []
         );
         setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+
+        console.log("Most upvote results: ", rspmostupvotes[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -74,6 +113,7 @@ export default function CitizenDashboard() {
       }
     };
 
+    // getDeeplinkTicket();
     fetchData();
   }, [userProfile]);
 
@@ -97,13 +137,39 @@ export default function CitizenDashboard() {
 
   return (
     <div>
+
+
+      {/* popup starts here */}
+
+      {(deeplinkTicket) && <FaultCardUserView
+        show={true}
+        onClose={() => { }}
+        title={deeplinkTicket.asset_id}
+        address={deeplinkTicket.address}
+        arrowCount={deeplinkTicket.upvotes}
+        commentCount={deeplinkTicket.commentcount}
+        viewCount={deeplinkTicket.viewcount}
+        ticketId={deeplinkTicket.ticket_id}
+        ticketNumber={deeplinkTicket.ticketnumber}
+        description={deeplinkTicket.description}
+        image={deeplinkTicket.imageURL}
+        createdBy={deeplinkTicket.createdby}
+        latitude={deeplinkTicket.latitude}
+        longitude={deeplinkTicket.longitude}
+        urgency={deeplinkTicket.urgency}
+      />}
+
+      {/* popup ends here */}
+
+
+
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="flex flex-col">
-            <NavbarUser unreadNotifications={unreadNotifications} />
+          <NavbarUser unreadNotifications={unreadNotifications} />
           <div className="flex justify-center z-50 pt-8">
-            
-            <NotificationPromt userEmail={userEmail}/>
+
+            <NotificationPromt userEmail={userEmail} />
           </div>
 
           <div
