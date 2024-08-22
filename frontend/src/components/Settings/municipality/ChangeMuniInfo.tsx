@@ -84,7 +84,7 @@ const ChangeMuniInfo: React.FC<ChangeMuniInfoProps> = ({ onBack }) => {
             value={firstname}
             name="given_name"
             onChange={(event) => setFirstname(event.target.value)}
-            className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+            className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-3xl"
           />
           <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
         </div>
@@ -97,7 +97,7 @@ const ChangeMuniInfo: React.FC<ChangeMuniInfoProps> = ({ onBack }) => {
             value={surname}
             name="family_name"
             onChange={(event) => setSurname(event.target.value)}
-            className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500"
+            className="border-b-2 rounded-3xl border-gray-300 focus:outline-none focus:border-blue-500"
           />
           <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
         </div>
@@ -112,7 +112,7 @@ const ChangeMuniInfo: React.FC<ChangeMuniInfoProps> = ({ onBack }) => {
       <div className="flex justify-center">
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600"
           onClick={handleSaveChanges}
         >
           Save Changes

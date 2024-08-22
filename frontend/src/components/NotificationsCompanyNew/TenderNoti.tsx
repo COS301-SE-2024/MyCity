@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { FaCircle, FaRegCircle, FaUserCircle } from "react-icons/fa";
-import TenderMax from "../Tenders/CompanyTenderMax";// Adjust the import path as necessary
+import TenderMax from "../Tenders/CompanyTenderMax"; // Adjust the import path as necessary
 
 interface TenderNotificationProps {
   tenderId: string;
@@ -23,18 +22,20 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
     // Mock data - Replace this with actual backend call when available
     const fetchTenderData = async () => {
       const mockData = {
-        title: "Infrastructure Repair",
+        contract_id: tenderId,
+        status: "in progress",
+        companyname: "ABC Corp",
+        contractdatetime: "2024-08-08T00:00:00Z",
+        finalCost: 50000,
+        finalDuration: 7,
+        ticketnumber: "12345",
+        longitude: "30.0",
+        latitude: "-25.0",
+        completedatetime: "",
+        contractnumber: "CON-12345",
         municipality: "Happy City Municipality",
-        description: "Urgent repair needed.",
-        status: "Active",
-        municipalityImage: "https://via.placeholder.com/50",
-        user_picture: "https://via.placeholder.com/50",
-        createdBy: "Jane Doe",
-        issueDate: "2024-08-08T00:00:00Z",
-        price: 50000,
-        estimatedDuration: 7,
         upload: null,
-        id: tenderId,
+        hasReportedCompletion: false,
       };
       setTenderData(mockData);
     };
@@ -51,7 +52,7 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
       case "contract terminated":
         return ": your contract was terminated";
       case "contract completed":
-        return " your contract was completed";
+        return ": your contract was completed";
       default:
         return "";
     }
@@ -70,7 +71,7 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
   return (
     <>
       <div
-        className="flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-8 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleNotificationClick}
       >
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
@@ -89,13 +90,25 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
         </div>
       </div>
 
-      {/* {showTenderView && tenderData && (
+      {showTenderView && tenderData && (
         <TenderMax
-          onClose={handleTenderViewClose}
+          contract_id={tenderData.contract_id}
+          status={tenderData.status}
+          companyname={tenderData.companyname}
+          contractdatetime={tenderData.contractdatetime}
+          finalCost={tenderData.finalCost}
+          finalDuration={tenderData.finalDuration}
+          ticketnumber={tenderData.ticketnumber}
+          longitude={tenderData.longitude}
+          latitude={tenderData.latitude}
+          completedatetime={tenderData.completedatetime}
+          contractnumber={tenderData.contractnumber}
           municipality={tenderData.municipality}
-          tender={tenderData}
+          upload={tenderData.upload}
+          hasReportedCompletion={tenderData.hasReportedCompletion}
+          onClose={handleTenderViewClose}
         />
-      )} */}
+      )}
     </>
   );
 };

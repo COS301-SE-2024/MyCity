@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
 import { useMapbox } from "@/hooks/useMapbox";
 import NavbarUser from "@/components/Navbar/NavbarUser";
@@ -9,10 +9,17 @@ import { HelpCircle } from "lucide-react";
 
 export default function CreateTicket() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
   const toggleHelpMenu = () => {
     setIsHelpOpen(!isHelpOpen);
   };
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   return (
     <div className="relative min-h-screen">
@@ -38,7 +45,12 @@ export default function CreateTicket() {
       {/* Overlay to ensure content is on top of the background */}
       <div className="relative z-10">
         {/* Navbar */}
-        <NavbarUser />
+        <NavbarUser unreadNotifications={unreadNotifications} />
+        <div className="relative">
+              <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-10">
+                Add Ticket
+              </h1>
+            </div>
 
         {/* Help Menu Button */}
         <div className="fixed bottom-4 left-4 z-20">
@@ -79,11 +91,9 @@ export default function CreateTicket() {
         {/* Desktop View */}
         <div className="hidden sm:block">
           <main className="flex flex-col items-center justify-start py-5">
-            <h1 className="text-4xl font-bold text-white text-opacity-80 mb-5">
-              Add Ticket
-            </h1>
+            
             <div className="w-full max-w-7xl px-5">
-              <div className="mt-5">
+              <div className="mt-10">
                 <CreateTicketComp useMapboxProp={useMapbox} />
               </div>
             </div>

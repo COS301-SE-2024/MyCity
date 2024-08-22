@@ -19,7 +19,6 @@ interface TenderType {
   latitude : string;
   upload: File | null;
   hasReportedCompletion: boolean;
-
 }
 
 
@@ -38,6 +37,7 @@ const statusStyles = {
 export default function ActiveTenders({tenders,refresh} : {tenders: TenderType[], refresh : ()=> void}) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
+  const [selectedTender, setSelectedTender] = useState<TenderType | null>(null);
 
   // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
@@ -77,31 +77,34 @@ export default function ActiveTenders({tenders,refresh} : {tenders: TenderType[]
             <Tender key={tender.tender_id} onClose={handleClose} tender={tender} />
           ))}
         </div>
-        <div className="flex justify-between mt-4 text-white">
-          <button
-            onClick={handlePrevPage}
-            className={`px-48 py-2 ${
-              currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-            }`}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            className={`px-48 py-2 ${
-              currentPage === totalPages
-                ? "cursor-not-allowed opacity-50"
-                : ""
-            }`}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+
+        {currentTenders.length > 0 && (
+          <div className="flex justify-between mt-4 text-white">
+            <button
+              onClick={handlePrevPage}
+              className={`px-48 py-2 ${
+                currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+              }`}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              className={`px-48 py-2 ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed opacity-50"
+                  : ""
+              }`}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

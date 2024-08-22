@@ -72,7 +72,7 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
   };
 
   return (
-    <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
+    <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg">
       {!selectedTicket ? (
         <>
           <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
@@ -87,29 +87,35 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
             </div>
           </div>
           <div className="min-w-full">
-            {currentRecords.map((record: RecordType) => (
-              <div key={record.ticket_id} onClick={() => handleRecordClick(record)} className="px-4">
-                <Record record={record} />
-              </div>
-            ))}
+            {currentRecords.length > 0 ? (
+              currentRecords.map((record: RecordType) => (
+                <div key={record.ticket_id} onClick={() => handleRecordClick(record)} className="px-4">
+                  <Record record={record} />
+                </div>
+              ))
+            ) : (
+              <div className="mt-16 text-white text-opacity-80">No Open Tickets to display.</div>
+            )}
           </div>
-          <div className="flex justify-between mt-4 text-white">
-            <button 
-              onClick={handlePrevPage} 
-              className={`px-48 py-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button 
-              onClick={handleNextPage} 
-              className={`px-48 py-2 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+          {currentRecords.length > 0 && (
+            <div className="flex justify-between mt-4 text-white">
+              <button 
+                onClick={handlePrevPage} 
+                className={`px-48 py-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button 
+                onClick={handleNextPage} 
+                className={`px-48 py-2 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <div className="fixed inset-0 text-black bg-black bg-opacity-50 z-50 flex justify-center items-center">

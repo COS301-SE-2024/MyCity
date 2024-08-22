@@ -7,14 +7,7 @@ import * as React from "react";
 import { UserProfileProvider } from "@/context/UserProfileContext";
 import { MapboxProvider } from "@/context/MapboxContext";
 
-
 const inter = Inter({ subsets: ["latin"] });
-
-// export const metadata: Metadata = {
-//   title: "MyCity",
-//   description: "MyCity",
-// };
-
 
 const APP_NAME = "MyCity";
 const APP_DEFAULT_TITLE = "MyCity";
@@ -33,7 +26,6 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    // startUpImage: [],
   },
   formatDetection: {
     telephone: false,
@@ -74,12 +66,13 @@ export default function RootLayout({
           <ConfigureAmplifyClientSide />
           <UserProfileProvider>
             <MapboxProvider>
-              {children}
+              <div className="relative z-10"> {/* Ensure the navbar will be above other content */}
+                {children}
+              </div>
             </MapboxProvider>
           </UserProfileProvider>
         </NextUIProvider>
       </body>
-    </html >
+    </html>
   );
 }
-

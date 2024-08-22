@@ -4,7 +4,6 @@ import React, { useState, FormEvent } from "react";
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
 import SearchSP from "@/components/Search/SearchSP";
-import SearchTicket from "@/components/Search/SearchTicket";
 import { HelpCircle, X } from "lucide-react";
 import { ThreeDots } from "react-loader-spinner";
 import {
@@ -83,7 +82,7 @@ export default function CreateTicket() {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && searchTerm.trim().length > 0) {
       handleSearch();
     }
   };
@@ -92,14 +91,15 @@ export default function CreateTicket() {
 
   const indexOfLastResult = currentPage * resultsPerPage;
   const indexOfFirstResult = indexOfLastResult - resultsPerPage;
-  const currentResults = searchResults.slice(
-    indexOfFirstResult,
-    indexOfLastResult
-  );
+  const currentResults = Array.isArray(searchResults)
+    ? searchResults.slice(indexOfFirstResult, indexOfLastResult)
+    : [];
+
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 
   return (
     <div>
-      <NavbarCompany />
+      <NavbarCompany unreadNotifications={unreadNotifications} />
       <div
         style={{
           position: "fixed",
@@ -117,8 +117,8 @@ export default function CreateTicket() {
         }}
       ></div>
       <main>
-        <div className="flex items-center mb-2 mt-2 ml-2">
-          <h1 className="text-4xl font-bold text-white text-opacity-80">
+      <div className="relative pt-8">
+          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
             Search
           </h1>
           <button
@@ -145,9 +145,7 @@ export default function CreateTicket() {
               <h2 className="text-xl font-bold mb-4">Help Menu</h2>
               <p>This page allows you to:</p>
               <ul className="list-disc list-inside">
-                <li>
-                  Search for service providers or municipalities.
-                </li>
+                <li>Search for service providers or municipalities.</li>
                 <li>
                   Use the filter button to select your preferred search
                   criterion.
@@ -185,7 +183,12 @@ export default function CreateTicket() {
               <button
                 data-testid="search-btn"
                 type="submit"
-                className="ml-2 px-3 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-300"
+                disabled={searchTerm.trim().length === 0}
+                className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${
+                  searchTerm.trim().length > 0
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               >
                 Search
               </button>
@@ -193,26 +196,25 @@ export default function CreateTicket() {
           </form>
 
           <div className="flex mt-4 relative">
-            {["municipalities", "serviceProviders"].map(
-              (filter) => (
-                <div
-                  key={filter}
-                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
-                      ? "bg-gray-500 text-white"
-                      : "bg-transparent text-white"
-                    }`}
-                  onClick={() =>
-                    handleFilterChange(
-                      filter as "municipalities" | "serviceProviders"
-                    )
-                  }
-                >
-                  {filter === "municipalities"
-                    ? "Municipalities"
-                    : "Service Providers"}
-                </div>
-              )
-            )}
+            {["municipalities", "serviceProviders"].map((filter) => (
+              <div
+                key={filter}
+                className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${
+                  selectedFilter === filter
+                    ? "bg-gray-500 text-white"
+                    : "bg-transparent text-white"
+                }`}
+                onClick={() =>
+                  handleFilterChange(
+                    filter as "municipalities" | "serviceProviders"
+                  )
+                }
+              >
+                {filter === "municipalities"
+                  ? "Municipalities"
+                  : "Service Providers"}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -251,34 +253,45 @@ export default function CreateTicket() {
               }
               return null;
             })}
-            <div className="flex justify-center mt-4">
-              <nav>
-                <ul className="flex list-none p-0">
-                  {Array.from(
-                    {
-                      length: Math.ceil(searchResults.length / resultsPerPage),
-                    },
-                    (_, index) => (
-                      <li key={index} className="mx-1">
-                        <button
-                          onClick={() => paginate(index + 1)}
-                          className={`px-3 py-1 rounded-full ${currentPage === index + 1
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-300"
-                            }`}
-                        >
-                          {index + 1}
-                        </button>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </nav>
-            </div>
+
+            {/* Only show pagination if there are results */}
+            {searchResults.length > 0 && (
+              <div className="flex justify-between mt-4 text-white">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  className={`px-48 py-2 ${
+                    currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of{" "}
+                  {Math.ceil(searchResults.length / resultsPerPage)}
+                </span>
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  className={`px-48 py-2 ${
+                    currentPage ===
+                    Math.ceil(searchResults.length / resultsPerPage)
+                      ? "cursor-not-allowed opacity-50"
+                      : ""
+                  }`}
+                  disabled={
+                    currentPage ===
+                    Math.ceil(searchResults.length / resultsPerPage)
+                  }
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </>
         )}
+
         {showToast && (
-          <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded shadow-lg">
+          <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded-3xl shadow-lg">
             <span>{totalResults} results found in </span>
             <span className="text-blue-500">{searchTime.toFixed(2)}</span>
             <span> seconds</span>

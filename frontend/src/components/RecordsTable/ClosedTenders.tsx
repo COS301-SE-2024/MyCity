@@ -154,9 +154,7 @@ export default function ClosedTenders({tickets} : {tickets : TicketType[]}) {
           <button
             onClick={handleNextPage}
             className={`px-48 py-2 ${
-              currentPage === totalPages
-                ? "cursor-not-allowed opacity-50"
-                : ""
+              currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
             }`}
             disabled={currentPage === totalPages}
           >
