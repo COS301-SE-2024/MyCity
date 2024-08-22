@@ -35,6 +35,7 @@ interface RecordTypeProps{
 export default function OpenTicketsTable({records} : {records:RecordType[]}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedTicket, setSelectedTicket] = useState<RecordType | null>(null);
+  const [showTicketView, setShowTicketView] = useState(false);
   const recordsPerPage = 10;
 
   // Filter records with status "Unaddressed"
@@ -65,16 +66,17 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
 
   const handleRecordClick = (record: RecordType) => {
     setSelectedTicket(record);
+    setShowTicketView(true);
   };
 
   const handleBack = () => {
     setSelectedTicket(null);
+    setShowTicketView(false);
   };
 
   return (
     <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg">
-      {!selectedTicket ? (
-        <>
+      
           <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
             <div className='text-xl font-bold'>Select a Ticket to create a Tender Bid for it.</div>
             <div className="grid grid-cols-6 gap-4 items-center mb-2 px-4 py-1 font-bold text-center border-b border-gray-200 mt-6">
@@ -116,34 +118,6 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
               </button>
             </div>
           )}
-        </>
-      ) : (
-        <div className="fixed inset-0 text-black bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="transform scale-80 w-full">
-          <TicketViewMuni
-          show={showTicketView}
-          onClose={handleClose}
-          title={selectedTicket.asset_id}
-          address={selectedTicket.address}
-          arrowCount={selectedTicket.upvotes}
-          commentCount={selectedTicket.commentcount}
-          viewCount={selectedTicket.viewcount}
-          ticketNumber={selectedTicket.ticketnumber}
-          description={selectedTicket.description}
-          user_picture={selectedTicket.user_picture}
-          createdBy={selectedTicket.createdby}
-          imageURL={selectedTicket.imageURL}
-          status={selectedTicket.state}
-          municipalityImage={selectedTicket.municipality_picture}
-          upvotes={selectedTicket.upvotes}
-          latitude={selectedTicket.latitude}
-          longitude={selectedTicket.longitude}
-          urgency={selectedTicket.urgency}
-          ticket_id={selectedTicket.ticket_id}
-        />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

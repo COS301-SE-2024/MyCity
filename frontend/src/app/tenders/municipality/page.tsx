@@ -8,11 +8,13 @@ import ActiveTenders from "@/components/RecordsTable/ActiveTenders";
 import OpenTicketsTable from "@/components/RecordsTable/OpenTicketsTable";
 import { useProfile } from "@/hooks/useProfile";
 import { getTicketsInMunicipality } from "@/services/tickets.service";
+import { getMunicipalityTenders } from "@/services/tender.service";
 import { ThreeDots } from "react-loader-spinner";
 
 export default function MuniTenders() {
   const userProfile: any = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [muniTenders, setMuniTenders] = useState<any[]>([]);
   const [loadingOpenTickets, setLoadingOpenTickets] = useState(true);
   const [loadingActiveTenders, setLoadingActiveTenders] = useState(true);
   const [loadingClosedTenders, setLoadingClosedTenders] = useState(true);
@@ -27,6 +29,14 @@ export default function MuniTenders() {
     }
   };
 
+  const fetchTenders = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const user_session = String(user_data.current?.session_token);
+    const user_municipality = String(user_data.current?.municipality);
+    const rspmunitenders = await getMunicipalityTenders(user_municipality,user_session);
+    setMuniTenders(rspmunitenders)
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoadingOpenTickets(true);
@@ -37,6 +47,8 @@ export default function MuniTenders() {
         user_municipality,
         user_session
       );
+      const rspmunitenders = await getMunicipalityTenders(user_municipality,user_session);
+      setMuniTenders(rspmunitenders)
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
       setLoadingOpenTickets(false);
     };
@@ -124,7 +136,7 @@ export default function MuniTenders() {
                       />
                     </div>
                   ) : (
-                    <ActiveTenders />
+                    <ActiveTenders tenders={muniTenders} refresh={fetchTenders} />
                   )}
                 </Tab>
 
@@ -143,7 +155,7 @@ export default function MuniTenders() {
                       />
                     </div>
                   ) : (
-                    <ClosedTenders />
+                    <ClosedTenders tickets={dashMuniResults} />
                   )}
                 </Tab>
               </Tabs>

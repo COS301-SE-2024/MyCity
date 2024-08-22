@@ -127,7 +127,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  if (!show) return null;
+  // if (!show) return null;
 
   const addressParts = address.split(",");
 

@@ -54,7 +54,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
 
   useEffect(() => {
     fetchComments();
-  }, [fetchComments]);
+  }, []);
 
   const handleNewComment = async () => {
     if (newComment.trim() !== '') {
