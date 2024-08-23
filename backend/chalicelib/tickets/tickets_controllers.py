@@ -152,6 +152,70 @@ def create_ticket(ticket_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+    
+
+def add_watchlist(ticket_data):
+    try:
+        required_fields = [
+            "username",
+            "ticket_id",
+        ]
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+            
+        user_exist = watchlist_table.scan(
+            FilterExpression=Attr("user_id").eq(ticket_data['username']) &  Attr("ticket_id").eq(ticket_data['ticket_id'])
+        )
+        if len(user_exist['Items']) > 0:
+            error_response = {
+                "Error": {
+                    "Code": "AlreadyExists",
+                    "Message": "Already have ticket in watchlist",
+                }
+            }
+            raise ClientError(error_response, "AlreadyExists")
+        
+        if TicketExists(ticket_data['ticket_id']) == False:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExists",
+                    "Message": "Ticket doesnt exist",
+                }
+            }
+            raise ClientError(error_response, "TicketDoesntExists")
+        
+        watchlist_id = generate_id()
+        
+        watchlist_item = {
+            "watchlist_id" : watchlist_id,
+            "ticket_id" : ticket_data['ticket_id'],
+            "user_id" : ticket_data['username'],
+        }
+
+        watchlist_table.put_item(Item=watchlist_item)
+        return {"Status": "Success","Message" : "ticket has been added to " + ticket_data['username']}
+        
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+    
+
+def TicketExists(ticket_id):
+    exists = tickets_table.query(
+        KeyConditionExpression=Key("ticket_id").eq(ticket_id)
+    )
+    if len(exists['Items']) > 0:
+        return True
+    else:
+        return False
+
 
 
 def get_fault_types():
@@ -513,6 +577,12 @@ def ClosedTicket(ticket_data):
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Closed"}
         response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        dateExpr = "set #dateClosed=:r"
+        CloseexpattrName = {"#dateClosed": "dateClosed"}
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        CloseexpattrValue = {":r": formatted_datetime}
+        response_closed = updateTicketTable(ticket_id, dateExpr, CloseexpattrName, CloseexpattrValue)
         if response["ResponseMetadata"]:
             return {
                 "Status": "Success",
