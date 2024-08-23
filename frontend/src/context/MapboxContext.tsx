@@ -16,7 +16,7 @@ export interface MapboxContextProps {
     panMapTo: (lng: number | undefined, lat: number | undefined) => void;
     panToCurrentLocation: () => void;
     initialiseMap: (mapContainerRef: React.RefObject<HTMLDivElement>) => MutableRefObject<mapboxgl.Map | null>;
-    initialiseFaultMap: (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[]) => MutableRefObject<mapboxgl.Map | null>;
+    initialiseFaultMap: (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[], municipality?: string) => Promise<MutableRefObject<mapboxgl.Map | null>>;
 }
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
@@ -35,6 +35,8 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     const currentMarker = useRef<Marker | null>(null);
     const [selectedAddress, setSelectedAddress] = useState<PKResult | null>(null);
+
+    const municipalityCoordinates = useRef<LngLatLike | null>(null);
 
     const initialiseMap = (mapContainerRef: React.RefObject<HTMLDivElement>) => {
         // if (map.current) {
@@ -116,7 +118,6 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 });
 
                 if (response.resultsCount > 0) {
-                    console.log(response.results[0]);
                     setSelectedAddress(response.results[0]);
                 }
             }
@@ -139,12 +140,33 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         }
     };
 
-    const initialiseFaultMap = (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[]) => {
+    const initialiseFaultMap = async (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[], municipality?: string) => {
         if (faultMap.current) {
             // faultMap.current.resize();
             // return faultMap;
             faultMapMarkers = [];
         }
+
+        // use pk to get coordinates of user's municipality
+        if (!municipalityCoordinates.current && municipality) {
+            const response = await pk.search(
+                municipality,
+                {
+                    countries: ["za"],
+                    types: ["county"],
+                    maxResults: 1,
+                    language: "en"
+                });
+
+                if (response.resultsCount > 0) {
+                    const coordinates = response.results[0].coordinates.split(",");
+                    const muniLat = Number(coordinates[0].trim());
+                    const muniLng = Number(coordinates[1].trim());
+                    municipalityCoordinates.current = [muniLng, muniLat];
+                }
+        }
+
+
 
         //set max bounds to lock the map to South Africa
         const boundsSA: [LngLatLike, LngLatLike] = [
@@ -152,9 +174,13 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             [33.0, -22.0]  // Northeast coordinates (lng, lat)
         ];
 
+        if(!municipalityCoordinates.current){
+            municipalityCoordinates.current = [28.23142, -25.75442];
+        }
+
         faultMap.current = new mapboxgl.Map({
             container: faultMapContainerRef.current!,
-            center: [28.23142, -25.75442],
+            center: municipalityCoordinates.current,
             zoom: 10,
             maxBounds: boundsSA
         });
