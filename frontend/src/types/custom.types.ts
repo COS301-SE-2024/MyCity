@@ -72,3 +72,26 @@ export interface UnprocessedFaultGeoData {
     longitude: string;
     urgency: string;
 }
+
+
+export interface DashboardTicket {
+    dateClosed: string;
+    upvotes: number;
+    ticket_id: string;
+    ticketnumber: string;
+    asset_id: string;
+    state: string;
+    dateOpened: string;
+    createdby: string;
+    imageURL: string;
+    viewcount: number;
+    description: string;
+    municipality_id: string;
+    commentcount: number;
+    user_picture: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    ticketID: string;
+    urgency: "high" | "medium" | "low";
+}
