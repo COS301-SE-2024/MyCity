@@ -1,4 +1,4 @@
-import { FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
+import { DashboardTicket, FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
 import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
@@ -181,7 +181,17 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        if (!Array.isArray(result.data)) {
+            const result: DashboardTicket[] = [];
+            return result;
+        }
+
+        const unprocessedData = result.data as any[];
+
+        formatAddress(unprocessedData);
+        ChangeState(unprocessedData);
+
+        const data: DashboardTicket[] = unprocessedData;
 
         return data;
 
@@ -192,7 +202,7 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-    
+
     if (!municipality) {
         throw new Error("Missing municipality");
     }
@@ -283,10 +293,9 @@ export async function getOpenTicketsInMunicipality(municipality: string | undefi
     }
 }
 
-export async function AcceptTicket(ticket: string,user_session : string)
-{
+export async function AcceptTicket(ticket: string, user_session: string) {
     const data = {
-        ticket_id : ticket,
+        ticket_id: ticket,
     }
 
     const apiURL = "/api/tickets/accept";
@@ -304,19 +313,17 @@ export async function AcceptTicket(ticket: string,user_session : string)
     }
 
     const result = await response.json()
-    if(result.data.Status == "Success" )
-    {
+    if (result.data.Status == "Success") {
         return true
     }
     else false
-    
+
 
 }
 
-export async function CloseTicket(ticket: string,user_session : string)
-{
+export async function CloseTicket(ticket: string, user_session: string) {
     const data = {
-        ticket_id : ticket,
+        ticket_id: ticket,
     }
 
     const apiURL = "/api/tickets/close";
@@ -334,12 +341,11 @@ export async function CloseTicket(ticket: string,user_session : string)
     }
 
     const result = await response.json()
-    if(result.data.Status == "Success" )
-    {
+    if (result.data.Status == "Success") {
         return true
     }
     else false
-    
+
 
 }
 
@@ -406,7 +412,6 @@ function CreateTicketNumber(municipality: string): string {
     for (let index = 0; index < 2; index++) {
         let randint: number = Math.floor(Math.random() * municipality.length);
         while (municipality[randint] == " " || municipality[randint] == "-" || municipality[randint] == "_") {
-            // console.log("inside loop")
             randint = Math.floor(Math.random() * municipality.length);
         }
         ticketnumber += municipality[randint].toUpperCase();
@@ -418,14 +423,12 @@ function CreateTicketNumber(municipality: string): string {
     return ticketnumber;
 }
 
-function ChangeState(tickets: any[]){
+function ChangeState(tickets: any[]) {
     tickets.forEach((item: any) => {
-        if(item['state'] == "Assigning Contract")
-        {
+        if (item['state'] == "Assigning Contract") {
             item['state'] = "In Progress"
         }
-        else if(item['state']=="OPEN")
-        {
+        else if (item['state'] == "OPEN") {
             item['state'] == "Opened"
         }
 
@@ -528,41 +531,41 @@ export async function getTicketComments(ticket_id: string, user_session: string)
     }
 }
 
-export const getUserFirstLastName = async (username: string, userPoolID :string): Promise<UserAttributes | null> => {
+export const getUserFirstLastName = async (username: string, userPoolID: string): Promise<UserAttributes | null> => {
     const client = new CognitoIdentityProviderClient({
-      region: process.env.AWS_REGION,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-      },
+        region: process.env.AWS_REGION,
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+        },
     });
-  
+
     try {
-      const command = new AdminGetUserCommand({
-        UserPoolId: userPoolID ,
-        Username: username,
-      });
-  
-      const response = await client.send(command);
-  
-      const userAttributes: UserAttributes = {};
-  
-      response.UserAttributes?.forEach(attribute => {
-          if (attribute.Name === "given_name") {
-            userAttributes.given_name = attribute.Value;
-          } else if (attribute.Name === "family_name") {
-            userAttributes.family_name = attribute.Value;
-          } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
-            userAttributes.picture = attribute.Value;
-          }
-      });
-  
-      return userAttributes;
+        const command = new AdminGetUserCommand({
+            UserPoolId: userPoolID,
+            Username: username,
+        });
+
+        const response = await client.send(command);
+
+        const userAttributes: UserAttributes = {};
+
+        response.UserAttributes?.forEach(attribute => {
+            if (attribute.Name === "given_name") {
+                userAttributes.given_name = attribute.Value;
+            } else if (attribute.Name === "family_name") {
+                userAttributes.family_name = attribute.Value;
+            } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
+                userAttributes.picture = attribute.Value;
+            }
+        });
+
+        return userAttributes;
     } catch (error) {
-      console.error("Error fetching user:", error);
-      return null;
+        console.error("Error fetching user:", error);
+        return null;
     }
-  };
+};
 
 function formatAddress(data: any[]) {
     data.forEach(item => {

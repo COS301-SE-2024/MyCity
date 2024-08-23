@@ -1,32 +1,32 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
-import TicketViewCompany from '../TicketViewCompany/TicketViewCompany';
+import React, { useState, useRef, useEffect } from "react";
+import { AlertCircle } from "lucide-react";
+import TicketViewCompany from "../TicketViewCompany/TicketViewCompany";
 
-type Urgency = 'high' | 'medium' | 'low';
-type Status = 'Fix in progress' | 'Unaddressed';
+type Urgency = "high" | "medium" | "low";
+type Status = "Fix in progress" | "Unaddressed";
 
 interface RecordType {
-    ticket_id: string;
-    ticketnumber : string;
-    asset_id: string;
-    imageURL : string;
-    user_picture : string;
-    municipality_picture : string ;
-    description : string;
-    state: string;
-    address: string;
-    createdby: string;
-    viewcount : number;
-    commentcount: number;
-    latitude : string;
-    longitude : string;
-    upvotes : number;
-    urgency: Urgency;
-    municipality : string;
+  ticket_id: string;
+  ticketnumber: string;
+  asset_id: string;
+  imageURL: string;
+  user_picture: string;
+  municipality_picture: string;
+  description: string;
+  state: string;
+  address: string;
+  createdby: string;
+  viewcount: number;
+  commentcount: number;
+  latitude: string;
+  longitude: string;
+  upvotes: number;
+  urgency: Urgency;
+  municipality: string;
 }
 
 interface UrgencyMappingType {
-  [key: string]: { icon: JSX.Element, label: string };
+  [key: string]: { icon: JSX.Element; label: string };
 }
 
 interface StatusMappingType {
@@ -34,14 +34,20 @@ interface StatusMappingType {
 }
 
 const statusMapping: StatusMappingType = {
-  'Fix in progress': 'Tender Contract',
-  'Unaddressed': 'View Tenders'
+  "Fix in progress": "Tender Contract",
+  Unaddressed: "View Tenders",
 };
 
 const urgencyMapping: UrgencyMappingType = {
-  high: { icon: <AlertCircle className="text-red-500" />, label: 'Urgent' },
-  medium: { icon: <AlertCircle className="text-yellow-500" />, label: 'Moderate' },
-  low: { icon: <AlertCircle className="text-green-500" />, label: 'Not Urgent' }
+  high: { icon: <AlertCircle className="text-red-500" />, label: "Urgent" },
+  medium: {
+    icon: <AlertCircle className="text-yellow-600" />,
+    label: "Moderate",
+  },
+  low: {
+    icon: <AlertCircle className="text-green-500" />,
+    label: "Not Urgent",
+  },
 };
 
 export default function Record({ record }: { record: RecordType }) {
@@ -72,41 +78,51 @@ export default function Record({ record }: { record: RecordType }) {
   function getStateColour(state: string) {
     switch (state) {
       case "Opened":
-        return 'bg-green-200 text-green-800';
+        return "bg-green-200 text-black";
       case "In Progress":
-        return 'bg-blue-200 text-blue-800';
+        return "bg-blue-200 text-black";
       case "Assigning Contract":
-        return 'bg-blue-200 text-blue-800';
+        return "bg-blue-200 text-black";
       case "Closed":
-        return 'bg-red-200 text-red-800';
+        return "bg-red-200 text-black";
       case "Taking Tenders":
-        return 'bg-purple-200 text-purple-800';
+        return "bg-purple-200 text-black";
       default:
-        return 'bg-gray-200 text-gray-800';
+        return "bg-gray-200 text-black";
     }
   }
 
-  const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
+  const urgency =
+    urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
     if (addressRef.current) {
-      setIsOverflowing(addressRef.current.scrollWidth > addressRef.current.clientWidth);
+      setIsOverflowing(
+        addressRef.current.scrollWidth > addressRef.current.clientWidth
+      );
     }
   }, []);
 
-  const truncatedAddress = record.address.split(',')[0];
+  const truncatedAddress = record.address.split(",")[0];
 
   return (
     <>
       <div
-        className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleClick}
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
-        <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
+        <div className="col-span-1 flex justify-center font-bold">
+          {record.ticketnumber}
+        </div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${getStateColour(record.state)}`}>
+          <span
+            className={`py-1 rounded-3xl text-center font-bold ${getStateColour(
+              record.state
+            )}`}
+            style={{ minWidth: "150px" }}
+          >
             {record.state}
           </span>
         </div>
@@ -115,7 +131,7 @@ export default function Record({ record }: { record: RecordType }) {
           className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap hover:overflow-visible"
           ref={addressRef}
           style={{
-            position: 'relative'
+            position: "relative",
           }}
         >
           <div
@@ -131,7 +147,9 @@ export default function Record({ record }: { record: RecordType }) {
             {truncatedAddress}
           </div>
         </div>
-        <div className="col-span-1 flex justify-center">{record.municipality}</div>
+        <div className="col-span-1 flex justify-center">
+          {record.municipality}
+        </div>
       </div>
       {showTicketView && (
         <TicketViewCompany
@@ -139,20 +157,20 @@ export default function Record({ record }: { record: RecordType }) {
           show={showTicketView}
           onClose={handleClose}
           title={record.asset_id}
-          address={record.address}
-          arrowCount={record.upvotes} // Update this as per your data source
-          commentCount={record.commentcount} // Update this as per your data source
-          viewCount={record.viewcount} // Update this as per your data source
-          description={record.description} // Update this as per your data source
-          user_picture={record.user_picture} // Update this as per your data source
+          address={truncatedAddress}  
+          arrowCount={record.upvotes}
+          commentCount={record.commentcount}
+          viewCount={record.viewcount}
+          description={record.description}
+          user_picture={record.user_picture}
           createdBy={record.createdby}
           imageURL={record.imageURL}
           status={record.state}
-          municipalityImage={record.municipality_picture} // Update this as per your data source
+          municipalityImage={record.municipality_picture}
           upvotes={record.upvotes}
           latitude={record.latitude}
           longitude={record.longitude}
-          urgency={record.urgency} // Pass urgency to TicketViewMuni
+          urgency={record.urgency}
           ticketNumber={record.ticketnumber}
         />
       )}

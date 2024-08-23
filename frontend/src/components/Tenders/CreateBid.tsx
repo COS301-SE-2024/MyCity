@@ -91,7 +91,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
                   id="proposedPrice"
                   value={proposedPrice}
                   onChange={handlePriceChange}
-                  className="w-full pl-6 pr-2 py-1 border rounded"
+                  className="w-full pl-6 pr-2 py-1 border rounded-3xl"
                   placeholder="0.00"
                 />
               </div>
@@ -104,7 +104,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
                   id="jobDuration"
                   value={jobDuration}
                   onChange={handleDurationChange}
-                  className="w-full pl-2 pr-10 py-1 border rounded"
+                  className="w-full pl-2 pr-10 py-1 border rounded-3xl"
                   placeholder="Days"
                 />
                 <span className="absolute right-0 top-0 bottom-0 flex items-center pr-2">days</span>
@@ -112,7 +112,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
             </div>
             <div className="mb-4">
               <p className="text-lg font-semibold mb-1">Other Relevant Information</p>
-              <div className="border-dashed border-2 border-gray-400 rounded-lg p-4">
+              <div className="border-dashed border-2 border-gray-400 rounded-3xl p-4">
                 <input
                   type="file"
                   onChange={handleFileUpload}

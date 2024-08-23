@@ -34,7 +34,7 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
         completedatetime: "2024-08-14T00:00:00Z",
         contractnumber: "CNTR-56789",
         upload: null,
-        hasReportedCompletion: action === "contract completed",
+        hasReportedCompletion: action === "completion report received",
       };
       setTenderData(mockData);
     };
@@ -44,14 +44,10 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
 
   const getActionText = () => {
     switch (action) {
-      case "bid accepted":
-        return ": your bid was accepted";
-      case "bid rejected":
-        return ": your bid was rejected";
-      case "contract terminated":
-        return ": your contract was terminated";
-      case "contract completed":
-        return ": your contract was completed";
+      case "bid received":
+        return " bid was received";
+      case "completion report received":
+        return " received a completion report";
       default:
         return "";
     }
@@ -59,13 +55,9 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
 
   const getStatus = (action: string) => {
     switch (action) {
-      case "bid accepted":
-        return "accepted";
-      case "bid rejected":
-        return "rejected";
-      case "contract terminated":
-        return "terminated";
-      case "contract completed":
+      case "bid received":
+        return "received";
+      case "completion report received":
         return "completed";
       default:
         return "submitted";

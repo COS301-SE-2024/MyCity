@@ -67,7 +67,9 @@ const RecordsTable: React.FC<RecordTypeProps> = ({records = [],refresh}) => {
       </div>
       <div className="min-w-full">
         {currentRecords.map(record => (
-          <Record key={record.ticket_id} record={record} refresh={refresh} />
+          <div key={record.ticket_id} className="mb-0">
+            <Record record={record} refresh={refresh} />
+          </div>
         ))}
       </div>
       <div className="flex justify-between mt-4 text-white">
@@ -90,5 +92,4 @@ const RecordsTable: React.FC<RecordTypeProps> = ({records = [],refresh}) => {
     </div>
   );
 }
-
 export default RecordsTable

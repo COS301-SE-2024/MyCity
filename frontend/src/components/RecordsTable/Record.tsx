@@ -39,6 +39,13 @@ const statusMapping: StatusMappingType = {
   'Opened': 'View Tenders'
 };
 
+const statusStyles = {
+  Opened : "text-green-500 bg-green-200 bg-green-200 rounded-full",
+  In_Progress: "text-blue-500 bg-blue-200 bg-blue-200 rounded-full",
+  Assigning_Contract: "text-blue-500 bg-blue-200 bg-blue-200 rounded-full",
+  Closed: "text-red-500 bg-red-200 border-red-200 rounded-full",
+};
+
 const urgencyMapping: UrgencyMappingType = {
   high: { icon: <AlertCircle className="text-red-500" />, label: 'Urgent' },
   medium: { icon: <AlertCircle className="text-yellow-500" />, label: 'Moderate' },
@@ -60,15 +67,37 @@ export default function Record({ record }: { record: RecordType }) {
 
   const getUrgency = (votes : number) =>{
         if (votes < 10) {
-        return "low";
-    } else if (votes >= 10 && votes < 20) {
-        return "medium";
-    } else if (votes >= 20 && votes <= 40) {
-        return "high";
-    } else {
-        return "low"; // Default case
+          return "low";
+      } else if (votes >= 10 && votes < 20) {
+          return "medium";
+      } else if (votes >= 20 && votes <= 40) {
+          return "high";
+      } else {
+          return "low"; // Default case
+      }
+  }
+
+  function getStatus(state : string){
+    switch (state) {
+      case "Closed":
+        return "Closed"
+        break;
+      case "Opened":
+        return "Opened";
+        break;
+      case "In Progress":
+        return "In_Progress";
+        break;
+      case "Assigning Contract":
+        return "Assigning_Contract";
+        break;
+      default:
+        return "Closed"
+        break;
     }
-}
+  }
+
+  
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
@@ -89,7 +118,7 @@ export default function Record({ record }: { record: RecordType }) {
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
         <div className="col-span-1 flex justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded ${record.state == "Opened" ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}`}>
+          <span className={`px-2 py-1 rounded ${statusStyles[getStatus(record.state)]}`}>
             {record.state}
           </span>
         </div>
