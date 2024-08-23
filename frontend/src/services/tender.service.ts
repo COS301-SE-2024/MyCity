@@ -219,19 +219,53 @@ export async function getCompanyTenders(companyname: string,user_session : strin
     }
 
     const result = await response.json()
-    console.log(result)
+ 
     if(result.data.Status )
     {
         return null
     }
     else 
     {
-        console.log(result.data)
+       
         AssignTenderNumbers(result.data)
         return result.data
     }
     
 
+}
+
+export async function getMunicipalityTenders(municipality: string,user_session : string,revalidate?: boolean)
+{
+
+    if (revalidate) {
+        invalidateCache("tenders-getmunitenders"); //invalidate the cache
+    }
+
+    const apiURL = "/api/tenders/getmunitenders";
+    const urlWithParams = `${apiURL}?municipality=${encodeURIComponent(municipality)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json()
+    if(result.data.Status )
+    {
+        return null
+    }
+    else 
+    {
+        AssignTenderNumbers(result.data)
+        return result.data
+    }
+    
 }
 
 export async function getContract(tender_id: string,user_session : string)
