@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Key, Suspense, useEffect, useRef, useState } from "react";
+import React, { Key, useEffect, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
@@ -18,22 +18,15 @@ import {
 } from "@/services/tickets.service";
 
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
-import { useSearchParams } from "next/navigation";
 import { DashboardTicket } from "@/types/custom.types";
 
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 
-
-export default function CitizenDashboard() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <CitizenDashboardContent />
-    </Suspense>
-  );
+interface CitizenDashboardProps {
+  searchParams: any;
 }
 
-
-function CitizenDashboardContent() {
+export default function CitizenDashboard({ searchParams }: CitizenDashboardProps) {
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
@@ -42,33 +35,31 @@ function CitizenDashboardContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-  const [deeplinkTicket, setDeeplinkTicket] = useState<DashboardTicket | undefined>();
-  const searchParams = useSearchParams();
 
-
-  useEffect(() => {
-    // Mock the unread notifications count with a random number
-    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
-    setUnreadNotifications(mockUnreadNotifications);
-  }, []);
   const [userEmail, setUserEmail] = useState("");
 
+  const [deeplinkTicket, setDeeplinkTicket] = useState<DashboardTicket | undefined>();
+  const deeplinkTicketId = searchParams["t_id"];
+
+
   useEffect(() => {
+    const mockUnreadNotifications = () => {
+      // Mock the unread notifications count with a random number
+      const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+      setUnreadNotifications(mockUnreadNotifications);
+    }
+
     const getDeeplinkTicket = async () => {
       const user_data = await userProfile.getUserProfile();
       const userSession = String(user_data.current?.session_token);
-
       //check if the ticket id query parameter is present
-      if (!searchParams.has('t_id')) {
+      if (!deeplinkTicketId) {
         //return if not present
         return;
       }
 
-      // get the parameter
-      const ticketId = searchParams.get('t_id');
-
       //get the ticket
-      const deepTicket = await getTicket(ticketId!, userSession);
+      const deepTicket = await getTicket(deeplinkTicketId, userSession);
       if (deepTicket.length == 1) {
         setDeeplinkTicket(deepTicket[0]);
       }
@@ -113,9 +104,11 @@ function CitizenDashboardContent() {
       }
     };
 
+    mockUnreadNotifications();
     getDeeplinkTicket();
     fetchData();
-  }, [userProfile]);
+  }, []);
+
 
   const preloadImages = (srcs: string[]) => {
     srcs.forEach((src) => {
@@ -138,7 +131,7 @@ function CitizenDashboardContent() {
   return (
     <div>
 
-      {/* fault popup used with deeplinks starts here*/}
+      {/* fault popup used with deeplink starts here*/}
 
       {(deeplinkTicket) && <FaultCardUserView
         show={true}
@@ -163,7 +156,7 @@ function CitizenDashboardContent() {
         longitude={deeplinkTicket.longitude}
         urgency={deeplinkTicket.urgency}
       />}
-      {/* fault popup used with deeplinks ends here */}
+      {/* fault popup used with deeplink ends here */}
 
 
       {/* Desktop View */}
