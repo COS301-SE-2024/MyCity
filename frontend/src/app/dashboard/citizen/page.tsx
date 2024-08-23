@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Key, useEffect, useRef, useState } from "react";
+import React, { Key, Suspense, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
@@ -12,27 +12,72 @@ import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
 import {
   getMostUpvote,
+  getTicket,
   getTicketsInMunicipality,
   getWatchlistTickets,
 } from "@/services/tickets.service";
 
 import NotificationPromt from "@/components/Notifications/NotificationPromt";
+import { useSearchParams } from "next/navigation";
+import { DashboardTicket } from "@/types/custom.types";
+
+import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
+
 
 export default function CitizenDashboard() {
-  const user = useRef(null);
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CitizenDashboardContent />
+    </Suspense>
+  );
+}
+
+
+function CitizenDashboardContent() {
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  const [deeplinkTicket, setDeeplinkTicket] = useState<DashboardTicket | undefined>();
+  const searchParams = useSearchParams();
+
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
+    const getDeeplinkTicket = async () => {
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+
+      //check if the ticket id query parameter is present
+      if (!searchParams.has('t_id')) {
+        //return if not present
+        return;
+      }
+
+      // get the parameter
+      const ticketId = searchParams.get('t_id');
+
+      //get the ticket
+      const deepTicket = await getTicket(ticketId!, userSession);
+      if (deepTicket.length == 1) {
+        setDeeplinkTicket(deepTicket[0]);
+      }
+    };
+
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email?? "";
+        const user_id = user_data.current?.email ?? "";
         setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
         const rspmostupvotes = await getMostUpvote(user_session);
@@ -60,6 +105,7 @@ export default function CitizenDashboard() {
           Array.isArray(rspmunicipality) ? rspmunicipality : []
         );
         setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -67,6 +113,7 @@ export default function CitizenDashboard() {
       }
     };
 
+    getDeeplinkTicket();
     fetchData();
   }, [userProfile]);
 
@@ -90,13 +137,42 @@ export default function CitizenDashboard() {
 
   return (
     <div>
+
+      {/* fault popup used with deeplinks starts here*/}
+
+      {(deeplinkTicket) && <FaultCardUserView
+        show={true}
+        onClose={() => {
+          // update url to remove ticket id parameter
+          const url = new URL(window.location.href);
+          url.searchParams.delete("t_id");
+          window.history.replaceState({}, '', url.toString());
+          setDeeplinkTicket(undefined);
+        }}
+        title={deeplinkTicket.asset_id}
+        address={deeplinkTicket.address}
+        arrowCount={deeplinkTicket.upvotes}
+        commentCount={deeplinkTicket.commentcount}
+        viewCount={deeplinkTicket.viewcount}
+        ticketId={deeplinkTicket.ticket_id}
+        ticketNumber={deeplinkTicket.ticketnumber}
+        description={deeplinkTicket.description}
+        image={deeplinkTicket.imageURL}
+        createdBy={deeplinkTicket.createdby}
+        latitude={deeplinkTicket.latitude}
+        longitude={deeplinkTicket.longitude}
+        urgency={deeplinkTicket.urgency}
+      />}
+      {/* fault popup used with deeplinks ends here */}
+
+
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="flex flex-col">
-            <NavbarUser />
+          <NavbarUser unreadNotifications={unreadNotifications} />
           <div className="flex justify-center z-50 pt-8">
-            
-            <NotificationPromt userEmail={userEmail}/>
+
+            <NotificationPromt userEmail={userEmail} />
           </div>
 
           <div
@@ -116,11 +192,12 @@ export default function CitizenDashboard() {
             }}
           ></div>
           <main>
-            <div className="flex items-center mb-2 mt-2 ml-5">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 text-center ">
+            <div className="relative">
+              <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
                 Dashboard
               </h1>
             </div>
+
             <div className="fixed bottom-4 left-4 z-20">
               <HelpCircle
                 data-testid="open-help-menu"
@@ -161,16 +238,16 @@ export default function CitizenDashboard() {
               </div>
             )}
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-4 right-4 shadow-lg z-20"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg z-20"
               onClick={() => (window.location.href = "/create-ticket/citizen")}
             >
-              + New Ticket
+              + Report Fault
             </button>
-            <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
+            <div className="flex flex-col items-center justify-center rounded-3xl h-fit py-1">
               <Tabs
                 aria-label="Signup Options"
                 defaultSelectedKey={0}
-                className="mt-5 flex justify-center w-full"
+                className="mt-5 flex justify-center w-full rounded-3xl"
                 classNames={{
                   tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black",
                   panel: "w-full",
@@ -217,7 +294,7 @@ export default function CitizenDashboard() {
                   <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
                     Nearest to you
                   </h1>
-                  <h1 className="text-center text-white mb-4 ml-2">
+                  <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
                     Based on your proximity to the issue.
                   </h1>
 

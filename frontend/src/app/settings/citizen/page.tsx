@@ -15,7 +15,7 @@ type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 export default function Settings() {
   const { getUserProfile } = useProfile();
   const [data, setData] = useState<UserData | null>(null);
-
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [activeTab, setActiveTab] = useState("AccountInformation");
   const [subPage, setSubPage] = useState<SubPage>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -32,6 +32,12 @@ export default function Settings() {
   // const [surname, setSurname] = useState<string>("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   useEffect(() => {
     const getProfileData = async () => {
@@ -236,9 +242,7 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div
-          className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-        >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
@@ -246,9 +250,7 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div
-            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-          >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -314,46 +316,62 @@ export default function Settings() {
                 <div className="flex items-center justify-between p-2 rounded">
                   <div className="flex items-center">
                     <MapPin className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">Enable Location Access</span>
+                    <span className="text-lg font-semibold">
+                      Enable Location Access
+                    </span>
                   </div>
                   <div
-                    className={`relative w-12 h-6 rounded-full ${locationAccess ? "bg-green-400" : "bg-gray-400"}`}
+                    className={`relative w-12 h-6 rounded-full ${
+                      locationAccess ? "bg-green-400" : "bg-gray-400"
+                    }`}
                     onClick={toggleLocationAccess}
                   >
                     <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${locationAccess ? "translate-x-6" : "translate-x-0"} transition-transform`}
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                        locationAccess ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                     ></div>
                   </div>
                 </div>
-                <p className="text-gray-600">Enable or disable location access for better service recommendations.</p>
+                <p className="text-gray-600">
+                  Enable or disable location access for better service
+                  recommendations.
+                </p>
               </div>
-        
+
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
                 <div className="flex items-center justify-between p-2 rounded">
                   <div className="flex items-center">
                     <Shield className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">Two-Factor Authentication</span>
+                    <span className="text-lg font-semibold">
+                      Two-Factor Authentication
+                    </span>
                   </div>
                   <div
-                    className={`relative w-12 h-6 rounded-full ${twoFactorAuth ? "bg-green-400" : "bg-gray-400"}`}
+                    className={`relative w-12 h-6 rounded-full ${
+                      twoFactorAuth ? "bg-green-400" : "bg-gray-400"
+                    }`}
                     onClick={toggleTwoFactorAuth}
                   >
                     <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${twoFactorAuth ? "translate-x-6" : "translate-x-0"} transition-transform`}
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                        twoFactorAuth ? "translate-x-6" : "translate-x-0"
+                      } transition-transform`}
                     ></div>
                   </div>
                 </div>
-                <p className="text-gray-600">Add an extra layer of security to your account with two-factor authentication.</p>
+                <p className="text-gray-600">
+                  Add an extra layer of security to your account with two-factor
+                  authentication.
+                </p>
               </div>
             </div>
           </div>
         );
-        
+
       case "Accessibility":
         return (
-          <div
-            className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4"
-          >
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -416,7 +434,7 @@ export default function Settings() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarUser />
+          <NavbarUser unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
@@ -435,9 +453,13 @@ export default function Settings() {
           ></div>
           <main>
             <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80">
-                Settings
-              </h1>
+              <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Settings
+                </h1>
+              </div>
+            </div>
+            <div className="flex items-center mb-2 mt-2 ml-2">
               <button data-testid="open-help-menu" onClick={toggleHelpMenu}>
                 <HelpCircle
                   className="ml-2 fixed bottom-4 right-4 text-white cursor-pointer transform transition-transform duration-300 hover:scale-110"
@@ -476,7 +498,7 @@ export default function Settings() {
             )}
 
             <div className="flex">
-            <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
+              <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                 <div className="flex items-center mb-4">
                   {data?.picture ? (
                     <img

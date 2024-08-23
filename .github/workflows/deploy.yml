@@ -75,36 +75,11 @@ jobs:
             exit 0
           fi
 
-    - name: Set Binary Media Types for API Gateway
-      working-directory: backend
-      run: |
-            aws apigateway update-rest-api \
-              --rest-api-id $(aws apigateway get-rest-apis --query "items[?name=='mycity-api'].id" --output text) \
-              --patch-operations op=add,path=/binaryMediaTypes/multipart~1form-data
-
-    - name: Wait Before Deploying API Gateway Stage
-      working-directory: backend
-      run: sleep 30  # Wait for 30 seconds before the next step
-
-    - name: Deploy API Gateway Stage
-      working-directory: backend
-      run: |
-          if [ ${{ github.base_ref }} == 'main' ]; then
-            aws apigateway create-deployment \
-          --rest-api-id ${{ secrets.API_ID }} \
-          --stage-name "prod"
-          elif [ ${{ github.base_ref }} == 'development' ]; then
-            aws apigateway create-deployment \
-          --rest-api-id ${{ secrets.API_ID }} \
-          --stage-name "dev"
-          else
-            echo "No API Gateway Stage deployment for this branch"
-            exit 0
-          fi
-
 
     - name: Deploy Chalice App
       working-directory: backend
+      env:
+        API_STAGE_NAME: ${{ env.API_STAGE_NAME }}
       run: |
           chalice deploy --stage ${{ env.API_STAGE_NAME }}
 

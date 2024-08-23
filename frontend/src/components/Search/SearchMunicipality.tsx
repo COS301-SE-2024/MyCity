@@ -2,23 +2,21 @@ import React from 'react';
 import { UserCircle } from 'lucide-react';
 import { Municipality } from '@/types/custom.types';
 
-
 interface SearchMunicipalityProps {
   municipalities: Municipality[];
 }
 
 const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities }) => {
-  /*if (!municipalities || municipalities.length === 0) {
-    return <div>No municipalities found.</div>;
-  }*/
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-1 px-6 rounded-3xl">
       {municipalities.map((municipality: Municipality, index: number) => (
-        <div key={index} className="grid grid-cols-6 gap-4 bg-white bg-opacity-70 mb-4 rounded-md shadow-md p-4">
+        <div
+          key={index}
+          className="grid grid-cols-6 gap-2 bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4"
+        >
           {/* Municipality text */}
           <div className="flex flex-col justify-center items-center">
-            <span className="text-s text-black-500">Municipality</span>
+            <span className="text-s font-bold text-black-500">Municipality</span>
           </div>
 
           {/* User Circle Icon */}
@@ -28,26 +26,31 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({ municipalities 
 
           {/* Municipality Name */}
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">Name</span>
-            <span className="text-gray-800">{municipality.municipality_id}</span>
+            <span className="text-xs text-black">Name</span>
+            <span className="text-black">{municipality.municipality_id}</span>
           </div>
 
           {/* Province */}
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">Province</span>
-            <span className="text-gray-800">{municipality.province}</span>
+            <span className="text-xs text-black">Province</span>
+            <span className="text-black">{municipality.province}</span>
           </div>
 
           {/* Email */}
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">Email</span>
-            <span className="text-gray-800">{municipality.email}</span>
+            <span className="text-sm text-black">Email</span>
+            <span
+              className="text-black truncate max-w-[15rem]"
+              style={{ fontSize: municipality.email.length > 35 ? '0.75rem' : '1rem' }}
+            >
+              {municipality.email}
+            </span>
           </div>
 
           {/* Contact Number */}
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-500">Contact Number</span>
-            <span className="text-gray-800">{municipality.contactNumber}</span>
+            <span className="text-xs text-black">Contact Number</span>
+            <span className="text-black">{municipality.contactNumber}</span>
           </div>
         </div>
       ))}

@@ -32,13 +32,8 @@ const statusStyles = {
 
 export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  
   const tendersPerPage = 10;
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   const safeTenders = Array.isArray(tenders) ? tenders : [];
 
@@ -59,20 +54,7 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <ThreeDots
-          height="40"
-          width="80"
-          radius="9"
-          color="#ADD8E6"
-          ariaLabel="three-dots-loading"
-          visible={true}
-        />
-      </div>
-    );
-  }
+  
 
   if (safeTenders.length === 0) {
     return (
@@ -83,9 +65,10 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
   }
 
   return (
-    <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
-      <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+    <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
+      <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
+        <div className='text-xl my-4 font-bold'>Select a Tender Contract to view its details.</div>
+        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-6 py-1 font-bold text-center border-b border-gray-200">
           <div className="col-span-1 flex justify-center">Status</div>
           <div className="col-span-1 flex justify-center">Tender ID</div>
           <div className="col-span-1 flex justify-center">Ticket ID</div>
@@ -94,7 +77,7 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
           <div className="col-span-1 flex justify-center">Price</div>
           <div className="col-span-1 flex justify-center">Estimated Duration</div>
         </div>
-        <div className="min-w-full">
+        <div className="min-w-full px-6">
           {currentTenders.map((tender) => (
             <Tender key={tender.ticket_id} tender={tender} />
           ))}
