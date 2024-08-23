@@ -49,6 +49,6 @@ next-env.d.ts
 *.Identifier
 
 # auto generated service worker files
-public/sw.*
+public/sw*
 public/swe-worker-*
 public/workbox-*
