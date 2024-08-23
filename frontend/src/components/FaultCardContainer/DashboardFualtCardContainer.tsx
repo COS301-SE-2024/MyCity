@@ -35,11 +35,21 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
   const handleCardClick = (cardData: CardData) => {
+    // update url to include ticket id parameter
+    const url = new URL(window.location.href);
+    url.searchParams.set("t_id", cardData.ticket_id);
+    window.history.pushState({}, "", url.toString());
+
     setSelectedCard(cardData);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
+    // update url to remove ticket id parameter
+    const url = new URL(window.location.href);
+    url.searchParams.delete("t_id");
+    window.history.replaceState({}, '', url.toString());
+
     setShowModal(false);
     setSelectedCard(null);
   };

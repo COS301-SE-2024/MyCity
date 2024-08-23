@@ -46,31 +46,23 @@ export default function CitizenDashboard() {
 
   useEffect(() => {
     const getDeeplinkTicket = async () => {
-      console.log("function entry");
-
       const user_data = await userProfile.getUserProfile();
-      console.log("user profile extracted");
       const userSession = String(user_data.current?.session_token);
-
 
       //check if the ticket id query parameter is present
       if (!searchParams.has('t_id')) {
         //return if not present
-        console.log("search param not present");
         return;
       }
 
       // get the parameter
       const ticketId = searchParams.get('t_id');
 
-      console.log("attempting to get ticket with id ", ticketId);
-
       //get the ticket
       const deepTicket = await getTicket(ticketId!, userSession);
       if (deepTicket.length == 1) {
         setDeeplinkTicket(deepTicket[0]);
       }
-      console.log("ticket has been retrieved: ", JSON.stringify(deepTicket));
     };
 
     const fetchData = async () => {
@@ -105,7 +97,6 @@ export default function CitizenDashboard() {
         );
         setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
 
-        console.log("Most upvote results: ", rspmostupvotes[0]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -113,7 +104,7 @@ export default function CitizenDashboard() {
       }
     };
 
-    // getDeeplinkTicket();
+    getDeeplinkTicket();
     fetchData();
   }, [userProfile]);
 
@@ -139,11 +130,17 @@ export default function CitizenDashboard() {
     <div>
 
 
-      {/* popup starts here */}
-
+      {/* fault popup used with deeplinks starts here*/}
+      
       {(deeplinkTicket) && <FaultCardUserView
         show={true}
-        onClose={() => { }}
+        onClose={() => {
+          // update url to remove ticket id parameter
+          const url = new URL(window.location.href);
+          url.searchParams.delete("t_id");
+          window.history.replaceState({}, '', url.toString());
+          setDeeplinkTicket(undefined);
+        }}
         title={deeplinkTicket.asset_id}
         address={deeplinkTicket.address}
         arrowCount={deeplinkTicket.upvotes}
@@ -158,9 +155,7 @@ export default function CitizenDashboard() {
         longitude={deeplinkTicket.longitude}
         urgency={deeplinkTicket.urgency}
       />}
-
-      {/* popup ends here */}
-
+      {/* fault popup used with deeplinks ends here */}
 
 
       {/* Desktop View */}
