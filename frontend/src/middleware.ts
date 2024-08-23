@@ -32,14 +32,14 @@ export async function middleware(request: NextRequest) {
 
     userPathSuffix = cookie.value;
 
-    //RULE 1: and tries to access any of the auth routes,
-    if (pathStartsWith("/auth")) {
-      //redirect to dashboard
+    //RULE 1: and tries to access guest home page or any of the auth routes,
+    if (pathIs("/") || pathStartsWith("/auth")) {
+      //redirect to their home page (dashboard)
       return NextResponse.redirect(new URL(`/dashboard/${userPathSuffix}`, request.nextUrl));
     }
 
-    //RULE 2: and tries to access an unauthorised page of another user type (with the exception of the home page),
-    if (!pathEndsWith(userPathSuffix) && !pathIs("/")) {
+    //RULE 3: and tries to access an unauthorised page of another user type (with the exception of the home page),
+    if (!pathEndsWith(userPathSuffix)) {
       //redirect them to their own equivalent of the page
       const lastSeparator = path.lastIndexOf("/");
       const pathPrefix = path.substring(0, lastSeparator);
