@@ -34,6 +34,10 @@ function getStatus(status : string){
       return "under_review"
     case "submitted":
       return "submitted"
+    case "approved":
+      return "approved"
+    case "accepted":
+      return "approved"
     default:
       return "submitted"
       break;
@@ -43,8 +47,9 @@ function getStatus(status : string){
 const statusStyles = {
   under_review: "text-blue-500 border-blue-500 rounded-full",
 //   c: "text-black bg-green-200 rounded-full",
-  rejected: "text-black bg-red-200 rounded-full",
-  submitted: "text-black bg-gray-200 rounded-full",
+  rejected: "text-red-500 bg-red-200 border-red-200 rounded-full",
+  submitted: "text-black-500 bg-gray-200 border-gray-200 rounded-full",
+  approved: "text-green-500 bg-green-200 border-green-200 rounded-full",
 };
 
 const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (data : number) => void }) => {
@@ -210,7 +215,8 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={handleBack}>
                   Back
                 </button>
-                {tenderStatus === "approved" ? (
+                {tenderStatus === "Rejected" ? null : (
+                (tenderStatus === "Approved" || tenderStatus === "Accepted" )? (
                     ///Add button to open component of the contract
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
@@ -229,7 +235,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
                       Accept
                     </button>
                   </>
-                )}
+                ))}
               </div>
             </div>
             {/* Right Section */}

@@ -369,9 +369,11 @@ def validate_ticket_id(ticket_id):
 def view_ticket_data(ticket_id):
     ticket_id = validate_ticket_id(ticket_id)
     try:
-        response = tickets_table.query(KeyConditionExpression=Key("ticket_id").eq(ticket_id))
+        response = tickets_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_id)
+        )
         items = response.get("Items", [])
-        
+
         if len(items) > 0:
             for item in items:
                 response_item = ticketupdate_table.query(

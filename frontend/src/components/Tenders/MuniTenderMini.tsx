@@ -23,28 +23,23 @@ interface TenderType {
 
 function statusStyles(status: String) {
   switch (status) {
-    case "rejected":
-      return "bg-red-200 text-black";
-    case "approved":
-      return "bg-green-200 text-black";
-    case "under review":
-      return "border-blue-500 text-black";
-    case "submitted":
-      return "bg-gray-200 text-black";
-    case "reject":
-      return "bg-red-200 text-black";
-    default:
-      return "bg-gray-200 text-black";
+    case 'rejected':
+      return 'bg-red-200 text-red-500 border-red-200';
+    case 'approved':
+      return 'bg-green-200 text-green-500 ';
+    case 'accepted':
+      return 'bg-green-200 text-green-500 border-green-200';
+    case 'under review':
+      return 'border-blue-200 text-blue-500 bg-blue-200';
+    case 'submitted':
+      return 'bg-gray-200 text-gray border-gray-200';
+    case 'rejected':
+      return 'bg-red-200 text-red';
   }
 }
 
-export default function Tender({
-  tender,
-  onClose,
-}: {
-  tender: TenderType;
-  onClose: (data: number) => void;
-}) {
+
+export default function Tender({ tender,onClose }: { tender: TenderType,onClose: (data : number) => void }) {
   const [showDetails, setShowDetails] = useState(false);
   const [status, setStatus] = useState<String>("");
 
@@ -88,12 +83,8 @@ export default function Tender({
         style={{ boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}
       >
         <div className="col-span-1 flex justify-center">
-          <span
-            className={`px-2 py-1 text-center font-bold ${statusStyles(
-              status
-            )} min-w-[150px] rounded-3xl`}
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+          <span className={`px-2 py-1 rounded-full border ${statusStyles(status)}`}>
+            {status}
           </span>
         </div>
 
