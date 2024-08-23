@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Key, useEffect, useRef, useState } from "react";
+import React, { Key, Suspense, useEffect, useRef, useState } from "react";
 import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
@@ -23,7 +23,17 @@ import { DashboardTicket } from "@/types/custom.types";
 
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 
+
 export default function CitizenDashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CitizenDashboardContent />
+    </Suspense>
+  );
+}
+
+
+function CitizenDashboardContent() {
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
@@ -34,7 +44,6 @@ export default function CitizenDashboard() {
 
   const [deeplinkTicket, setDeeplinkTicket] = useState<DashboardTicket | undefined>();
   const searchParams = useSearchParams();
-
 
 
   useEffect(() => {
@@ -129,9 +138,8 @@ export default function CitizenDashboard() {
   return (
     <div>
 
-
       {/* fault popup used with deeplinks starts here*/}
-      
+
       {(deeplinkTicket) && <FaultCardUserView
         show={true}
         onClose={() => {
