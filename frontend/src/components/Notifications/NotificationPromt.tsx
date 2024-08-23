@@ -48,7 +48,17 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
 
   async function storeToken() {
     const user_data = await getUserProfile();
-    const token = await generateToken() ?? " ";
+    console.log("User: ", userEmail);
+    console.log("Browser: ", getBrowserInfo());
+
+    // const token = await generateToken();
+
+
+    var token = await generateToken();
+    while (!token) {
+      token = await generateToken();
+    }
+    console.log("Token generated: ", token);
 
     try {
       const sessiont = user_data.current?.session_token || " ";
