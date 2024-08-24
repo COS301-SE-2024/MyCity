@@ -7,7 +7,7 @@ export async function StoreToken(sessiont: string, username: string, deviceID: s
         // subscriptions: subscriptions
     };
 
-    const apiURL = "/api/notifications/notification";
+    const apiURL = "/api/notifications/insert-token";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {

@@ -35,7 +35,7 @@ app.register_blueprint(watchlist_blueprint, "Watchlist", "/watchlist")
 
 app.register_blueprint(users_blueprint, "Users", "/users")
 
-app.register_blueprint(notification_blueprint, "Notifications", "/notifications")
+app.register_blueprint(notification_blueprint, "Notifications", "/insert-token")
 
 
 @app.route("/", authorizer=cognito_authorizer, cors=True)

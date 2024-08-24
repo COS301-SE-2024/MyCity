@@ -29,9 +29,9 @@ def format_response(status_code, body):
 
 
 def insert_notification_token(token_data):
-    reuired_fields = ["username ", "deviceID", "token"]
+    required_fields = ["username ", "deviceID", "token"]
 
-    for field in reuired_fields:
+    for field in required_fields:
         if field not in token_data:
             raise BadRequestError(f"{field} is required")
 
