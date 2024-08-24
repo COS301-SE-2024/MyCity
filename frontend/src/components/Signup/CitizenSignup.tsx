@@ -40,6 +40,7 @@ export default function CitizenSignup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
@@ -47,7 +48,21 @@ export default function CitizenSignup() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsEmailValid(emailRegex.test(email));
   };
-
+  useEffect(() => {
+    const fetchMunicipalities = async () => {
+      try {
+        const data = await getMunicipalityList();
+        setMunicipalities(data);
+      } catch (error: any) {
+        console.error("Error fetching municipalities:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching is complete
+      }
+    };
+  
+    fetchMunicipalities();
+  }, []);
+  
   const passwordChecklist = [
     {
       text: "At least 8 characters long",
@@ -248,39 +263,49 @@ export default function CitizenSignup() {
           onChange={handleInputChange}
         />
 
-        <Autocomplete
-          label={
-            <span className="font-semibold text-medium block mb-[0.20em]">
-              Municipality{" "}
-              <span
-                className={`${
-                  selectedMunicipality ? "text-green-500" : "text-red-500"
-                } *`}
-              ></span>
-            </span>
-          }
-          labelPlacement="outside"
-          name="municipality"
-          placeholder="Select a municipality"
-          fullWidth
-          defaultItems={municipalities}
-          disableSelectorIconRotation
-          isClearable={false}
-          menuTrigger={"input"}
-          size={"lg"}
-          onSelectionChange={(value) =>
-            setSelectedMunicipality(value as string)
-          }
+<div className="relative w-full">
+  {loading ? (
+    <div className="flex justify-center items-center h-[3em] rounded-lg">
+      <FaSpinner className="animate-spin text-black" size={20} />
+    </div>
+  ) : (
+    <Autocomplete
+      label={
+        <span className="font-semibold text-medium block mb-[0.20em]">
+          Municipality{" "}
+          <span
+            className={`${
+              selectedMunicipality ? "text-green-500" : "text-red-500"
+            } *`}
+          ></span>
+        </span>
+      }
+      labelPlacement="outside"
+      name="municipality"
+      placeholder="Select a municipality"
+      fullWidth
+      defaultItems={municipalities}
+      disableSelectorIconRotation
+      isClearable={false}
+      menuTrigger={"input"}
+      size={"lg"}
+      onSelectionChange={(value) =>
+        setSelectedMunicipality(value as string)
+      }
+    >
+      {(municipality) => (
+        <AutocompleteItem
+          key={municipality.municipality_id}
+          textValue={municipality.municipality_id}
         >
-          {(municipality) => (
-            <AutocompleteItem
-              key={municipality.municipality_id}
-              textValue={municipality.municipality_id}
-            >
-              <span className="text-small">{municipality.municipality_id}</span>
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
+          <span className="text-small">{municipality.municipality_id}</span>
+        </AutocompleteItem>
+      )}
+    </Autocomplete>
+  )}
+</div>
+
+
 
         {/* Password Inputs */}
         <div className="flex justify-between gap-4">
