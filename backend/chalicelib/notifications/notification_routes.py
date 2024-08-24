@@ -8,7 +8,7 @@ notification_blueprint = Blueprint(__name__)
 
 
 @notification_blueprint.route(
-    "/insert-token", authorizer=cognito_authorizer, methods=["GET"], cors=True
+    "/notifications", authorizer=cognito_authorizer, methods=["GET"], cors=True
 )
 def Store_Token_route():
     request = notification_blueprint.current_request
