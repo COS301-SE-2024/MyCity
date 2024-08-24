@@ -29,27 +29,32 @@ def format_response(status_code, body):
 
 
 def insert_notification_token(token_data):
-    required_fields = ["username ", "deviceID", "token"]
+    try:
+        required_fields = ["username ", "deviceID", "token"]
 
-    for field in required_fields:
-        if field not in token_data:
-            raise BadRequestError(f"{field} is required")
+        for field in required_fields:
+            if field not in token_data:
+                raise BadRequestError(f"{field} is required")
 
-    username = token_data["username"]
-    deviceID = token_data["deviceID"]
-    token = token_data["token"]
-    current_datetime = datetime.now()
-    formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-    subscriptions = ["status", "upvotes", "comments"]
+        username = token_data["username"]
+        deviceID = token_data["deviceID"]
+        token = token_data["token"]
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        subscriptions = ["status", "upvotes", "comments"]
 
-    notification_item = {
-        "username": username,
-        "deviceID": deviceID,
-        "token": token,
-        "subscriptions": subscriptions,
-        "date": formatted_datetime,
-    }
+        notification_item = {
+            "username": username,
+            "deviceID": deviceID,
+            "token": token,
+            "subscriptions": subscriptions,
+            "date": formatted_datetime,
+        }
 
-    notifications_table.put_item(Item=notification_item)
-    accresponse = {"message": "Notification Token Saved", "token": token}
-    return format_response(float(200), accresponse)
+        notifications_table.put_item(Item=notification_item)
+        accresponse = {"message": "Notification Token Saved", "token": token}
+        return format_response(float(200), accresponse)
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
