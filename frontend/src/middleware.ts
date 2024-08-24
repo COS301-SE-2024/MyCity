@@ -12,53 +12,53 @@ export async function middleware(request: NextRequest) {
   const pathStartsWith = (url: string) => path.startsWith(url);
   const pathEndsWith = (url: string) => path.endsWith(url);
 
-  //bypass middleware if not in production environment
-  // if (process.env.NODE_ENV != "production") {
-  //   return response;
-  // }
+  // bypass middleware if not in production environment
+  if (process.env.NODE_ENV != "production") {
+    return response;
+  }
 
 
   //---- IF USER IS LOGGED IN ------
-  // if (isAuthenticated) {
-  //   const cookie = request.cookies.get(USER_PATH_SUFFIX_COOKIE_NAME);
-  //   let userPathSuffix: string = "";
+  if (isAuthenticated) {
+    const cookie = request.cookies.get(USER_PATH_SUFFIX_COOKIE_NAME);
+    let userPathSuffix: string = "";
 
-  //   if (!cookie) {
-  //     //in the event that user path suffix cookie is null for some reason,
-  //     //display message saying token expired, log the user out and redirect to login page
-  //     handleSignOut();
-  //     return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
-  //   }
+    if (!cookie) {
+      //in the event that user path suffix cookie is null for some reason,
+      //display message saying token expired, log the user out and redirect to login page
+      handleSignOut();
+      return NextResponse.redirect(new URL("/auth/login", request.nextUrl));
+    }
 
-  //   userPathSuffix = cookie.value;
+    userPathSuffix = cookie.value;
 
-  //   //RULE 1: and tries to access any of the auth routes,
-  //   if (pathStartsWith("/auth")) {
-  //     //redirect to dashboard
-  //     return NextResponse.redirect(new URL(`/dashboard/${userPathSuffix}`, request.nextUrl));
-  //   }
+    //RULE 1: and tries to access guest home page or any of the auth routes,
+    if (pathIs("/") || pathStartsWith("/auth")) {
+      //redirect to their home page (dashboard)
+      return NextResponse.redirect(new URL(`/dashboard/${userPathSuffix}`, request.nextUrl));
+    }
 
-  //   //RULE 2: and tries to access an unauthorised page of another user type (with the exception of the home page),
-  //   if (!pathEndsWith(userPathSuffix) && !pathIs("/")) {
-  //     //redirect them to their own equivalent of the page
-  //     const lastSeparator = path.lastIndexOf("/");
-  //     const pathPrefix = path.substring(0, lastSeparator);
-  //     const nextPath = `${pathPrefix}/${userPathSuffix}`;
-  //     return NextResponse.redirect(new URL(nextPath, request.nextUrl));
-  //   }
+    //RULE 3: and tries to access an unauthorised page of another user type (with the exception of the home page),
+    if (!pathEndsWith(userPathSuffix)) {
+      //redirect them to their own equivalent of the page
+      const lastSeparator = path.lastIndexOf("/");
+      const pathPrefix = path.substring(0, lastSeparator);
+      const nextPath = `${pathPrefix}/${userPathSuffix}`;
+      return NextResponse.redirect(new URL(nextPath, request.nextUrl));
+    }
 
-  // }
+  }
 
-  // //---- IF USER IS NOT LOGGED IN ------
-  // else {
+  //---- IF USER IS NOT LOGGED IN ------
+  else {
 
-  //   //RULE 3: and is trying to access a page that is neither their home, dashboardd, about nor login/signup pages,
-  //   if (!pathStartsWith("/auth") && !pathIs("/") && !pathIs("/dashboard/guest") && !pathIs("/about/guest")) {
-  //     //redirect to guest dashboard
-  //     return NextResponse.redirect(new URL("/dashboard/guest", request.nextUrl));
-  //   }
+    //RULE 3: and is trying to access a page that is neither their home, dashboardd, about nor login/signup pages,
+    if (!pathStartsWith("/auth") && !pathIs("/") && !pathIs("/dashboard/guest") && !pathIs("/about/guest")) {
+      //redirect to guest dashboard
+      return NextResponse.redirect(new URL("/dashboard/guest", request.nextUrl));
+    }
 
-  // }
+  }
 
   return response;
 }
