@@ -31,10 +31,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # Install Python dependencies if necessary (if you are using Python)
+      # Install Python dependencies
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
 
       - name: Super-Linter
         uses: super-linter/super-linter@v6.5.1            
