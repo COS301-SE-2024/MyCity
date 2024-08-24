@@ -182,6 +182,8 @@ def add_watchlist(ticket_data):
             }
             raise ClientError(error_response, "AlreadyExists")
         
+        
+        
         if TicketExists(ticket_data['ticket_id']) == False:
             error_response = {
                 "Error": {
