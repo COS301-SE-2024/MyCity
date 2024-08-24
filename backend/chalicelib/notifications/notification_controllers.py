@@ -51,12 +51,10 @@ def insert_notification_token(token_data):
             "date": formatted_datetime,
         }
 
-        
-
         notifications_table.put_item(Item=notification_item)
         accresponse = {"message": "Notification Token Saved", "token": token}
         return format_response(float(200), accresponse)
-    
+
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
