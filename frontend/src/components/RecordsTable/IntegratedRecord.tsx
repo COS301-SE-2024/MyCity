@@ -120,7 +120,7 @@ export default function Record({ record, refresh }: { record: RecordType, refres
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
         <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
-        <div className="col-span-1 flex justify-center">{record.asset_id}</div>
+        <div className="col-span-1 flex  text-center justify-center">{record.asset_id}</div>
         <div className="col-span-1 flex justify-center">
           <span 
             className={`py-1 rounded-3xl text-center font-bold ${getStateColour(ticketstate)}`} 
