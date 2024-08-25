@@ -3,10 +3,10 @@ name: Super Linter
 on:
   pull_request:
     branches: [main, development, release]
-  workflow_dispatch: {}  
+  workflow_dispatch: {}
 
 jobs:
-  build:    
+  build:
     name: Super Linter
 
     runs-on: ubuntu-latest
@@ -22,22 +22,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Cache Python dependencies
-      - name: Cache Python dependencies
+      # Cache Super-Linter dependencies
+      - name: Cache Super-Linter files
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt') }}
+          path: |
+            ~/.cache/linters
+            ~/.cache/superlinter
+          key: ${{ runner.os }}-superlinter-${{ hashFiles('**/.github/workflows/superlinter.yml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
-
-      # Install Python dependencies
-      - name: Install dependencies
-        run: |
-          pip install -r backend/requirements.txt
+            ${{ runner.os }}-superlinter-
 
       - name: Super-Linter
-        uses: super-linter/super-linter@v6.5.1            
+        uses: super-linter/super-linter@v6.5.1
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_PYTHON_BLACK: true
