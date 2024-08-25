@@ -6,6 +6,7 @@ import { onMessage } from "@firebase/messaging";
 import { useProfile } from "@/hooks/useProfile";
 import { StoreToken } from "@/services/notification.service";
 import { X } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
 
 declare global {
   interface Navigator {
@@ -48,8 +49,8 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
 
   async function storeToken() {
     const user_data = await getUserProfile();
-    console.log("User: ", userEmail);
-    console.log("Browser: ", getBrowserInfo());
+    
+    
 
     // const token = await generateToken();
 
@@ -58,12 +59,26 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
     while (!token) {
       token = await generateToken();
     }
-    console.log("Token generated: ", token);
+    
 
     try {
       const sessiont = user_data.current?.session_token || " ";
+      console.log("Session Token: ", sessiont);
+      console.log("User: ", userEmail);
+      console.log("Browser: ", getBrowserInfo());
+      console.log("Token generated: ", token);
+
+      
       const isAdded = await StoreToken(sessiont, userEmail, getBrowserInfo(), token);
       console.log("Token stored: ", isAdded);
+      
+      if (isAdded === true) {
+        toast.success("Notifications enabled!");
+        console.log("Token stored successfully");
+      } else {
+        throw new Error("Storing Token failed");
+      }
+
     } catch (error: any) {
       console.error("Error:", error);
     }
