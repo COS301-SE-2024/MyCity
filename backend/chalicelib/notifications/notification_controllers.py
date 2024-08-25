@@ -15,6 +15,7 @@ def convert_decimal_to_float(obj):
         return float(obj)
     raise TypeError
 
+
 def format_response(status_code, body):
     return Response(
         body=json.dumps(body, default=convert_decimal_to_float),
@@ -26,8 +27,9 @@ def format_response(status_code, body):
         },
     )
 
+
 def insert_notification_token(token_data):
-    print(token_data);
+    print(token_data)
     try:
         required_fields = ["username", "deviceID", "token"]
 
@@ -41,7 +43,6 @@ def insert_notification_token(token_data):
         current_datetime = datetime.now()
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         subscriptions = ["status", "upvotes", "comments"]
-
 
         notification_item = {
             "username": username,
@@ -59,6 +60,7 @@ def insert_notification_token(token_data):
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         return {"Status": "FAILED", "Error": error_message}
+
 
 def get_notification_tokens(username):
     try:

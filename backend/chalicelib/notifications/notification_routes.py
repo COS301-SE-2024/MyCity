@@ -17,6 +17,7 @@ def store_token_route():
     response = insert_notification_token(ticket_data)
     return response
 
+
 @notifications_blueprint.route(
     "/get-tokens", authorizer=cognito_authorizer, methods=["GET"], cors=True
 )
