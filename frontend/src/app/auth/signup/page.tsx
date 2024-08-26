@@ -10,6 +10,29 @@ import PrivateCompanySignup from "@/components/Signup/PrivateCompanySignup";
 import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Signup() {
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+
+  React.useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude.toString());
+        setLongitude(position.coords.longitude.toString());
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+      },
+      {
+        enableHighAccuracy: true, // Enable high accuracy mode
+        timeout: 10000, // Timeout after 10 seconds
+        maximumAge: 0, // No caching, get the latest position
+      }
+    );
+  }, []);
+  
+  console.log("Latitude is :", latitude);
+  console.log("Longitude is :", longitude);
+
   const headers: string[] = [
     "Get Connected.",
     "Take Control.",
@@ -123,42 +146,42 @@ export default function Signup() {
 
           {/* Content */}
           <div className="mt-2">
-              <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
-                <span className="text-[2.5em] font-bold">
-                  {currentFormHeader}
-                </span>
-                <Tabs
-                  aria-label="Signup Options"
-                  defaultSelectedKey={2}
-                  className="mt-2 flex justify-center w-full"
-                  classNames={{
-                    tab: " min-h-10",
-                    panel: "w-full",
-                    cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
-                    tabContent:
-                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
-                  }}
-                  onSelectionChange={handleTabChange}
+            <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
+              <span className="text-[2.5em] font-bold">
+                {currentFormHeader}
+              </span>
+              <Tabs
+                aria-label="Signup Options"
+                defaultSelectedKey={2}
+                className="mt-2 flex justify-center w-full"
+                classNames={{
+                  tab: " min-h-10",
+                  panel: "w-full",
+                  cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
+                  tabContent:
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
+                }}
+                onSelectionChange={handleTabChange}
+              >
+                <Tab key={0} title="Citizen" data-testid="citizen-tab">
+                  <CitizenSignup />
+                </Tab>
+                <Tab
+                  key={1}
+                  title="Municipality"
+                  data-testid="municipality-tab"
                 >
-                  <Tab key={0} title="Citizen" data-testid="citizen-tab">
-                    <CitizenSignup />
-                  </Tab>
-                  <Tab
-                    key={1}
-                    title="Municipality"
-                    data-testid="municipality-tab"
-                  >
-                    <MunicipalitySignup />
-                  </Tab>
-                  <Tab
-                    key={2}
-                    title="Service Provider"
-                    data-testid="service-provider-tab"
-                  >
-                    <ServiceProviderTabs />
-                  </Tab>
-                </Tabs>
-              </div>
+                  <MunicipalitySignup />
+                </Tab>
+                <Tab
+                  key={2}
+                  title="Service Provider"
+                  data-testid="service-provider-tab"
+                >
+                  <ServiceProviderTabs />
+                </Tab>
+              </Tabs>
+            </div>
           </div>
         </div>
         {/* Navbar */}
