@@ -270,7 +270,7 @@ export default function ServiceProviderSignup() {
       <div className="block sm:hidden">
         <div className="px-2">
           <form
-            data-testid="service-provider-signup-form"
+            data-testid="mobile-service-provider-signup-form"
             onSubmit={handleSubmit}
             className="flex flex-col gap-y-4 pt-2"
           >

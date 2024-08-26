@@ -129,7 +129,7 @@ export default function Signup() {
                 </span>
                 <Tabs
                   aria-label="Signup Options"
-                  defaultSelectedKey={2}
+                  defaultSelectedKey={0}
                   className="mt-2 flex justify-center w-full"
                   classNames={{
                     tab: " min-h-10",
@@ -140,20 +140,20 @@ export default function Signup() {
                   }}
                   onSelectionChange={handleTabChange}
                 >
-                  <Tab key={0} title="Citizen" data-testid="citizen-tab">
+                  <Tab key={0} title="Citizen" data-testid="mobile-citizen-tab">
                     <CitizenSignup />
                   </Tab>
                   <Tab
                     key={1}
                     title="Municipality"
-                    data-testid="municipality-tab"
+                    data-testid="mobile-municipality-tab"
                   >
                     <MunicipalitySignup />
                   </Tab>
                   <Tab
                     key={2}
                     title="Service Provider"
-                    data-testid="service-provider-tab"
+                    data-testid="mobile-service-provider-tab"
                   >
                     <ServiceProviderTabs />
                   </Tab>
