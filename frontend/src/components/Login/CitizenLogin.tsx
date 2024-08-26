@@ -48,7 +48,10 @@ export default function CitizenLogin() {
     setError(null); // Clear any previous error
 
     try {
-      const { isSignedIn } = await handleSignIn(new FormData(event.currentTarget as HTMLFormElement), UserRole.CITIZEN);
+      const { isSignedIn } = await handleSignIn(
+        new FormData(event.currentTarget as HTMLFormElement),
+        UserRole.CITIZEN
+      );
 
       if (isSignedIn) {
         router.push("/dashboard/citizen");
@@ -76,109 +79,229 @@ export default function CitizenLogin() {
   };
 
   return (
-    <div className="px-12">
-      <form
-        data-testid="citizen-login-form"
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-y-8 pt-8"
-      >
-        <Input
-          variant={"bordered"}
-          fullWidth
-          label={
-            <span className="font-semibold text-medium block mb-[0.20em]">
-              Email <span className="text-blue-500">*</span>
-            </span>
-          }
-          labelPlacement={"outside"}
-          classNames={{
-            inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""}`,
-          }}
-          type="email"
-          name="email"
-          autoComplete="new-email"
-          placeholder="example@mail.com"
-          required
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-
-        <div className="relative w-full">
-          <Input
-            variant={"bordered"}
-            fullWidth
-            label={
-              <span className="font-semibold text-medium block mb-[0.20em]">
-                Password <span className="text-blue-500">*</span>
-              </span>
-            }
-            labelPlacement={"outside"}
-            classNames={{
-              inputWrapper: "h-[3em]",
-            }}
-            type={showPassword ? "text" : "password"}
-            name="password"
-            autoComplete="new-password"
-            placeholder="Password"
-            required
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-          <button
-            type="button"
-            className="absolute top-1/2 right-3 transform translate-y-1 text-black"
-            onClick={togglePasswordVisibility}
+    <div>
+      {/* Desktop View */}
+      <div className="hidden sm:block">
+        <div className="px-12">
+          <form
+            data-testid="citizen-login-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-y-8 pt-8"
           >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
-        </div>
+            <Input
+              variant={"bordered"}
+              fullWidth
+              label={
+                <span className="font-semibold text-medium block mb-[0.20em]">
+                  Email <span className="text-blue-500">*</span>
+                </span>
+              }
+              labelPlacement={"outside"}
+              classNames={{
+                inputWrapper: `h-[3em] ${
+                  !isEmailValid ? "border-red-500" : ""
+                }`,
+              }}
+              type="email"
+              name="email"
+              autoComplete="new-email"
+              placeholder="example@mail.com"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+            />
 
-        <Button
-          name="submit"
-          data-testid="submit-btn"
-          className={`w-56 h-11 rounded-3xl m-auto font-semibold ${
-            isFormValid && !isLoading
-              ? "bg-blue-500 text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-          type="submit"
-          disabled={!isFormValid || isLoading}
-        >
-          {isLoading ? <FaSpinner className="animate-spin" /> : "Login"}
-        </Button>
+            <div className="relative w-full">
+              <Input
+                variant={"bordered"}
+                fullWidth
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    Password <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="new-password"
+                placeholder="Password"
+                required
+                value={formData.password}
+                onChange={handleInputChange}
+              />
+              <button
+                type="button"
+                className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
 
-        <div className="w-full flex flex-row items-center">
-          <hr className="flex-grow border-t border-gray-300" />
-          <span className="mx-4 text-sm">OR</span>
-          <hr className="flex-grow border-t border-gray-300" />
-        </div>
-
-        <Button
-          onClick={googleButtonOnClick}
-          name="google-submit"
-          data-testid="google-login-btn"
-          className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
-          type="button"
-          disabled={isLoading}
-        >
-          <FcGoogle size={20} />
-          <span className="ml-2">Continue with Google</span>
-        </Button>
-      </form>
-
-      {error && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <p className="text-black">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+            <Button
+              name="submit"
+              data-testid="submit-btn"
+              className={`w-56 h-11 rounded-3xl m-auto font-semibold ${
+                isFormValid && !isLoading
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              type="submit"
+              disabled={!isFormValid || isLoading}
             >
-              Retry
-            </button>
-          </div>
+              {isLoading ? <FaSpinner className="animate-spin" /> : "Login"}
+            </Button>
+
+            <div className="w-full flex flex-row items-center">
+              <hr className="flex-grow border-t border-gray-300" />
+              <span className="mx-4 text-sm">OR</span>
+              <hr className="flex-grow border-t border-gray-300" />
+            </div>
+
+            <Button
+              onClick={googleButtonOnClick}
+              name="google-submit"
+              data-testid="google-login-btn"
+              className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+              type="button"
+              disabled={isLoading}
+            >
+              <FcGoogle size={20} />
+              <span className="ml-2">Continue with Google</span>
+            </Button>
+          </form>
+
+          {error && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <p className="text-black">{error}</p>
+                <button
+                  onClick={() => setError(null)}
+                  className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
+
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        <div >
+          <form
+            data-testid="citizen-login-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-y-4 pt-4"
+          >
+            {/* Input Fields */}
+            <div className="flex justify-between gap-4">
+              <Input
+                variant={"bordered"}
+                fullWidth
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    Email <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: `h-[3em] ${
+                    !isEmailValid ? "border-red-500" : ""
+                  }`,
+                }}
+                type="email"
+                name="email"
+                autoComplete="new-email"
+                placeholder="example@mail.com"
+                required
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+              </div>
+
+              <div className="relative w-full">
+                <Input
+                  variant={"bordered"}
+                  fullWidth
+                  label={
+                    <span className="font-semibold text-medium block mb-[0.20em]">
+                      Password <span className="text-blue-500">*</span>
+                    </span>
+                  }
+                  labelPlacement={"outside"}
+                  classNames={{
+                    inputWrapper: "h-[3em]",
+                  }}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+
+              <Button
+                name="submit"
+                data-testid="submit-btn"
+                className={`w-56 h-11 rounded-3xl m-auto font-semibold ${
+                  isFormValid && !isLoading
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                type="submit"
+                disabled={!isFormValid || isLoading}
+              >
+                {isLoading ? <FaSpinner className="animate-spin" /> : "Login"}
+              </Button>
+
+              <div className="w-full flex flex-row items-center">
+                <hr className="flex-grow border-t border-gray-300" />
+                <span className="mx-4 text-sm">OR</span>
+                <hr className="flex-grow border-t border-gray-300" />
+              </div>
+
+              <Button
+                onClick={googleButtonOnClick}
+                name="google-submit"
+                data-testid="google-login-btn"
+                className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+                type="button"
+                disabled={isLoading}
+              >
+                <FcGoogle size={20} />
+                <span className="ml-2">Continue with Google</span>
+              </Button>
+          </form>
+
+          {error && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <p className="text-black">{error}</p>
+                <button
+                  onClick={() => setError(null)}
+                  className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
