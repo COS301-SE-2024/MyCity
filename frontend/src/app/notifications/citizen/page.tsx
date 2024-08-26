@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import React, { Key, useEffect, useRef, useState } from "react";
 import TicketNoti from "@/components/NotificationsCitizenNew/TicketNoti";
 import { useProfile } from "@/hooks/useProfile";
+import { ThreeDots } from "react-loader-spinner"; // Import the loading spinner
 
 interface CardData {
   dateClosed: string;
@@ -51,6 +52,7 @@ const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
 );
 
 export default function Notifications() {
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const userProfile = useProfile();
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
@@ -59,11 +61,18 @@ export default function Notifications() {
   const itemsPerPage = 20;
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   const handleCardClick = (cardData: CardData) => {
     setSelectedCard(cardData);
     setShowModal(true);
   };
+
+  useEffect(() => {
+    // Mock the unread notifications count with a random number
+    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    setUnreadNotifications(mockUnreadNotifications);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,6 +99,8 @@ export default function Notifications() {
         setDashWatchResults(Array.isArray(rspwatchlist) ? rspwatchlist : []);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -124,7 +135,7 @@ export default function Notifications() {
         ? "watchlisted"
         : dashMuniResults.includes(item)
         ? "updated"
-        : "commented on"; // Example default action
+        : "commented on";
 
       return (
         <TicketNoti
@@ -132,8 +143,8 @@ export default function Notifications() {
           ticketNumber={item.ticketnumber}
           image={item.imageURL || null}
           action={action}
-          isNew={item.isNew || false} // Assuming `isNew` is part of your item data
-          title={item.title} // Make sure these fields exist in your data
+          isNew={item.isNew || false}
+          title={item.title}
           address={item.address}
           description={item.description}
           createdBy={item.createdby}
@@ -159,7 +170,7 @@ export default function Notifications() {
             overflow: "hidden",
           }}
         >
-          <NavbarUser />
+          <NavbarUser unreadNotifications={unreadNotifications} />
 
           {/* Background image */}
           <div
@@ -179,13 +190,30 @@ export default function Notifications() {
           />
 
           {/* Content */}
-          <div className="fixed inset-0 overflow-hidden">
+          <div className="fixed inset-0 overflow-y-auto">
             <main>
-              <h1 className="text-4xl font-bold mb-2 mt-2 ml-2 text-white text-opacity-80">
-                Notifications
-              </h1>
+              <div className="relative pt-8">
+                <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+                  Notifications
+                </h1>
+              </div>
 
-              {visibleNotifications}
+              {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <ThreeDots
+                    height="80"
+                    width="80"
+                    radius="9"
+                    color="#ADD8E6"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <div className="pt-20 px-6 rounded-3xl">{visibleNotifications}</div>
+              )}
 
               {/* Add other static TicketNoti components if needed */}
             </main>

@@ -1,14 +1,15 @@
-"use client";
+"use client"
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
-import { Building, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { getTicketsInMunicipality } from "@/services/tickets.service";
 import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from Lucide
 
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
@@ -59,6 +60,8 @@ export default function Dashboard() {
   useEffect(() => {
     fetchDataWithoutCache();
   }, [fetchDataWithoutCache]);
+
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 
   return (
     <div>
@@ -119,7 +122,7 @@ export default function Dashboard() {
               zIndex: -1,
             }}
           ></div>
-          <NavbarMunicipality />
+          <NavbarMunicipality unreadNotifications={unreadNotifications} />
           <main className="p-8 relative">
             <div className="flex items-center mb-2 mt-2 ml-2">
               <h1 className="text-4xl font-bold text-white text-opacity-80">
@@ -127,7 +130,9 @@ export default function Dashboard() {
               </h1>
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
-              <Building size={30} className="mb-2" />
+              <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+                <ImageIcon size={20} className="text-gray-500" />
+              </div>
               {cityLoading ? (
                 <ThreeDots
                   height="40"
@@ -140,7 +145,7 @@ export default function Dashboard() {
                   visible={true}
                 />
               ) : (
-                <span className="text-xl">{city}</span>
+                <span className="text-xl font-bold">{city}</span>
               )}
             </div>
             <div className="flex items-center justify-between mt-8">
@@ -182,7 +187,7 @@ export default function Dashboard() {
                   (window.location.href = "/create-ticket/municipality")
                 }
               >
-                + New Ticket
+                + Report Fault
               </button>
             </div>
             <div className="mt-8">
@@ -206,6 +211,13 @@ export default function Dashboard() {
           </main>
         </div>
       </div>
+
+
+
+
+
+
+      
 
       {/* Mobile View */}
       <div className="block sm:hidden">

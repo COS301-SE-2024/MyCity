@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import NavbarCompany from '@/components/Navbar/NavbarCompany';
 import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
-import { PenToolIcon, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { getCompanyTickets } from '@/services/tickets.service';
 import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from 'react-loader-spinner';
 import { FaTimes } from 'react-icons/fa';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, Image as ImageIcon } from 'lucide-react'; // Import ImageIcon from Lucide
 
 export default function Dashboard() {
   const userProfile = useProfile();
@@ -41,6 +41,8 @@ export default function Dashboard() {
     setIsHelpOpen(!isHelpOpen);
   };
 
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
   return (
     <div>
       {/* Help Menu Button */}
@@ -69,7 +71,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-bold mb-4">Help Menu</h2>
             <p>This dashboard allows you to:</p>
             <ul className="list-disc list-inside">
-              <li>View all tickets in your companies region that urgently need to be addressed.</li>
+              <li>View all tickets in your company&apos;s region that urgently need to be addressed.</li>
               <li>Sort tickets by various criteria such as urgency, status, or fault type.</li>
               <li>Keep track of tickets that are upvoted or have high importance.</li>
             </ul>
@@ -97,7 +99,7 @@ export default function Dashboard() {
           zIndex: -1,
         }}
       ></div>
-      <NavbarCompany />
+      <NavbarCompany unreadNotifications={unreadNotifications} />
       <main className="p-8 relative">
         <div className="flex items-center mb-2 mt-2 ml-2">
           <h1 className="text-4xl font-bold text-white text-opacity-80">
@@ -105,7 +107,9 @@ export default function Dashboard() {
           </h1>
         </div>
         <div className="flex flex-col items-center justify-center text-white text-opacity-80">
-          <PenToolIcon size={30} className="mb-2" />
+          <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+            <ImageIcon size={20} className="text-gray-500" /> {/* Image placeholder */}
+          </div>
           {isLoading ? (
             <ThreeDots
               height="40"
@@ -183,7 +187,6 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Background image */}
           <div
             style={{
               position: "absolute",
@@ -196,15 +199,12 @@ export default function Dashboard() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              zIndex: -1,
             }}
           ></div>
 
-          {/* Content */}
           <div className="h-[5vh] flex items-center justify-center"></div>
           <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
             <h1 className="text-4xl text-white font-bold mb-4 ml-4">
               <span className="text-blue-200">MyCity</span> <br />
               Under Construction

@@ -26,14 +26,14 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         address: "1234 Mock Street, Happy City",
         description: "Help me.",
         status: "Opened",
-        municipalityImage: "https://via.placeholder.com/50",
-        user_picture: "https://via.placeholder.com/50",
+        municipalityImage: "",
+        user_picture: "",
         createdBy: "Kyle Marshall",
         longitude: "30.0",
         latitude: "-25.0",
         upvotes: 15,
         ticket_id: "12345",
-        imageURL: "https://via.placeholder.com/200",
+        imageURL: "",
         urgency: "high",
       };
       setTicketData(mockData);
@@ -102,10 +102,10 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
             ticketNumber={ticketNumber}
             ticket_id={ticketData.ticket_id}
             description="Repair the main road."
-            user_picture="https://via.placeholder.com/150"
+            user_picture=""
             createdBy="John Doe"
             status="Active"
-            imageURL="https://via.placeholder.com/200"
+            imageURL=""
             municipalityImage="https://via.placeholder.com/50"
             upvotes={10} // this is being conflated with arrowCount
             latitude="37.7749" //mock data!! all of these

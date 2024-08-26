@@ -18,7 +18,7 @@ import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function CitizenSignup() {
   const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
@@ -39,6 +39,56 @@ export default function CitizenSignup() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setIsEmailValid(emailRegex.test(email));
+  };
+  useEffect(() => {
+    const fetchMunicipalities = async () => {
+      try {
+        const data = await getMunicipalityList();
+        setMunicipalities(data);
+      } catch (error: any) {
+        console.error("Error fetching municipalities:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching is complete
+      }
+    };
+  
+    fetchMunicipalities();
+  }, []);
+  
+  const passwordChecklist = [
+    {
+      text: "At least 8 characters long",
+      test: (password: string) => password.length >= 8,
+    },
+    {
+      text: "Contains an uppercase letter",
+      test: (password: string) => /[A-Z]/.test(password),
+    },
+    {
+      text: "Contains a lowercase letter",
+      test: (password: string) => /[a-z]/.test(password),
+    },
+    {
+      text: "Contains a number",
+      test: (password: string) => /[0-9]/.test(password),
+    },
+    {
+      text: "Contains a special character",
+      test: (password: string) => /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    },
+    {
+      text: "Passwords match",
+      test: () => passwordsMatch,
+    },
+  ];
 
   const toggleChecklistVisibility = () => {
     setIsChecklistVisible(!isChecklistVisible);
@@ -53,13 +103,12 @@ export default function CitizenSignup() {
   };
 
   useEffect(() => {
-    // Fetch the municipalities when the component mounts
     const fetchMunicipalities = async () => {
       try {
         const data = await getMunicipalityList();
         setMunicipalities(data);
       } catch (error: any) {
-        console.log(error.message);
+        console.error("Error fetching municipalities:", error);
       }
     };
 
@@ -89,6 +138,9 @@ export default function CitizenSignup() {
     if (name === "confirmPassword") {
       setPasswordsMatch(value === formData.password);
     }
+    if (name === "email") {
+      validateEmail(value);
+    }
   };
 
   const validatePassword = (password: string) => {
@@ -116,53 +168,28 @@ export default function CitizenSignup() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+
+    if (!isEmailValid) {
+      setError("Please enter a valid email address.");
+      setIsLoading(false);
+      return;
+    }
+
     const form = new FormData(event.currentTarget as HTMLFormElement);
     form.set("municipality", selectedMunicipality); // Append selected municipality to the form data
-  
-    const router = Router;
+
     try {
       const signedUp = await handleSignUp(form, UserRole.CITIZEN);
       if (signedUp.isSignedIn) {
         router.push("/dashboard/citizen");
       }
     } catch (error: any) {
-      setError(`Error: ${error.message}`);
+      console.error("Signup error:", error);
+      setError("An unexpected error occurred. Please try again later.");
     } finally {
       setIsLoading(false);
     }
   };
-  
-
-  const getAsteriskColor = (field: keyof typeof formData) => {
-    return formData[field] ? "text-green-500" : "text-red-500";
-  };
-
-  const passwordChecklist = [
-    {
-      text: "At least 8 characters long",
-      test: (password: string) => password.length >= 8,
-    },
-    {
-      text: "Contains an uppercase letter",
-      test: (password: string) => /[A-Z]/.test(password),
-    },
-    {
-      text: "Contains a lowercase letter",
-      test: (password: string) => /[a-z]/.test(password),
-    },
-    {
-      text: "Contains a number",
-      test: (password: string) => /[0-9]/.test(password),
-    },
-    {
-      text: "Contains a special character",
-      test: (password: string) => /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    },
-    {
-      text: "Passwords match",
-      test: () => passwordsMatch,
-    },
-  ];
 
   return (
     <div className="px-12">
@@ -171,6 +198,7 @@ export default function CitizenSignup() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-y-4 pt-8"
       >
+        {/* Input Fields */}
         <div className="flex justify-between gap-4">
           <Input
             variant={"bordered"}
@@ -224,7 +252,7 @@ export default function CitizenSignup() {
           }
           labelPlacement={"outside"}
           classNames={{
-            inputWrapper: "h-[3em]",
+            inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""}`,
           }}
           type="email"
           name="email"
@@ -235,40 +263,51 @@ export default function CitizenSignup() {
           onChange={handleInputChange}
         />
 
-        <Autocomplete
-          label={
-            <span className="font-semibold text-medium block mb-[0.20em]">
-              Municipality{" "}
-              <span
-                className={`${
-                  selectedMunicipality ? "text-green-500" : "text-red-500"
-                } *`}
-              ></span>
-            </span>
-          }
-          labelPlacement="outside"
-          name="municipality"
-          placeholder="Select a municipality"
-          fullWidth
-          defaultItems={municipalities}
-          disableSelectorIconRotation
-          isClearable={false}
-          menuTrigger={"input"}
-          size={"lg"}
-          onSelectionChange={(value) =>
-            setSelectedMunicipality(value as string)
-          }
+<div className="relative w-full">
+  {loading ? (
+    <div className="flex justify-center items-center h-[3em] rounded-lg">
+      <FaSpinner className="animate-spin text-black" size={20} />
+    </div>
+  ) : (
+    <Autocomplete
+      label={
+        <span className="font-semibold text-medium block mb-[0.20em]">
+          Municipality{" "}
+          <span
+            className={`${
+              selectedMunicipality ? "text-green-500" : "text-red-500"
+            } *`}
+          ></span>
+        </span>
+      }
+      labelPlacement="outside"
+      name="municipality"
+      placeholder="Select a municipality"
+      fullWidth
+      defaultItems={municipalities}
+      disableSelectorIconRotation
+      isClearable={false}
+      menuTrigger={"input"}
+      size={"lg"}
+      onSelectionChange={(value) =>
+        setSelectedMunicipality(value as string)
+      }
+    >
+      {(municipality) => (
+        <AutocompleteItem
+          key={municipality.municipality_id}
+          textValue={municipality.municipality_id}
         >
-          {(municipality) => (
-            <AutocompleteItem
-              key={municipality.municipality_id}
-              textValue={municipality.municipality_id}
-            >
-              <span className="text-small">{municipality.municipality_id}</span>
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
+          <span className="text-small">{municipality.municipality_id}</span>
+        </AutocompleteItem>
+      )}
+    </Autocomplete>
+  )}
+</div>
 
+
+
+        {/* Password Inputs */}
         <div className="flex justify-between gap-4">
           <div className="relative w-1/2">
             <Input
@@ -336,6 +375,7 @@ export default function CitizenSignup() {
           </div>
         </div>
 
+        {/* Password Checklist */}
         <div className="mt-2">
           <button
             className="flex items-center gap-2 text-sm text-blue-500 font-semibold"
@@ -365,6 +405,7 @@ export default function CitizenSignup() {
           )}
         </div>
 
+        {/* Submit Button */}
         <Button
           name="submit"
           className={`w-28 h-11 rounded-full m-auto font-semibold ${
@@ -379,10 +420,11 @@ export default function CitizenSignup() {
         </Button>
       </form>
 
+      {/* Error Modal */}
       {error && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <p className="text-black">{error}.</p>
+            <p className="text-black">{error}</p>
             <button
               onClick={() => setError(null)}
               className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"

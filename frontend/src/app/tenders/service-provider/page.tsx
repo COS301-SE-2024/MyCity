@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Key, useEffect, useRef, useState } from "react";
+import React, { Key, useEffect, useState } from "react";
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import { Tab, Tabs } from "@nextui-org/react";
 import ClosedTenders from "@/components/RecordsTableCompany/ClosedTenders";
@@ -17,11 +17,55 @@ export default function MuniTenders() {
   const userProfile = useProfile();
   const [openTickets, setOpenTickets] = useState<any[]>([]);
   const [mytenders, setMytenders] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  const handleTabChange = (key: Key) => {
+  const [loadingTabs, setLoadingTabs] = useState({
+    openTickets: true,
+    activeTenders: false,
+    closedTenders: false,
+  });
+
+  const fetchDataForTab = async (tab: keyof typeof loadingTabs) => {
+    try {
+      setLoadingTabs((prev) => ({ ...prev, [tab]: true }));
+      const user_data = await userProfile.getUserProfile();
+      const user_company = String(user_data.current?.company_name);
+      const user_session = String(user_data.current?.session_token);
+
+      if (tab === "openTickets") {
+        const rspmostupvotes = await getOpenCompanyTickets(user_session);
+        setOpenTickets(rspmostupvotes);
+      } else if (tab === "activeTenders") {
+        const rsptenders = await getCompanyTenders(user_company, user_session, true);
+        setMytenders(rsptenders);
+      }
+      // You could handle fetching for "closedTenders" similarly if needed
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoadingTabs((prev) => ({ ...prev, [tab]: false }));
+    }
+  };
+
+  const handleTabChange = async (key: Key) => {
     const index = Number(key);
+
+    switch (index) {
+      case 0:
+        if (!openTickets.length) await fetchDataForTab("openTickets");
+        break;
+      case 1:
+        if (!mytenders.length) await fetchDataForTab("activeTenders");
+        break;
+      case 2:
+        if (!loadingTabs.closedTenders) {
+          // Assume closed tenders don't require fetching
+          setLoadingTabs((prev) => ({ ...prev, closedTenders: false }));
+        }
+        break;
+      default:
+        break;
+    }
   };
 
   const toggleHelpMenu = () => {
@@ -29,28 +73,10 @@ export default function MuniTenders() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const user_data = await userProfile.getUserProfile();
-        const user_company = String(user_data.current?.company_name);
-        const user_session = String(user_data.current?.session_token);
-        const rspmostupvotes = await getOpenCompanyTickets(user_session);
-        const rsptenders = await getCompanyTenders(user_company, user_session, true);
-        setOpenTickets(rspmostupvotes);
-        setMytenders(rsptenders);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [userProfile]);
+    fetchDataForTab("openTickets");
+  }, [userProfile, fetchDataForTab]);
 
-  useEffect(() => {
-    console.log(openTickets); // This will log the updated openTickets whenever it changes
-  }, [openTickets]);
+  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 
   return (
     <div>
@@ -80,12 +106,17 @@ export default function MuniTenders() {
             <h2 className="text-xl font-bold mb-4">Help Menu</h2>
             <p>This page allows you to:</p>
             <ul className="list-disc list-inside">
-              <li>View and bid for open fault tickets in your company&apos;s region.</li>
+              <li>
+                View and bid for open fault tickets in your company&apos;s
+                region.
+              </li>
               <li>Access active and closed tenders associated with your company.</li>
               <li>Navigate between tabs to see different sets of records.</li>
             </ul>
             <p>
-              Use the tabs to switch between open tickets, active tenders, and closed tenders. Each tab provides detailed information on the respective records.
+              Use the tabs to switch between open tickets, active tenders, and
+              closed tenders. Each tab provides detailed information on the
+              respective records.
             </p>
           </div>
         </div>
@@ -94,7 +125,7 @@ export default function MuniTenders() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <NavbarCompany />
+          <NavbarCompany unreadNotifications={unreadNotifications} />
           <div
             style={{
               position: "fixed", // Change position to 'fixed'
@@ -112,52 +143,81 @@ export default function MuniTenders() {
             }}
           ></div>
           <main>
-            <div className="flex items-center mb-2 mt-2 ml-2">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 ">
-                Tenders
-              </h1>
+          <div className="flex items-center mb-2 mt-2 ml-2">
+              <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Tenders
+                </h1>
+              </div>
             </div>
-
             <div className="flex flex-col items-center justify-center rounded-lg h-fit py-1">
-              {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                  <ThreeDots
-                    height="40"
-                    width="80"
-                    radius="9"
-                    color="#ADD8E6"
-                    ariaLabel="three-dots-loading"
-                    visible={true}
-                  />
-                </div>
-              ) : (
-                <Tabs
-                  aria-label="Signup Options"
-                  defaultSelectedKey={0}
-                  className="mt-5 flex justify-center w-full"
-                  classNames={{
-                    tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
-                    panel: "w-full",
-                    cursor: "w-full border-3 border-blue-700/40",
-                    tabContent:
-                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
-                  }}
-                  onSelectionChange={handleTabChange}
-                >
-                  <Tab key={0} title="Open Tickets">
-                    <div className="p-4 text-center font-bold text-xl text-opacity-80"></div>
-                    <OpenTicketsTable records={openTickets} />
-                  </Tab>
+              <Tabs
+                aria-label="Signup Options"
+                defaultSelectedKey={0}
+                className="mt-5 flex justify-center w-full"
+                classNames={{
+                  tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black", // more transparent white background for tabs
+                  panel: "w-full",
+                  cursor: "w-full border-3 border-blue-700/40",
+                  tabContent:
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black", // slightly more transparent for selected tab
+                }}
+                onSelectionChange={handleTabChange}
+              >
+                <Tab key={0} title="Open Tickets">
+                  {loadingTabs.openTickets ? (
+                    <div className="flex justify-center items-center h-64">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <div className=""></div>
+                      <OpenTicketsTable records={openTickets} />
+                    </div>
+                  )}
+                </Tab>
 
-                  <Tab key={1} title="Active Tenders">
+                <Tab key={1} title="Active Tenders">
+                  {loadingTabs.activeTenders ? (
+                    <div className="flex justify-center items-center h-64">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
                     <ActiveTenders tenders={mytenders} />
-                  </Tab>
+                  )}
+                </Tab>
 
-                  <Tab key={2} title="Closed Tenders">
+                <Tab key={2} title="Closed Tenders">
+                  {loadingTabs.closedTenders ? (
+                    <div className="flex justify-center items-center h-64">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
                     <ClosedTenders />
-                  </Tab>
-                </Tabs>
-              )}
+                  )}
+                </Tab>
+              </Tabs>
             </div>
           </main>
         </div>

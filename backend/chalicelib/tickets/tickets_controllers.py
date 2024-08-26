@@ -154,6 +154,66 @@ def create_ticket(ticket_data):
         return {"Status": "FAILED", "Error": error_message}
 
 
+def add_watchlist(ticket_data):
+    try:
+        required_fields = [
+            "username",
+            "ticket_id",
+        ]
+        for field in required_fields:
+            if field not in ticket_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        user_exist = watchlist_table.scan(
+            FilterExpression=Attr("user_id").eq(ticket_data["username"])
+            & Attr("ticket_id").eq(ticket_data["ticket_id"])
+        )
+        if len(user_exist["Items"]) > 0:
+            error_response = {
+                "Error": {
+                    "Code": "AlreadyExists",
+                    "Message": "Already have ticket in watchlist",
+                }
+            }
+            raise ClientError(error_response, "AlreadyExists")
+
+        if DoesTicketExist(ticket_data["ticket_id"]) == False:
+            error_response = {
+                "Error": {
+                    "Code": "TicketDoesntExists",
+                    "Message": "Ticket doesnt exist",
+                }
+            }
+            raise ClientError(error_response, "TicketDoesntExists")
+
+        watchlist_id = generate_id()
+
+        watchlist_item = {
+            "watchlist_id": watchlist_id,
+            "ticket_id": ticket_data["ticket_id"],
+            "user_id": ticket_data["username"],
+        }
+
+        watchlist_table.put_item(Item=watchlist_item)
+        return {
+            "Status": "Success",
+            "Message": "ticket has been added to "
+            + ticket_data["username"]
+            + "with id of :"
+            + watchlist_id,
+        }
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 def get_fault_types():
     try:
         response = assets_table.scan()
@@ -369,12 +429,29 @@ def validate_ticket_id(ticket_id):
 def view_ticket_data(ticket_id):
     ticket_id = validate_ticket_id(ticket_id)
     try:
-        response = tickets_table.scan()
+        response = tickets_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_id)
+        )
         items = response.get("Items", [])
-        filtered_items = [
-            item for item in items if ticket_id in item.get("ticket_id", "")
-        ]
-        return filtered_items
+
+        if len(items) > 0:
+            for item in items:
+                response_item = ticketupdate_table.query(
+                    IndexName="ticket_id-index",
+                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+                )
+                item["commentcount"] = len(response_item["Items"])
+            getUserprofile(items)
+            return items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "NoTickets",
+                    "Message": "Doesnt have ticket in municipality",
+                }
+            }
+            raise ClientError(error_response, "NoTicket")
+
     except ClientError as e:
         raise BadRequestError(
             f"Failed to get Ticket data: {e.response['Error']['Message']}"
@@ -496,6 +573,14 @@ def ClosedTicket(ticket_data):
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Closed"}
         response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        dateExpr = "set #dateClosed=:r"
+        CloseexpattrName = {"#dateClosed": "dateClosed"}
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        CloseexpattrValue = {":r": formatted_datetime}
+        response_closed = updateTicketTable(
+            ticket_id, dateExpr, CloseexpattrName, CloseexpattrValue
+        )
         if response["ResponseMetadata"]:
             return {
                 "Status": "Success",

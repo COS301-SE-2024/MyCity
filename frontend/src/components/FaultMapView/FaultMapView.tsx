@@ -20,7 +20,7 @@ export default function FaultMapView() {
       const faultGeodata = await getTicketsGeoData(sessionToken);
 
       if (faultMapContainer.current) {
-        initialiseFaultMap(faultMapContainer, faultGeodata);
+        await initialiseFaultMap(faultMapContainer, faultGeodata, userProfile.current?.municipality);
       }
 
       if (Array.isArray(faultGeodata)) {
@@ -32,7 +32,8 @@ export default function FaultMapView() {
     };
 
     loadFaultMap();
-  }, [getUserProfile, initialiseFaultMap]);
+  }, []);
+  // }, [getUserProfile, initialiseFaultMap]);
 
   return (
     <div className="flex items-center justify-center h-full px-4">

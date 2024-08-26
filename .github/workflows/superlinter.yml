@@ -1,33 +1,37 @@
-name: Super Linter
-
-on:
-  pull_request:
-    branches: [main, development, release]
-  workflow_dispatch: {}  
-
-jobs:
-  build:    
-    name: Super Linter
-
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-      packages: write
-      statuses: write
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          
-      - name: Super-Linter
-        uses: super-linter/super-linter@v6.5.1            
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_PYTHON_BLACK: true
-          IGNORE_GITIGNORED_FILES: true
-          IGNORE_GENERATED_FILES: true
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  name: Super-Linter
+  
+  on: # yamllint disable-line rule:truthy
+    pull_request:
+      branches: [main, development, release]
+    workflow_dispatch: {}
+  
+  permissions: {}
+  
+  jobs:
+    build:
+      name: Super-Linter
+      runs-on: ubuntu-latest
+  
+      permissions:
+        contents: read
+        packages: read
+        # To report GitHub Actions status checks
+        statuses: write
+  
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            # super-linter needs the full git history to get the
+            # list of files that changed across commits
+            fetch-depth: 0
+  
+        - name: Super-linter
+          uses: super-linter/super-linter/slim@v7.0.0 # x-release-please-version
+          env:
+            VALIDATE_ALL_CODEBASE: false
+            VALIDATE_PYTHON_BLACK: true
+            IGNORE_GITIGNORED_FILES: true
+            IGNORE_GENERATED_FILES: true
+            DEFAULT_BRANCH: main
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
