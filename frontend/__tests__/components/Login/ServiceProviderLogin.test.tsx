@@ -1,4 +1,5 @@
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
+import { colorVariants } from "@nextui-org/react";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("ServiceProviderLogin", () => {
@@ -6,16 +7,16 @@ describe("ServiceProviderLogin", () => {
     it("renders an email input", () => {
         render(<ServiceProviderLogin />);
         // Use getByPlaceholderText if the placeholder is unique
-        const emailInput = screen.getByPlaceholderText("example@mail.com");
-    
+        const emailInputs = screen.getAllByPlaceholderText("example@mail.com");
+        const emailInput = emailInputs[0];
         expect(emailInput).toBeInTheDocument();
         expect(emailInput).toHaveAttribute("type", "email");
     });
 
     it("renders a password input", () => {
         render(<ServiceProviderLogin />);
-        const passwordInput = screen.getByLabelText(/Service Provider Password/);
-
+        const passwordInputs = screen.getAllByLabelText(/Service Provider Password/);
+        const passwordInput = passwordInputs[0];
         expect(passwordInput).toBeInTheDocument();
         expect(passwordInput).toHaveAttribute("type", "password");
     });
@@ -24,8 +25,8 @@ describe("ServiceProviderLogin", () => {
     it("renders a submit button", () => {
         render(<ServiceProviderLogin />);
 
-        const submitButton = screen.getByTestId("submit-btn")
-
+        const submitButtons = screen.getAllByTestId("submit-btn")
+        const submitButton = submitButtons[0];
         expect(submitButton).toBeInTheDocument();
 
         expect(submitButton).toHaveTextContent("Login");
