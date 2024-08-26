@@ -95,12 +95,12 @@ export default function Signup() {
           }}
           className="px-2"
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200 flex justify-center">
+          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-3 ml-3 transition-transform duration-200">
             <img
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
               alt="MyCity"
-              width={100}
-              height={100}
+              width={75}
+              height={75}
             />
           </div>
 
@@ -122,11 +122,12 @@ export default function Signup() {
           ></div>
 
           {/* Content */}
-          <div className="mt-2">
-              <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
-                <span className="text-[2.5em] font-bold">
-                  {currentFormHeader}
-                </span>
+          <div className="mt-5 ">
+            <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
+              <span className="text-[2.5em] font-bold">
+                {currentFormHeader}
+              </span>
+              <div className="overflow-auto h-[65vh] rounded-lg">
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
@@ -159,6 +160,7 @@ export default function Signup() {
                   </Tab>
                 </Tabs>
               </div>
+            </div>
           </div>
         </div>
         {/* Navbar */}
