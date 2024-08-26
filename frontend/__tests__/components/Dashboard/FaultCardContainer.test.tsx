@@ -15,8 +15,8 @@ describe("Dashboard", () => {
     it("renders an email input", () => {
         render(<CitizenLogin />);
         // Use getByPlaceholderText if the placeholder is unique
-        const emailInput = screen.getByPlaceholderText("example@mail.com");
-    
+        const emailInputs = screen.getAllByPlaceholderText("example@mail.com");
+        const emailInput = emailInputs[0];
         expect(emailInput).toBeInTheDocument();
         expect(emailInput).toHaveAttribute("type", "email");
     });
