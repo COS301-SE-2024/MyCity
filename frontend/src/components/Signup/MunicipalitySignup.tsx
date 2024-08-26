@@ -226,13 +226,13 @@ export default function MunicipalitySignup() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
               type="email"
               name="email"
               autoComplete="new-email"
+              data-testid="email-input"
               placeholder="example@mail.com"
               required
               value={formData.email}
@@ -372,11 +372,10 @@ export default function MunicipalitySignup() {
 
             <Button
               name="submit"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${
-                isFormValid && isEmailValid
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid && isEmailValid
                   ? "bg-blue-500 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >
@@ -407,7 +406,7 @@ export default function MunicipalitySignup() {
       <div className="block sm:hidden">
         <div className="px-2">
           <form
-            data-testid="municipality-signup-form"
+            data-testid="mobile-municipality-signup-form"
             onSubmit={handleSubmit}
             className="flex flex-col gap-y-4 pt-2"
           >
@@ -464,9 +463,8 @@ export default function MunicipalitySignup() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
               type="email"
               name="email"
@@ -610,11 +608,10 @@ export default function MunicipalitySignup() {
 
             <Button
               name="submit"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${
-                isFormValid && isEmailValid
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid && isEmailValid
                   ? "bg-blue-500 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >

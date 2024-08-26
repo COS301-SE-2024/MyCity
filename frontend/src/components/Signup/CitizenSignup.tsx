@@ -261,6 +261,7 @@ export default function CitizenSignup() {
               }}
               type="email"
               name="email"
+              data-testid="email-input"
               autoComplete="new-email"
               placeholder="example@mail.com"
               required
@@ -451,7 +452,6 @@ export default function CitizenSignup() {
       <div className="block sm:hidden">
         <div className="px-2">
           <form
-            data-testid="citizen-signup-form"
             onSubmit={handleSubmit}
             className="flex flex-col gap-y-4 pt-2"
           >
