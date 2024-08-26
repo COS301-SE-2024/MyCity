@@ -60,13 +60,13 @@ export default function NavbarGuest() {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden bottom-0 w-full h-20 bg-black bg-opacity-70 fixed border flex items-center justify-between">
-        <nav className="z-40 fixed w-full p-0 flex items-center justify-between">
-          <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
+      <div className="block sm:hidden bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center">
+        <nav className="z-40 fixed w-full p-0 flex items-center justify-center">
+          <div className="flex-initial text-[0.95rem] gap-9 flex me-5 justify-center">
             <Link href="/" passHref>
               <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
                 <div className="flex flex-col gap-1 items-center">
-                  <Building2 size={25} />
+                  <Building2 size={50} />
                 </div>
               </div>
             </Link>
@@ -74,7 +74,7 @@ export default function NavbarGuest() {
             <Link href="/about" passHref>
               <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
                 <div className="flex flex-col gap-1 items-center">
-                  <Lightbulb size={25} />
+                  <Lightbulb size={50} />
                 </div>
               </div>
             </Link>
@@ -82,7 +82,7 @@ export default function NavbarGuest() {
             <Link href="/" passHref>
               <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
                 <div className="flex flex-col gap-1 items-center">
-                  <Wrench size={25} />
+                  <Wrench size={50} />
                 </div>
               </div>
             </Link>
@@ -90,7 +90,7 @@ export default function NavbarGuest() {
             <Link href="/dashboard/guest" passHref>
               <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
                 <div className="flex flex-col gap-1 items-center">
-                  <Globe size={25} />
+                  <Globe size={50} />
                 </div>
               </div>
             </Link>
