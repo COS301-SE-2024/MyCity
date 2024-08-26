@@ -40,7 +40,8 @@ describe("CitizenLogin", () => {
         render(<CitizenLogin />);
         const mockFunction = jest.fn();
         // const mockLogin = handleSignIn.mockResolvedValue({ status: 200 });
-        const loginForm = screen.getByTestId("citizen-login-form");
+        const loginForms = screen.getAllByTestId("citizen-login-form");
+        const loginForm = loginForms[0];
         loginForm.addEventListener("submit", mockFunction);
 
         fireEvent.submit(loginForm)

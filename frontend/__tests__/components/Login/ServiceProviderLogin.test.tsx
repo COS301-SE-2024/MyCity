@@ -35,7 +35,8 @@ describe("ServiceProviderLogin", () => {
     test("handler function is called after clicking submit button", () => {
         render(<ServiceProviderLogin />);
         const mockFunction = jest.fn();
-        const loginForm = screen.getByTestId("service-provider-login-form");
+        const loginForms = screen.getAllByTestId("service-provider-login-form");
+        const loginForm = loginForms[0];
         loginForm.addEventListener("submit", mockFunction);
 
         fireEvent.submit(loginForm);
