@@ -161,238 +161,486 @@ export default function MunicipalitySignup() {
   ];
 
   return (
-    <div className="px-12">
-      <div className="text-center mt-4">Create an account as a municipal employee.</div>
-      <form
-        data-testid="municipality-signup-form"
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-y-4 pt-8"
-      >
-        <div className="flex justify-between gap-4">
-          <Input
-            variant={"bordered"}
-            className="w-1/2"
-            label={
-              <span className="font-semibold text-medium block mb-[0.20em]">
-                First Name <span className="text-blue-500">*</span>
-              </span>
-            }
-            labelPlacement={"outside"}
-            classNames={{
-              inputWrapper: "h-[3em]",
-            }}
-            type="text"
-            name="firstname"
-            autoComplete="new-firstname"
-            placeholder="Jane"
-            required
-            value={formData.firstname}
-            onChange={handleInputChange}
-          />
-          <Input
-            variant={"bordered"}
-            className="w-1/2"
-            label={
-              <span className="font-semibold text-medium block mb-[0.20em]">
-                Last Name <span className="text-blue-500">*</span>
-              </span>
-            }
-            labelPlacement={"outside"}
-            classNames={{
-              inputWrapper: "h-[3em]",
-            }}
-            type="text"
-            name="surname"
-            autoComplete="new-surname"
-            placeholder="Doe"
-            required
-            value={formData.surname}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        <Input
-          variant={"bordered"}
-          fullWidth
-          label={
-            <span className="font-semibold text-medium block mb-[0.20em]">
-              Email <span className="text-blue-500">*</span>
-            </span>
-          }
-          labelPlacement={"outside"}
-          classNames={{
-            inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""}`,
-          }}
-          type="email"
-          name="email"
-          autoComplete="new-email"
-          placeholder="example@mail.com"
-          required
-          value={formData.email}
-          onChange={handleInputChange}
-        />
-
-        <div className="flex justify-between gap-4">
-          <div className="relative w-1/2">
-            <Input
-              variant={"bordered"}
-              label={
-                <span className="font-semibold text-medium block mb-[0.20em]">
-                  Create Password <span className="text-blue-500">*</span>
-                </span>
-              }
-              labelPlacement={"outside"}
-              classNames={{
-                inputWrapper: "h-[3em]",
-              }}
-              type={showPassword ? "text" : "password"}
-              name="password"
-              autoComplete="new-password"
-              placeholder="Password"
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-            <button
-              type="button"
-              className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
-              onClick={togglePasswordVisibility}
-            >
-              {showPassword ? (
-                <FaEyeSlash className="h-5 w-5" />
-              ) : (
-                <FaEye className="h-5 w-5" />
-              )}
-            </button>
+    <div>
+      {/* Desktop View */}
+      <div className="hidden sm:block">
+        <div className="px-12">
+          <div className="text-center mt-4">
+            Create an account as a municipal employee.
           </div>
-          <div className="relative w-1/2">
-            <Input
-              variant={"bordered"}
-              label={
-                <span className="font-semibold text-medium block mb-[0.20em]">
-                  Confirm Password <span className="text-blue-500">*</span>
-                </span>
-              }
-              labelPlacement={"outside"}
-              classNames={{
-                inputWrapper: "h-[3em]",
-              }}
-              type={showConfirmPassword ? "text" : "password"}
-              name="confirmPassword"
-              autoComplete="new-password"
-              placeholder="Password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-            />
-            <button
-              type="button"
-              className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
-              onClick={toggleConfirmPasswordVisibility}
-            >
-              {showConfirmPassword ? (
-                <FaEyeSlash className="h-5 w-5" />
-              ) : (
-                <FaEye className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-2">
-          <button
-            className="flex items-center gap-2 text-sm text-blue-500 font-semibold"
-            type="button"
-            onClick={() => setIsChecklistVisible(!isChecklistVisible)}
+          <form
+            data-testid="municipality-signup-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-y-4 pt-8"
           >
-            Password Requirements
-            <FaInfoCircle />
-            {isChecklistVisible ? <FaAngleUp /> : <FaAngleDown />}
-          </button>
-          {isChecklistVisible && (
-            <div className="flex flex-col gap-1 mt-2">
-              {passwordChecklist.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 text-black text-sm"
+            <div className="flex justify-between gap-4">
+              <Input
+                variant={"bordered"}
+                className="w-1/2"
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    First Name <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type="text"
+                name="firstname"
+                autoComplete="new-firstname"
+                placeholder="Jane"
+                required
+                value={formData.firstname}
+                onChange={handleInputChange}
+              />
+              <Input
+                variant={"bordered"}
+                className="w-1/2"
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    Last Name <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type="text"
+                name="surname"
+                autoComplete="new-surname"
+                placeholder="Doe"
+                required
+                value={formData.surname}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <Input
+              variant={"bordered"}
+              fullWidth
+              label={
+                <span className="font-semibold text-medium block mb-[0.20em]">
+                  Email <span className="text-blue-500">*</span>
+                </span>
+              }
+              labelPlacement={"outside"}
+              classNames={{
+                inputWrapper: `h-[3em] ${
+                  !isEmailValid ? "border-red-500" : ""
+                }`,
+              }}
+              type="email"
+              name="email"
+              autoComplete="new-email"
+              placeholder="example@mail.com"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+
+            <div className="flex justify-between gap-4">
+              <div className="relative w-1/2">
+                <Input
+                  variant={"bordered"}
+                  label={
+                    <span className="font-semibold text-medium block mb-[0.20em]">
+                      Create Password <span className="text-blue-500">*</span>
+                    </span>
+                  }
+                  labelPlacement={"outside"}
+                  classNames={{
+                    inputWrapper: "h-[3em]",
+                  }}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
+                  onClick={togglePasswordVisibility}
                 >
-                  {item.test(formData.password) ? (
-                    <FaCheck className="text-green-500" />
+                  {showPassword ? (
+                    <FaEyeSlash className="h-5 w-5" />
                   ) : (
-                    <FaTimes className="text-red-500" />
+                    <FaEye className="h-5 w-5" />
                   )}
-                  <span>{item.text}</span>
+                </button>
+              </div>
+              <div className="relative w-1/2">
+                <Input
+                  variant={"bordered"}
+                  label={
+                    <span className="font-semibold text-medium block mb-[0.20em]">
+                      Confirm Password <span className="text-blue-500">*</span>
+                    </span>
+                  }
+                  labelPlacement={"outside"}
+                  classNames={{
+                    inputWrapper: "h-[3em]",
+                  }}
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  {showConfirmPassword ? (
+                    <FaEyeSlash className="h-5 w-5" />
+                  ) : (
+                    <FaEye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-2">
+              <button
+                className="flex items-center gap-2 text-sm text-blue-500 font-semibold"
+                type="button"
+                onClick={() => setIsChecklistVisible(!isChecklistVisible)}
+              >
+                Password Requirements
+                <FaInfoCircle />
+                {isChecklistVisible ? <FaAngleUp /> : <FaAngleDown />}
+              </button>
+              {isChecklistVisible && (
+                <div className="flex flex-col gap-1 mt-2">
+                  {passwordChecklist.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 text-black text-sm"
+                    >
+                      {item.test(formData.password) ? (
+                        <FaCheck className="text-green-500" />
+                      ) : (
+                        <FaTimes className="text-red-500" />
+                      )}
+                      <span>{item.text}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </div>
 
-        <div className="relative w-full mt-4">
-          <Input
-            variant={"bordered"}
-            label={
-              <span className="font-semibold text-medium block mb-[0.20em]">
-                MuniCode <span className="text-blue-500">*</span>
-              </span>
-            }
-            labelPlacement={"outside"}
-            classNames={{
-              inputWrapper: "h-[3em]",
-            }}
-            type="text"
-            name="municode"
-            autoComplete="new-municode"
-            placeholder="MuniCode"
-            required
-            value={formData.municode}
-            onChange={handleInputChange}
-          />
-          <button
-            type="button"
-            className="absolute top-1/2 right-3 transform translate-y-1 text-blue-500"
-            onClick={toggleHelpVisibility}
-          >
-            <FaQuestionCircle />
-          </button>
-          {isHelpVisible && (
-            <div className="absolute top-[-3rem] right-0 bg-white border rounded-lg p-1 text-xs shadow-lg w-40">
-              MuniCode is a unique identifier to verify your association with your municipality.
+            <div className="relative w-full mt-4">
+              <Input
+                variant={"bordered"}
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    MuniCode <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type="text"
+                name="municode"
+                autoComplete="new-municode"
+                placeholder="MuniCode"
+                required
+                value={formData.municode}
+                onChange={handleInputChange}
+              />
+              <button
+                type="button"
+                className="absolute top-1/2 right-3 transform translate-y-1 text-blue-500"
+                onClick={toggleHelpVisibility}
+              >
+                <FaQuestionCircle />
+              </button>
+              {isHelpVisible && (
+                <div className="absolute top-[-3rem] right-0 bg-white border rounded-lg p-1 text-xs shadow-lg w-40">
+                  MuniCode is a unique identifier to verify your association
+                  with your municipality.
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <Button
-          name="submit"
-          className={`w-28 h-11 rounded-full m-auto font-semibold ${
-            isFormValid && isEmailValid
-              ? "bg-blue-500 text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-          type="submit"
-          disabled={!isFormValid || isLoading}
-        >
-          {isLoading ? <FaSpinner className="animate-spin" /> : "Submit"}
-        </Button>
-      </form>
-
-      {error && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <p className="text-black">
-              {error.includes("UserLambdaValidationException")
-                ? "Sign up failed: Invalid authorization code provided. Please check your code and try again."
-                : "An error occurred during sign up. Please try again."}
-            </p>
-            <button
-              onClick={() => setError(null)}
-              className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+            <Button
+              name="submit"
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${
+                isFormValid && isEmailValid
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              type="submit"
+              disabled={!isFormValid || isLoading}
             >
-              Retry
-            </button>
-          </div>
+              {isLoading ? <FaSpinner className="animate-spin" /> : "Submit"}
+            </Button>
+          </form>
+
+          {error && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <p className="text-black">
+                  {error.includes("UserLambdaValidationException")
+                    ? "Sign up failed: Invalid authorization code provided. Please check your code and try again."
+                    : "An error occurred during sign up. Please try again."}
+                </p>
+                <button
+                  onClick={() => setError(null)}
+                  className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        <div className="px-2">
+          <form
+            data-testid="municipality-signup-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-y-4 pt-2"
+          >
+            <div className="flex justify-between gap-4">
+              <Input
+                variant={"bordered"}
+                className="w-1/2"
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    First Name <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type="text"
+                name="firstname"
+                autoComplete="new-firstname"
+                placeholder="Jane"
+                required
+                value={formData.firstname}
+                onChange={handleInputChange}
+              />
+              <Input
+                variant={"bordered"}
+                className="w-1/2"
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    Last Name <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type="text"
+                name="surname"
+                autoComplete="new-surname"
+                placeholder="Doe"
+                required
+                value={formData.surname}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <Input
+              variant={"bordered"}
+              fullWidth
+              label={
+                <span className="font-semibold text-medium block mb-[0.20em]">
+                  Email <span className="text-blue-500">*</span>
+                </span>
+              }
+              labelPlacement={"outside"}
+              classNames={{
+                inputWrapper: `h-[3em] ${
+                  !isEmailValid ? "border-red-500" : ""
+                }`,
+              }}
+              type="email"
+              name="email"
+              autoComplete="new-email"
+              placeholder="example@mail.com"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+
+            <div className="flex justify-between gap-4">
+              <div className="relative w-1/2">
+                <Input
+                  variant={"bordered"}
+                  label={
+                    <span className="font-semibold text-medium block mb-[0.20em]">
+                      Create Password <span className="text-sm text-blue-500">*</span>
+                    </span>
+                  }
+                  labelPlacement={"outside"}
+                  classNames={{
+                    inputWrapper: "h-[3em]",
+                  }}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? (
+                    <FaEyeSlash className="h-5 w-5" />
+                  ) : (
+                    <FaEye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              <div className="relative w-1/2">
+                <Input
+                  variant={"bordered"}
+                  label={
+                    <span className="font-semibold text-medium block mb-[0.20em]">
+                      Confirm Password<span className="text-sm text-blue-500">*</span>
+                    </span>
+                  }
+                  labelPlacement={"outside"}
+                  classNames={{
+                    inputWrapper: "h-[3em]",
+                  }}
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Password"
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 top-0 bottom-0 right-3 flex items-center justify-center transform translate-y-3"
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  {showConfirmPassword ? (
+                    <FaEyeSlash className="h-5 w-5" />
+                  ) : (
+                    <FaEye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-2">
+              <button
+                className="flex items-center gap-2 text-sm text-blue-500 font-semibold"
+                type="button"
+                onClick={() => setIsChecklistVisible(!isChecklistVisible)}
+              >
+                Password Requirements
+                <FaInfoCircle />
+                {isChecklistVisible ? <FaAngleUp /> : <FaAngleDown />}
+              </button>
+              {isChecklistVisible && (
+                <div className="flex flex-col gap-1 mt-2">
+                  {passwordChecklist.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 text-black text-sm"
+                    >
+                      {item.test(formData.password) ? (
+                        <FaCheck className="text-green-500" />
+                      ) : (
+                        <FaTimes className="text-red-500" />
+                      )}
+                      <span>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="relative w-full mt-4">
+              <Input
+                variant={"bordered"}
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    MuniCode <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type="text"
+                name="municode"
+                autoComplete="new-municode"
+                placeholder="MuniCode"
+                required
+                value={formData.municode}
+                onChange={handleInputChange}
+              />
+              <button
+                type="button"
+                className="absolute top-1/2 right-3 transform translate-y-1 text-blue-500"
+                onClick={toggleHelpVisibility}
+              >
+                <FaQuestionCircle />
+              </button>
+              {isHelpVisible && (
+                <div className="absolute top-[-3rem] right-0 bg-white border rounded-lg p-1 text-xs shadow-lg w-40">
+                  MuniCode is a unique identifier to verify your association
+                  with your municipality.
+                </div>
+              )}
+            </div>
+
+            <Button
+              name="submit"
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${
+                isFormValid && isEmailValid
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              type="submit"
+              disabled={!isFormValid || isLoading}
+            >
+              {isLoading ? <FaSpinner className="animate-spin" /> : "Submit"}
+            </Button>
+          </form>
+
+          {error && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center text-center items-center z-50">
+              <div className="bg-white rounded-lg shadow-lg p-6">
+                <p className="text-black">
+                  {error.includes("UserLambdaValidationException")
+                    ? "Sign up failed: Invalid authorization code provided. Please check your code and try again."
+                    : "An error occurred during sign up. Please try again."}
+                </p>
+                <button
+                  onClick={() => setError(null)}
+                  className="mt-4 bg-blue-500 text-center text-white px-4 py-2 rounded"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

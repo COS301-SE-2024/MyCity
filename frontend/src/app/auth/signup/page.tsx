@@ -93,7 +93,7 @@ export default function Signup() {
             height: "100vh",
             overflow: "hidden", // Prevents content overflow
           }}
-          className="px-4"
+          className="px-2"
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200 flex justify-center">
             <img
@@ -175,7 +175,7 @@ function ServiceProviderTabs() {
     <Tabs
       aria-label="Service Provider Options"
       defaultSelectedKey={0}
-      className="mt-5 flex justify-center w-full"
+      className="mt-1 flex justify-center w-full"
       classNames={{
         tab: "min-w-24 min-h-8 text-sm font-light",
         panel: "w-full",
