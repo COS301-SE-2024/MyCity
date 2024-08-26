@@ -95,7 +95,7 @@ export default function Signup() {
           }}
           className="px-4"
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
+          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200 flex justify-center">
             <img
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
               alt="MyCity"
