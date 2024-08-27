@@ -10,7 +10,11 @@ import PrivateCompanySignup from "@/components/Signup/PrivateCompanySignup";
 import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 export default function Signup() {
-  const headers: string[] = ["Get Connected.", "Take Control.", "Be The Change."];
+  const headers: string[] = [
+    "Get Connected.",
+    "Take Control.",
+    "Be The Change.",
+  ];
   const [currentFormHeader, setCurrentFormHeader] = useState(headers[2]);
 
   const handleTabChange = (key: Key) => {
@@ -32,7 +36,7 @@ export default function Signup() {
               width: "100%",
               height: "100%",
               backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
@@ -42,7 +46,9 @@ export default function Signup() {
           ></div>
           <main className="flex justify-center mb-8">
             <div className="flex flex-col bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[40em] h-fit py-12 mt-12">
-              <span className="text-[2.5em] font-bold">{currentFormHeader}</span>
+              <span className="text-[2.5em] font-bold">
+                {currentFormHeader}
+              </span>
               <Tabs
                 aria-label="Signup Options"
                 defaultSelectedKey={2}
@@ -59,10 +65,18 @@ export default function Signup() {
                 <Tab key={0} title="Citizen" data-testid="citizen-tab">
                   <CitizenSignup />
                 </Tab>
-                <Tab key={1} title="Municipality" data-testid="municipality-tab">
+                <Tab
+                  key={1}
+                  title="Municipality"
+                  data-testid="municipality-tab"
+                >
                   <MunicipalitySignup />
                 </Tab>
-                <Tab key={2} title="Service Provider" data-testid="service-provider-tab">
+                <Tab
+                  key={2}
+                  title="Service Provider"
+                  data-testid="service-provider-tab"
+                >
                   <ServiceProviderTabs />
                 </Tab>
               </Tabs>
@@ -79,14 +93,14 @@ export default function Signup() {
             height: "100vh",
             overflow: "hidden", // Prevents content overflow
           }}
+          className="px-2"
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
+          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-3 ml-3 transition-transform duration-200">
             <img
-              src="https://i.imgur.com/WbMLivx.png"
+              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
               alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
+              width={75}
+              height={75}
             />
           </div>
 
@@ -99,7 +113,7 @@ export default function Signup() {
               width: "100%",
               height: "100%",
               backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://www.andbeyond.com/wp-content/uploads/sites/5/Johannesburg-Skyline.jpg")',
+                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
@@ -108,31 +122,49 @@ export default function Signup() {
           ></div>
 
           {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
+          <div className="mt-5 ">
+            <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
+              <span className="text-[2.5em] font-bold">
+                {currentFormHeader}
+              </span>
+              <div className="overflow-auto h-[65vh] rounded-lg">
+                <Tabs
+                  aria-label="Signup Options"
+                  defaultSelectedKey={0}
+                  className="mt-2 flex justify-center w-full"
+                  classNames={{
+                    tab: " min-h-10",
+                    panel: "w-full",
+                    cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
+                    tabContent:
+                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
+                  }}
+                  onSelectionChange={handleTabChange}
+                >
+                  <Tab key={0} title="Citizen" data-testid="mobile-citizen-tab">
+                    <CitizenSignup />
+                  </Tab>
+                  <Tab
+                    key={1}
+                    title="Municipality"
+                    data-testid="mobile-municipality-tab"
+                  >
+                    <MunicipalitySignup />
+                  </Tab>
+                  <Tab
+                    key={2}
+                    title="Service Provider"
+                    data-testid="mobile-service-provider-tab"
+                  >
+                    <ServiceProviderTabs />
+                  </Tab>
+                </Tabs>
+              </div>
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
           </div>
         </div>
+        {/* Navbar */}
+        <NavbarGuest />
       </div>
     </div>
   );
@@ -145,7 +177,7 @@ function ServiceProviderTabs() {
     <Tabs
       aria-label="Service Provider Options"
       defaultSelectedKey={0}
-      className="mt-5 flex justify-center w-full"
+      className="mt-1 flex justify-center w-full"
       classNames={{
         tab: "min-w-24 min-h-8 text-sm font-light",
         panel: "w-full",

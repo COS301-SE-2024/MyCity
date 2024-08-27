@@ -20,7 +20,11 @@ export default function FaultMapView() {
       const faultGeodata = await getTicketsGeoData(sessionToken);
 
       if (faultMapContainer.current) {
-        initialiseFaultMap(faultMapContainer, faultGeodata);
+        await initialiseFaultMap(
+          faultMapContainer,
+          faultGeodata,
+          userProfile.current?.municipality
+        );
       }
 
       if (Array.isArray(faultGeodata)) {
@@ -32,41 +36,93 @@ export default function FaultMapView() {
     };
 
     loadFaultMap();
-  }, [getUserProfile, initialiseFaultMap]);
+  }, []);
+  // }, [getUserProfile, initialiseFaultMap]);
 
   return (
-    <div className="flex items-center justify-center h-full px-4">
-      <div className="flex flex-col md:flex-row w-full max-w-7xl h-[40rem] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
-        {/* Key Section */}
-        <div className="w-full md:w-1/6 p-6 bg-white bg-opacity-80 flex flex-col justify-center">
-          <h2 className="text-xl font-bold mb-4 text-center">Key</h2>
-          <div className="flex items-center mb-4">
-            <div className="w-6 h-6 rounded-full bg-red-700 mr-4"></div>
-            <span className="text-lg">Urgent</span>
-          </div>
-          <div className="flex items-center mb-4">
-            <div className="w-6 h-6 rounded-full bg-yellow-600 mr-4"></div>
-            <span className="text-lg">Semi-urgent</span>
-          </div>
-          <div className="flex items-center mb-4">
-            <div className="w-6 h-6 rounded-full bg-green-700 mr-4"></div>
-            <span className="text-lg">Non-urgent</span>
-          </div>
-          <div className="mt-6 text-center">
-            <h2 className="text-lg font-bold">Faults Pinned</h2>
-            {loading ? (
-              <div className="flex justify-center">
-                <Rings color="#000000" height={40} width={40} />
+    <div>
+      {/* Desktop View */}
+      <div className="hidden sm:block">
+        <div className="flex items-center justify-center h-full px-4">
+          <div className="flex flex-col md:flex-row w-full max-w-7xl h-[40rem] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
+            {/* Key Section */}
+            <div className="w-full md:w-1/6 p-6 bg-white bg-opacity-80 flex flex-col justify-center">
+              <h2 className="text-xl font-bold mb-4 text-center">Key</h2>
+              <div className="flex items-center mb-4">
+                <div className="w-6 h-6 rounded-full bg-red-700 mr-4"></div>
+                <span className="text-lg">Urgent</span>
               </div>
-            ) : (
-              <p className="text-lg font-bold">{faultCount}</p>
-            )}
+              <div className="flex items-center mb-4">
+                <div className="w-6 h-6 rounded-full bg-yellow-600 mr-4"></div>
+                <span className="text-lg">Semi-urgent</span>
+              </div>
+              <div className="flex items-center mb-4">
+                <div className="w-6 h-6 rounded-full bg-green-700 mr-4"></div>
+                <span className="text-lg">Non-urgent</span>
+              </div>
+              <div className="mt-6 text-center">
+                <h2 className="text-lg font-bold">Faults Pinned</h2>
+                {loading ? (
+                  <div className="flex justify-center">
+                    <Rings color="#000000" height={40} width={40} />
+                  </div>
+                ) : (
+                  <p className="text-lg font-bold">{faultCount}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Map Section */}
+            <div className="w-full md:w-5/6 flex-grow">
+              <div
+                className="relative w-full h-full rounded-lg bg-gray-200"
+                ref={faultMapContainer}
+              ></div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Map Section */}
-        <div className="w-full md:w-5/6 flex-grow">
-          <div className="relative w-full h-full rounded-lg bg-gray-200" ref={faultMapContainer}></div>
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        <div className="flex items-center justify-center h-full px-4">
+          <div className="flex flex-col md:flex-row w-full max-w-7xl h-[55vh] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
+            
+            {/* Map Section */}
+            <div className="w-full md:w-5/6 flex-grow">
+              <div
+                className="relative w-full h-full rounded-lg bg-gray-200"
+                ref={faultMapContainer}
+              ></div>
+            </div>
+
+            {/* Key Section */}
+            <div className="w-full md:w-1/6 p-2 bg-white flex flex-col justify-center">
+              <h2 className="text-lg font-bold text-center">Key</h2>
+              <div className="flex items-center ">
+                <div className="w-4 h-4 rounded-full bg-red-700 mr-2"></div>
+                <span className="text-sm">Urgent</span> 
+              </div>
+              <div className="flex items-center ">
+                <div className="w-4 h-4 rounded-full bg-yellow-600 mr-2"></div>
+                <span className="text-sm">Semi-urgent</span>
+              </div>
+              <div className="flex items-center ">
+                <div className="w-4 h-4 rounded-full bg-green-700 mr-2"></div>
+                <span className="text-sm">Non-urgent</span> 
+              </div>
+              <div className=" text-center">
+                <h2 className="text-lg font-bold">Faults Pinned</h2>
+                {loading ? (
+                  <div className="flex justify-center">
+                    <Rings color="#000000" height={40} width={40} />
+                  </div>
+                ) : (
+                  <p className="text-lg font-bold">{faultCount}</p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

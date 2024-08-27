@@ -29,27 +29,64 @@ def format_response(status_code, body):
 
 
 def insert_notification_token(token_data):
-    reuired_fields = ["username ", "deviceID", "token"]
+    print(token_data)
+    try:
+        required_fields = ["username", "deviceID", "token"]
 
-    for field in reuired_fields:
-        if field not in token_data:
-            raise BadRequestError(f"{field} is required")
+        for field in required_fields:
+            if field not in token_data:
+                raise BadRequestError(f"{field} is required")
 
-    username = token_data["username"]
-    deviceID = token_data["deviceID"]
-    token = token_data["token"]
-    current_datetime = datetime.now()
-    formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
-    subscriptions = ["status", "upvotes", "comments"]
+        username = token_data["username"]
+        deviceID = token_data["deviceID"]
+        token = token_data["token"]
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+        subscriptions = ["status", "upvotes", "comments"]
 
-    notification_item = {
-        "username": username,
-        "deviceID": deviceID,
-        "token": token,
-        "subscriptions": subscriptions,
-        "date": formatted_datetime,
-    }
+        notification_item = {
+            "username": username,
+            "deviceID": deviceID,
+            "token": token,
+            "subscriptions": subscriptions,
+            "date": formatted_datetime,
+        }
 
-    notifications_table.put_item(Item=notification_item)
-    accresponse = {"message": "Notification Token Saved", "token": token}
-    return format_response(float(200), accresponse)
+        response = notifications_table.put_item(Item=notification_item)
+        print(response)
+        accresponse = {"message": "Notification Token Saved", "token": token}
+        return format_response(float(200), accresponse)
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_notification_tokens(username):
+    try:
+        if username == None:
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required field: username",
+                }
+            }
+            raise ClientError(error_response, "InvalideFields")
+        response = notifications_table.query(
+            KeyConditionExpression="username = :username",
+            ExpressionAttributeValues={":username": username},
+        )
+        items = response["Items"]
+        if len(items) > 0:
+            return items
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "No Tokens",
+                    "Message": "User does not have any notification tokens",
+                }
+            }
+            raise ClientError(error_response, "No Tokens")
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}

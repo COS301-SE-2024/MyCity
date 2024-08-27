@@ -38,7 +38,7 @@ export default function OpenTicketsTable({records} : {records:RecordType[]}) {
   const [showTicketView, setShowTicketView] = useState(false);
   const recordsPerPage = 10;
 
-  // Filter records with status "Unaddressed"
+  // Filter records with status "Opened"
   const unaddressedRecords = records.filter(record => record.state === 'Opened');
 
   // Calculate pagination details

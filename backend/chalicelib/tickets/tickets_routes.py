@@ -17,6 +17,7 @@ from chalicelib.tickets.tickets_controllers import (
     ClosedTicket,
     get_Open_Company_Tickets,
     get_open_tickets_in_municipality,
+    add_watchlist,
 )
 from chalicelib.authorisers import cognito_authorizer
 
@@ -31,6 +32,16 @@ def create_ticket_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
     response = create_ticket(ticket_data)
+    return response
+
+
+@tickets_blueprint.route(
+    "/addwatchlist", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
+def create_ticket_route():
+    request = tickets_blueprint.current_request
+    ticket_data = request.json_body
+    response = add_watchlist(ticket_data)
     return response
 
 
