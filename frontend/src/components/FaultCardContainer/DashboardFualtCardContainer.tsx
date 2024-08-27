@@ -28,7 +28,9 @@ interface CardComponentProps {
   cardData: CardData[];
 }
 
-const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = [] }) => {
+const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
+  cardData = [],
+}) => {
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 10;
   const [showModal, setShowModal] = useState(false);
@@ -48,14 +50,16 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
     // update url to remove ticket id parameter
     const url = new URL(window.location.href);
     url.searchParams.delete("t_id");
-    window.history.replaceState({}, '', url.toString());
+    window.history.replaceState({}, "", url.toString());
 
     setShowModal(false);
     setSelectedCard(null);
   };
 
   const showNextItems = () => {
-    setStartIndex((prevIndex) => Math.min(prevIndex + itemsPerPage, cardData.length - itemsPerPage));
+    setStartIndex((prevIndex) =>
+      Math.min(prevIndex + itemsPerPage, cardData.length - itemsPerPage)
+    );
   };
 
   const showPreviousItems = () => {
@@ -65,7 +69,9 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
     .map((item) => (
-      <div key={item.ticket_id} className="mr-4"> {/* Added margin-right for spacing */}
+      <div key={item.ticket_id} className="mr-2">
+        {" "}
+        {/* Added margin-right for spacing */}
         <FaultCardUser
           data={{
             title: item.asset_id,
@@ -85,55 +91,113 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
     ));
 
   return (
-    <div className="flex flex-col items-center w-full rounded-3xl shadow-md overflow-hidden m-2">
-      <div
-        className="w-full overflow-x-auto custom-scrollbar rounded-3xl"
-        style={{
-          paddingLeft: '16px',
-          paddingRight: '16px',
-          scrollbarWidth: 'thin',
-          scrollbarColor: 'rgba(255, 255, 255, 0.3) transparent',
-        }}
-      >
-        <style jsx>{`
-          ::-webkit-scrollbar {
-            height: 4px; /* Smaller height for the scrollbar */
-          }
-          ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.7); /* Lighter color */
-            border-radius: 9999px; /* Fully rounded scrollbar */
-            min-width: 20px; /* Minimum width to reduce the scrollbar thumb size */
-          }
-          ::-webkit-scrollbar-track {
-            background: transparent;
-            margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
-          }
-        `}</style>
-        <div className="flex justify-start mb-4">
-          <div className="flex text-center flex-nowrap">
-            {visibleItems}
+    <div>
+      {/* Desktop View */}
+      <div className="hidden sm:block">
+        <div className="flex flex-col items-center w-full rounded-3xl shadow-md overflow-hidden m-2">
+          <div
+            className="w-full overflow-x-auto custom-scrollbar rounded-3xl"
+            style={{
+              paddingLeft: "16px",
+              paddingRight: "16px",
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent",
+            }}
+          >
+            <style jsx>{`
+              ::-webkit-scrollbar {
+                height: 4px; /* Smaller height for the scrollbar */
+              }
+              ::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.7); /* Lighter color */
+                border-radius: 9999px; /* Fully rounded scrollbar */
+                min-width: 20px; /* Minimum width to reduce the scrollbar thumb size */
+              }
+              ::-webkit-scrollbar-track {
+                background: transparent;
+                margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
+              }
+            `}</style>
+            <div className="flex justify-start mb-4">
+              <div className="flex text-center flex-nowrap">{visibleItems}</div>
+            </div>
           </div>
+          {showModal && selectedCard && (
+            <FaultCardUserView
+              show={showModal}
+              onClose={handleCloseModal}
+              title={selectedCard.asset_id}
+              address={selectedCard.address}
+              arrowCount={selectedCard.upvotes}
+              commentCount={selectedCard.commentcount}
+              viewCount={selectedCard.viewcount}
+              ticketId={selectedCard.ticket_id}
+              ticketNumber={selectedCard.ticketnumber}
+              description={selectedCard.description}
+              image={selectedCard.imageURL}
+              createdBy={selectedCard.createdby}
+              latitude={selectedCard.latitude}
+              longitude={selectedCard.longitude}
+              urgency={selectedCard.urgency}
+            />
+          )}
         </div>
       </div>
-      {showModal && selectedCard && (
-        <FaultCardUserView
-          show={showModal}
-          onClose={handleCloseModal}
-          title={selectedCard.asset_id}
-          address={selectedCard.address}
-          arrowCount={selectedCard.upvotes}
-          commentCount={selectedCard.commentcount}
-          viewCount={selectedCard.viewcount}
-          ticketId={selectedCard.ticket_id}
-          ticketNumber={selectedCard.ticketnumber}
-          description={selectedCard.description}
-          image={selectedCard.imageURL}
-          createdBy={selectedCard.createdby}
-          latitude={selectedCard.latitude}
-          longitude={selectedCard.longitude}
-          urgency={selectedCard.urgency}
-        />
-      )}
+
+      {/* Mobile View */}
+      <div className="block sm:hidden overflow-hidden">
+        <div className="flex h-[60vh] w-full rounded-3xl shadow-md overflow-hidden">
+          <div
+            className="w-full overflow-y-auto custom-scrollbar rounded-3xl"
+            style={{
+              paddingLeft: "8px",
+              paddingRight: "8px",
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent",// Adjust the height as needed
+            }}
+          >
+            <style jsx>{`
+              ::-webkit-scrollbar {
+                width: 4px; /* Smaller width for vertical scrollbar */
+              }
+              ::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.7); /* Lighter color */
+                border-radius: 9999px; /* Fully rounded scrollbar */
+              }
+              ::-webkit-scrollbar-track {
+                background: transparent;
+                margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
+              }
+            `}</style>
+            <div className="grid grid-cols-2 gap-4">
+              {visibleItems.map((item, index) => (
+                <div key={index} className="text-center">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+          {showModal && selectedCard && (
+            <FaultCardUserView
+              show={showModal}
+              onClose={handleCloseModal}
+              title={selectedCard.asset_id}
+              address={selectedCard.address}
+              arrowCount={selectedCard.upvotes}
+              commentCount={selectedCard.commentcount}
+              viewCount={selectedCard.viewcount}
+              ticketId={selectedCard.ticket_id}
+              ticketNumber={selectedCard.ticketnumber}
+              description={selectedCard.description}
+              image={selectedCard.imageURL}
+              createdBy={selectedCard.createdby}
+              latitude={selectedCard.latitude}
+              longitude={selectedCard.longitude}
+              urgency={selectedCard.urgency}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
