@@ -175,7 +175,7 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
         {/* Bottom Bar */}
         <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center">
           <nav className="z-51 fixed w-full p-0 flex items-center justify-center">
-            <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
+            <div className="flex-initial text-[0.95rem] flex me-5 gap-9 items-center">
               <Link href="/dashboard/citizen" passHref>
                 <div className={getNavItemClass("/dashboard/citizen")}>
                   <div className="flex flex-col gap-1 items-center">
