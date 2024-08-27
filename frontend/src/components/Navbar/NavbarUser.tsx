@@ -13,7 +13,7 @@ import {
 import { useProfile } from "@/hooks/useProfile";
 import { UserData } from "@/types/custom.types";
 import { usePathname } from "next/navigation";
-import { handleSignOut } from "@/services/auth.service";  // Import handleSignOut
+import { handleSignOut } from "@/services/auth.service"; // Import handleSignOut
 
 export default function NavbarUser({ unreadNotifications = 0 }) {
   const pathname = usePathname(); // Get the current pathname
@@ -61,109 +61,163 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
   };
 
   return (
-    <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center z-1 justify-between">
-      <Link href="/">
-        <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-          <img
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-            alt="MyCity"
-            width={50}
-            height={50}
-            className="w-50 h-50"
-          />
-        </div>
-      </Link>
-
-      <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
-        <Link href="/dashboard/citizen" passHref>
-          <div className={getNavItemClass("/dashboard/citizen")}>
-            <div className="flex flex-col gap-1 items-center">
-              <Home size={25} />
-              <span>Dashboard</span>
+    <div>
+      {/* Desktop View */}
+      <div className="hidden sm:block">
+        <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center z-1 justify-between">
+          <Link href="/">
+            <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
+                alt="MyCity"
+                width={50}
+                height={50}
+                className="w-50 h-50"
+              />
             </div>
-          </div>
-        </Link>
+          </Link>
 
-        <Link href="/create-ticket/citizen" passHref>
-          <div className={getNavItemClass("/create-ticket/citizen")}>
-            <div className="flex flex-col gap-1 items-center">
-              <PlusCircle size={25} />
-              <span>Report Fault</span>
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/notifications/citizen" passHref>
-          <div className={getNavItemClass("/notifications/citizen")}>
-            <div className="relative flex flex-col gap-1 items-center">
-              <Bell size={25} />
-              {unreadNotifications > 0 && (
-                <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
-                  {unreadNotifications}
+          <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
+            <Link href="/dashboard/citizen" passHref>
+              <div className={getNavItemClass("/dashboard/citizen")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <Home size={25} />
+                  <span>Dashboard</span>
                 </div>
-              )}
-              <span>Notifications</span>
-            </div>
+              </div>
+            </Link>
+
+            <Link href="/create-ticket/citizen" passHref>
+              <div className={getNavItemClass("/create-ticket/citizen")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <PlusCircle size={25} />
+                  <span>Report Fault</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/notifications/citizen" passHref>
+              <div className={getNavItemClass("/notifications/citizen")}>
+                <div className="relative flex flex-col gap-1 items-center">
+                  <Bell size={25} />
+                  {unreadNotifications > 0 && (
+                    <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
+                      {unreadNotifications}
+                    </div>
+                  )}
+                  <span>Notifications</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/search/citizen" passHref>
+              <div className={getNavItemClass("/search/citizen")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <Search size={25} />
+                  <span>Search</span>
+                </div>
+              </div>
+            </Link>
+
+            <Dropdown className="bg-white">
+              <DropdownTrigger
+                className="cursor-pointer"
+                data-testid="profile-dropdown-trigger"
+              >
+                <Avatar
+                  showFallback
+                  src={data?.picture}
+                  className="w-10 h-10 b-0 ring-offset-1 ring-offset-black-300 ring-2 ring-black-500"
+                />
+              </DropdownTrigger>
+
+              <DropdownMenu
+                aria-label="profile dropdown"
+                className="px-0 py-2 gap-0 rounded-sm text-black"
+              >
+                <DropdownItem
+                  key="settings"
+                  href="/settings/citizen"
+                  role="link"
+                  className="h-9 hover:bg-grey-500"
+                  textValue="Settings"
+                >
+                  <span className="text-sm">Settings</span>
+                </DropdownItem>
+
+                <DropdownItem
+                  key="about"
+                  href="/about"
+                  role="link"
+                  className="h-9 hover:bg-grey-500"
+                  textValue="About us"
+                >
+                  <span className="text-sm">About us</span>
+                </DropdownItem>
+
+                <DropdownItem
+                  key="logout"
+                  onClick={onLogout}
+                  role="button"
+                  className="h-9 hover:bg-grey-500"
+                  textValue="Log out"
+                >
+                  <span className="text-danger text-sm">Log out</span>
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
           </div>
-        </Link>
-
-        <Link href="/search/citizen" passHref>
-          <div className={getNavItemClass("/search/citizen")}>
-            <div className="flex flex-col gap-1 items-center">
-              <Search size={25} />
-              <span>Search</span>
-            </div>
-          </div>
-        </Link>
-
-        <Dropdown className="bg-white">
-          <DropdownTrigger
-            className="cursor-pointer"
-            data-testid="profile-dropdown-trigger"
-          >
-            <Avatar
-              showFallback
-              src={data?.picture}
-              className="w-10 h-10 b-0 ring-offset-1 ring-offset-black-300 ring-2 ring-black-500"
-            />
-          </DropdownTrigger>
-
-          <DropdownMenu
-            aria-label="profile dropdown"
-            className="px-0 py-2 gap-0 rounded-sm text-black"
-          >
-            <DropdownItem
-              key="settings"
-              href="/settings/citizen"
-              role="link"
-              className="h-9 hover:bg-grey-500"
-              textValue="Settings"
-            >
-              <span className="text-sm">Settings</span>
-            </DropdownItem>
-
-            <DropdownItem
-              key="about"
-              href="/about"
-              role="link"
-              className="h-9 hover:bg-grey-500"
-              textValue="About us"
-            >
-              <span className="text-sm">About us</span>
-            </DropdownItem>
-
-            <DropdownItem
-              key="logout"
-              onClick={onLogout}
-              role="button"
-              className="h-9 hover:bg-grey-500"
-              textValue="Log out"
-            >
-              <span className="text-danger text-sm">Log out</span>
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+        </nav>
       </div>
-    </nav>
+      {/* Mobile View */}
+
+      <div className="block sm:hidden">
+        {/* Bottom Bar */}
+        <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center">
+          <nav className="z-51 fixed w-full p-0 flex items-center justify-center">
+            <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
+              <Link href="/dashboard/citizen" passHref>
+                <div className={getNavItemClass("/dashboard/citizen")}>
+                  <div className="flex flex-col gap-1 items-center">
+                    <Home size={50} />
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/create-ticket/citizen" passHref>
+                <div className={getNavItemClass("/create-ticket/citizen")}>
+                  <div className="flex flex-col gap-1 items-center">
+                    <PlusCircle size={50} />
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/notifications/citizen" passHref>
+                <div className={getNavItemClass("/notifications/citizen")}>
+                  <div className="relative flex flex-col gap-1 items-center">
+                    <Bell size={50} />
+                    {unreadNotifications > 0 && (
+                      <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
+                        {unreadNotifications}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/search/citizen" passHref>
+                <div className={getNavItemClass("/search/citizen")}>
+                  <div className="flex flex-col gap-1 items-center">
+                    <Search size={50} />
+                  </div>
+                </div>
+              </Link>
+
+              
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
   );
 }

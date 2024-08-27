@@ -5,6 +5,7 @@ import { Tabs, Tab } from "@nextui-org/react";
 import FaultTable from "@/components/FaultTable/FaultTable";
 import FaultMapView from "@/components/FaultMapView/FaultMapView";
 import NavbarUser from "@/components/Navbar/NavbarUser";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
@@ -358,13 +359,8 @@ export default function CitizenDashboard({
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div className="flex flex-col">
-          <NavbarUser unreadNotifications={unreadNotifications} />
-          <div className="flex justify-center z-50 pt-8">
-            <NotificationPromt userEmail={userEmail} />
-          </div>
-
+      <div className="block sm:hidden ">
+        <div className="flex flex-col h-full overflow-hidden">
           <div
             style={{
               position: "fixed",
@@ -380,178 +376,217 @@ export default function CitizenDashboard({
               backgroundAttachment: "fixed",
               zIndex: -1,
             }}
-          ></div>
-          <main>
-            <div className="relative">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
-                Dashboard
-              </h1>
+          >
+            {/* Navbar Top*/}
+            <NavbarMobile />
+
+            {/* Notification Prompt */}
+            <div className="flex justify-center z-50 pt-8">
+              <NotificationPromt userEmail={userEmail} />
             </div>
 
-            <div className="fixed bottom-4 left-4 z-20">
-              <HelpCircle
-                data-testid="open-help-menu"
-                className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
-                size={24}
-                onClick={toggleHelpMenu}
-              />
-            </div>
-
-            {isHelpOpen && (
-              <div
-                data-testid="help"
-                className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
-              >
-                <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
-                  <button
-                    data-testid="close-help-menu"
-                    className="absolute top-2 right-2 text-gray-700"
-                    onClick={toggleHelpMenu}
-                  >
-                    <FaTimes size={24} />
-                  </button>
-                  <h2 className="text-xl font-bold mb-4">Help Menu</h2>
-                  <p>This dashboard allows you to:</p>
-                  <ul className="list-disc list-inside">
-                    <li>View the most up-voted issues in your area.</li>
-                    <li>See issues nearest to your location.</li>
-                    <li>Track issues you have added to your watchlist.</li>
-                    <li>
-                      Switch between different views: Cards, List, and Map.
-                    </li>
-                  </ul>
-                  <p>
-                    Use the tabs to navigate between different sections of the
-                    dashboard.
-                  </p>
-                </div>
+            {/* Dashboard Content */}
+            <div className="h-[85vh]">
+              <div className="flex justify-center">
+                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                  Dashboard
+                </h1>
               </div>
-            )}
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-10 right-10 shadow-lg z-20"
-              onClick={() => (window.location.href = "/create-ticket/citizen")}
-            >
-              + Report Fault
-            </button>
-            <div className="flex flex-col items-center justify-center rounded-3xl h-fit py-1">
-              <Tabs
-                aria-label="Signup Options"
-                defaultSelectedKey={0}
-                className="mt-5 flex justify-center w-full rounded-3xl"
-                classNames={{
-                  tab: "min-w-32 min-h-10 bg-white bg-opacity-30 text-black",
-                  panel: "w-full",
-                  cursor: "w-full border-3 border-blue-700/40",
-                  tabContent:
-                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
-                }}
-                onSelectionChange={handleTabChange}
-              >
-                <Tab key={0} title="Cards">
-                  <div className="w-full text-center">
-                    <h1 className="text-2xl text-white text-opacity-80 font-bold mt-2">
-                      Most up-voted
-                    </h1>
+
+              <div className="fixed bottom-24 left-4 z-20">
+                <HelpCircle
+                  data-testid="open-help-menu"
+                  className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
+                  size={24}
+                  onClick={toggleHelpMenu}
+                />
+
+                {isHelpOpen && (
+                  <div
+                    data-testid="help"
+                    className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
+                  >
+                    <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
+                      <button
+                        data-testid="close-help-menu"
+                        className="absolute top-2 right-2 text-gray-700"
+                        onClick={toggleHelpMenu}
+                      >
+                        <FaTimes size={24} />
+                      </button>
+                      <h2 className="text-xl font-bold mb-4">Help Menu</h2>
+                      <p>This dashboard allows you to:</p>
+                      <ul className="list-disc list-inside">
+                        <li>View the most up-voted issues in your area.</li>
+                        <li>See issues nearest to your location.</li>
+                        <li>Track issues you have added to your watchlist.</li>
+                        <li>
+                          Switch between different views: Cards, List, and Map.
+                        </li>
+                      </ul>
+                      <p>
+                        Use the tabs to navigate between different sections of
+                        the dashboard.
+                      </p>
+                    </div>
                   </div>
-                  <div className="w-full text-center">
-                    <h1 className="text-l text-white text-opacity-80 mb-4">
-                      Based on votes from the community in your area.
+                )}
+
+                <div className="">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-24 right-4 shadow-lg z-20"
+                    onClick={() =>
+                      (window.location.href = "/create-ticket/citizen")
+                    }
+                  >
+                    Report Fault
+                  </button>
+                </div>
+                
+              </div>
+
+              <div className="flex h-[80vh] flex-col items-center rounded-3xl">
+                <Tabs
+                  aria-label="Signup Options"
+                  defaultSelectedKey={0}
+                  className="flex justify-center w-full rounded-3xl pt-4"
+                  classNames={{
+                    tab: "min-w-28 min-h-10  bg-white bg-opacity-30 text-black",
+                    panel: "w-full h-full",
+                    cursor: "w-full border-3 border-blue-700/40",
+                    tabContent:
+                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
+                  }}
+                  onSelectionChange={handleTabChange}
+                >
+                  <Tab key={0} title="Cards" className="h-full ">
+                    <Tabs
+                      aria-label="Signup Options"
+                      defaultSelectedKey={0}
+                      className="mt-2 flex justify-center w-full rounded-3xl "
+                      classNames={{
+                        tab: "min-w-24 min-h-8bg-white bg-opacity-30 text-black text-xs",
+                        panel: "w-full",
+                        cursor: "w-full border-3 border-blue-700/40",
+                        tabContent:
+                          "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
+                      }}
+                      onSelectionChange={handleTabChange}
+                    >
+                      <Tab key={0} title="Watchlist" className=" h-full">
+                        <div className="  h-full">
+                          <h1 className="text-l text-opacity-80 text-white text-center mb-2">
+                            All of the issues you have in your watchlist.
+                          </h1>
+
+                          {isLoading ? (
+                            <div className="flex justify-center items-center">
+                              <ThreeDots
+                                height="40"
+                                width="80"
+                                radius="9"
+                                color="#ADD8E6"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                visible={true}
+                              />
+                            </div>
+                          ) : dashWatchResults.length > 0 ? (
+                            <div className="h-full">
+                              <DashboardFaultCardContainer
+                                cardData={dashWatchResults}
+                              />
+                            </div>
+                          ) : (
+                            <p className="text-center text-white text-opacity-60 text-sm">
+                              There are no faults to display.
+                            </p>
+                          )}
+                        </div>
+                      </Tab>
+
+                      <Tab key={1} title="Most Upvoted">
+                        <div className="w-full text-center"></div>
+                        <div className="w-full text-center">
+                          <h1 className="text-l text-white text-opacity-80 mb-4">
+                            Based on votes from the community in your area.
+                          </h1>
+                        </div>
+                        {isLoading ? (
+                          <div className="flex justify-center items-center">
+                            <ThreeDots
+                              height="40"
+                              width="80"
+                              radius="9"
+                              color="#ADD8E6"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{}}
+                              wrapperClass=""
+                              visible={true}
+                            />
+                          </div>
+                        ) : dashMostUpvoteResults.length > 0 ? (
+                          <DashboardFaultCardContainer
+                            cardData={dashMostUpvoteResults}
+                          />
+                        ) : (
+                          <p className="text-center text-white text-opacity-60 text-sm">
+                            There are no faults to display.
+                          </p>
+                        )}
+                      </Tab>
+
+                      <Tab key={2} title="Nearest to you">
+                        <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
+                          Based on your proximity to the issue.
+                        </h1>
+
+                        {isLoading ? (
+                          <div className="flex justify-center items-center">
+                            <ThreeDots
+                              height="40"
+                              width="80"
+                              radius="9"
+                              color="#ADD8E6"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{}}
+                              wrapperClass=""
+                              visible={true}
+                            />
+                          </div>
+                        ) : dashMuniResults.length > 0 ? (
+                          <DashboardFaultCardContainer
+                            cardData={dashMuniResults}
+                          />
+                        ) : (
+                          <p className="text-center text-sm text-opacity-60 text-white">
+                            There are no faults to display.
+                          </p>
+                        )}
+                      </Tab>
+                    </Tabs>
+                  </Tab>
+
+                  <Tab key={1} title="List">
+                    <FaultTable tableitems={dashMostUpvoteResults} />
+                  </Tab>
+
+                  <Tab key={2} title="Map">
+                    <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
+                      Faults Near You
                     </h1>
-                  </div>
-                  {isLoading ? (
-                    <div className="flex justify-center items-center">
-                      <ThreeDots
-                        height="40"
-                        width="80"
-                        radius="9"
-                        color="#ADD8E6"
-                        ariaLabel="three-dots-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                        visible={true}
-                      />
-                    </div>
-                  ) : dashMostUpvoteResults.length > 0 ? (
-                    <DashboardFaultCardContainer
-                      cardData={dashMostUpvoteResults}
-                    />
-                  ) : (
-                    <p className="text-center text-white text-opacity-60 text-sm">
-                      There are no faults to display.
-                    </p>
-                  )}
-
-                  <h1 className="text-2xl text-center text-white text-opacity-80 font-bold mt-2 ml-2">
-                    Nearest to you
-                  </h1>
-                  <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
-                    Based on your proximity to the issue.
-                  </h1>
-
-                  {isLoading ? (
-                    <div className="flex justify-center items-center">
-                      <ThreeDots
-                        height="40"
-                        width="80"
-                        radius="9"
-                        color="#ADD8E6"
-                        ariaLabel="three-dots-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                        visible={true}
-                      />
-                    </div>
-                  ) : dashMuniResults.length > 0 ? (
-                    <DashboardFaultCardContainer cardData={dashMuniResults} />
-                  ) : (
-                    <p className="text-center text-sm text-opacity-60 text-white">
-                      There are no faults to display.
-                    </p>
-                  )}
-
-                  <h1 className="text-2xl text-white text-opacity-80 text-center font-bold mt-2 ml-2">
-                    Watchlist
-                  </h1>
-
-                  <h1 className="text-l text-opacity-80 text-white text-center mb-4 ml-2">
-                    All of the issues you have added to your watchlist.
-                  </h1>
-
-                  {isLoading ? (
-                    <div className="flex justify-center items-center">
-                      <ThreeDots
-                        height="40"
-                        width="80"
-                        radius="9"
-                        color="#ADD8E6"
-                        ariaLabel="three-dots-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                        visible={true}
-                      />
-                    </div>
-                  ) : dashWatchResults.length > 0 ? (
-                    <DashboardFaultCardContainer cardData={dashWatchResults} />
-                  ) : (
-                    <p className="text-center text-white text-opacity-60 text-sm">
-                      There are no faults to display.
-                    </p>
-                  )}
-                </Tab>
-
-                <Tab key={1} title="List">
-                  <FaultTable tableitems={dashMostUpvoteResults} />
-                </Tab>
-
-                <Tab key={2} title="Map">
-                  <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
-                    Faults Near You
-                  </h1>
-                  <FaultMapView />
-                </Tab>
-              </Tabs>
+                    <FaultMapView />
+                  </Tab>
+                </Tabs>
+              </div>
             </div>
-          </main>
+
+            {/* Navbar Bottom */}
+            <div className="">
+              <NavbarUser unreadNotifications={unreadNotifications} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
