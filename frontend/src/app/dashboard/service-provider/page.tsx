@@ -13,6 +13,7 @@ import { HelpCircle, Image as ImageIcon } from 'lucide-react'; // Import ImageIc
 export default function Dashboard() {
   const userProfile = useProfile();
   const [company, setCompany] = useState("");
+  const [companypicture, setCompanypicture] = useState("");
   const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,14 +25,16 @@ export default function Dashboard() {
       const user_data = await userProfile.getUserProfile();
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
+      const user_pic = String(user_data.current?.picture);
       const rspmostupvotes = await getCompanyTickets(user_company, user_session);
+      setCompanypicture(user_pic);
       setCompany(user_company);
       setUpvoteTickets(rspmostupvotes);
       setIsLoading(false);
     };
 
     fetchData();
-  }, [userProfile]);
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -108,7 +111,13 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center justify-center text-white text-opacity-80">
           <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-            <ImageIcon size={20} className="text-gray-500" /> {/* Image placeholder */}
+            <img
+              src={companypicture}
+              alt="Description of image"
+              width={20}
+              height={20}
+              className="w-full h-full object-cover"
+            />
           </div>
           {isLoading ? (
             <ThreeDots

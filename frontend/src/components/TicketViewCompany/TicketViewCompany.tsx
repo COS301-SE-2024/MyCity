@@ -70,21 +70,21 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
       setCompany(user_company);
-      const rsptenders = await getCompanyTenders(user_company, user_session);
+      const rsptenders = await getCompanyTenders(user_company, user_session,true);
       if (rsptenders == null) {
         setHasBidded(false);
       } else {
         rsptenders.forEach((item: { ticket_id: string }) => {
           if (item.ticket_id == ticket_id) {
             setTender(item);
+            setHasBidded(true);
           }
         });
-        setHasBidded(!!tender);
       }
     };
 
     fetchData();
-  }, [userProfile, tender, ticket_id]);
+  }, [userProfile]);
 
   useEffect(() => {
     setMapKey((prevKey) => prevKey + 1);
@@ -127,7 +127,13 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     const user_data = await userProfile.getUserProfile();
     const company_name = String(user_data.current?.company_name);
     const user_session = String(user_data.current?.session_token);
-    const rsptenders = await getCompanyTenders(company_name, user_session);
+    const rsptenders = await getCompanyTenders(company_name, user_session,true);
+    rsptenders.forEach((item: { ticket_id: string }) => {
+      if (item.ticket_id == ticket_id) {
+        setTender(item);
+        setHasBidded(true);
+      }
+    });
     setReRender(false);
     setShowBid(true);
     setHasBidded(!!tender);
