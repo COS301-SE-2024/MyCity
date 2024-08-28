@@ -80,7 +80,7 @@ def getmytenders():
 @tenders_blueprint.route(
     "/getmunitenders", authorizer=cognito_authorizer, methods=["GET"], cors=True
 )
-def getmytenders():
+def getmunitenders():
     request = tenders_blueprint.current_request
     municipality = request.query_params.get("municipality")
     response = getMunicipalityTenders(municipality)
