@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { InteractTicket } from "@/services/tickets.service";
+import { useProfile } from "@/hooks/useProfile";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -103,6 +105,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [arrowColor, setArrowColor] = useState(initialData.arrowColor);
   const [commentColor, setCommentColor] = useState(initialData.commentColor);
   const [eyeColor, setEyeColor] = useState(initialData.eyeColor);
+  const userProfile = useProfile();
 
   useEffect(() => {
     const data = {
@@ -117,13 +120,28 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
   }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor, ticketNumber]);
 
-  const handleArrowClick = () => {
+  const handleArrowClick = async () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
-      setCurrentArrowCount((prevCount: any) => prevCount + 1);
+      console.log("Inside arrow")
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+      const rspvotes = await InteractTicket(ticketId,"UPVOTE",userSession)
+      if(rspvotes !== -1)
+      {
+        setCurrentArrowCount(rspvotes);
+      }
+      else setCurrentArrowCount((prevCount: any) => prevCount + 1);
     } else {
       setArrowColor("black");
-      setCurrentArrowCount((prevCount: any) => prevCount - 1);
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+      const rspvotes = await InteractTicket(ticketId,"UNVOTE",userSession)
+      if(rspvotes !== -1)
+      {
+        setCurrentArrowCount(rspvotes);
+      }
+      else setCurrentArrowCount((prevCount: any) => prevCount - 1);
     }
   };
 

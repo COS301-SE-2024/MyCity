@@ -4,6 +4,8 @@ import MapComponent from "@/context/MapboxMap"; // Adjust the import path as nec
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
 import { MapPin, Image as ImageIcon } from "lucide-react"; // Added ImageIcon from lucide-react
+import { InteractTicket } from "@/services/tickets.service";
+import { useProfile } from "@/hooks/useProfile";
 
 interface FaultCardUserViewProps {
   show: boolean;
@@ -62,39 +64,82 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [eyeColor, setEyeColor] = useState("black");
   const [showComments, setShowComments] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isInitialRender, setIsInitialRender] = useState(true);
+  const userProfile = useProfile();
+
 
   useEffect(() => {
-    const data = {
-      arrowCount: currentArrowCount,
-      commentCount: currentCommentCount,
-      viewCount: currentViewCount,
-      arrowColor,
-      commentColor,
-      eyeColor,
-    };
-
-    localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
-  }, [
-    currentArrowCount,
-    currentCommentCount,
-    currentViewCount,
-    arrowColor,
-    commentColor,
-    eyeColor,
-    ticketNumber,
-  ]);
+   
+      const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
+      if (storedData) {
+        const data = JSON.parse(storedData);
+        setCurrentArrowCount(data.arrowCount);
+        setCurrentCommentCount(data.commentCount);
+        setCurrentViewCount(data.viewCount);
+        setArrowColor(data.arrowColor);
+        setCommentColor(data.commentColor);
+        setEyeColor(data.eyeColor);
+      }
+      else 
+      {
+        const data = {
+          arrowCount: currentArrowCount,
+          commentCount: currentCommentCount,
+          viewCount: currentViewCount,
+          arrowColor,
+          commentColor,
+          eyeColor,
+        };
+    
+        localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
+      }
+  }, [ticketNumber,isInitialRender]);
 
   const toggleComments = () => {
     setShowComments((prev) => !prev);
   };
 
-  const handleArrowClick = () => {
+  const handleArrowClick = async () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
-      setCurrentArrowCount((prevCount: number) => prevCount + 1);
+      console.log("inside arrwossss")
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+      const rspvotes = await InteractTicket(ticketId,"UPVOTE",userSession)
+      if(rspvotes !== -1)
+      {
+        console.log("Inside rspmovetss")
+        setCurrentArrowCount(rspvotes);
+        const data = {
+          arrowCount: rspvotes,
+          commentCount: currentCommentCount,
+          viewCount: currentViewCount,
+          arrowColor : "blue",
+          commentColor,
+          eyeColor,
+        };
+        localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
+      }
+      else setCurrentArrowCount((prevCount: any) => prevCount + 1);
     } else {
       setArrowColor("black");
-      setCurrentArrowCount((prevCount: number) => prevCount - 1);
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+      const rspvotes = await InteractTicket(ticketId,"UNVOTE",userSession)
+      if(rspvotes !== -1)
+      {
+        setCurrentArrowCount(rspvotes);
+        const data = {
+          arrowCount: rspvotes,
+          commentCount: currentCommentCount,
+          viewCount: currentViewCount,
+          arrowColor : "black",
+          commentColor,
+          eyeColor,
+        };
+        localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
+      }
+      else setCurrentArrowCount((prevCount: any) => prevCount - 1);
     }
   };
 

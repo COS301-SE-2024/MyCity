@@ -321,6 +321,35 @@ export async function AcceptTicket(ticket: string, user_session: string) {
 
 }
 
+export async function InteractTicket(ticket: string, interact_type : string, user_session: string) {
+    const data = {
+        type : interact_type,
+        ticket_id: ticket,
+    }
+
+    const apiURL = "/api/tickets/interact";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json()
+    if (result.data.Status == "SUCCESFUL") {
+        return result.data.vote
+    }
+    else return -1
+
+
+}
+
 export async function CloseTicket(ticket: string, user_session: string) {
     const data = {
         ticket_id: ticket,
