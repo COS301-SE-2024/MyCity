@@ -11,6 +11,7 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
+import LocationPrompt from "@/components/Location/LocationPrompt";
 import {
   getMostUpvote,
   getTicket,
@@ -350,6 +351,9 @@ export default function CitizenDashboard({
                   <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
                     Faults Near You
                   </h1>
+                  <div className="flex justify-center z-50 pt-8">
+                    <LocationPrompt />
+                  </div>
                   <FaultMapView />
                 </Tab>
               </Tabs>
@@ -442,7 +446,6 @@ export default function CitizenDashboard({
                     Report Fault
                   </button>
                 </div>
-                
               </div>
 
               <div className="flex h-[80vh] flex-col items-center rounded-3xl">
@@ -573,6 +576,9 @@ export default function CitizenDashboard({
                   </Tab>
 
                   <Tab key={2} title="Map">
+                    <div className="flex justify-center z-50 pt-8">
+                      <LocationPrompt />
+                    </div>
                     <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
                       Faults Near You
                     </h1>
