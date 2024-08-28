@@ -11,7 +11,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
-  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
@@ -89,8 +88,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
               type={showOldPassword ? "text" : "password"}
               id="old-password"
               name="oldPassword"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
               className="w-full border rounded-3xl p-2 pr-10"
               placeholder="Enter your old password"
             />

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { handleUpdatePassword } from "@/services/auth.service";
 
 type ChangePasswordProps = {
   onBack: () => void;
@@ -10,7 +11,6 @@ const ChangeMuniPass: React.FC<ChangePasswordProps> = ({ onBack }) => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
-  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
@@ -32,7 +32,18 @@ const ChangeMuniPass: React.FC<ChangePasswordProps> = ({ onBack }) => {
     return passwordRules.every((rule) => rule.test(password));
   };
 
-  const handleSaveChanges = () => {
+  const checkPasswordMatch = (confirmPassword: string) => {
+    setConfirmNewPassword(confirmPassword);
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match.");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const handleSavePassword = async (event: FormEvent) => {
+    event.preventDefault();
+
     if (newPassword !== confirmNewPassword) {
       setPasswordError("New passwords do not match.");
       return;
@@ -44,20 +55,14 @@ const ChangeMuniPass: React.FC<ChangePasswordProps> = ({ onBack }) => {
       return;
     }
 
-    // Integrate with backend for verification and password change
-    // Example: Call a backend service to verify old password and save the new one
-    // savePassword(oldPassword, newPassword).then(...).catch(...);
-
     setPasswordError("");
-    alert("Password changed successfully!");
-  };
 
-  const checkPasswordMatch = (confirmPassword: string) => {
-    setConfirmNewPassword(confirmPassword);
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords do not match.");
-    } else {
-      setPasswordError("");
+    try {
+      const form = new FormData(event.currentTarget as HTMLFormElement);
+      await handleUpdatePassword(form);
+      alert("Password changed successfully!");
+    } catch (error: any) {
+      setPasswordError("Incorrect old password.");
     }
   };
 
@@ -72,102 +77,104 @@ const ChangeMuniPass: React.FC<ChangePasswordProps> = ({ onBack }) => {
       </button>
       <h2 className="text-xl font-semibold mb-4">Change Employee Password</h2>
 
-      <div className="mb-4 relative">
-        <label className="block text-gray-700 mb-2" htmlFor="old-password">
-          Old Password
-        </label>
-        <div className="relative">
-          <input
-            type={showOldPassword ? "text" : "password"}
-            id="old-password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            className="w-full border rounded-3xl p-2 pr-10"
-            placeholder="Enter your old password"
-          />
-          <button
-            type="button"
-            className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-700"
-            onClick={toggleOldPassword}
+      <form onSubmit={handleSavePassword}>
+        <div className="mb-4 relative">
+          <label className="block text-gray-700 mb-2" htmlFor="old-password">
+            Old Password
+          </label>
+          <div className="relative">
+            <input
+              type={showOldPassword ? "text" : "password"}
+              id="old-password"
+              name="oldPassword"
+              className="w-full border rounded-3xl p-2 pr-10"
+              placeholder="Enter your old password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-700"
+              onClick={toggleOldPassword}
+            >
+              {showOldPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-4 relative">
+          <label className="block text-gray-700 mb-2" htmlFor="new-password">
+            New Password
+          </label>
+          <div className="relative">
+            <input
+              type={showNewPassword ? "text" : "password"}
+              id="new-password"
+              name="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full border rounded-3xl p-2 pr-10"
+              placeholder="Enter your new password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-700"
+              onClick={toggleNewPassword}
+            >
+              {showNewPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-4 relative">
+          <label
+            className="block text-gray-700 mb-2"
+            htmlFor="confirm-new-password"
           >
-            {showOldPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
+            Confirm New Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmNewPassword ? "text" : "password"}
+              id="confirm-new-password"
+              value={confirmNewPassword}
+              onChange={(e) => checkPasswordMatch(e.target.value)}
+              className="w-full border rounded-3xl p-2 pr-10"
+              placeholder="Confirm your new password"
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-700"
+              onClick={toggleConfirmNewPassword}
+            >
+              {showConfirmNewPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {passwordError && (
+          <p className="text-red-500 text-center">{passwordError}</p>
+        )}
+
+        <div className="flex justify-center mt-4">
+          <button
+              type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600"
+          >
+            Save Changes
           </button>
         </div>
-      </div>
-
-      <div className="mb-4 relative">
-        <label className="block text-gray-700 mb-2" htmlFor="new-password">
-          New Password
-        </label>
-        <div className="relative">
-          <input
-            type={showNewPassword ? "text" : "password"}
-            id="new-password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full border rounded-3xl p-2 pr-10"
-            placeholder="Enter your new password"
-          />
-          <button
-            type="button"
-            className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-700"
-            onClick={toggleNewPassword}
-          >
-            {showNewPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div className="mb-4 relative">
-        <label
-          className="block text-gray-700 mb-2"
-          htmlFor="confirm-new-password"
-        >
-          Confirm New Password
-        </label>
-        <div className="relative">
-          <input
-            type={showConfirmNewPassword ? "text" : "password"}
-            id="confirm-new-password"
-            value={confirmNewPassword}
-            onChange={(e) => checkPasswordMatch(e.target.value)}
-            className="w-full border rounded-3xl p-2 pr-10"
-            placeholder="Confirm your new password"
-          />
-          <button
-            type="button"
-            className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-700"
-            onClick={toggleConfirmNewPassword}
-          >
-            {showConfirmNewPassword ? (
-              <EyeOff className="h-5 w-5" />
-            ) : (
-              <Eye className="h-5 w-5" />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {passwordError && (
-        <p className="text-red-500 text-center">{passwordError}</p>
-      )}
-
-      <div className="flex justify-center mt-4">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600"
-          onClick={handleSaveChanges}
-        >
-          Save Changes
-        </button>
-      </div>
+      </form>
     </div>
   );
 };
