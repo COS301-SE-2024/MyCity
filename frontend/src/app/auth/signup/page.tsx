@@ -45,41 +45,51 @@ export default function Signup() {
             }}
           ></div>
           <main className="flex justify-center mb-8">
-            <div className="flex flex-col bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-[40em] h-fit py-12 mt-12">
-              <span className="text-[2.5em] font-bold">
-                {currentFormHeader}
-              </span>
-              <Tabs
-                aria-label="Signup Options"
-                defaultSelectedKey={2}
-                className="mt-5 flex justify-center w-full"
-                classNames={{
-                  tab: "min-w-32 min-h-10",
-                  panel: "w-full",
-                  cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
-                  tabContent:
-                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
-                }}
-                onSelectionChange={handleTabChange}
-              >
-                <Tab key={0} title="Citizen" data-testid="citizen-tab">
-                  <CitizenSignup />
-                </Tab>
-                <Tab
-                  key={1}
-                  title="Municipality"
-                  data-testid="municipality-tab"
+            <div className="flex flex bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-1/2 h-fit py-12 mt-12">
+              <div>
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Signup.gif"
+                  alt="MyCity"
+                  width={512}
+                  height={512}
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[2.5em] flex justify-center font-bold">
+                  {currentFormHeader}
+                </span>
+                <Tabs
+                  aria-label="Signup Options"
+                  defaultSelectedKey={2}
+                  className="mt-5 flex justify-center w-full"
+                  classNames={{
+                    tab: "min-w-32 min-h-10",
+                    panel: "w-full",
+                    cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
+                    tabContent:
+                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
+                  }}
+                  onSelectionChange={handleTabChange}
                 >
-                  <MunicipalitySignup />
-                </Tab>
-                <Tab
-                  key={2}
-                  title="Service Provider"
-                  data-testid="service-provider-tab"
-                >
-                  <ServiceProviderTabs />
-                </Tab>
-              </Tabs>
+                  <Tab key={0} title="Citizen" data-testid="citizen-tab">
+                    <CitizenSignup />
+                  </Tab>
+                  <Tab
+                    key={1}
+                    title="Municipality"
+                    data-testid="municipality-tab"
+                  >
+                    <MunicipalitySignup />
+                  </Tab>
+                  <Tab
+                    key={2}
+                    title="Service Provider"
+                    data-testid="service-provider-tab"
+                  >
+                    <ServiceProviderTabs />
+                  </Tab>
+                </Tabs>
+              </div>
             </div>
           </main>
         </div>
@@ -128,6 +138,14 @@ export default function Signup() {
                 {currentFormHeader}
               </span>
               <div className="overflow-auto h-[65vh] rounded-lg">
+                <div className="flex justify-center">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Signup.gif"
+                    alt="MyCity"
+                    width={256}
+                    height={256}
+                  />
+                </div>
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
