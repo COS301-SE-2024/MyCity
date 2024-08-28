@@ -88,6 +88,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
             <input
               type={showOldPassword ? "text" : "password"}
               id="old-password"
+              name="oldPassword"
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               className="w-full border rounded-3xl p-2 pr-10"
@@ -115,6 +116,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onBack }) => {
             <input
               type={showNewPassword ? "text" : "password"}
               id="new-password"
+              name="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="w-full border rounded-3xl p-2 pr-10"
