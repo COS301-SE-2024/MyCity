@@ -74,7 +74,7 @@ export default function CitizenDashboard({
         const user_id = user_data.current?.email ?? "";
         setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
-        const rspmostupvotes = await getMostUpvote(user_session);
+        const rspmostupvotes = await getMostUpvote(user_session,true);
         const rspwatchlist = await getWatchlistTickets(
           String(user_id),
           user_session
@@ -82,7 +82,8 @@ export default function CitizenDashboard({
         const municipality = user_data.current?.municipality;
         const rspmunicipality = await getTicketsInMunicipality(
           municipality,
-          user_session
+          user_session,
+          true
         );
 
         // Preload images for all the fetched results
