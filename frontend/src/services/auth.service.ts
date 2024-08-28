@@ -1,6 +1,6 @@
 import { UserRole } from '@/types/custom.types';
 import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
-import { SignUpInput, SignUpOutput, autoSignIn, fetchAuthSession, signIn, signInWithRedirect, signOut, signUp } from 'aws-amplify/auth';
+import { SignUpInput, SignUpOutput, UpdatePasswordInput, autoSignIn, fetchAuthSession, signIn, signInWithRedirect, signOut, signUp, updatePassword } from 'aws-amplify/auth';
 
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
@@ -11,7 +11,7 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
         password: String(form.get("password")),
     });
 
-    console.log("username: " + String(form.get("email")) + " password : " + String(form.get("password")) )
+    console.log("username: " + String(form.get("email")) + " password : " + String(form.get("password")))
     console.log("did it log in: " + String(isSignedIn))
 
 
@@ -28,6 +28,22 @@ export async function handleGoogleSignIn() {
 export async function handleSignOut() {
     removeUserPathSuffix();
     await signOut();
+}
+
+export async function handleUpdatePassword(form: FormData) {
+    const _oldPassword = String(form.get("oldPassword"));
+    const _newPassword = String(form.get("newPassword"));
+
+    const passwordInput: UpdatePasswordInput = {
+        newPassword: _newPassword,
+        oldPassword: _oldPassword
+    };
+
+    try {
+        await updatePassword(passwordInput);
+    } catch (error) {
+        throw error;
+    }
 }
 
 
