@@ -31,6 +31,12 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 }
 
 const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
+  const [coordinates, setCoordinates] = useState<{ latitude: number | null; longitude: number | null }>({
+    latitude: null,
+    longitude: null,
+  });
+  const [error, setError] = useState<string | null>(null);
+ 
   const {
     selectedAddress,
     map,
@@ -65,6 +71,28 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     types: ["street"],
     language: "en",
   };
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+          setCoordinates({ latitude, longitude });
+        },
+        (error) => {
+          setError(error.message);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   useEffect(() => {
     setIsClient(true); // Set the client-side flag when the component mounts
