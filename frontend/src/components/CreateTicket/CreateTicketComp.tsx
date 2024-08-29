@@ -1,5 +1,18 @@
-import React, { FormEvent, useEffect, useState, useMemo, useCallback, useRef } from "react";
-import { AutocompleteItem, Textarea, Button, Autocomplete } from "@nextui-org/react";
+import React, {
+  FormEvent,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
+import {
+  AutocompleteItem,
+  Textarea,
+  Button,
+  Autocomplete,
+  ButtonGroup,
+} from "@nextui-org/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useProfile } from "@/hooks/useProfile";
@@ -18,7 +31,14 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 }
 
 const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
-  const { selectedAddress, map, initialiseMap, dropPin, panMapTo, panToCurrentLocation } = useMapboxProp();
+  const {
+    selectedAddress,
+    map,
+    initialiseMap,
+    dropPin,
+    panMapTo,
+    panToCurrentLocation,
+  } = useMapboxProp();
   const { getUserProfile } = useProfile();
   const formRef = useRef<HTMLFormElement>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -31,7 +51,10 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isClient, setIsClient] = useState(false); // State to check if running on client-side
 
-  const memoizedApiKey = useMemo(() => String(process.env.PLACEKIT_API_KEY), []);
+  const memoizedApiKey = useMemo(
+    () => String(process.env.PLACEKIT_API_KEY),
+    []
+  );
 
   const pkaOptions: PlaceKitOptions = {
     countries: ["za"],
@@ -105,7 +128,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
         if (isClient) {
-          
         }
       } else {
         throw new Error("Ticket creation failed");
@@ -152,20 +174,31 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     return () => clearTimeout(timer);
   };
 
+  const [selectedSeverity, setSelectedSeverity] = useState("Minor");
+
+  const handleSelect = (severity: string) => {
+    setSelectedSeverity(severity);
+  };
+  const getButtonStyle = (severity: string) => {
+    return selectedSeverity === severity ? "border-blue-500 border-3" : "";
+  };
   return (
     <div className="flex justify-center items-center h-full w-full px-4">
       <ToastContainer />
-  
+
       <div className="flex w-full max-w-screen-xl h-[40rem] rounded-lg overflow-hidden">
-        
         {/* Form Section */}
         <div className="w-1/2 p-6 bg-white flex flex-col justify-center">
-          <h2 className="text-2xl text-center font-bold mb-6">Create a Fault Ticket</h2> {/* Added Heading */}
+          <h2 className="text-2xl text-center font-bold mb-6">
+            Report a Fault
+          </h2>{" "}
+          {/* Added Heading */}
           <form
             ref={formRef}
             onSubmit={handleSubmit}
             className="flex flex-col gap-y-8"
           >
+            {/* Fault Type */}
             {faultTypes.length > 0 ? (
               <Autocomplete
                 label={
@@ -205,6 +238,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             ) : (
               <p>Loading fault types...</p>
             )}
+
+            {/* Description */}
             <Textarea
               label={<span className="font-semibold text-sm">Description</span>}
               labelPlacement="outside"
@@ -212,15 +247,83 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               placeholder="Add Description..."
               onChange={(e) => setFaultDescription(e.target.value)}
             />
+
+            {/* Fault Severity */}
             <div>
-              <span className="font-semibold text-sm">Selected Address:</span>
-              <div className="flex flex-col gap-y-0.5 text-xs ps-2">
-                <span>{selectedAddress?.street?.name}</span>
-                <span>{selectedAddress?.county}</span>
-                <span>{selectedAddress?.city}</span>
-                <span>{selectedAddress?.administrative}</span>
+              <span className="font-semibold text-sm">Fault Severity</span>
+              <div className="flex h-[3.5rem] justify-center">
+                <ButtonGroup aria-label="Basic example" className="flex h-full">
+                  <Button
+                    variant="bordered"
+                    className={`h-full ${getButtonStyle("Minor")}`}
+                    onClick={() => handleSelect("Minor")}
+                  >
+                    <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
+                      <img
+                        width="25"
+                        height="auto"
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
+                        alt="Minor"
+                      />
+                      Minor
+                    </div>
+                  </Button>
+                  <Button
+                    variant="bordered"
+                    className={`h-full ${getButtonStyle("Major")}`}
+                    onClick={() => handleSelect("Major")}
+                  >
+                    <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl  justify-center items-center h-full">
+                      <img
+                        width="25"
+                        height="auto"
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
+                        alt="Major"
+                      />
+                      Major
+                    </div>
+                  </Button>
+                  <Button
+                    variant="bordered"
+                    className={`h-full ${getButtonStyle("Critical")}`}
+                    onClick={() => handleSelect("Critical")}
+                  >
+                    <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
+                      <img
+                        width="25"
+                        height="auto"
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
+                        alt="Critical"
+                      />
+                      Critical
+                    </div>
+                  </Button>
+                </ButtonGroup>
               </div>
             </div>
+
+            {/* Address */}
+            <div className="w-full">
+              <span className="font-semibold text-sm">Address:</span>
+              <PlaceKit
+                apiKey={memoizedApiKey}
+                options={pkaOptions}
+                className="w-full"
+                onPick={handleSuggestionPick}
+                placeholder="Search for an address..."
+              />
+
+              <div>
+                <div className="flex flex-col gap-y-0.5 text-xs ps-2">
+                  <span>{selectedAddress?.street?.name}</span>
+                  <span>{selectedAddress?.county}</span>
+                  <span>{selectedAddress?.city}</span>
+                  <span>{selectedAddress?.administrative}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
             <Button
               type="submit"
               disabled={!isFormValid}
@@ -235,7 +338,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             </Button>
           </form>
         </div>
-  
+
         {/* Map Section */}
         <div className="w-1/2 relative bg-gray-200">
           <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
@@ -245,36 +348,35 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             >
               <Locate size={21} />
             </Button>
-            <Button className="min-w-fit h-fit p-2 bg-white" onClick={onPinClick}>
+            <Button
+              className="min-w-fit h-fit p-2 bg-white"
+              onClick={onPinClick}
+            >
               {!isPinDropped ? <Pin size={21} /> : <PinOff size={21} />}
             </Button>
           </div>
-  
-          <div className="absolute top-5 left-5 z-30 w-72">
-            <PlaceKit
-              apiKey={memoizedApiKey}
-              options={pkaOptions}
-              className="w-full"
-              onPick={handleSuggestionPick}
-              placeholder="Search for an address..."
-            />
-          </div>
-  
+
           {!isPinDropped && (
             <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
               <CustomMarker fill="#BE0505" />
             </div>
           )}
-  
+
           <div className="absolute text-sm bottom-5 left-1/2 transform -translate-x-1/2 z-40 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
-            <div className="flex justify-center cursor-pointer" onClick={handleTooltipToggle}>
+            <div
+              className="flex justify-center cursor-pointer"
+              onClick={handleTooltipToggle}
+            >
               <Info size={24} className="text-blue-500" />
             </div>
             {tooltipVisible && (
-              <p>Click on the pin in the bottom right corner to select this location as the fault address.</p>
+              <p>
+                Click on the pin in the bottom right corner to select this
+                location as the fault address.
+              </p>
             )}
           </div>
-  
+
           <div className="w-full h-full relative" ref={mapContainer}></div>
         </div>
       </div>
