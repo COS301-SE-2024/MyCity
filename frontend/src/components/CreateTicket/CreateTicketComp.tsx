@@ -31,12 +31,15 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 }
 
 const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
-  const [coordinates, setCoordinates] = useState<{ latitude: number | null; longitude: number | null }>({
+  const [coordinates, setCoordinates] = useState<{
+    latitude: number | null;
+    longitude: number | null;
+  }>({
     latitude: null,
     longitude: null,
   });
   const [error, setError] = useState<string | null>(null);
- 
+
   const {
     selectedAddress,
     map,
@@ -367,45 +370,50 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
           </form>
         </div>
 
-        {/* Map Section */}
+        {/* Graphical Section */}
         <div className="w-1/2 relative bg-gray-200">
-          <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
-            <Button
-              className="min-w-fit h-fit p-2 bg-white"
-              onClick={panToCurrentLocation}
-            >
-              <Locate size={21} />
-            </Button>
-            <Button
-              className="min-w-fit h-fit p-2 bg-white"
-              onClick={onPinClick}
-            >
-              {!isPinDropped ? <Pin size={21} /> : <PinOff size={21} />}
-            </Button>
-          </div>
 
-          {!isPinDropped && (
-            <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
-              <CustomMarker fill="#BE0505" />
+        
+          {/* Map Section */}
+          <div>
+            <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
+              <Button
+                className="min-w-fit h-fit p-2 bg-white"
+                onClick={panToCurrentLocation}
+              >
+                <Locate size={21} />
+              </Button>
+              <Button
+                className="min-w-fit h-fit p-2 bg-white"
+                onClick={onPinClick}
+              >
+                {!isPinDropped ? <Pin size={21} /> : <PinOff size={21} />}
+              </Button>
             </div>
-          )}
 
-          <div className="absolute text-sm bottom-5 left-1/2 transform -translate-x-1/2 z-40 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
-            <div
-              className="flex justify-center cursor-pointer"
-              onClick={handleTooltipToggle}
-            >
-              <Info size={24} className="text-blue-500" />
-            </div>
-            {tooltipVisible && (
-              <p>
-                Click on the pin in the bottom right corner to select this
-                location as the fault address.
-              </p>
+            {!isPinDropped && (
+              <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
+                <CustomMarker fill="#BE0505" />
+              </div>
             )}
-          </div>
 
-          <div className="w-full h-full relative" ref={mapContainer}></div>
+            <div className="absolute text-sm bottom-5 left-1/2 transform -translate-x-1/2 z-40 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
+              <div
+                className="flex justify-center cursor-pointer"
+                onClick={handleTooltipToggle}
+              >
+                <Info size={24} className="text-blue-500" />
+              </div>
+              {tooltipVisible && (
+                <p>
+                  Click on the pin in the bottom right corner to select this
+                  location as the fault address.
+                </p>
+              )}
+            </div>
+
+            <div className="w-full h-full relative" ref={mapContainer}></div>
+          </div>
         </div>
       </div>
     </div>
