@@ -37,7 +37,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
             </h1>
             <p className="text-md mb-4 text-center">
               Install our PWA to receive personalized results and updates based
-              on your area, even when you're offline. 
+              on your area, even when you are offline.
             </p>
             <p className="text-sm mb-4 text-center">
               Available on Android, Windows, and iOS.
