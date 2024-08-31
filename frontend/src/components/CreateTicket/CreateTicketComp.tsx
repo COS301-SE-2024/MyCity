@@ -229,6 +229,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             onSubmit={handleSubmit}
             className="flex flex-col gap-y-8"
           >
+           
+           
             {/* Fault Type */}
             {faultTypes.length > 0 ? (
               <Autocomplete
@@ -270,6 +272,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               <p>Loading fault types...</p>
             )}
 
+           
+           
             {/* Description */}
             <Textarea
               label={<span className="font-semibold text-sm">Description</span>}
@@ -353,6 +357,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                 </div>
               </div>
             </div>
+
+            
 
             {/* Submit Button */}
             <Button

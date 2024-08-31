@@ -26,7 +26,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
             </button>
             <div className="flex justify-center">
               <img
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/installl_pwa.webp"
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                 alt="Install Logo"
                 width={400}
               />
