@@ -1,63 +1,61 @@
 "use client";
 
-import Home from "./home/page";
+
 import React, { useEffect, useState } from "react";
+import Home from "./home/page";
 import PWAPrompt from "@/components/PWA/PWAPrompt";
 
-// Define the BeforeInstallPromptEvent type
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-};
+declare global {
+  interface WindowEventMap {
+    beforeinstallprompt: Event;
+  }
+}
 
 function App() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+    const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallPrompt(true); 
+      setShowInstallPrompt(true);
     };
 
-    // Cast "beforeinstallprompt" to string
-    window.addEventListener("beforeinstallprompt" as string, handleBeforeInstallPrompt as EventListener);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener("beforeinstallprompt" as string, handleBeforeInstallPrompt as EventListener);
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     };
   }, []);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
+      const promptEvent = deferredPrompt as any;
+      promptEvent.prompt();
+      const { outcome } = await promptEvent.userChoice;
       if (outcome === "accepted") {
         console.log("User accepted the install prompt");
       } else {
         console.log("User dismissed the install prompt");
       }
-      setDeferredPrompt(null); 
-      setShowInstallPrompt(false); 
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
     }
   };
 
   const handleCancelClick = () => {
-    setShowInstallPrompt(false); 
+    setShowInstallPrompt(false);
     console.log("User dismissed the custom install prompt");
   };
 
   return (
-    <>
+    <React.Fragment>
       <Home />
       {showInstallPrompt && (
-        <PWAPrompt 
-          onInstall={handleInstallClick} 
-          onCancel={handleCancelClick} 
-        />
+        <PWAPrompt onInstall={handleInstallClick} onCancel={handleCancelClick} />
       )}
-    </>
+    </React.Fragment>
   );
 }
 

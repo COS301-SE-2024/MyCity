@@ -36,7 +36,7 @@ export default function Login() {
             <div className="flex bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-1/2 h-fit py-12 mt-12">
               <div>
                 <img
-                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/login_icon.webp"
                   alt="MyCity"
                   width={512}
                   height={512}
