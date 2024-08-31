@@ -1,5 +1,3 @@
-// next.config.mjs
-
 import nextPWA from "@ducanh2912/next-pwa";
 
 const withPWA = nextPWA({
@@ -8,9 +6,46 @@ const withPWA = nextPWA({
     aggressiveFrontEndNavCaching: true,
     reloadOnOnline: true,
     swMinify: true,
-    disable: false, 
-    workboxOptions:{
+    disable: false,
+    workboxOptions: {
         disableDevLogs: true,
+        runtimeCaching: [
+            {
+                urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+                handler: 'CacheFirst',
+                options: {
+                    cacheName: 'google-fonts',
+                    expiration: {
+                        maxEntries: 4,
+                        maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+                    },
+                },
+            },
+            {
+                urlPattern: /\/api\/.*\/*.json/,
+                handler: 'NetworkFirst',
+                options: {
+                    cacheName: 'api-cache',
+                    networkTimeoutSeconds: 10,
+                    expiration: {
+                        maxEntries: 50,
+                        maxAgeSeconds: 5 * 60, // 5 minutes
+                    },
+                },
+            },
+            {
+                urlPattern: /\.(?:html|js|css|png|jpg|jpeg|svg|gif)$/,
+                handler: 'StaleWhileRevalidate',
+                options: {
+                    cacheName: 'static-resources',
+                    expiration: {
+                        maxEntries: 60,
+                        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+                    },
+                },
+            },
+            // Add more caching strategies as needed
+        ],
     },
 });
 
@@ -25,7 +60,7 @@ const nextConfig = {
         AWS_ACCESS_KEY_ID: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
         AWS_SECRET_ACCESS_KEY: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
 
-        
+
         FIREBASE_VAPID_KEY: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
         FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -35,21 +70,18 @@ const nextConfig = {
         FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         FIREBASE_MEASUREMENT_ID: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
     },
-
     webpack(config) {
-        // Grab the existing rule that handles SVG imports
+        // SVG handling configuration
         const fileLoaderRule = config.module.rules.find((rule) =>
             rule.test?.test?.('.svg'),
         );
 
         config.module.rules.push(
-            // Reapply the existing rule, but only for svg imports ending in ?url
             {
                 ...fileLoaderRule,
                 test: /\.svg$/i,
                 resourceQuery: /url/, // *.svg?url
             },
-            // Convert all other *.svg imports to React components
             {
                 test: /\.svg$/i,
                 issuer: fileLoaderRule.issuer,
@@ -58,7 +90,6 @@ const nextConfig = {
             },
         );
 
-        // Modify the file loader rule to ignore *.svg, since we have it handled now.
         fileLoaderRule.exclude = /\.svg$/i;
 
         return config;
