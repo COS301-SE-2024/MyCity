@@ -13,7 +13,7 @@ import {
   Autocomplete,
   ButtonGroup,
 } from "@nextui-org/react";
-import {useDropzone} from 'react-dropzone';
+import { useDropzone } from "react-dropzone";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useProfile } from "@/hooks/useProfile";
@@ -26,7 +26,7 @@ import { PlaceKit, PlaceKitOptions } from "@placekit/autocomplete-react";
 import CustomMarker from "../../../public/customMarker.svg";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
-
+import CameraPrompt from "@/components/Camera/CameraPrompt";
 interface Props extends React.HTMLAttributes<HTMLElement> {
   useMapboxProp: () => MapboxContextProps;
 }
@@ -38,20 +38,18 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const onDrop = useCallback((acceptedFiles) => {
     // acceptedFiles.forEach((file) => {
     //   const reader = new FileReader();
-
     //   reader.onload = () => {
     //     const fileAsDataURL = reader.result;
     //     setDataURL(fileAsDataURL as string);
     //   };
-
     //   reader.readAsDataURL(file);
     // });
-
   });
 
-  const {getRootProps, acceptedFiles, getInputProps, isDragActive} = useDropzone({onDrop});
+  const { getRootProps, acceptedFiles, getInputProps, isDragActive } =
+    useDropzone({ onDrop });
 
-  const selectedFile = acceptedFiles[0]
+  const selectedFile = acceptedFiles[0];
   console.log(selectedFile);
 
   const [coordinates, setCoordinates] = useState<{
@@ -237,23 +235,21 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     return selectedSeverity === severity ? "border-blue-500 border-3" : "";
   };
   return (
-    <div className="flex justify-center items-center h-full w-full px-4">
+    <div className="flex justify-center items-center h-full w-full px-4 overflow-hidden">
       <ToastContainer />
 
       <div className="flex w-full max-w-screen-xl h-[40rem] rounded-lg overflow-hidden">
         {/* Form Section */}
-        <div className="w-1/2 p-6 bg-white flex flex-col justify-center">
-          <h2 className="text-2xl text-center font-bold mb-6">
+        <div className="w-1/2 p-6 bg-white flex flex-col justify-center overflow-y-auto">
+          {/* Heading */}
+          <h2 className="text-2xl text-center font-bold mt-2 mb-6">
             Report a Fault
           </h2>{" "}
-          {/* Added Heading */}
           <form
             ref={formRef}
             onSubmit={handleSubmit}
             className="flex flex-col gap-y-8"
           >
-           
-           
             {/* Fault Type */}
             {faultTypes.length > 0 ? (
               <Autocomplete
@@ -295,8 +291,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               <p>Loading fault types...</p>
             )}
 
-           
-           
             {/* Description */}
             <Textarea
               label={<span className="font-semibold text-sm">Description</span>}
@@ -305,6 +299,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               placeholder="Add Description..."
               onChange={(e) => setFaultDescription(e.target.value)}
             />
+
             {/* Address */}
             <div className="w-full">
               <span className="font-semibold text-sm">Address:</span>
@@ -326,7 +321,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               </div>
             </div>
 
-            
             {/* Fault Severity */}
             <div>
               <span className="font-semibold text-sm">Fault Severity</span>
@@ -381,27 +375,48 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               </div>
             </div>
 
-
-
-            {/* Drag and drop */}
-            <div className="border flex justify-center items-center h-[5rem]" {...getRootProps()}>
-              <input {...getInputProps()} />
-              {isDragActive ? (
-                <div>
-                  <svg
-                    xmlns="https://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    height="50"
-                    width="50">
-                      <path d="M1 14.5C1 12.1716 2.22429 10.1291 4.34315 8.65685C6.46201 7.18458 9.03799 6.5 12 6.5C14.962 6.5 17.538 7.18458 19.6569 8.65685C21.7757 10.1291 23 12.1716 23 14.5V15.5C23 17.8284 21.7757 19.8709 19.6569 21.3431C17.538 22.8154 14.962 23.5 12 23.5C9.03799 23.5 6.46201 22.8154 4.34315 21.3431C2.22429 19.8709 1 17.8284 1 15.5V14.5Z" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+            {/* Image Upload */}
+            <div className=" flex flex-col">
+              <span className="font-semibold text-sm">Attach Image</span>
+              <div className="flex border">
+                {/* Camera upload */}
+                <div className="flex justify-center p-2 w-1/4">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
+                    alt="Camera Icon"
+                  />
                 </div>
-              ) : (
-                <div>
-                  Drop your files here or click to browse
-                </div>
-              )}
 
+                {/* Drag and drop */}
+                <div className="flex border w-3/4">
+                  <div
+                    className="border w-full flex justify-center items-center"
+                    {...getRootProps()}
+                  >
+                    <input {...getInputProps()} />
+                    {isDragActive ? (
+                      <div>
+                        <svg
+                          xmlns="https://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          height="50"
+                          width="50"
+                        >
+                          <path
+                            d="M1 14.5C1 12.1716 2.22429 10.1291 4.34315 8.65685C6.46201 7.18458 9.03799 6.5 12 6.5C14.962 6.5 17.538 7.18458 19.6569 8.65685C21.7757 10.1291 23 12.1716 23 14.5V15.5C23 17.8284 21.7757 19.8709 19.6569 21.3431C17.538 22.8154 14.962 23.5 12 23.5C9.03799 23.5 6.46201 22.8154 4.34315 21.3431C2.22429 19.8709 1 17.8284 1 15.5V14.5Z"
+                            stroke="#333"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    ) : (
+                      <div>Drop your files here or click to browse</div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Submit Button */}
@@ -422,8 +437,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
         {/* Graphical Section */}
         <div className="w-1/2 relative bg-gray-200">
-
-        
           {/* Map Section */}
           <div>
             <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
