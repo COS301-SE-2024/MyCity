@@ -158,6 +158,7 @@ export default function CitizenDashboard({
           latitude={deeplinkTicket.latitude}
           longitude={deeplinkTicket.longitude}
           urgency={deeplinkTicket.urgency}
+          state={deeplinkTicket.state}
         />
       )}
       {/* fault popup used with deeplink ends here */}
