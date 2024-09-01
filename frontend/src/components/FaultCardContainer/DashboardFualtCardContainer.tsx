@@ -69,7 +69,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
     .map((item) => (
-      <div key={item.ticket_id} className="mr-2">
+      <div key={item.ticket_id}>
         {" "}
         {/* Added margin-right for spacing */}
         <FaultCardUser
@@ -96,9 +96,9 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex flex-col items-center w-full rounded-3xl shadow-md overflow-hidden m-2">
+        <div className="flex flex-col items-center  w-full rounded-3xl shadow-md overflow-hidden">
           <div
-            className="w-full overflow-x-auto custom-scrollbar rounded-3xl"
+            className="overflow-x-auto custom-scrollbar rounded-3xl"
             style={{
               paddingLeft: "16px",
               paddingRight: "16px",
@@ -120,8 +120,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
                 margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
               }
             `}</style>
-            <div className="flex justify-start mb-4">
-              <div className="flex text-center flex-nowrap">{visibleItems}</div>
+            <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mb-4 w-full">
+              {visibleItems}
             </div>
           </div>
           {showModal && selectedCard && (
@@ -143,7 +143,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               urgency={selectedCard.urgency}
               municipality_id={selectedCard.municipality_id}
               state={selectedCard.state}
-              />
+            />
           )}
         </div>
       </div>
@@ -157,7 +157,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               paddingLeft: "8px",
               paddingRight: "8px",
               scrollbarWidth: "thin",
-              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent",// Adjust the height as needed
+              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent", // Adjust the height as needed
             }}
           >
             <style jsx>{`
