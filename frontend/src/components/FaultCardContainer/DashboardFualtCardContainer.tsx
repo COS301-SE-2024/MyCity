@@ -32,7 +32,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   cardData = [],
 }) => {
   const [startIndex, setStartIndex] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 15;
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
@@ -65,6 +65,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   const showPreviousItems = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
   };
+
+  // console.log(cardData);
 
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))

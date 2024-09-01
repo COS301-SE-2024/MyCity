@@ -96,6 +96,8 @@ export default function CitizenDashboard({
 
         preloadImages(imagesToPreload);
 
+        console.log("Upvotes", rspmostupvotes);
+        
         setMostUpvoteResults(rspmostupvotes);
         setDashMuniResults(
           Array.isArray(rspmunicipality) ? rspmunicipality : []
@@ -326,6 +328,7 @@ export default function CitizenDashboard({
                       ) : dashMostUpvoteResults.length > 0 ? (
                         <DashboardFaultCardContainer
                           cardData={dashMostUpvoteResults}
+                      
                         />
                       ) : (
                         <p className="text-center text-white text-opacity-60 text-sm">
