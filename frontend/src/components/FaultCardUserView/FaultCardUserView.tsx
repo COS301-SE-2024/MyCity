@@ -68,7 +68,7 @@ function formatMunicipalityID(mun: string): string {
   if (typeof mun !== "string") {
     return ""; // Or some other default value
   }
-  return mun.replace(/ /g, "");
+  return mun.replace(/ /g, "_");
 }
 
 function getDate(date: string): string {
@@ -278,7 +278,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       onClick={onClose} // Close modal when clicking outside
     >
       <div
-        className="bg-white rounded-lg shadow-lg w-2/3 max-h-[90vh] p-4 relative flex flex-col border border-red-300 justify-center"
+        className="bg-white rounded-lg shadow-lg w-2/3 h-2/3 p-4 relative flex flex-col border border-red-300 justify-center"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button
@@ -288,30 +288,28 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           <FaTimes size={24} />
         </button>
 
-        {/* Header */}
-        <div className="flex justify-center">
-          <div className="flex w-full justify-between items-center">
+        <div className="flex w-full h-full gap-4">
+          {/* Left Section */}
+          <div className="relative w-1/3 lg:w-1/3 pr-1 flex flex-col items-center">
+            {/* Title */}
+            <div className="flex w-full justify-start items-center ">
+              <div className="font-bold text-3xl pb-1">{title}</div>
+            </div>
+
             {/* Ticket Number */}
-            <div className="flex justify-start items-center">
+            <div className="flex w-full justify-start items-center pb-2">
               <div className="text-xl font-bold text-gray-400 ">
                 {ticketNumber}
               </div>
             </div>
 
-            {/* Title */}
-            <div className="flex justify-end items-center ">
-              <div className="font-bold text-2xl pb-4">{title}</div>
+            {/* Discription */}
+            <div className="mb-2 w-full">
+              <h3 className="font-bold text-black text-lg">Description</h3>
+              <div className="h-[5vh]">
+                <p className="text-gray-700">{description}</p>
+              </div>
             </div>
-
-            {/* Date opened */}
-            <div className="flex justify-end items-center  text-gray-400">
-              <div className="font-bold text-lg pb-4">2 August</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex">
-          <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
 
             {/*Status*/}
             <div
@@ -321,18 +319,29 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               {"In Progress"}
             </div>
 
-            {/* ETA */}
-            <div className="flex justify-between mt-4 w-3/4">
-              <div className="text-xl font-bold text-gray-500">
-                Estimated Time:{" "}
+            {/* Date Opened */}
+            <div className="flex justify-between mt-2 w-full">
+              <div className="text-lg font-bold text-gray-500">
+                Date Opened:{" "}
               </div>
-              <div className="text-xl font-bold text-gray-500"> 18 hours</div>
+              <div className="text-lg font-bold text-gray-500">
+                2 August 2024
+              </div>
             </div>
 
-            {/* Discription */}
-            <div className="mb-2 text-center h-[4rem]">
-              <h3 className="font-bold text-black text-lg">Description</h3>
-              <p className="text-gray-700">{description}</p>
+            {/* ETC */}
+            <div className="flex justify-between mb-2 w-full">
+              <div className="text-lg font-bold text-gray-500">
+                Estimated Time Left:{" "}
+              </div>
+              <div className="text-lg font-bold text-gray-500">18 hours</div>
+            </div>
+
+            {/* Address */}
+            <div className="flex w-full">
+              <div className="flex justify-between mt-2 mb-2 w-full">
+                <div className="text-sm font-bold text-gray-500">{address}</div>
+              </div>
             </div>
 
             {/* Map */}
@@ -349,71 +358,88 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               />
             </div>
 
-            {/* Actions */}
-            <div className="mb-4 flex justify-between w-full px-4">
-              {/* Upvotes */}
-              <div className="flex items-center">
-                <FaArrowUp
-                  className="text-gray-600 mr-2 cursor-pointer transform transition-transform hover:scale-110"
-                  style={{ color: arrowColor }}
-                  onClick={handleArrowClick}
-                />
-                <span className="text-gray-700">
-                  {formatNumber(currentArrowCount)}
-                </span>
-              </div>
-
-              {/* Comments */}
-              <div
-                className="flex items-center cursor-pointer transform transition-transform hover:scale-105"
-                onClick={toggleComments}
+            <div className=" w-full flex  pt-2">
+              {/* Google Maps */}
+              <Button
+                className="w-1/2 bg-opacity-45 text-black font-bold text-md  text-center rounded-lg py-1"
+                onClick={showDirections}
               >
-                <FaComment
-                  className="text-gray-600 mr-2"
-                  style={{ color: commentColor }}
+                {"Google Maps"}
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
+                  className="h-6"
+                  alt="Google"
                 />
-                <span className="text-gray-700">
-                  {formatNumber(currentCommentCount)}
-                </span>
-              </div>
+              </Button>
 
-              {/* Watchlist */}
-              <div className="flex items-center">
-                <FaEye
-                  className="text-gray-600 mr-2 cursor-pointer transform transition-transform hover:scale-110"
-                  style={{ color: eyeColor }}
-                  onClick={handleEyeClick}
-                />
-                <span className="text-gray-700">
-                  {formatNumber(currentViewCount)}
-                </span>
+              {/* Actions */}
+              <div className="mb-4 flex justify-between w-1/2 px-4">
+                {/* Upvotes */}
+                <div className="flex  flex-col items-center justify-center">
+                  <FaArrowUp
+                    className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                    style={{ color: arrowColor }}
+                    onClick={handleArrowClick}
+                  />
+                  <span className="text-gray-700">
+                    {formatNumber(currentArrowCount)}
+                  </span>
+                </div>
+
+                {/* Comments */}
+                <div
+                  className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105 justify-center"
+                  onClick={toggleComments}
+                >
+                  <FaComment
+                    className="text-gray-600"
+                    style={{ color: commentColor }}
+                  />
+                  <span className="text-gray-700">
+                    {formatNumber(currentCommentCount)}
+                  </span>
+                </div>
+
+                {/* Watchlist */}
+                <div className="flex flex-col items-center justify-center">
+                  <FaEye
+                    className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110 justify-center"
+                    style={{ color: eyeColor }}
+                    onClick={handleEyeClick}
+                  />
+                  <span className="text-gray-700">
+                    {formatNumber(currentViewCount)}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Address */}
-            <div className="flex justify-between mt-4 w-full">
-              <div className="text-xl font-bold text-gray-500 pr-2">Address: </div>
-              <div className="text-sm font-bold text-gray-500">{address}</div>
-            </div>
-
-            <div className="mt-2 flex justify-center gap-2">
-              <button
-                className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
-                onClick={onClose}
-              >
-                Back
-              </button>
+            {/* Fault's Municipality */}
+            <div className="flex w-full items-center justify-start">
+              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+                <img
+                  // src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                  //   municipality_id
+                  // )}.png`}
+                  src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                    "City of Tshwane Metropolitan"
+                  )}.png`}
+                  alt=""
+                />
+              </div>
+              {/* <div className="ml-2">{municipality_id}</div> */}
+              <div className="ml-2">{"City of Tshwane Metropolitan"}</div>
             </div>
           </div>
 
-          {/* Right Section (Map Placeholder) */}
-          <div className="relative w-full lg:w-2/3 bg-gray-200 flex items-center justify-center overflow-hidden">
+          {/* Right Section */}
+          <div className="relative w-2/3 mt-5 mb-2 flex justify-center overflow-hidden">
             {image && !imageError ? (
-              <div className="mb-2 flex justify-center">
+              <div className="flex justify-center">
                 <img
                   src={image}
                   alt="Fault"
-                  className="rounded-lg w-512 object-cover"
+                  className="rounded-lg object-cover"
                   onError={() => setImageError(true)} // Set error state if image fails to load
                 />
               </div>
@@ -422,16 +448,6 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 <ImageIcon size={48} color="#6B7280" />
               </div>
             )}
-
-            {/* Move the Directions Button to the Bottom Left */}
-            <div className="absolute bottom-2 left-2 z-10">
-              <Button
-                className="min-w-fit h-fit p-2 bg-white rounded-3xl"
-                onClick={showDirections}
-              >
-                <MapPin size={23} />
-              </Button>
-            </div>
 
             {/* Comments Section with Slide Animation */}
             <div
