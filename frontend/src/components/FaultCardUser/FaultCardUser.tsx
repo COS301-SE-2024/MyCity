@@ -13,6 +13,8 @@ interface CardData {
   description: string;
   image: string;
   createdBy: string;
+  municipality_id: string;
+  state: string;
 }
 
 interface FaultCardUserProps {

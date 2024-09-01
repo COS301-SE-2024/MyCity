@@ -18,6 +18,8 @@ interface TicketNotificationProps {
   latitude: number;
   longitude: number;
   ticket_id: string;
+  municipality_id: string;
+  state: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -37,6 +39,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   longitude,
   urgency,
   ticket_id,
+  state,
+  municipality_id,
 }) => {
   const [showTicketView, setShowTicketView] = useState(false);
   const [imageError, setImageError] = useState(false); // State to track image loading error
@@ -109,6 +113,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           longitude={longitude}
           urgency={urgency}
           ticketId={ticket_id}
+          state={state}
+          municipality_id={municipality_id}
         />
       )}
     </>

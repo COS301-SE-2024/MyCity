@@ -69,6 +69,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           createdBy: item.dateOpened,
           ticketNumber: item.ticket_id,
           ticketId: item.ticket_id,
+          municipality_id: item.municipality_id,
+          state: item.state,
         }}
         onClick={() => handleCardClick(item)}
       />
@@ -121,6 +123,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           longitude={selectedCard.longitude} // Pass longitude
           urgency={selectedCard.urgency} // Pass urgency
           ticketId={selectedCard.ticket_id}
+          municipality_id={selectedCard.municipality_id}
+          state={selectedCard.state}
         />
       )}
     </div>

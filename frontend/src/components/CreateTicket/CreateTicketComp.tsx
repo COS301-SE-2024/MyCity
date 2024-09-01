@@ -27,6 +27,7 @@ import CustomMarker from "../../../public/customMarker.svg";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import CameraPrompt from "@/components/Camera/CameraPrompt";
+
 interface Props extends React.HTMLAttributes<HTMLElement> {
   useMapboxProp: () => MapboxContextProps;
 }
@@ -35,22 +36,21 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [dataURL, setDataURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<File[]>([]);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    // acceptedFiles.forEach((file) => {
-    //   const reader = new FileReader();
-    //   reader.onload = () => {
-    //     const fileAsDataURL = reader.result;
-    //     setDataURL(fileAsDataURL as string);
-    //   };
-    //   reader.readAsDataURL(file);
-    // });
-  });
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const fileAsDataURL = reader.result;
+        setDataURL(fileAsDataURL as string);
+      };
+      reader.onerror = () => {
+        toast.error(`Error reading file: ${file.name}`);
+      };
+      reader.readAsDataURL(file);
+    });
+  }, []);
 
-  const { getRootProps, acceptedFiles, getInputProps, isDragActive } =
-    useDropzone({ onDrop });
-
-  const selectedFile = acceptedFiles[0];
-  console.log(selectedFile);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   const [coordinates, setCoordinates] = useState<{
     latitude: number | null;
@@ -79,7 +79,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [isPinDropped, setIsPinDropped] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
-  const [isClient, setIsClient] = useState(false); // State to check if running on client-side
+  const [isClient, setIsClient] = useState(false);
 
   const memoizedApiKey = useMemo(
     () => String(process.env.PLACEKIT_API_KEY),
@@ -101,7 +101,6 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
           setCoordinates({ latitude, longitude });
         },
         (error) => {
@@ -119,7 +118,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   }, []);
 
   useEffect(() => {
-    setIsClient(true); // Set the client-side flag when the component mounts
+    setIsClient(true);
 
     async function fetchFaultTypes() {
       try {
@@ -160,8 +159,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       return;
     }
 
-    const userData = await getUserProfile();
-    if (!userData.current) {
+    if (!user_data.current) {
       toast.error("Please log in if you wish to create a ticket.");
       return;
     }
@@ -175,12 +173,10 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
         String(latitude),
         String(longitude),
         String(fullAddress),
-        String(userData.current.email)
+        String(user_data.current.email)
       );
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
-        if (isClient) {
-        }
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -234,6 +230,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const getButtonStyle = (severity: string) => {
     return selectedSeverity === severity ? "border-blue-500 border-3" : "";
   };
+
+  
   return (
     <div className="flex justify-center items-center h-full w-full px-4 overflow-hidden">
       <ToastContainer />

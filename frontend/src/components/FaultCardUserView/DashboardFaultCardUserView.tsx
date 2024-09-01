@@ -22,6 +22,7 @@ interface FaultCardUserViewProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
+  municipality_id: string;
   longitude : string;
   latitude : string;
   user_picture : string;
@@ -49,6 +50,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   createdBy,
   status,
   municipalityImage,
+  municipality_id,
   longitude,
   latitude,
   user_picture,

@@ -18,6 +18,8 @@ interface Incident {
   createdby: string;
   latitude: number;
   longitude: number;
+  municipality_id: string;
+  state: string;
   urgency: "high" | "medium" | "low"; // Added urgency field
 }
 
@@ -176,7 +178,9 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
           longitude={selectedIncident.longitude}
           latitude={selectedIncident.latitude}
           ticketId={selectedIncident.ticket_id}
-        />
+          state={selectedIncident.state}
+          municipality_id={selectedIncident.municipality_id}
+          />
       )}
     </div>
   );
