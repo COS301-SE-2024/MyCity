@@ -11,6 +11,8 @@ interface CardData {
   image: string;
   createdBy: string;
   status: string; // New field
+  municipality_id: string;
+  state: string;
 }
 
 interface FaultCardUserProps extends CardData {

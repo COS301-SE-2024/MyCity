@@ -159,6 +159,7 @@ export default function CitizenDashboard({
           longitude={deeplinkTicket.longitude}
           urgency={deeplinkTicket.urgency}
           state={deeplinkTicket.state}
+          municipality_id={deeplinkTicket.municipality_id}
         />
       )}
       {/* fault popup used with deeplink ends here */}
@@ -253,12 +254,14 @@ export default function CitizenDashboard({
                 }}
                 onSelectionChange={handleTabChange}
               >
+                {/* Most up-voted */}
                 <Tab key={0} title="Cards">
                   <div className="w-full text-center">
                     <h1 className="text-2xl text-white text-opacity-80 font-bold mt-2">
                       Most up-voted
                     </h1>
                   </div>
+
                   <div className="w-full text-center">
                     <h1 className="text-l text-white text-opacity-80 mb-4">
                       Based on votes from the community in your area.

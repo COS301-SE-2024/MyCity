@@ -162,8 +162,18 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   urgency,
 }) => {
   const formattedStateKey = formatState(state);
-  // const { color, text } = notificationStates[formattedStateKey];
-  const { color, text } = notificationStates["InProgress"];
+
+  let color = "bg-gray-200"; // Default color
+  let text = "Default"; // Default text
+
+  if (formattedStateKey in notificationStates) {
+    color = notificationStates[formattedStateKey as keyof typeof notificationStates].color;
+    text = notificationStates[formattedStateKey as keyof typeof notificationStates].text;
+  } else {
+    color = notificationStates.Default.color;
+    text = notificationStates.Default.text;
+  }
+  
   const [currentArrowCount, setCurrentArrowCount] = useState(arrowCount);
   const [currentCommentCount, setCurrentCommentCount] = useState(commentCount);
   const [currentViewCount, setCurrentViewCount] = useState(viewCount);
@@ -315,8 +325,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div
               className={`${color} bg-opacity-75 text-black font-bold text-lg  text-center rounded-lg px-3 py-1 mt-1 w-full`}
             >
-              {/* {state} */}
-              {"In Progress"}
+              {state}
+              {/* {"In Progress"} */}
             </div>
 
             {/* Date Opened */}
@@ -418,17 +428,13 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div className="flex w-full items-center justify-start">
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
                 <img
-                  // src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                  //   municipality_id
-                  // )}.png`}
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                    "City of Tshwane Metropolitan"
+                    municipality_id
                   )}.png`}
                   alt=""
                 />
               </div>
-              {/* <div className="ml-2">{municipality_id}</div> */}
-              <div className="ml-2">{"City of Tshwane Metropolitan"}</div>
+              <div className="ml-2">{municipality_id}</div>
             </div>
           </div>
 

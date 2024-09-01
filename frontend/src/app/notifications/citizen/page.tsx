@@ -155,6 +155,8 @@ export default function Notifications() {
           longitude={item.longitude}
           urgency={item.urgency}
           ticket_id={item.ticket_id}
+          state={item.state}
+          municipality_id={item.municipality_id}
         />
       );
     });
