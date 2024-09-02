@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
+import CreateTicketCompMobile from "@/components/CreateTicket/CreateTicketCompMobile";
 import { useMapbox } from "@/hooks/useMapbox";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import { FaTimes } from "react-icons/fa";
@@ -46,11 +47,6 @@ export default function CreateTicket() {
       <div className="relative z-10">
         {/* Navbar */}
         <NavbarUser unreadNotifications={unreadNotifications} />
-        <div className="relative">
-          <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-10">
-            Report an Issue
-          </h1>
-        </div>
 
         {/* Help Menu Button */}
         <div className="fixed bottom-4 left-4 z-20">
@@ -94,7 +90,11 @@ export default function CreateTicket() {
 
         {/* Desktop View */}
         <div className="hidden sm:block">
+          <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-10">
+            Report an Issue
+          </h1>
           <main className="flex flex-col items-center justify-start py-5">
+            <div className="relative"></div>
             <div className="w-full max-w-7xl px-5">
               <div className="mt-10">
                 <CreateTicketComp useMapboxProp={useMapbox} />
@@ -106,9 +106,12 @@ export default function CreateTicket() {
         {/* Mobile View */}
         <div className="block sm:hidden">
           <main className="flex flex-col items-center justify-start py-5">
+            <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 text-center mt-5">
+              Report an Issue
+            </h1>
             <div className="w-full max-w-7xl px-5">
               <div className="mt-10">
-                <CreateTicketComp useMapboxProp={useMapbox} />
+                <CreateTicketCompMobile/>
               </div>
             </div>
           </main>
