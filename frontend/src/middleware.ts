@@ -13,9 +13,9 @@ export async function middleware(request: NextRequest) {
   const pathEndsWith = (url: string) => path.endsWith(url);
 
   // bypass middleware if not in production environment
-  if (process.env.NODE_ENV != "production") {
-    return response;
-  }
+  // if (process.env.NODE_ENV != "production") {
+  //   return response;
+  // }
 
 
   //---- IF USER IS LOGGED IN ------
@@ -52,11 +52,11 @@ export async function middleware(request: NextRequest) {
   //---- IF USER IS NOT LOGGED IN ------
   else {
 
-    //RULE 3: and is trying to access a page that is neither their home, dashboardd, about nor login/signup pages,
-    if (!pathStartsWith("/auth") && !pathIs("/") && !pathIs("/dashboard/guest") && !pathIs("/about/guest")) {
-      //redirect to guest dashboard
+    //RULE 3: and is trying to access a page that is neither their home, dashboard, about nor login/signup pages,
+    if (!pathIs("/dashboard/guest") && (pathStartsWith("/dashboard") || pathStartsWith("/settings") || pathStartsWith("/create-ticket") || pathStartsWith("/notifications") || pathStartsWith("/search") || pathStartsWith("/tenders"))) {
       return NextResponse.redirect(new URL("/dashboard/guest", request.nextUrl));
     }
+
 
   }
 
