@@ -10,7 +10,7 @@ import MapComponent from "@/context/MapboxMap"; // Adjust the import path as nec
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
 import { MapPin, Image as ImageIcon } from "lucide-react"; // Added ImageIcon from lucide-react
-import { InteractTicket } from "@/services/tickets.service";
+import { InteractTicket, addWatchlist } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import { Eye, Key } from "lucide-react";
 import { MessageCirclePlus } from "lucide-react";
@@ -101,6 +101,7 @@ function formatState(state: string | undefined): string {
 
 interface FaultCardUserViewProps {
   show: boolean;
+  refreshwatchlist: () => void;
   onClose: () => void;
   title: string;
   address: string;
@@ -146,6 +147,7 @@ const formatNumber = (num: number) => {
 const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   show,
   onClose,
+  refreshwatchlist,
   title,
   address,
   arrowCount,
@@ -263,9 +265,26 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     }
   };
 
-  const handleEyeClick = () => {
+  const handleEyeClick = async () => {
     if (eyeColor === "black") {
-      setEyeColor("blue");
+      const user_data = await userProfile.getUserProfile();
+      const username = String(user_data.current?.email);
+      const userSession = String(user_data.current?.session_token);
+      const rspaddwatch = await addWatchlist(ticketId,username,userSession);
+      refreshwatchlist();
+      if(rspaddwatch == true)
+      {
+        setEyeColor("blue");
+        const data = {
+          arrowCount,
+          commentCount: currentCommentCount,
+          viewCount: currentViewCount,
+          arrowColor,
+          commentColor,
+          eyeColor : "blue",
+        };
+        localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
+      }
       setCurrentViewCount((prevCount: number) => prevCount + 1);
     } else {
       setEyeColor("black");

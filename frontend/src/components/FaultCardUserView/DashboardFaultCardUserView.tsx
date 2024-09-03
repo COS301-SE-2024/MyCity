@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
-import { InteractTicket } from "@/services/tickets.service";
+import { InteractTicket,addWatchlist } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
@@ -147,7 +147,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     }
   };
 
-  const handleCommentClick = () => {
+  const handleCommentClick = async () => {
     if (commentColor === "black") {
       setCommentColor("blue");
       setCurrentCommentCount((prevCount: any) => prevCount + 1);
@@ -157,9 +157,16 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     }
   };
 
-  const handleEyeClick = () => {
+  const handleEyeClick = async () => {
     if (eyeColor === "black") {
-      setEyeColor("blue");
+      const user_data = await userProfile.getUserProfile();
+      const username = String(user_data.current?.email);
+      const userSession = String(user_data.current?.session_token);
+      const rspaddwatch = await addWatchlist(ticketId,username,userSession);
+      if(rspaddwatch == true)
+      {
+        setEyeColor("blue");
+      }
       setCurrentViewCount((prevCount: any) => prevCount + 1);
     } else {
       setEyeColor("black");

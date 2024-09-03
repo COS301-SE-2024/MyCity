@@ -26,10 +26,12 @@ interface CardData {
 
 interface CardComponentProps {
   cardData: CardData[];
+  refreshwatch : () => void;
 }
 
 const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   cardData = [],
+  refreshwatch
 }) => {
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 15;
@@ -145,6 +147,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               urgency={selectedCard.urgency}
               municipality_id={selectedCard.municipality_id}
               state={selectedCard.state}
+              refreshwatchlist={refreshwatch}
             />
           )}
         </div>
@@ -202,6 +205,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               urgency={selectedCard.urgency}
               municipality_id={selectedCard.municipality_id}
               state={selectedCard.state}
+              refreshwatchlist={refreshwatch}
             />
           )}
         </div>

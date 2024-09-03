@@ -436,6 +436,29 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
     else return true;
 }
 
+
+export async function addWatchlist(ticket : string, usern : string, sessiont : string) : Promise<boolean> {
+    const lowerusern = usern.toLowerCase();
+    const data = {
+        username : lowerusern,
+        ticket_id : ticket,
+    }
+    const apiURL = "/api/tickets/addwatchlist";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${sessiont}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+    else return true;
+}
+
 function CreateTicketNumber(municipality: string): string {
     let ticketnumber = municipality[0].toUpperCase();
     for (let index = 0; index < 2; index++) {
