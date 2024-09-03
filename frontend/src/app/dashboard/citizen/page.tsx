@@ -423,56 +423,7 @@ export default function CitizenDashboard({
                 </h1>
               </div>
 
-              <div className="fixed bottom-24 left-4 z-20">
-                <HelpCircle
-                  data-testid="open-help-menu"
-                  className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
-                  size={24}
-                  onClick={toggleHelpMenu}
-                />
-
-                {isHelpOpen && (
-                  <div
-                    data-testid="help"
-                    className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
-                  >
-                    <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-4 w-11/12 md:w-3/4 lg:w-1/2 relative">
-                      <button
-                        data-testid="close-help-menu"
-                        className="absolute top-2 right-2 text-gray-700"
-                        onClick={toggleHelpMenu}
-                      >
-                        <FaTimes size={24} />
-                      </button>
-                      <h2 className="text-xl font-bold mb-4">Help Menu</h2>
-                      <p>This dashboard allows you to:</p>
-                      <ul className="list-disc list-inside">
-                        <li>View the most up-voted issues in your area.</li>
-                        <li>See issues nearest to your location.</li>
-                        <li>Track issues you have added to your watchlist.</li>
-                        <li>
-                          Switch between different views: Cards, List, and Map.
-                        </li>
-                      </ul>
-                      <p>
-                        Use the tabs to navigate between different sections of
-                        the dashboard.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="">
-                  <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full fixed bottom-24 right-4 shadow-lg z-20"
-                    onClick={() =>
-                      (window.location.href = "/create-ticket/citizen")
-                    }
-                  >
-                    Report Fault
-                  </button>
-                </div>
-              </div>
+            
 
               <div className="flex h-[80vh] flex-col items-center rounded-3xl">
                 <Tabs
