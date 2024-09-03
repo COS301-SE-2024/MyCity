@@ -76,6 +76,7 @@ def create_ticket(ticket_data):
             "state",
             "username",
         ]
+
         for field in required_fields:
             if field not in ticket_data:
                 error_response = {
