@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
 import { useMapbox } from "@/hooks/useMapbox";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 
@@ -46,21 +47,6 @@ export default function CreateTicket() {
       <div className="relative z-10">
         {/* Navbar */}
         <NavbarMunicipality unreadNotifications={unreadNotifications} />
-        <div className="relative">
-              <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-10">
-                Add Ticket
-              </h1>
-            </div>
-
-        {/* Help Menu Button */}
-        <div className="fixed bottom-4 left-4 z-20">
-          <HelpCircle
-            data-testid="open-help-menu"
-            className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
-            size={24}
-            onClick={toggleHelpMenu}
-          />
-        </div>
 
         {isHelpOpen && (
           <div
@@ -79,10 +65,14 @@ export default function CreateTicket() {
               <p>This page allows you to:</p>
               <ul className="list-disc list-inside">
                 <li>Submit a new ticket to report an issue in your area.</li>
-                <li>Provide details such as the location and description of the issue.</li>
+                <li>
+                  Provide details such as the location and description of the
+                  issue.
+                </li>
               </ul>
               <p>
-                Use the map to pinpoint the exact location of the issue, and fill out the form with the necessary details.
+                Use the map to pinpoint the exact location of the issue, and
+                fill out the form with the necessary details.
               </p>
             </div>
           </div>
@@ -90,78 +80,41 @@ export default function CreateTicket() {
 
         {/* Desktop View */}
         <div className="hidden sm:block">
+          <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-5">
+            Report an Issue
+          </h1>
           <main className="flex flex-col items-center justify-start py-5">
-            
+            <div className="relative"></div>
             <div className="w-full max-w-7xl px-5">
-              <div className="mt-10">
+              <div className="mt-20">
                 <CreateTicketComp useMapboxProp={useMapbox} />
               </div>
             </div>
+            {/* Help Menu Button */}
+        <div className="fixed bottom-4 left-4 z-20">
+          <HelpCircle
+            data-testid="open-help-menu"
+            className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
+            size={24}
+            onClick={toggleHelpMenu}
+          />
+        </div>
           </main>
         </div>
-      </div>
 
-      {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div
-          style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
-          }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
-
-          {/* Background image */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "repeat",
-              zIndex: -1, // Ensures the background is behind other content
-            }}
-          ></div>
-
-          {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
+        {/* Mobile View */}
+        <div className="block sm:hidden">
+          <NavbarMobile />
+          <main className="flex flex-col items-center justify-start py-5">
+            <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 text-center mt-5">
+              Report an Issue
             </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
+            <div className="w-full max-w-7xl px-5">
+              <div className="mt-10">
+                <CreateTicketComp useMapboxProp={useMapbox}/>
+              </div>
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
-          </div>
+          </main>
         </div>
       </div>
     </div>

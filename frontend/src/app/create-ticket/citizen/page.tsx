@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
 import { useMapbox } from "@/hooks/useMapbox";
 import NavbarUser from "@/components/Navbar/NavbarUser";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 
@@ -46,21 +47,6 @@ export default function CreateTicket() {
       <div className="relative z-10">
         {/* Navbar */}
         <NavbarUser unreadNotifications={unreadNotifications} />
-        <div className="relative">
-          <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-10">
-            Report an Issue
-          </h1>
-        </div>
-
-        {/* Help Menu Button */}
-        <div className="fixed bottom-4 left-4 z-20">
-          <HelpCircle
-            data-testid="open-help-menu"
-            className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
-            size={24}
-            onClick={toggleHelpMenu}
-          />
-        </div>
 
         {isHelpOpen && (
           <div
@@ -94,21 +80,38 @@ export default function CreateTicket() {
 
         {/* Desktop View */}
         <div className="hidden sm:block">
+          <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-5">
+            Report an Issue
+          </h1>
           <main className="flex flex-col items-center justify-start py-5">
+            <div className="relative"></div>
             <div className="w-full max-w-7xl px-5">
-              <div className="mt-10">
+              <div className="mt-20">
                 <CreateTicketComp useMapboxProp={useMapbox} />
               </div>
             </div>
+            {/* Help Menu Button */}
+        <div className="fixed bottom-4 left-4 z-20">
+          <HelpCircle
+            data-testid="open-help-menu"
+            className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
+            size={24}
+            onClick={toggleHelpMenu}
+          />
+        </div>
           </main>
         </div>
 
         {/* Mobile View */}
         <div className="block sm:hidden">
+          <NavbarMobile />
           <main className="flex flex-col items-center justify-start py-5">
+            <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 text-center mt-5">
+              Report an Issue
+            </h1>
             <div className="w-full max-w-7xl px-5">
               <div className="mt-10">
-                <CreateTicketComp useMapboxProp={useMapbox} />
+                <CreateTicketComp useMapboxProp={useMapbox}/>
               </div>
             </div>
           </main>
