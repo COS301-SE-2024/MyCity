@@ -147,9 +147,9 @@ def create_ticket(ticket_data):
         # Put the ticket item into the tickets table
         tickets_table.put_item(Item=ticket_item)
 
-        #Put ticket on their watchlist
+        # Put ticket on their watchlist
         watchlist_id = generate_id()
-        
+
         watchlist_item = {
             "watchlist_id": watchlist_id,
             "ticket_id": ticket_id,
@@ -157,8 +157,12 @@ def create_ticket(ticket_data):
         }
         watchlist_table.put_item(Item=watchlist_item)
 
-        #after accepting
-        accresponse = {"message": "Ticket created successfully", "ticket_id": ticket_id, "watchlist_id" : watchlist_id }
+        # after accepting
+        accresponse = {
+            "message": "Ticket created successfully",
+            "ticket_id": ticket_id,
+            "watchlist_id": watchlist_id,
+        }
         return format_response(float(200), accresponse)
 
     except ClientError as e:
