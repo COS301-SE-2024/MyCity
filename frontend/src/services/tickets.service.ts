@@ -438,8 +438,9 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
 
 
 export async function addWatchlist(ticket : string, usern : string, sessiont : string) : Promise<boolean> {
+    const lowerusern = usern.toLowerCase();
     const data = {
-        username : usern,
+        username : lowerusern,
         ticket_id : ticket,
     }
     const apiURL = "/api/tickets/addwatchlist";

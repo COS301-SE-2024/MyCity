@@ -101,6 +101,7 @@ function formatState(state: string | undefined): string {
 
 interface FaultCardUserViewProps {
   show: boolean;
+  refreshwatchlist: () => void;
   onClose: () => void;
   title: string;
   address: string;
@@ -146,6 +147,7 @@ const formatNumber = (num: number) => {
 const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   show,
   onClose,
+  refreshwatchlist,
   title,
   address,
   arrowCount,
@@ -269,6 +271,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       const username = String(user_data.current?.email);
       const userSession = String(user_data.current?.session_token);
       const rspaddwatch = await addWatchlist(ticketId,username,userSession);
+      refreshwatchlist();
       if(rspaddwatch == true)
       {
         setEyeColor("blue");
