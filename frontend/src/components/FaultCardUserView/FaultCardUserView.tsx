@@ -294,9 +294,9 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const [isImageExpanded, setIsImageExpanded] = useState(false);
 
-const toggleImageSize = () => {
-  setIsImageExpanded((prev) => !prev);
-};
+  const toggleImageSize = () => {
+    setIsImageExpanded((prev) => !prev);
+  };
 
   return (
     <div
@@ -488,121 +488,116 @@ const toggleImageSize = () => {
         </div>
 
         {/* Mobile View */}
-<div className="sm:hidden flex flex-col w-full gap-3 text-black">
-  {/* Title and Ticket Number */}
-  <div className="text-center">
-    <div className="font-bold text-xl">{title}</div>
-    <div className="text-gray-400 text-lg">{ticketNumber}</div>
-  </div>
+        <div className="sm:hidden flex flex-col w-full gap-3 text-black">
+          {/* Title and Ticket Number */}
+          <div className="text-center">
+            <div className="font-bold text-xl">{title}</div>
+            <div className="text-gray-400 text-lg">{ticketNumber}</div>
+          </div>
 
-  {/* Status */}
-  <div
-    className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-1 w-full`}
-  >
-    {text}
-  </div>
+          {/* Status */}
+          <div
+            className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-1 w-full`}
+          >
+            {text}
+          </div>
 
-  {/* Description */}
-  <div className="text-gray-700 text-sm text-center px-4">
-    {description}
-  </div>
+          {/* Description */}
+          <div className="text-gray-700 text-sm text-center px-4">
+            {description}
+          </div>
 
-  {/* Address */}
-  <div className="text-gray-500 text-sm text-center">
-    {address}
-  </div>
+          {/* Address */}
+          <div className="text-gray-500 text-sm text-center">{address}</div>
 
-  {/* Image */}
-  <div className="relative w-full flex justify-center mt-2">
-    <img
-      src={image || undefined} // Ensure src is either a string or undefined
-      alt="Fault"
-      className="rounded-lg object-cover w-full h-40"
-      onError={() => setImageError(true)}
-    />
-    {imageError && (
-      <div className="flex justify-center items-center w-full h-40 bg-gray-200">
-        <ImageIcon size={32} color="#6B7280" />
-      </div>
-    )}
-  </div>
+          {/* Image */}
+          <div className="relative w-full flex justify-center mt-2">
+            <img
+              src={image || undefined} // Ensure src is either a string or undefined
+              alt="Fault"
+              className="rounded-lg object-cover w-full h-40"
+              onError={() => setImageError(true)}
+            />
+            {imageError && (
+              <div className="flex justify-center items-center w-full h-40 bg-gray-200">
+                <ImageIcon size={32} color="#6B7280" />
+              </div>
+            )}
+          </div>
 
-  {/* Map */}
-  
+          {/* Map */}
 
-  {/* Google Maps Button */}
-  <Button
-    className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1"
-    onClick={showDirections}
-  >
-    Google Maps
-  </Button>
+          {/* Google Maps Button */}
+          <Button
+            className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1"
+            onClick={showDirections}
+          >
+            Google Maps
+          </Button>
 
-  {/* Actions */}
-  <div className="flex justify-around w-full mt-2">
-    <div className="flex flex-col items-center">
-      <FaArrowUp
-        className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
-        style={{ color: arrowColor }}
-        onClick={handleArrowClick}
-      />
-      <span className="text-gray-700">
-        {formatNumber(currentArrowCount)}
-      </span>
-    </div>
-    <div
-      className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
-      onClick={toggleComments}
-    >
-      <FaComment
-        className="text-gray-600"
-        style={{ color: commentColor }}
-      />
-      <span className="text-gray-700">
-        {formatNumber(currentCommentCount)}
-      </span>
-    </div>
-    <div className="flex flex-col items-center">
-      <FaEye
-        className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
-        style={{ color: eyeColor }}
-        onClick={handleEyeClick}
-      />
-      <span className="text-gray-700">
-        {formatNumber(currentViewCount)}
-      </span>
-    </div>
-  </div>
+          {/* Actions */}
+          <div className="flex justify-around w-full mt-2">
+            <div className="flex flex-col items-center">
+              <FaArrowUp
+                className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                style={{ color: arrowColor }}
+                onClick={handleArrowClick}
+              />
+              <span className="text-gray-700">
+                {formatNumber(currentArrowCount)}
+              </span>
+            </div>
+            <div
+              className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+              onClick={toggleComments}
+            >
+              <FaComment
+                className="text-gray-600"
+                style={{ color: commentColor }}
+              />
+              <span className="text-gray-700">
+                {formatNumber(currentCommentCount)}
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <FaEye
+                className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                style={{ color: eyeColor }}
+                onClick={handleEyeClick}
+              />
+              <span className="text-gray-700">
+                {formatNumber(currentViewCount)}
+              </span>
+            </div>
+          </div>
 
-  {/* Fault's Municipality */}
-  <div className="flex w-full items-center justify-center mt-2">
-    <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-      <img
-        src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-          municipality_id
-        )}.png`}
-        alt=""
-      />
-    </div>
-    <div className="ml-2">{municipality_id}</div>
-  </div>
+          {/* Fault's Municipality */}
+          <div className="flex w-full items-center justify-center mt-2">
+            <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+              <img
+                src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                  municipality_id
+                )}.png`}
+                alt=""
+              />
+            </div>
+            <div className="ml-2">{municipality_id}</div>
+          </div>
 
-  {/* Comments Section with Slide Animation */}
-  <div
-    className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
-      showComments ? "translate-x-0" : "translate-x-full"
-    }`}
-    style={{ pointerEvents: showComments ? "auto" : "none" }}
-  >
-    <Comments
-      onBack={toggleComments}
-      isCitizen={false}
-      ticketId={ticketId}
-    />
-  </div>
-</div>
-
-
+          {/* Comments Section with Slide Animation */}
+          <div
+            className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
+              showComments ? "translate-x-0" : "translate-x-full"
+            }`}
+            style={{ pointerEvents: showComments ? "auto" : "none" }}
+          >
+            <Comments
+              onBack={toggleComments}
+              isCitizen={false}
+              ticketId={ticketId}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
