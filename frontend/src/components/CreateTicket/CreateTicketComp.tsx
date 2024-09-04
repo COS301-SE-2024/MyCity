@@ -486,7 +486,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
 
       {/* Mobile View */}
-      <div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-4 rounded-3xl overflow-hidden">
+      <div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-2 rounded-3xl overflow-hidden">
         <ToastContainer />
 
         <div className="w-full max-w-screen-md p-6 bg-white flex flex-col rounded-3xl justify-center overflow-y-auto">

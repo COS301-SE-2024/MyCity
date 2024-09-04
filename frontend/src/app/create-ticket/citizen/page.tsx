@@ -110,7 +110,7 @@ export default function CreateTicket() {
     <h1 className="absolute top-0 left-1/2 transform -translate-x-1/2 text-4xl font-bold mb-3 text-white text-opacity-80 text-center mt-2">
       Report an Issue
     </h1>
-    <div className="w-full max-w-7xl px-5 mt-16">
+    <div className="w-full max-w-7xl px-2 mt-16">
       <div className="mt-10">
         <CreateTicketComp useMapboxProp={useMapbox} />
       </div>
