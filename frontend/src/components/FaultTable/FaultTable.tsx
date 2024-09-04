@@ -25,6 +25,7 @@ interface Incident {
 
 interface IncidentProps {
   tableitems: Incident[];
+  refreshwatch : ()=> void;
 }
 
 const urgencyMapping = {
@@ -39,7 +40,7 @@ const urgencyMapping = {
   },
 };
 
-const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
+const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [],refreshwatch }) => {
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
     null
   );
@@ -208,6 +209,7 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
           ticketId={selectedIncident.ticket_id}
           state={selectedIncident.state}
           municipality_id={selectedIncident.municipality_id}
+          refreshwatchlist={refreshwatch}
         />
       )}
     </div>

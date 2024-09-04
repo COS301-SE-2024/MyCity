@@ -76,6 +76,7 @@ def create_ticket(ticket_data):
             "state",
             "username",
         ]
+
         for field in required_fields:
             if field not in ticket_data:
                 error_response = {
@@ -146,7 +147,23 @@ def create_ticket(ticket_data):
 
         # Put the ticket item into the tickets table
         tickets_table.put_item(Item=ticket_item)
-        accresponse = {"message": "Ticket created successfully", "ticket_id": ticket_id}
+
+        # Put ticket on their watchlist
+        watchlist_id = generate_id()
+
+        watchlist_item = {
+            "watchlist_id": watchlist_id,
+            "ticket_id": ticket_id,
+            "user_id": ticket_data["username"],
+        }
+        watchlist_table.put_item(Item=watchlist_item)
+
+        # after accepting
+        accresponse = {
+            "message": "Ticket created successfully",
+            "ticket_id": ticket_id,
+            "watchlist_id": watchlist_id,
+        }
         return format_response(float(200), accresponse)
 
     except ClientError as e:

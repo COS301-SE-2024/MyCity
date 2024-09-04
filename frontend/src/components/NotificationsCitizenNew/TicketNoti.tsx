@@ -20,6 +20,7 @@ interface TicketNotificationProps {
   ticket_id: string;
   municipality_id: string;
   state: string;
+  refreshwatch : ()=> void;
   urgency: "high" | "medium" | "low";
 }
 
@@ -41,6 +42,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   ticket_id,
   state,
   municipality_id,
+  refreshwatch
 }) => {
   const [showTicketView, setShowTicketView] = useState(false);
   const [imageError, setImageError] = useState(false); // State to track image loading error
@@ -115,6 +117,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           ticketId={ticket_id}
           state={state}
           municipality_id={municipality_id}
+          refreshwatchlist={refreshwatch}
         />
       )}
     </>

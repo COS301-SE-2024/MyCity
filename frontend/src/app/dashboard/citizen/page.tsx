@@ -46,6 +46,26 @@ export default function CitizenDashboard({
   >();
   const deeplinkTicketId = searchParams["t_id"];
 
+  const refreshwatchlist = async () =>{
+    try {
+        console.log("Refresh inside")
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.email ?? "";
+        const user_email = String(user_id).toLowerCase();
+        const user_session = String(user_data.current?.session_token);
+        const rspwatchlist = await getWatchlistTickets(
+          user_email,
+          user_session,
+          true
+        );
+        setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     const mockUnreadNotifications = () => {
       // Mock the unread notifications count with a random number
@@ -75,10 +95,12 @@ export default function CitizenDashboard({
         const user_id = user_data.current?.email ?? "";
         setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
+        const user_email = String(user_id).toLowerCase();
         const rspmostupvotes = await getMostUpvote(user_session, true);
         const rspwatchlist = await getWatchlistTickets(
-          String(user_id),
-          user_session
+          user_email,
+          user_session,
+          true
         );
         const municipality = user_data.current?.municipality;
         const rspmunicipality = await getTicketsInMunicipality(
@@ -162,6 +184,7 @@ export default function CitizenDashboard({
           urgency={deeplinkTicket.urgency}
           state={deeplinkTicket.state}
           municipality_id={deeplinkTicket.municipality_id}
+          refreshwatchlist={refreshwatchlist}
         />
       )}
       {/* fault popup used with deeplink ends here */}
@@ -294,6 +317,7 @@ export default function CitizenDashboard({
                           <div className="h-full">
                             <DashboardFaultCardContainer
                               cardData={dashWatchResults}
+                              refreshwatch={refreshwatchlist}
                             />
                           </div>
                         ) : (
@@ -328,7 +352,7 @@ export default function CitizenDashboard({
                       ) : dashMostUpvoteResults.length > 0 ? (
                         <DashboardFaultCardContainer
                           cardData={dashMostUpvoteResults}
-                      
+                          refreshwatch={refreshwatchlist}
                         />
                       ) : (
                         <p className="text-center text-white text-opacity-60 text-sm">
@@ -359,6 +383,7 @@ export default function CitizenDashboard({
                       ) : dashMuniResults.length > 0 ? (
                         <DashboardFaultCardContainer
                           cardData={dashMuniResults}
+                          refreshwatch={refreshwatchlist}
                         />
                       ) : (
                         <p className="text-center text-sm text-opacity-60 text-white">
@@ -370,7 +395,8 @@ export default function CitizenDashboard({
                 </Tab>
 
                 <Tab key={1} title="List">
-                  <FaultTable tableitems={dashMostUpvoteResults} />
+                  <FaultTable tableitems={dashMostUpvoteResults}
+                  refreshwatch={refreshwatchlist} />
                 </Tab>
 
                 <Tab key={2} title="Map">
@@ -476,6 +502,7 @@ export default function CitizenDashboard({
                             <div className="h-full">
                               <DashboardFaultCardContainer
                                 cardData={dashWatchResults}
+                                refreshwatch={refreshwatchlist}
                               />
                             </div>
                           ) : (
@@ -509,6 +536,7 @@ export default function CitizenDashboard({
                         ) : dashMostUpvoteResults.length > 0 ? (
                           <DashboardFaultCardContainer
                             cardData={dashMostUpvoteResults}
+                            refreshwatch={refreshwatchlist}
                           />
                         ) : (
                           <p className="text-center text-white text-opacity-60 text-sm">
@@ -538,6 +566,7 @@ export default function CitizenDashboard({
                         ) : dashMuniResults.length > 0 ? (
                           <DashboardFaultCardContainer
                             cardData={dashMuniResults}
+                            refreshwatch={refreshwatchlist}
                           />
                         ) : (
                           <p className="text-center text-sm text-opacity-60 text-white">
@@ -549,7 +578,8 @@ export default function CitizenDashboard({
                   </Tab>
 
                   <Tab key={1} title="List">
-                    <FaultTable tableitems={dashMostUpvoteResults} />
+                    <FaultTable tableitems={dashMostUpvoteResults} 
+                      refreshwatch={refreshwatchlist} />
                   </Tab>
 
                   <Tab key={2} title="Map">

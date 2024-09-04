@@ -63,6 +63,24 @@ export default function Notifications() {
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
+  const refreshwatchlist = async () =>{
+    try {
+        const user_data = await userProfile.getUserProfile();
+        const user_id = user_data.current?.email ?? "";
+        const user_session = String(user_data.current?.session_token);
+        const rspwatchlist = await getWatchlistTickets(
+          String(user_id),
+          user_session,
+          true
+        );
+        setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
   const handleCardClick = (cardData: CardData) => {
     setSelectedCard(cardData);
     setShowModal(true);
@@ -157,6 +175,7 @@ export default function Notifications() {
           ticket_id={item.ticket_id}
           state={item.state}
           municipality_id={item.municipality_id}
+          refreshwatch={refreshwatchlist}
         />
       );
     });
