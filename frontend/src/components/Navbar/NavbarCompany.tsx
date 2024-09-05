@@ -133,7 +133,7 @@ export default function NavbarCompany({ unreadNotifications = 0 }) {
       {/* Mobile View */}
       <div className="block sm:hidden">
         {/* Bottom Bar */}
-        <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center">
+        <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center z-50">
           <nav className="z-51 fixed w-full p-0 flex items-center justify-between">
             <div className="flex w-full text-[0.95rem] items-center justify-between px-6">
               <Link href="/dashboard/service-provider" passHref>

@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import NavbarUser from "@/components/Navbar/NavbarUser";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import React, { Key, useEffect, useRef, useState } from "react";
 import TicketNoti from "@/components/NotificationsCitizenNew/TicketNoti";
 import { useProfile } from "@/hooks/useProfile";
@@ -63,23 +64,23 @@ export default function Notifications() {
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-  const refreshwatchlist = async () =>{
+  const refreshwatchlist = async () => {
     try {
-        const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email ?? "";
-        const user_session = String(user_data.current?.session_token);
-        const rspwatchlist = await getWatchlistTickets(
-          String(user_id),
-          user_session,
-          true
-        );
-        setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+      const user_data = await userProfile.getUserProfile();
+      const user_id = user_data.current?.email ?? "";
+      const user_session = String(user_data.current?.session_token);
+      const rspwatchlist = await getWatchlistTickets(
+        String(user_id),
+        user_session,
+        true
+      );
+      setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
     } catch (error) {
-        console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleCardClick = (cardData: CardData) => {
     setSelectedCard(cardData);
@@ -233,7 +234,9 @@ export default function Notifications() {
                   />
                 </div>
               ) : (
-                <div className="pt-20 px-6 rounded-3xl">{visibleNotifications}</div>
+                <div className="pt-20 px-6 rounded-3xl">
+                  {visibleNotifications}
+                </div>
               )}
 
               {/* Add other static TicketNoti components if needed */}
@@ -244,6 +247,7 @@ export default function Notifications() {
 
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarUser unreadNotifications={unreadNotifications} />
         <div
           style={{
             position: "relative",
@@ -251,15 +255,8 @@ export default function Notifications() {
             overflow: "hidden",
           }}
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
+          {/* Mobile Navbar */}
+          <NavbarMobile />
 
           {/* Background image */}
           <div
@@ -279,27 +276,30 @@ export default function Notifications() {
           />
 
           {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
+          <div className="fixed inset-0 overflow-y-auto pt-4">
+            {" "}
+            {/* Reduced padding further to pt-4 */}
+            <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mt-2">
+              Notifications
             </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
-            </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
+            <main>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <ThreeDots
+                    height="80"
+                    width="80"
+                    radius="9"
+                    color="#ADD8E6"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <div className="px-2 mt-2">{visibleNotifications}</div>
+              )}
+            </main>
           </div>
         </div>
       </div>

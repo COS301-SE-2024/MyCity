@@ -238,7 +238,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       <ToastContainer />
 
       {/* Desktop View */}
-<div className="hidden sm:flex w-full max-w-screen-xl h-[40rem] rounded-lg overflow-hidden">
+<div className="hidden sm:flex w-full max-w-screen-xl h-[40rem] rounded-lg overflow-hidden z-10">
   {/* Form Section */}
   <div className="w-1/2 p-6 bg-white flex flex-col overflow-hidden">
     <h2 className="text-2xl text-center font-bold mt-2 mb-6">
@@ -486,7 +486,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
 
       {/* Mobile View */}
-      <div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-4 rounded-3xl overflow-hidden">
+      <div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-2 rounded-3xl overflow-hidden">
         <ToastContainer />
 
         <div className="w-full max-w-screen-md p-6 bg-white flex flex-col rounded-3xl justify-center overflow-y-auto">
@@ -580,74 +580,69 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             </div>
 
             {/* Fault Severity */}
-            <div>
-              <span className="font-semibold text-sm">Fault Severity</span>
-              <div className="flex h-[2.5rem] justify-center">
-                <ButtonGroup aria-label="Basic example" className="flex h-full">
-                  <Button
-                    variant="bordered"
-                    className={`h-full ${
-                      selectedFault === "Minor"
-                        ? "border-blue-500 border-2"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedFault("Minor")}
-                  >
-                    <div className="flex flex-col min-w-24 px-1 font-sm rounded-2xl justify-center items-center h-full">
-                      <img
-                        width="20"
-                        height="auto"
-                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
-                        alt="Minor"
-                      />
-                    </div>
-                  </Button>
-                  <Button
-                    variant="bordered"
-                    className={`h-full ${
-                      selectedFault === "Major"
-                        ? "border-blue-500 border-2"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedFault("Major")}
-                  >
-                    <div className="flex flex-col min-w-24 px-1 font-sm rounded-2xl justify-center items-center h-full">
-                      <img
-                        width="20"
-                        height="auto"
-                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
-                        alt="Major"
-                      />
-                    </div>
-                  </Button>
-                  <Button
-                    variant="bordered"
-                    className={`h-full ${
-                      selectedFault === "Critical"
-                        ? "border-blue-500 border-2"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedFault("Critical")}
-                  >
-                    <div className="flex flex-col min-w-24 px-1 font-sm rounded-2xl justify-center items-center h-full">
-                      <img
-                        width="20"
-                        height="auto"
-                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
-                        alt="Critical"
-                      />
-                    </div>
-                  </Button>
-                </ButtonGroup>
-              </div>
-            </div>
+<div>
+  <span className="font-semibold text-sm">Fault Severity</span>
+  <div className="flex h-[2.5rem] justify-center space-x-2">
+    <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
+      <Button
+        variant="bordered"
+        className={`flex-1 h-full ${
+          selectedFault === "Minor" ? "border-blue-500 border-2" : ""
+        }`}
+        onClick={() => setSelectedFault("Minor")}
+      >
+        <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+          <img
+            width="20"
+            height="auto"
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
+            alt="Minor"
+          />
+        </div>
+      </Button>
+      <Button
+        variant="bordered"
+        className={`flex-1 h-full ${
+          selectedFault === "Major" ? "border-blue-500 border-2" : ""
+        }`}
+        onClick={() => setSelectedFault("Major")}
+      >
+        <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+          <img
+            width="20"
+            height="auto"
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
+            alt="Major"
+          />
+        </div>
+      </Button>
+      <Button
+        variant="bordered"
+        className={`flex-1 h-full ${
+          selectedFault === "Critical" ? "border-blue-500 border-2" : ""
+        }`}
+        onClick={() => setSelectedFault("Critical")}
+      >
+        <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+          <img
+            width="20"
+            height="auto"
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
+            alt="Critical"
+          />
+        </div>
+      </Button>
+    </ButtonGroup>
+  </div>
+</div>
+
 
             {/* Submit Button */}
             <Button
               type="submit"
               disabled={!isFormValid}
               className={cn(
-                "m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300",
+                "m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0",
                 isFormValid
                   ? "bg-blue-500 text-white hover:bg-blue-600"
                   : "bg-blue-200 text-white cursor-not-allowed"

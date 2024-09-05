@@ -169,13 +169,17 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   let text = "Default"; // Default text
 
   if (formattedStateKey in notificationStates) {
-    color = notificationStates[formattedStateKey as keyof typeof notificationStates].color;
-    text = notificationStates[formattedStateKey as keyof typeof notificationStates].text;
+    color =
+      notificationStates[formattedStateKey as keyof typeof notificationStates]
+        .color;
+    text =
+      notificationStates[formattedStateKey as keyof typeof notificationStates]
+        .text;
   } else {
     color = notificationStates.Default.color;
     text = notificationStates.Default.text;
   }
-  
+
   const [currentArrowCount, setCurrentArrowCount] = useState(arrowCount);
   const [currentCommentCount, setCurrentCommentCount] = useState(commentCount);
   const [currentViewCount, setCurrentViewCount] = useState(viewCount);
@@ -186,6 +190,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [imageError, setImageError] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const userProfile = useProfile();
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
 
   useEffect(() => {
     const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -213,6 +218,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const toggleComments = () => {
     setShowComments((prev) => !prev);
+
+    
+
+    const toggleImageSize = () => {
+      setIsImageExpanded((prev) => !prev);
+    };
   };
 
   const handleArrowClick = async () => {
@@ -301,13 +312,19 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const addressParts = address.split(",");
 
+  
+
+  const toggleImageSize = () => {
+    setIsImageExpanded((prev) => !prev);
+  };
+
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto"
       onClick={onClose} // Close modal when clicking outside
     >
       <div
-        className="bg-white rounded-lg shadow-lg w-2/3 h-2/3 p-4 relative flex flex-col border border-red-300 justify-center"
+        className="bg-white rounded-lg shadow-lg w-full sm:w-2/3 sm:h-2/3 p-4 relative flex flex-col border border-red-300 justify-center"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button
@@ -317,11 +334,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           <FaTimes size={24} />
         </button>
 
-        <div className="flex w-full h-full gap-4">
+        {/* Desktop View */}
+        <div className="hidden sm:flex w-full h-full gap-4">
           {/* Left Section */}
           <div className="relative w-1/3 lg:w-1/3 pr-1 flex flex-col items-center">
             {/* Title */}
-            <div className="flex w-full justify-start items-center ">
+            <div className="flex w-full justify-start items-center">
               <div className="font-bold text-3xl pb-1">{title}</div>
             </div>
 
@@ -332,7 +350,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
             </div>
 
-            {/* Discription */}
+            {/* Description */}
             <div className="mb-2 w-full">
               <h3 className="font-bold text-black text-lg">Description</h3>
               <div className="h-[5vh]">
@@ -340,18 +358,17 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
             </div>
 
-            {/*Status*/}
+            {/* Status */}
             <div
-              className={`${color} bg-opacity-75 text-black font-bold text-lg  text-center rounded-lg px-3 py-1 mt-1 w-full`}
+              className={`${color} bg-opacity-75 text-black font-bold text-lg text-center rounded-lg px-3 py-1 mt-1 w-full`}
             >
               {state}
-              {/* {"In Progress"} */}
             </div>
 
             {/* Date Opened */}
             <div className="flex justify-between mt-2 w-full">
               <div className="text-lg font-bold text-gray-500">
-                Date Opened:{" "}
+                Date Opened:
               </div>
               <div className="text-lg font-bold text-gray-500">
                 2 August 2024
@@ -361,7 +378,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             {/* ETC */}
             <div className="flex justify-between mb-2 w-full">
               <div className="text-lg font-bold text-gray-500">
-                Estimated Time Left:{" "}
+                Estimated Time Left:
               </div>
               <div className="text-lg font-bold text-gray-500">18 hours</div>
             </div>
@@ -387,10 +404,10 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               />
             </div>
 
-            <div className=" w-full flex  pt-2">
+            <div className="w-full flex pt-2">
               {/* Google Maps */}
               <Button
-                className="w-1/2 bg-opacity-45 text-black font-bold text-md  text-center rounded-lg py-1"
+                className="w-1/2 bg-opacity-45 text-black font-bold text-md text-center rounded-lg py-1"
                 onClick={showDirections}
               >
                 {"Google Maps"}
@@ -404,7 +421,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               {/* Actions */}
               <div className="mb-4 flex justify-between w-1/2 px-4">
                 {/* Upvotes */}
-                <div className="flex  flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center">
                   <FaArrowUp
                     className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
                     style={{ color: arrowColor }}
@@ -487,6 +504,118 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 ticketId={ticketId}
               />
             </div>
+          </div>
+        </div>
+
+        {/* Mobile View */}
+        <div className="sm:hidden flex flex-col w-full gap-3 text-black">
+          {/* Title and Ticket Number */}
+          <div className="text-center">
+            <div className="font-bold text-xl">{title}</div>
+            <div className="text-gray-400 text-lg">{ticketNumber}</div>
+          </div>
+
+          {/* Status */}
+          <div
+            className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-1 w-full`}
+          >
+            {text}
+          </div>
+
+          {/* Description */}
+          <div className="text-gray-700 text-sm text-center px-4">
+            {description}
+          </div>
+
+          {/* Address */}
+          <div className="text-gray-500 text-sm text-center">{address}</div>
+
+          {/* Image */}
+          <div className="relative w-full flex justify-center mt-2">
+            <img
+              src={image || undefined} // Ensure src is either a string or undefined
+              alt="Fault"
+              className="rounded-lg object-cover w-full h-40"
+              onError={() => setImageError(true)}
+            />
+            {imageError && (
+              <div className="flex justify-center items-center w-full h-40 bg-gray-200">
+                <ImageIcon size={32} color="#6B7280" />
+              </div>
+            )}
+          </div>
+
+          {/* Map */}
+
+          {/* Google Maps Button */}
+          <Button
+            className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1"
+            onClick={showDirections}
+          >
+            Google Maps
+          </Button>
+
+          {/* Actions */}
+          <div className="flex justify-around w-full mt-2">
+            <div className="flex flex-col items-center">
+              <FaArrowUp
+                className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                style={{ color: arrowColor }}
+                onClick={handleArrowClick}
+              />
+              <span className="text-gray-700">
+                {formatNumber(currentArrowCount)}
+              </span>
+            </div>
+            <div
+              className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+              onClick={toggleComments}
+            >
+              <FaComment
+                className="text-gray-600"
+                style={{ color: commentColor }}
+              />
+              <span className="text-gray-700">
+                {formatNumber(currentCommentCount)}
+              </span>
+            </div>
+            <div className="flex flex-col items-center">
+              <FaEye
+                className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                style={{ color: eyeColor }}
+                onClick={handleEyeClick}
+              />
+              <span className="text-gray-700">
+                {formatNumber(currentViewCount)}
+              </span>
+            </div>
+          </div>
+
+          {/* Fault's Municipality */}
+          <div className="flex w-full items-center justify-center mt-2">
+            <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+              <img
+                src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                  municipality_id
+                )}.png`}
+                alt=""
+              />
+            </div>
+            <div className="ml-2">{municipality_id}</div>
+          </div>
+
+          {/* Comments Section with Slide Animation */}
+          <div
+            className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
+              showComments ? "translate-x-0" : "translate-x-full"
+            }`}
+            style={{ pointerEvents: showComments ? "auto" : "none" }}
+          >
+            <Comments
+              onBack={toggleComments}
+              isCitizen={false}
+              ticketId={ticketId}
+            />
           </div>
         </div>
       </div>
