@@ -1,0 +1,18 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: lanlords
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: mycity-nodejs-api
+service: nodejs-aws-lambda
+provider:
+  name: aws
+  runtime: nodejs20.x
+functions:
+  app:
+    handler: dist/app.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: /{proxy+}
