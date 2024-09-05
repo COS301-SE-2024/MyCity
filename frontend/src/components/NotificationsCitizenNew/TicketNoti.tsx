@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { FaCircle } from "react-icons/fa";
-import { Image as ImageIcon } from "lucide-react"; 
+import { Image as ImageIcon } from "lucide-react";
 import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 
 interface TicketNotificationProps {
@@ -18,6 +17,9 @@ interface TicketNotificationProps {
   latitude: number;
   longitude: number;
   ticket_id: string;
+  municipality_id: string;
+  state: string;
+  refreshwatch: () => void;
   urgency: "high" | "medium" | "low";
 }
 
@@ -37,9 +39,12 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   longitude,
   urgency,
   ticket_id,
+  state,
+  municipality_id,
+  refreshwatch,
 }) => {
   const [showTicketView, setShowTicketView] = useState(false);
-  const [imageError, setImageError] = useState(false); // State to track image loading error
+  const [imageError, setImageError] = useState(false);
 
   const getActionText = () => {
     switch (action) {
@@ -68,8 +73,9 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
 
   return (
     <>
+      {/* Desktop View */}
       <div
-        className="flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="hidden sm:flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleNotificationClick}
       >
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`} />
@@ -79,7 +85,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
               src={image}
               alt="Ticket"
               className="w-full h-full object-cover"
-              onError={() => setImageError(true)} // Set error state if image fails to load
+              onError={() => setImageError(true)}
             />
           ) : (
             <ImageIcon size={32} color="#6B7280" />
@@ -87,10 +93,40 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         </div>
         <div className="flex-1 text-center overflow-hidden whitespace-nowrap">
           <div className="text-sm inline-block">
-            <span className="font-bold">Ticket #{ticketNumber}</span> {getActionText()}.
+            <span className="font-bold">Ticket #{ticketNumber}</span>{" "}
+            {getActionText()}.
           </div>
         </div>
       </div>
+
+      {/* Mobile View */}
+<div
+  className="block sm:hidden flex flex-col items-center text-black bg-white bg-opacity-70 rounded-2xl p-3 mb-2 mx-2 cursor-pointer hover:bg-opacity-80 transition-colors"
+  onClick={handleNotificationClick}
+>
+  <div className="flex flex-col items-center w-full">
+    <div className="text-sm text-center">
+      <span className="font-bold">Ticket #{ticketNumber}</span>{" "}
+      {getActionText()}.
+    </div>
+  </div>
+  <div className="flex justify-center mt-2">
+    <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 border border-gray-300 flex items-center justify-center">
+      {image && !imageError ? (
+        <img
+          src={image}
+          alt="Ticket"
+          className="w-full h-full object-cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <ImageIcon size={24} color="#6B7280" />
+      )}
+    </div>
+  </div>
+</div>
+
+
 
       {showTicketView && (
         <FaultCardUserView
@@ -109,6 +145,9 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           longitude={longitude}
           urgency={urgency}
           ticketId={ticket_id}
+          state={state}
+          municipality_id={municipality_id}
+          refreshwatchlist={refreshwatch}
         />
       )}
     </>

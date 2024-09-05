@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaArrowUp } from "react-icons/fa";
-import { ThreeDots } from "react-loader-spinner"; // Import the loading spinner
-import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView"; // Updated import
+import { ThreeDots } from "react-loader-spinner";
+import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import { AlertCircle } from "lucide-react";
 
 interface Incident {
@@ -18,11 +18,14 @@ interface Incident {
   createdby: string;
   latitude: number;
   longitude: number;
-  urgency: "high" | "medium" | "low"; // Added urgency field
+  municipality_id: string;
+  state: string;
+  urgency: "high" | "medium" | "low";
 }
 
 interface IncidentProps {
   tableitems: Incident[];
+  refreshwatch : ()=> void;
 }
 
 const urgencyMapping = {
@@ -37,10 +40,14 @@ const urgencyMapping = {
   },
 };
 
-const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-  const [isOverflowing, setIsOverflowing] = useState<{ [key: number]: boolean }>({});
+const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [],refreshwatch }) => {
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [isOverflowing, setIsOverflowing] = useState<{
+    [key: number]: boolean;
+  }>({});
   const addressRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -54,10 +61,9 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
   }, [addressRefs]);
 
   useEffect(() => {
-    // Simulate a delay for loading (e.g., fetching data)
     setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Adjust the delay as needed
+    }, 2000);
   }, []);
 
   const handleRowClick = (incident: Incident) => {
@@ -69,22 +75,15 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
   };
 
   const getUrgency = (votes: number) => {
-    if (votes < 10) {
-      return "low";
-    } else if (votes >= 10 && votes < 20) {
-      return "medium";
-    } else if (votes >= 20 && votes <= 40) {
-      return "high";
-    } else {
-      return "low"; // Default case
-    }
+    if (votes < 10) return "low";
+    if (votes >= 10 && votes < 20) return "medium";
+    if (votes >= 20 && votes <= 40) return "high";
+    return "low";
   };
+
   const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + "M";
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + "k";
-    }
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1) + "k";
     return num.toString();
   };
 
@@ -94,7 +93,7 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
   };
 
   return (
-    <div className="text-white text-opacity-80 p-10">
+    <div className="text-white text-opacity-80 p-5 sm:p-10">
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <ThreeDots
@@ -103,60 +102,92 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
             radius="9"
             color="#ADD8E6"
             ariaLabel="three-dots-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
             visible={true}
           />
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 text-white text-opacity-80 font-bold border-b border-gray-200">
-            <div className="col-span-1 flex justify-center">Urgency</div>
-            <div className="col-span-1 flex justify-center">Ticket Number</div>
-            <div className="col-span-1 flex justify-center">Fault Type</div>
-            <div className="col-span-1 flex justify-center">Upvotes</div>
-            <div className="col-span-1 flex justify-center">Address</div>
-          </div>
-          {tableitems.map((incident, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
-              onClick={() => handleRowClick(incident)}
-            >
+          {/* Desktop View */}
+          <div className="hidden sm:block h-[80vh] overflow-y-auto">
+            <div className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 text-white text-opacity-80 font-bold border-b border-gray-200">
+              <div className="col-span-1 flex justify-center">Urgency</div>
               <div className="col-span-1 flex justify-center">
-                {urgencyMapping[getUrgency(incident.upvotes)].icon}
+                Ticket Number
               </div>
-              <div className="col-span-1 flex justify-center font-bold">
-                {incident.ticketnumber}
-              </div>
-              <div className="col-span-1 flex justify-center">
-                {incident.asset_id}
-              </div>
-              <div className="col-span-1 flex justify-center text-center">
-                <div className="flex flex-col items-center">
-                  <div>
+              <div className="col-span-1 flex justify-center">Fault Type</div>
+              <div className="col-span-1 flex justify-center">Upvotes</div>
+              <div className="col-span-1 flex justify-center">Address</div>
+            </div>
+            {tableitems.map((incident, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-5 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
+                onClick={() => handleRowClick(incident)}
+              >
+                <div className="col-span-1 flex justify-center">
+                  {urgencyMapping[getUrgency(incident.upvotes)].icon}
+                </div>
+                <div className="col-span-1 flex justify-center font-bold">
+                  {incident.ticketnumber}
+                </div>
+                <div className="col-span-1 flex justify-center">
+                  {incident.asset_id}
+                </div>
+                <div className="col-span-1 flex justify-center text-center">
+                  <div className="flex flex-col items-center">
                     <FaArrowUp />
+                    <div>{formatNumber(incident.upvotes)}</div>
                   </div>
-                  <div>{formatNumber(incident.upvotes)}</div>
+                </div>
+                <div
+                  className="col-span-1 flex justify-center overflow-hidden whitespace-nowrap"
+                  ref={(el) => {
+                    addressRefs.current[index] = el;
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "inline-block",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {truncateAddress(incident.address)}
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Mobile View */}
+          <div className="block sm:hidden h-[80vh] overflow-y-auto">
+            {tableitems.map((incident, index) => (
               <div
-                className="col-span-1 flex justify-center overflow-hidden whitespace-nowrap"
-                ref={(el) => {
-                  addressRefs.current[index] = el;
-                }}
+                key={index}
+                className="p-4 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200 mb-2"
+                onClick={() => handleRowClick(incident)}
               >
+                <div className="flex justify-between items-center mb-2">
+                  <div>{urgencyMapping[getUrgency(incident.upvotes)].icon}</div>
+                  <div className="font-bold">{incident.ticketnumber}</div>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <div>{incident.asset_id}</div>
+                  <div className="flex items-center">
+                    <FaArrowUp className="mr-1" />
+                    {formatNumber(incident.upvotes)}
+                  </div>
+                </div>
                 <div
-                  style={{
-                    display: "inline-block",
-                    whiteSpace: "nowrap",
+                  className="overflow-hidden whitespace-nowrap"
+                  ref={(el) => {
+                    addressRefs.current[index] = el;
                   }}
                 >
                   {truncateAddress(incident.address)}
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </>
       )}
       {selectedIncident && (
@@ -176,6 +207,9 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
           longitude={selectedIncident.longitude}
           latitude={selectedIncident.latitude}
           ticketId={selectedIncident.ticket_id}
+          state={selectedIncident.state}
+          municipality_id={selectedIncident.municipality_id}
+          refreshwatchlist={refreshwatch}
         />
       )}
     </div>
@@ -183,7 +217,6 @@ const IncidentTable: React.FC<IncidentProps> = ({ tableitems = [] }) => {
 };
 
 export default IncidentTable;
-
 
 //Previous version of this in development
 

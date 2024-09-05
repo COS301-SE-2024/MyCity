@@ -24,9 +24,10 @@ interface CardData {
 
 interface CardComponentProps {
   cardData: CardData[];
+  refreshwatch : ()=> void;
 }
 
-const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = [] }) => {
+const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = [],refreshwatch }) => {
   const [startIndex, setStartIndex] = useState(0); // Index to track the starting point of displayed items
   const itemsPerPage = 7; // Number of items to display per page
   const [showModal, setShowModal] = useState(false);
@@ -69,6 +70,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           createdBy: item.dateOpened,
           ticketNumber: item.ticket_id,
           ticketId: item.ticket_id,
+          municipality_id: item.municipality_id,
+          state: item.state,
         }}
         onClick={() => handleCardClick(item)}
       />
@@ -121,6 +124,9 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ cardData = 
           longitude={selectedCard.longitude} // Pass longitude
           urgency={selectedCard.urgency} // Pass urgency
           ticketId={selectedCard.ticket_id}
+          municipality_id={selectedCard.municipality_id}
+          state={selectedCard.state}
+          refreshwatchlist={refreshwatch}
         />
       )}
     </div>

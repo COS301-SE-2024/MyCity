@@ -6,7 +6,7 @@ import uuid
 from dotenv import load_dotenv
 import os
 
-from math import radians, cos, sin, asin, sqrt
+from math import radians, cos, sin, asin, sqrt, atan2
 from datetime import datetime
 from decimal import Decimal
 from boto3.dynamodb.conditions import Key
@@ -35,11 +35,6 @@ user_poolid = os.getenv("USER_POOL_ID")
 municipality_table = dynamodb.Table("municipalities")
 watchlist_table = dynamodb.Table("watchlist")
 ticketupdate_table = dynamodb.Table("ticket_updates")
-address = [
-    "23 South Street,Hillvill",
-    "25 Klerksdorp,Suikerbossie",
-    "5 1st Street,  Hillborrow",
-]
 
 
 def generate_id():
@@ -64,6 +59,48 @@ def format_response(status_code, body):
     )
 
 
+def getdistance(origin, destination):
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371  # km
+
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+    a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * cos(radians(lat2)) * sin(
+        dlon / 2
+    ) * sin(dlon / 2)
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    d = radius * c
+
+    return d
+
+
+def getMunicipality(latitude, longitude):
+    municipality = ""
+    mindistance = 100000000000
+    response_muni = municipality_table.scan(
+        ProjectionExpression="longitude, latitude, municipality_id"
+    )
+
+    print(response_muni["Items"][1:5])
+
+    if len(response_muni["Items"]) > 0:
+        for items in response_muni["Items"]:
+            clean_lat = str(items["latitude"]).strip().strip("'")
+            clean_long = str(items["longitude"]).strip().strip("'")
+            origin = (Decimal(clean_lat), Decimal(clean_long))
+            destination = (latitude, longitude)
+            distance = getdistance(origin, destination)
+            if mindistance > distance:
+                municipality = items["municipality_id"]
+                mindistance = distance
+
+    if municipality == "":
+        return "NOT APPLICABLE"
+    else:
+        return municipality
+
+
 def create_ticket(ticket_data):
     try:
         # Validate required fields
@@ -76,6 +113,7 @@ def create_ticket(ticket_data):
             "state",
             "username",
         ]
+
         for field in required_fields:
             if field not in ticket_data:
                 error_response = {
@@ -110,14 +148,15 @@ def create_ticket(ticket_data):
         address = ticket_data["address"]
 
         # extract municipality from address
-        ticket_municipality = ""
-        split_address = address.split(",")
-        if "Local Municipality" in split_address[2]:
-            ticket_municipality = split_address[2].replace("Municipality", "")
-        else:
-            ticket_municipality = split_address[1]
+        # ticket_municipality = ""
+        # split_address = address.split(",")
+        # if "Local Municipality" in split_address[2]:
+        #     ticket_municipality = split_address[2].replace("Municipality", "")
+        # else:
+        #     ticket_municipality = split_address[1]
 
-        municipality_id = ticket_municipality.strip()
+        # municipality_id = ticket_municipality.strip()
+        municipality_id = getMunicipality(latitude, longitude)
 
         current_datetime = datetime.now()
 
@@ -146,7 +185,23 @@ def create_ticket(ticket_data):
 
         # Put the ticket item into the tickets table
         tickets_table.put_item(Item=ticket_item)
-        accresponse = {"message": "Ticket created successfully", "ticket_id": ticket_id}
+
+        # Put ticket on their watchlist
+        watchlist_id = generate_id()
+
+        watchlist_item = {
+            "watchlist_id": watchlist_id,
+            "ticket_id": ticket_id,
+            "user_id": ticket_data["username"],
+        }
+        watchlist_table.put_item(Item=watchlist_item)
+
+        # after accepting
+        accresponse = {
+            "message": "Ticket created successfully",
+            "ticket_id": ticket_id,
+            "watchlist_id": watchlist_id,
+        }
         return format_response(float(200), accresponse)
 
     except ClientError as e:
@@ -522,7 +577,7 @@ def getMostUpvoted():
         response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
         items = response["Items"]
         sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
-        top_items = sorted_items[:6]
+        top_items = sorted_items[:15]
         if len(top_items) > 0:
             for item in top_items:
                 response_item = ticketupdate_table.query(

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import { InteractTicket,addWatchlist } from "@/services/tickets.service";
+import { useProfile } from "@/hooks/useProfile";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -20,6 +22,7 @@ interface FaultCardUserViewProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
+  municipality_id: string;
   longitude : string;
   latitude : string;
   user_picture : string;
@@ -47,6 +50,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   createdBy,
   status,
   municipalityImage,
+  municipality_id,
   longitude,
   latitude,
   user_picture,
@@ -103,6 +107,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [arrowColor, setArrowColor] = useState(initialData.arrowColor);
   const [commentColor, setCommentColor] = useState(initialData.commentColor);
   const [eyeColor, setEyeColor] = useState(initialData.eyeColor);
+  const userProfile = useProfile();
 
   useEffect(() => {
     const data = {
@@ -117,17 +122,32 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
   }, [currentArrowCount, currentCommentCount, currentViewCount, arrowColor, commentColor, eyeColor, ticketNumber]);
 
-  const handleArrowClick = () => {
+  const handleArrowClick = async () => {
     if (arrowColor === "black") {
       setArrowColor("blue");
-      setCurrentArrowCount((prevCount: any) => prevCount + 1);
+      console.log("Inside arrow")
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+      const rspvotes = await InteractTicket(ticketId,"UPVOTE",userSession)
+      if(rspvotes !== -1)
+      {
+        setCurrentArrowCount(rspvotes);
+      }
+      else setCurrentArrowCount((prevCount: any) => prevCount + 1);
     } else {
       setArrowColor("black");
-      setCurrentArrowCount((prevCount: any) => prevCount - 1);
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
+      const rspvotes = await InteractTicket(ticketId,"UNVOTE",userSession)
+      if(rspvotes !== -1)
+      {
+        setCurrentArrowCount(rspvotes);
+      }
+      else setCurrentArrowCount((prevCount: any) => prevCount - 1);
     }
   };
 
-  const handleCommentClick = () => {
+  const handleCommentClick = async () => {
     if (commentColor === "black") {
       setCommentColor("blue");
       setCurrentCommentCount((prevCount: any) => prevCount + 1);
@@ -137,9 +157,16 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     }
   };
 
-  const handleEyeClick = () => {
+  const handleEyeClick = async () => {
     if (eyeColor === "black") {
-      setEyeColor("blue");
+      const user_data = await userProfile.getUserProfile();
+      const username = String(user_data.current?.email);
+      const userSession = String(user_data.current?.session_token);
+      const rspaddwatch = await addWatchlist(ticketId,username,userSession);
+      if(rspaddwatch == true)
+      {
+        setEyeColor("blue");
+      }
       setCurrentViewCount((prevCount: any) => prevCount + 1);
     } else {
       setEyeColor("black");
