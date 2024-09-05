@@ -190,6 +190,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [imageError, setImageError] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const userProfile = useProfile();
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
 
   useEffect(() => {
     const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -218,7 +219,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const toggleComments = () => {
     setShowComments((prev) => !prev);
 
-    const [isImageExpanded, setIsImageExpanded] = useState(false);
+    
 
     const toggleImageSize = () => {
       setIsImageExpanded((prev) => !prev);
@@ -311,7 +312,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const addressParts = address.split(",");
 
-  const [isImageExpanded, setIsImageExpanded] = useState(false);
+  
 
   const toggleImageSize = () => {
     setIsImageExpanded((prev) => !prev);
