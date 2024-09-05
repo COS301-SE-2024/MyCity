@@ -6,7 +6,7 @@ import uuid
 from dotenv import load_dotenv
 import os
 
-from math import radians, cos, sin, asin, sqrt,atan2
+from math import radians, cos, sin, asin, sqrt, atan2
 from datetime import datetime
 from decimal import Decimal
 from boto3.dynamodb.conditions import Key
@@ -14,7 +14,7 @@ from boto3.dynamodb.conditions import Attr
 import re
 import json
 import logging
-import string  
+import string
 
 # import requests
 import random
@@ -58,41 +58,47 @@ def format_response(status_code, body):
         },
     )
 
+
 def getdistance(origin, destination):
     lat1, lon1 = origin
     lat2, lon2 = destination
-    radius = 6371 # km
+    radius = 6371  # km
 
-    dlat = radians(lat2-lat1)
-    dlon = radians(lon2-lon1)
-    a = sin(dlat/2) * sin(dlat/2) + cos(math.radians(lat1)) \
-        * cos(radians(lat2)) * sin(dlon/2) * sin(dlon/2)
-    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+    a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * cos(radians(lat2)) * sin(
+        dlon / 2
+    ) * sin(dlon / 2)
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
     d = radius * c
 
     return d
 
-def getMunicipality(latitude,longitude):
+
+def getMunicipality(latitude, longitude):
     municipality = ""
     mindistance = 100000000000
     response_muni = municipality_table.scan(
-        ProjectionExpression="longitude, latitude, municipality_id" 
+        ProjectionExpression="longitude, latitude, municipality_id"
     )
-    
-    if(len(response_muni['Items']) > 0):
-        for items in response_muni['Items']:
-            origin = (Decimal(str(items['latitude'])),Decimal(str(items['longitude'])))
-            destination = (latitude,longitude)
-            distance = getdistance(origin,destination)
-            if(mindistance > distance):
-                municipality = items['municipality_id']
+
+    print(response_muni["Items"][1:5])
+
+    if len(response_muni["Items"]) > 0:
+        for items in response_muni["Items"]:
+            clean_lat = str(items["latitude"]).strip().strip("'")
+            clean_long = str(items["longitude"]).strip().strip("'")
+            origin = (Decimal(clean_lat), Decimal(clean_long))
+            destination = (latitude, longitude)
+            distance = getdistance(origin, destination)
+            if mindistance > distance:
+                municipality = items["municipality_id"]
                 mindistance = distance
 
-    if(municipality == ''):
+    if municipality == "":
         return "NOT APPLICABLE"
-    else :
-        return municipality   
-
+    else:
+        return municipality
 
 
 def create_ticket(ticket_data):
@@ -150,7 +156,7 @@ def create_ticket(ticket_data):
         #     ticket_municipality = split_address[1]
 
         # municipality_id = ticket_municipality.strip()
-        municipality_id = getMunicipality(latitude,longitude)
+        municipality_id = getMunicipality(latitude, longitude)
 
         current_datetime = datetime.now()
 
