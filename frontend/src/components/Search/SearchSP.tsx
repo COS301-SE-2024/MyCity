@@ -11,7 +11,7 @@ const SearchSP: React.FC<SearchSPProps> = ({ serviceProviders }) => {
   return (
     <div>
       {/* Desktop View */}
-      <div className="hidden sm:block">
+      <div className="hidden lg:block"> {/* Show desktop view on large screens and above */}
         <div className="space-y-1 px-6 rounded-3xl">
           {serviceProviders.map((sp: ServiceProvider, index: number) => (
             <div
@@ -86,7 +86,7 @@ const SearchSP: React.FC<SearchSPProps> = ({ serviceProviders }) => {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
+      <div className="block lg:hidden"> {/* Show mobile view on medium screens and below */}
         <div className="space-y-1 px-4 rounded-3xl">
           {serviceProviders.map((sp: ServiceProvider, index: number) => (
             <div
