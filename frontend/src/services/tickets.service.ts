@@ -433,6 +433,11 @@ export async function CreatTicket(sessiont: string, assett: string, descrip: str
     if (!response.ok) {
         return false;
     }
+    const result = await response.json();
+    if(result.data.Status)
+    {
+        return false;
+    }
     else return true;
 }
 

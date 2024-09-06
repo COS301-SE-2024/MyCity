@@ -72,6 +72,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   } = useMapboxProp();
   const { getUserProfile } = useProfile();
   const formRef = useRef<HTMLFormElement>(null);
+  const formRefmobile = useRef<HTMLFormElement>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
 
   const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
@@ -177,8 +178,61 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
         String(fullAddress),
         String(user_data.current.email)
       );
+      console.log(isCreated)
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
+        window.location.href = "/dashboard/citizen";
+      } else {
+        throw new Error("Ticket creation failed");
+      }
+    } catch (error: any) {
+      console.error("Error:", error);
+      toast.error(`Error: ${error.message}`);
+    }
+  };
+
+  ////////////Handle submit for mobile
+  const handleSubmitMobile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const user_data = await getUserProfile();
+    const formcovert = formRefmobile.current;
+
+    if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
+      console.error("Form is not recognized as HTMLFormElement");
+      return;
+    }
+
+    const form = new FormData(formcovert);
+    const latitude = selectedAddress?.lat;
+    const longitude = selectedAddress?.lng;
+    const fullAddress = `${selectedAddress?.street?.name}, ${selectedAddress?.county}, ${selectedAddress?.city}, ${selectedAddress?.administrative}`;
+    const selectedFault = form.get("fault-type");
+    const faultDescription = form.get("fault-description");
+
+    if (!selectedFault) {
+      toast.error("Fault type is required!");
+      return;
+    }
+
+    if (!user_data.current) {
+      toast.error("Please log in if you wish to create a ticket.");
+      return;
+    }
+
+    try {
+      const sessiont = user_data.current?.session_token || " ";
+      const isCreated = await CreatTicket(
+        sessiont,
+        String(selectedFault),
+        String(faultDescription),
+        String(latitude),
+        String(longitude),
+        String(fullAddress),
+        String(user_data.current.email)
+      );
+      if (isCreated === true) {
+        toast.success("Ticket created successfully!");
+        
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -495,8 +549,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             Report a Fault
           </h2>
           <form
-            ref={formRef}
-            onSubmit={handleSubmit}
+            ref={formRefmobile}
+            onSubmit={handleSubmitMobile}
             className="flex flex-col gap-y-4"
           >
             {/* Fault Type */}
