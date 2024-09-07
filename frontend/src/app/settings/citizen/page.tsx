@@ -9,6 +9,7 @@ import { User, HelpCircle, XCircle } from "lucide-react";
 import { Mail, BellOff, MapPin, Shield, Moon, Text } from "lucide-react";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
@@ -242,15 +243,15 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
         );
-
+  
       case "Notifications":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -278,7 +279,7 @@ export default function Settings() {
                   Enable or disable email notifications for various activities.
                 </p>
               </div>
-
+  
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
                 <div className="flex items-center justify-between p-2 rounded">
                   <div className="flex items-center">
@@ -307,9 +308,10 @@ export default function Settings() {
             </div>
           </div>
         );
+  
       case "SecurityPrivacy":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -338,40 +340,13 @@ export default function Settings() {
                   recommendations.
                 </p>
               </div>
-
-              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                <div className="flex items-center justify-between p-2 rounded">
-                  <div className="flex items-center">
-                    <Shield className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">
-                      Two-Factor Authentication
-                    </span>
-                  </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      twoFactorAuth ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleTwoFactorAuth}
-                  >
-                    <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        twoFactorAuth ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  Add an extra layer of security to your account with two-factor
-                  authentication.
-                </p>
-              </div>
             </div>
           </div>
         );
-
+  
       case "Accessibility":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -397,30 +372,6 @@ export default function Settings() {
                   Toggle dark mode for a better viewing experience in low light.
                 </p>
               </div>
-
-              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                <div className="flex items-center justify-between p-2 rounded">
-                  <div className="flex items-center">
-                    <Text className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">Larger Font</span>
-                  </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      largerFont ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleLargerFont}
-                  >
-                    <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        largerFont ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  Enable larger font sizes for better readability.
-                </p>
-              </div>
             </div>
           </div>
         );
@@ -428,6 +379,7 @@ export default function Settings() {
         return null;
     }
   };
+  
 
   return (
     <div>
@@ -571,69 +523,128 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div
-          style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
-          }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
+{/* Mobile View */}
+<div className="block sm:hidden">
+  <NavbarUser unreadNotifications={unreadNotifications} />
+  <NavbarMobile />
+  {/* Background Image */}
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundImage:
+        'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      zIndex: -1,
+    }}
+  ></div>
 
-          {/* Background image */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
-            }}
-          ></div>
+  <main className="relative z-10 p-4">
+    <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
+      Settings
+    </h1>
 
-          {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
-            </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
-          </div>
+    {/* Profile and Tabs */}
+    <div className="bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
+      <div className="flex items-center mb-4">
+        {data?.picture ? (
+          <img
+            src={data?.picture}
+            alt="Profile"
+            width={12}
+            height={12}
+            className="w-12 h-12 rounded-full mr-4"
+          />
+        ) : (
+          <User className="w-12 h-12 rounded-full mr-4" />
+        )}
+        <div>
+          <p className="text-lg font-semibold">
+            {data?.given_name} {data?.family_name}
+          </p>
         </div>
       </div>
+
+      {/* Tabs */}
+      <nav className="space-y-2">
+        <button
+          className={`w-full text-left py-2 px-4 rounded-t ${
+            activeTab === "AccountInformation"
+              ? "bg-gray-200"
+              : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("AccountInformation")}
+        >
+          Account Information
+        </button>
+        <button
+          className={`w-full text-left py-2 px-4 ${
+            activeTab === "Notifications"
+              ? "bg-gray-200"
+              : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("Notifications")}
+        >
+          Notifications
+        </button>
+        <button
+          className={`w-full text-left py-2 px-4 ${
+            activeTab === "SecurityPrivacy"
+              ? "bg-gray-200"
+              : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("SecurityPrivacy")}
+        >
+          Security & Privacy
+        </button>
+        <button
+          className={`w-full text-left py-2 px-4 rounded-b ${
+            activeTab === "Accessibility"
+              ? "bg-gray-200"
+              : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("Accessibility")}
+        >
+          Accessibility
+        </button>
+      </nav>
+    </div>
+
+    {/* Tab Content with Extra Padding at the Bottom for Scroll */}
+    <div
+      className="bg-white bg-opacity-80 rounded-b-lg shadow-md p-4 mt-0"
+      style={{
+        paddingBottom: "80px", // Add extra padding at the bottom
+        transition: "max-height 0.5s ease-out",
+        overflow: "hidden",
+        animation: "slide-down 0.5s ease-out forwards",
+      }}
+    >
+      {renderTabContent()}
+    </div>
+  </main>
+
+  {/* Style for the slide-down animation */}
+  <style jsx>{`
+    @keyframes slide-down {
+      0% {
+        max-height: 0;
+        opacity: 0;
+      }
+      100% {
+        max-height: 100vh;
+        opacity: 1;
+      }
+    }
+  `}</style>
+</div>
+
+
     </div>
   );
 }
