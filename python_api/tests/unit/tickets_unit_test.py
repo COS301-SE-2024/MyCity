@@ -44,7 +44,7 @@ def test_client():
 #                 'file': (BytesIO(b"dummy content"), 'test_file.jpg'),
 #                 "address": "123 Example Street",
 #             },
-#             {  
+#             {
 #                 'file': (BytesIO(b"dummy content"), 'test_file.jpg'),
 #                 "asset": "Water",
 #                 "description": "Test description",
