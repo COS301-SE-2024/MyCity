@@ -41,7 +41,7 @@ def create_ticket_route():
 @tickets_blueprint.route(
     "/addwatchlist", authorizer=cognito_authorizer, methods=["POST"], cors=True
 )
-def create_ticket_route():
+def create_watchlist_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
     response = add_watchlist(ticket_data)
