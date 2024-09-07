@@ -26,12 +26,15 @@ tickets_blueprint = Blueprint(__name__)
 
 
 @tickets_blueprint.route(
-    "/create", authorizer=cognito_authorizer, methods=["POST"], cors=True
+    "/create",
+    authorizer=cognito_authorizer,
+    methods=["POST"],
+    content_types=["multipart/form-data"],
+    cors=True,
 )
 def create_ticket_route():
     request = tickets_blueprint.current_request
-    ticket_data = request.json_body
-    response = create_ticket(ticket_data)
+    response = create_ticket(request)
     return response
 
 
