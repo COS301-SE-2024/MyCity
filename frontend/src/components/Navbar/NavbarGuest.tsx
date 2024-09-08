@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Building2, Lightbulb, Wrench, Globe } from "lucide-react";
+import { Building2, Lightbulb, Wrench, Globe, Lock } from "lucide-react";
 
-export default function NavbarGuest() {
+export default function NavbarGuest({ showLogin = false }) {
   return (
     <div>
       {/* Desktop View */}
@@ -55,6 +55,18 @@ export default function NavbarGuest() {
                 </div>
               </div>
             </Link>
+
+            {/* Conditionally show login button */}
+            {showLogin && (
+              <Link href="/auth/login" passHref>
+                <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
+                  <div className="flex flex-col gap-1 items-center">
+                    <Lock size={25} />
+                    <span>Login</span>
+                  </div>
+                </div>
+              </Link>
+            )}
           </div>
         </nav>
       </div>
