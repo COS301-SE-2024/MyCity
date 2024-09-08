@@ -416,7 +416,8 @@ export async function CreatTicket(sessiont: string,formData : FormData): Promise
     // if (!API_BASE_URL) {
     //     throw new Error("missing api base url");
     // }
-    const apiURL = "/api/tickets/create";
+    console.log(sessiont)
+    const apiURL = "https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
@@ -429,7 +430,7 @@ export async function CreatTicket(sessiont: string,formData : FormData): Promise
         return false;
     }
     const result = await response.json();
-    if(result.data.Status)
+    if(result.data?.Status)
     {
         return false;
     }
