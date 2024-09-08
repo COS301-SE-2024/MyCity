@@ -57,7 +57,7 @@ function HowItWorksItem({
       {/* Citizen */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <img src={image1} alt="How It Works" className="w-3/5 mb-4" />
+        <img src={image1} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
           {title1}
         </h1>
@@ -77,7 +77,7 @@ function HowItWorksItem({
       {/* Municipalities */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <img src={image2} alt="How It Works" className="w-3/5 mb-4" />
+        <img src={image2} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
           {title2}
         </h1>
@@ -96,7 +96,7 @@ function HowItWorksItem({
       {/* Service Providers */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <img src={image3} alt="How It Works" className="w-3/5 mb-4" />
+        <img src={image3} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
           {title3}
         </h1>
