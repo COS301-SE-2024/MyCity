@@ -38,7 +38,7 @@ export default function NavbarGuest() {
               </div>
             </Link>
 
-            <Link href="/" passHref>
+            <Link href="/guide" passHref>
               <div className="text-white cursor-pointer transform hover:scale-105 transition-transform duration-200">
                 <div className="flex flex-col gap-1 items-center">
                   <Wrench size={25} />

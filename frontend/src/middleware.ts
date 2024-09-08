@@ -53,7 +53,16 @@ export async function middleware(request: NextRequest) {
   else {
 
     //RULE 3: and is trying to access a page that is neither their home, dashboard, about nor login/signup pages,
-    if (!pathIs("/dashboard/guest") && (pathStartsWith("/dashboard") || pathStartsWith("/settings") || pathStartsWith("/create-ticket") || pathStartsWith("/notifications") || pathStartsWith("/search") || pathStartsWith("/tenders"))) {
+    if (
+      !pathIs("/dashboard/guest") &&
+      !pathStartsWith("/guide") && // Allow access to /guide even if the user isn't logged in
+      (pathStartsWith("/dashboard") ||
+        pathStartsWith("/settings") ||
+        pathStartsWith("/create-ticket") ||
+        pathStartsWith("/notifications") ||
+        pathStartsWith("/search") ||
+        pathStartsWith("/tenders"))
+    ) {
       return NextResponse.redirect(new URL("/dashboard/guest", request.nextUrl));
     }
 
