@@ -1,6 +1,6 @@
 "use client";
 
-import NavbarGuest from "@/components/Navbar/NavbarGuest";
+import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
 
@@ -16,7 +16,7 @@ export default function Home() {
             overflow: "hidden", // Prevents content overflow
           }}
         >
-          <NavbarGuest />
+          <Navbar />
           {/* <NavbarUser /> */}
 
           {/* Background image */}
@@ -130,7 +130,7 @@ export default function Home() {
 
             
           </div>
-          <NavbarGuest />
+          <Navbar />
         </div>
       </div>
     </>

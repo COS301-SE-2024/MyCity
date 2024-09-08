@@ -153,7 +153,7 @@ export default function Guide() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         {/* Navbar - Make sure it's fixed and above all other content */}
-        <Navbar />
+        <Navbar showLogin={true}/>
         {/* Background Image */}
         <div
           style={{
