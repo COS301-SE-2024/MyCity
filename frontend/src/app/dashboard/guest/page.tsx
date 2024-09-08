@@ -35,7 +35,7 @@ export default function GuestDashboard() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
-          <Navbar />
+        <Navbar showLogin={true}/>
 
           <main>
             <h1 className="text-4xl font-bold mb-2 mt-2 ml-2">Live Activity</h1>
