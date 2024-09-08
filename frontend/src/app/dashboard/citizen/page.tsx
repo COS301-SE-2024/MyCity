@@ -46,25 +46,26 @@ export default function CitizenDashboard({
   >();
   const deeplinkTicketId = searchParams["t_id"];
 
-  const refreshwatchlist = async () =>{
+  const refreshwatchlist = async () => {
     try {
-        console.log("Refresh inside")
-        const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email ?? "";
-        const user_email = String(user_id).toLowerCase();
-        const user_session = String(user_data.current?.session_token);
-        const rspwatchlist = await getWatchlistTickets(
-          user_email,
-          user_session,
-          true
-        );
-        setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+      console.log("Refresh inside");
+      const user_data = await userProfile.getUserProfile();
+      const user_id = user_data.current?.email ?? "";
+      const user_email = String(user_id).toLowerCase();
+      const user_session = String(user_data.current?.session_token);
+      console.log("User Session", user_session);
+      const rspwatchlist = await getWatchlistTickets(
+        user_email,
+        user_session,
+        true
+      );
+      setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
     } catch (error) {
-        console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     const mockUnreadNotifications = () => {
@@ -119,8 +120,10 @@ export default function CitizenDashboard({
         preloadImages(imagesToPreload);
 
         console.log("Upvotes", rspmostupvotes);
-        
+
         setMostUpvoteResults(rspmostupvotes);
+
+        console.log(Array.isArray(rspmunicipality) ? rspmunicipality : []);
         setDashMuniResults(
           Array.isArray(rspmunicipality) ? rspmunicipality : []
         );
@@ -395,8 +398,10 @@ export default function CitizenDashboard({
                 </Tab>
 
                 <Tab key={1} title="List">
-                  <FaultTable tableitems={dashMostUpvoteResults}
-                  refreshwatch={refreshwatchlist} />
+                  <FaultTable
+                    tableitems={dashMostUpvoteResults}
+                    refreshwatch={refreshwatchlist}
+                  />
                 </Tab>
 
                 <Tab key={2} title="Map">
@@ -448,8 +453,6 @@ export default function CitizenDashboard({
                   Dashboard
                 </h1>
               </div>
-
-            
 
               <div className="flex h-[80vh] flex-col items-center rounded-3xl">
                 <Tabs
@@ -578,8 +581,10 @@ export default function CitizenDashboard({
                   </Tab>
 
                   <Tab key={1} title="List">
-                    <FaultTable tableitems={dashMostUpvoteResults} 
-                      refreshwatch={refreshwatchlist} />
+                    <FaultTable
+                      tableitems={dashMostUpvoteResults}
+                      refreshwatch={refreshwatchlist}
+                    />
                   </Tab>
 
                   <Tab key={2} title="Map">
