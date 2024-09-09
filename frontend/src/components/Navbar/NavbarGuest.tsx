@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Building2, Lightbulb, Wrench, Globe, Lock } from "lucide-react";
+import ToggleTheme from '@/components/Theme/ToggleTheme';
 
 export default function NavbarGuest({ showLogin = false }) {
+
+
   return (
     <div>
       {/* Desktop View */}
@@ -55,6 +58,8 @@ export default function NavbarGuest({ showLogin = false }) {
                 </div>
               </div>
             </Link>
+
+            <ToggleTheme />
 
             {/* Conditionally show login button */}
             {showLogin && (

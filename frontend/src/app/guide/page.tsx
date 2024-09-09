@@ -50,7 +50,7 @@ function HowItWorksItem({
 }: HowItWorksItemProps) {
   return (
     <div
-      className={`flex p-4 my-4 bg-gray-700  text-white rounded-3xl items-center ${
+      className={`flex p-4 my-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${
         reverse ? "sm:flex-row-reverse" : "sm:flex-row"
       } flex-col sm:h-[33vh] md:h-[50vh] lg:h-[55vh] w-3/4 overflow-hidden gap-4`}
     >
@@ -58,19 +58,19 @@ function HowItWorksItem({
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
         <img src={image1} alt="How It Works" className="w-2/5 mb-4" />
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title1}
         </h1>
 
         {/* Scrollable paragraph container */}
         <div className="w-full max-h-60 overflow-y-scroll">
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph1a}
           </p>
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph2a}
           </p>
-          <p className="text-lg text-white text-opacity-80">{paragraph3a}</p>
+          <p className="text-lg dark:text-white text-opacity-80">{paragraph3a}</p>
         </div>
       </div>
 
@@ -78,18 +78,18 @@ function HowItWorksItem({
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
         <img src={image2} alt="How It Works" className="w-2/5 mb-4" />
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title2}
         </h1>
         {/* Scrollable paragraph container */}
         <div className="w-full max-h-60 overflow-y-scroll">
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph1b}
           </p>
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph2b}
           </p>
-          <p className="text-lg text-white text-opacity-80">{paragraph3b}</p>
+          <p className="text-lg dark:text-white text-opacity-80">{paragraph3b}</p>
         </div>
       </div>
 
@@ -97,18 +97,18 @@ function HowItWorksItem({
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
         <img src={image3} alt="How It Works" className="w-2/5 mb-4" />
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title3}
         </h1>
         {/* Scrollable paragraph container */}
         <div className="w-full max-h-60 overflow-y-scroll">
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph1c}
           </p>
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph2c}
           </p>
-          <p className="text-lg text-white text-opacity-80">{paragraph3c}</p>
+          <p className="text-lg dark:text-white text-opacity-80">{paragraph3c}</p>
         </div>
       </div>
     </div>
@@ -121,7 +121,7 @@ function StepItem({ stepNumber, title, description, reverse, image }: StepItemPr
 
 
       <div
-      className={`flex m-4 bg-gray-700 p-4 text-white rounded-3xl items-center ${
+      className={`flex m-4 dark:bg-gray-700 dark:text-white bg-gray-100 p-4  rounded-3xl items-center ${
         reverse ? "sm:flex-row-reverse" : "sm:flex-row"
       } flex-col [33vh] w-3/4`}
     >
@@ -133,7 +133,7 @@ function StepItem({ stepNumber, title, description, reverse, image }: StepItemPr
         />
       </div>
       <div className="w-full sm:w-3/4 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left overflow-y-auto h-full">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white text-opacity-80 mb-4">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white text-opacity-80 mb-4">
         Step {stepNumber}: {title}
         </h2>
         <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
@@ -307,7 +307,7 @@ function MobileView() {
       {/* Mobile Content */}
       <div className="h-[5vh] flex items-center justify-center"></div>
       <div className="container mx-auto relative z-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl text-white font-bold mb-4 ml-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl dark:text-white font-bold mb-4 ml-4">
           <span className="text-blue-200">MyCity</span> <br />
           Under Construction
         </h1>

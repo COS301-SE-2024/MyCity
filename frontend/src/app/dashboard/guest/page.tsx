@@ -569,17 +569,13 @@ interface CitizenDashboardProps {
 export default function CitizenDashboard({
   searchParams,
 }: CitizenDashboardProps) {
-  const userProfile = {
-    getUserProfile: () => ({ email: "guest@example.com", name: "Guest User" }),
-  };
+
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-
-  const [userEmail, setUserEmail] = useState("");
 
   const [deeplinkTicket, setDeeplinkTicket] = useState<
     DashboardTicket | undefined

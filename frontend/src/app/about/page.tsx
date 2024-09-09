@@ -191,7 +191,7 @@ function TeamMember({
 }: TeamMemberProps) {
   return (
     <div
-      className={`flex p-4 my-4 bg-gray-700  text-white rounded-3xl items-center ${
+      className={`flex p-4 my-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${
         reverse ? "sm:flex-row-reverse" : "sm:flex-row"
       } flex-col h-[40vh] overflow-hidden`}
     >
@@ -243,7 +243,7 @@ function VisionItem({
 }: VisionItemProps) {
   return (
     <div
-      className={`flex m-4 bg-gray-700 p-4 text-white rounded-3xl items-center ${
+      className={`flex m-4 p-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${
         reverse ? "sm:flex-row-reverse" : "sm:flex-row"
       } flex-col sm:h-[33vh] md:h-[50vh] lg:h-[60vh] w-3/4`}
     >
