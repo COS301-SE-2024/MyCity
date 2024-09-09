@@ -7,51 +7,97 @@ interface SearchTicketProps {
 }
 
 const SearchTicket: React.FC<SearchTicketProps> = ({ tickets }) => {
-  /*if (!tickets || tickets.length === 0) {
-    return <div>No tickets found.</div>;
-  }*/
-
   return (
-    <div className="space-y-1 px-6 rounded-3xl">
-      {tickets.map((ticket: Ticket, index: number) => (
-        <div key={index} className="grid grid-cols-6 gap-2 bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4">
-          {/* First Field - Ticket */}
-          <div className="flex flex-col justify-center font-bold items-center">
-            <span className="text-s text-black-500">Ticket</span>
-          </div>
+    <div>
+      {/* Desktop View */}
+      <div className="hidden lg:block">
+        <div className="space-y-1 px-6 rounded-3xl">
+          {tickets.map((ticket: Ticket, index: number) => (
+            <div key={index} className="grid grid-cols-6 gap-2 bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4">
+              {/* First Field - Ticket */}
+              <div className="flex flex-col justify-center font-bold items-center">
+                <span className="text-s text-black-500">Ticket</span>
+              </div>
 
-          {/* Second Field - Urgent */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-black">Urgent</span>
-            <AlertTriangle size={40} color='red' />
-          </div>
+              {/* Second Field - Urgent */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-black">Urgent</span>
+                <AlertTriangle size={40} color='red' />
+              </div>
 
-          {/* Third Field - Asset Type */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-black">Asset Type</span>
-            <span className="text-black">{ticket.asset_id}</span>
-          </div>
+              {/* Third Field - Asset Type */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-black">Asset Type</span>
+                <span className="text-black">{ticket.asset_id}</span>
+              </div>
 
-          {/* Fourth Field - Date Opened */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-black">Date Opened</span>
-            <span className="text-black">{new Date(ticket.dateOpened).toLocaleDateString()}</span>
-          </div>
+              {/* Fourth Field - Date Opened */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-black">Date Opened</span>
+                <span className="text-black">{new Date(ticket.dateOpened).toLocaleDateString()}</span>
+              </div>
 
-          {/* Fifth Field - Municipality */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-black">Municipality</span>
-            <span className="text-black">{ticket.municipality_id}</span>
-          </div>
+              {/* Fifth Field - Municipality */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-black">Municipality</span>
+                <span className="text-black">{ticket.municipality_id}</span>
+              </div>
 
-          {/* Sixth Field - State */}
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-black">State</span>
-            <span className="text-black">{ticket.state}</span>
-          </div>
-
+              {/* Sixth Field - State */}
+              <div className="flex flex-col items-center">
+                <span className="text-xs text-black">State</span>
+                <span className="text-black">{ticket.state}</span>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
+
+      {/* Mobile View */}
+      <div className="block lg:hidden">
+        <div className="space-y-1 px-4 rounded-3xl">
+          {tickets.map((ticket: Ticket, index: number) => (
+            <div
+              key={index}
+              className="flex flex-col bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4 space-y-4"
+            >
+              {/* First Field - Ticket */}
+              <div className="text-center font-bold">
+                <span className="text-sm text-black-500">Ticket</span>
+              </div>
+
+              {/* Second Field - Urgent */}
+              <div className="flex items-center justify-center">
+                <AlertTriangle size={30} color='red' />
+              </div>
+
+              {/* Third Field - Asset Type */}
+              <div className="flex flex-col">
+                <span className="text-xs text-black">Asset Type</span>
+                <span className="text-black">{ticket.asset_id}</span>
+              </div>
+
+              {/* Fourth Field - Date Opened */}
+              <div className="flex flex-col">
+                <span className="text-xs text-black">Date Opened</span>
+                <span className="text-black">{new Date(ticket.dateOpened).toLocaleDateString()}</span>
+              </div>
+
+              {/* Fifth Field - Municipality */}
+              <div className="flex flex-col">
+                <span className="text-xs text-black">Municipality</span>
+                <span className="text-black">{ticket.municipality_id}</span>
+              </div>
+
+              {/* Sixth Field - State */}
+              <div className="flex flex-col">
+                <span className="text-xs text-black">State</span>
+                <span className="text-black">{ticket.state}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
