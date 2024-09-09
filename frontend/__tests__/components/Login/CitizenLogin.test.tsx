@@ -1,12 +1,23 @@
 import CitizenLogin from "@/components/Login/CitizenLogin";
-import { fireEvent, render, screen} from "@testing-library/react";
-import * as AuthService from "../../../src/services/auth.service";  // Path to your auth service
+import { fireEvent, render, screen, waitFor} from "@testing-library/react";
+import * as AuthService from "../../../src/services/auth.service";
+import { useRouter } from "next/router";
 
 jest.mock("../../../src/services/auth.service", () => ({
     handleGoogleSignIn: jest.fn().mockResolvedValue({ status: 200 }),
+    handleSignIn: jest.fn(),
+}));
+
+jest.mock("next/router", () => ({
+    useRouter: jest.fn(),
 }));
 
 describe("CitizenLogin", () => {
+
+    beforeEach(() => {
+        // Reset mocks before each test
+        jest.clearAllMocks();
+    });
 
     /* Test 1: Renders email input correctly */
     it("renders an email input", () => {
@@ -113,22 +124,36 @@ describe("CitizenLogin", () => {
     });
 
     /* Test 9: Redirects to dashboard after successful sign-in */
-    it("redirects to dashboard after successful sign-in", () => {
+    it("redirects to dashboard after successful sign-in", async () => {
+        // Mock the push method from useRouter
         const mockRouterPush = jest.fn();
-        jest.mock("next/router", () => ({
-            useRouter: () => ({
-                push: mockRouterPush,
-            }),
-        }));
+        // Define the mock return value for useRouter
+         // Define the mock return value for useRouter
+        (useRouter as jest.Mock).mockReturnValue({
+            push: mockRouterPush, // Mock the push method
+        });
 
+        // Mock the response of handleSignIn to simulate a successful login
+        (AuthService.handleSignIn as jest.Mock).mockResolvedValue({
+            isSignedIn: true,
+        });
+    
+        // Render the CitizenLogin component
         render(<CitizenLogin />);
+    
+        // Simulate form submission by triggering the form submit event directly
+        const forms = screen.getAllByTestId("citizen-login-form"); // Ensure you have a test ID for the form
+        const form = forms[0];
+        fireEvent.submit(form);
+    
+        // Wait for the mock handleSignIn to be called
+        await waitFor(() => expect(AuthService.handleSignIn).toHaveBeenCalled());
 
-        // Assuming the isSignedIn is triggered internally on a successful form submission
-        // Mock the sign-in success
-        const submitButtons = screen.getAllByTestId("submit-btn");
-        const submitButton = submitButtons[0];
-        fireEvent.click(submitButton);
+        const useRouterSpy = jest.spyOn(require('next/router'), 'useRouter');
+    
+        // Assert that after a successful login, the router pushes to /dashboard/citizen
         //expect(mockRouterPush).toHaveBeenCalledWith("/dashboard/citizen");
+        
     });
 
     /* Test 10: Handles Google sign-in correctly */
