@@ -119,11 +119,16 @@ export default function ServiceProviderLogin() {
               <button
                 type="button"
                 className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+                data-testid="eye-button"
                 onClick={togglePasswordVisibility}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            <Button
+                className="min-w-fit h-fit p-2 bg-white"
+                // onClick={f}
+              >Forgot password?</Button>
 
             <Button
               name="submit"

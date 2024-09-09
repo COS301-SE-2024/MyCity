@@ -102,6 +102,7 @@ export default function CitizenLogin() {
                   !isEmailValid ? "border-red-500" : ""
                 }`,
               }}
+              
               type="email"
               name="email"
               autoComplete="new-email"
@@ -252,6 +253,7 @@ export default function CitizenLogin() {
                 <button
                   type="button"
                   className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+                  data-testid="eye-button"
                   onClick={togglePasswordVisibility}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
