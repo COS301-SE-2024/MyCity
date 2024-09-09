@@ -10,7 +10,7 @@ import { Mail, BellOff, MapPin, Shield, Moon, Text } from "lucide-react";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
-
+import ToggleTheme from "@/components/Theme/ToggleTheme";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 
 export default function Settings() {
@@ -81,10 +81,6 @@ export default function Settings() {
 
     getProfileData();
   }, [getUserProfile]);
-
-  const toggleDarkMode = () => {
-    setDarkMode((prevState) => !prevState);
-  };
 
   const toggleLargerFont = () => {
     setLargerFont((prevState) => !prevState);
@@ -210,7 +206,7 @@ export default function Settings() {
             </button>
             {showConfirmation && (
               <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-                <div className="bg-white p-4 rounded">
+                <div className="dark:bg-gray-700 dark:text-white bg-white p-4 rounded">
                   <p>
                     Are you sure you want to delete your account? This action
                     cannot be undone.
@@ -243,15 +239,15 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
         );
-  
+
       case "Notifications":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -279,7 +275,7 @@ export default function Settings() {
                   Enable or disable email notifications for various activities.
                 </p>
               </div>
-  
+
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
                 <div className="flex items-center justify-between p-2 rounded">
                   <div className="flex items-center">
@@ -308,10 +304,10 @@ export default function Settings() {
             </div>
           </div>
         );
-  
+
       case "SecurityPrivacy":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -343,10 +339,10 @@ export default function Settings() {
             </div>
           </div>
         );
-  
+
       case "Accessibility":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full dark:bg-gray-700 dark:text-white bg-white  bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -355,31 +351,21 @@ export default function Settings() {
                     <Moon className="h-6 w-6 text-black mr-2" />
                     <span className="text-lg font-semibold">Dark Mode</span>
                   </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      darkMode ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleDarkMode}
-                  >
-                    <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        darkMode ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
-                  </div>
+
+                  <ToggleTheme />
                 </div>
-                <p className="text-gray-600">
+                <p className="dark:text-gray-200 text-gray-600">
                   Toggle dark mode for a better viewing experience in low light.
                 </p>
               </div>
             </div>
           </div>
         );
+
       default:
         return null;
     }
   };
-  
 
   return (
     <div>
@@ -450,7 +436,7 @@ export default function Settings() {
             )}
 
             <div className="flex">
-              <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
+              <div className="w-64 dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                 <div className="flex items-center mb-4">
                   {data?.picture ? (
                     <img
@@ -523,128 +509,126 @@ export default function Settings() {
         </div>
       </div>
 
-{/* Mobile View */}
-<div className="block sm:hidden">
-  <NavbarUser unreadNotifications={unreadNotifications} />
-  <NavbarMobile />
-  {/* Background Image */}
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundImage:
-        'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      zIndex: -1,
-    }}
-  ></div>
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        <NavbarUser unreadNotifications={unreadNotifications} />
+        <NavbarMobile />
+        {/* Background Image */}
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -1,
+          }}
+        ></div>
 
-  <main className="relative z-10 p-4">
-    <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
-      Settings
-    </h1>
+        <main className="relative z-10 p-4">
+          <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
+            Settings
+          </h1>
 
-    {/* Profile and Tabs */}
-    <div className="bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
-      <div className="flex items-center mb-4">
-        {data?.picture ? (
-          <img
-            src={data?.picture}
-            alt="Profile"
-            width={12}
-            height={12}
-            className="w-12 h-12 rounded-full mr-4"
-          />
-        ) : (
-          <User className="w-12 h-12 rounded-full mr-4" />
-        )}
-        <div>
-          <p className="text-lg font-semibold">
-            {data?.given_name} {data?.family_name}
-          </p>
-        </div>
+          {/* Profile and Tabs */}
+          <div className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
+            <div className="flex items-center mb-4">
+              {data?.picture ? (
+                <img
+                  src={data?.picture}
+                  alt="Profile"
+                  width={12}
+                  height={12}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+              ) : (
+                <User className="w-12 h-12 rounded-full mr-4" />
+              )}
+              <div>
+                <p className="text-lg font-semibold">
+                  {data?.given_name} {data?.family_name}
+                </p>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <nav className="space-y-2">
+              <button
+                className={`w-full text-left py-2 px-4 rounded-t ${
+                  activeTab === "AccountInformation"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("AccountInformation")}
+              >
+                Account Information
+              </button>
+              <button
+                className={`w-full text-left py-2 px-4 ${
+                  activeTab === "Notifications"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("Notifications")}
+              >
+                Notifications
+              </button>
+              <button
+                className={`w-full text-left py-2 px-4 ${
+                  activeTab === "SecurityPrivacy"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("SecurityPrivacy")}
+              >
+                Security & Privacy
+              </button>
+              <button
+                className={`w-full text-left py-2 px-4 rounded-b ${
+                  activeTab === "Accessibility"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("Accessibility")}
+              >
+                Accessibility
+              </button>
+            </nav>
+          </div>
+
+          {/* Tab Content with Extra Padding at the Bottom for Scroll */}
+          <div
+            className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-b-lg shadow-md p-4 mt-0"
+            style={{
+              paddingBottom: "80px", // Add extra padding at the bottom
+              transition: "max-height 0.5s ease-out",
+              overflow: "hidden",
+              animation: "slide-down 0.5s ease-out forwards",
+            }}
+          >
+            {renderTabContent()}
+          </div>
+        </main>
+
+        {/* Style for the slide-down animation */}
+        <style jsx>{`
+          @keyframes slide-down {
+            0% {
+              max-height: 0;
+              opacity: 0;
+            }
+            100% {
+              max-height: 100vh;
+              opacity: 1;
+            }
+          }
+        `}</style>
       </div>
-
-      {/* Tabs */}
-      <nav className="space-y-2">
-        <button
-          className={`w-full text-left py-2 px-4 rounded-t ${
-            activeTab === "AccountInformation"
-              ? "bg-gray-200"
-              : "hover:bg-gray-100"
-          }`}
-          onClick={() => setActiveTab("AccountInformation")}
-        >
-          Account Information
-        </button>
-        <button
-          className={`w-full text-left py-2 px-4 ${
-            activeTab === "Notifications"
-              ? "bg-gray-200"
-              : "hover:bg-gray-100"
-          }`}
-          onClick={() => setActiveTab("Notifications")}
-        >
-          Notifications
-        </button>
-        <button
-          className={`w-full text-left py-2 px-4 ${
-            activeTab === "SecurityPrivacy"
-              ? "bg-gray-200"
-              : "hover:bg-gray-100"
-          }`}
-          onClick={() => setActiveTab("SecurityPrivacy")}
-        >
-          Security & Privacy
-        </button>
-        <button
-          className={`w-full text-left py-2 px-4 rounded-b ${
-            activeTab === "Accessibility"
-              ? "bg-gray-200"
-              : "hover:bg-gray-100"
-          }`}
-          onClick={() => setActiveTab("Accessibility")}
-        >
-          Accessibility
-        </button>
-      </nav>
-    </div>
-
-    {/* Tab Content with Extra Padding at the Bottom for Scroll */}
-    <div
-      className="bg-white bg-opacity-80 rounded-b-lg shadow-md p-4 mt-0"
-      style={{
-        paddingBottom: "80px", // Add extra padding at the bottom
-        transition: "max-height 0.5s ease-out",
-        overflow: "hidden",
-        animation: "slide-down 0.5s ease-out forwards",
-      }}
-    >
-      {renderTabContent()}
-    </div>
-  </main>
-
-  {/* Style for the slide-down animation */}
-  <style jsx>{`
-    @keyframes slide-down {
-      0% {
-        max-height: 0;
-        opacity: 0;
-      }
-      100% {
-        max-height: 100vh;
-        opacity: 1;
-      }
-    }
-  `}</style>
-</div>
-
-
     </div>
   );
 }
