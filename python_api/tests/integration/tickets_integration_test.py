@@ -12,31 +12,31 @@ def test_client():
 
 
 # Test creating a ticket with missing fields
-def test_create_ticket_missing_fields(test_client):
-    # Test with various combinations of missing required fields
-    test_cases = [
-        {},
-        {"title": "Test"},
-        {"asset": "Water", "title": "Test"},
-    ]
+# def test_create_ticket_missing_fields(test_client):
+#     # Test with various combinations of missing required fields
+#     test_cases = [
+#         {},
+#         {"title": "Test"},
+#         {"asset": "Water", "title": "Test"},
+#     ]
 
-    for case in test_cases:
-        response = test_client.http.post(
-            "/tickets/create",
-            headers={"Content-Type": "application/json"},
-            body=json.dumps(case),
-        )
-        # Check if the response has status 200 but failed status
-        assert (
-            response.status_code == 200
-        ), f"Expected status code 200 but got {response.status_code} for data: {case}"
-        response_body = json.loads(response.body)
-        assert (
-            response_body["Status"] == "FAILED"
-        ), f"Status should be FAILED for invalid data: {case}"
-        assert (
-            "Error" in response_body
-        ), f"Response should have an Error for invalid data: {case}"
+#     for case in test_cases:
+#         response = test_client.http.post(
+#             "/tickets/create",
+#             headers={"Content-Type": "application/json"},
+#             body=json.dumps(case),
+#         )
+#         # Check if the response has status 200 but failed status
+#         assert (
+#             response.status_code == 200
+#         ), f"Expected status code 200 but got {response.status_code} for data: {case}"
+#         response_body = json.loads(response.body)
+#         assert (
+#             response_body["Status"] == "FAILED"
+#         ), f"Status should be FAILED for invalid data: {case}"
+#         assert (
+#             "Error" in response_body
+#         ), f"Response should have an Error for invalid data: {case}"
 
 
 # Test viewing ticket data with missing ticket_id

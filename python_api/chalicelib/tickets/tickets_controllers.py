@@ -5,6 +5,7 @@ from chalice import BadRequestError, Chalice, Response
 import uuid
 from dotenv import load_dotenv
 import os
+from chalicelib.multipart_handler import upload_file, parse_data
 
 from math import radians, cos, sin, asin, sqrt, atan2
 from datetime import datetime
@@ -101,8 +102,10 @@ def getMunicipality(latitude, longitude):
         return municipality
 
 
-def create_ticket(ticket_data):
+def create_ticket(request):
     try:
+        image_link = upload_file(request, "ticket_images")
+        form_data = parse_data(request)
         # Validate required fields
         required_fields = [
             "address",
@@ -115,7 +118,8 @@ def create_ticket(ticket_data):
         ]
 
         for field in required_fields:
-            if field not in ticket_data:
+            req_field = form_data.get(field)
+            if not req_field:
                 error_response = {
                     "Error": {
                         "Code": "IncorrectFields",
@@ -127,7 +131,7 @@ def create_ticket(ticket_data):
         # Ensure user exists
 
         # Ensure asset exists
-        asset_id = ticket_data["asset"]
+        asset_id = str(form_data.get("asset"))
         asset_response = assets_table.get_item(Key={"asset_id": asset_id})
         if "Item" not in asset_response:
             error_response = {
@@ -141,11 +145,11 @@ def create_ticket(ticket_data):
         # Generate ticket ID
         ticket_id = generate_id()
 
-        latitude = Decimal(str(ticket_data["latitude"]))
-        longitude = Decimal(str(ticket_data["longitude"]))
+        latitude = Decimal(str(form_data.get("latitude")))
+        longitude = Decimal(str(form_data.get("longitude")))
 
         # get the address
-        address = ticket_data["address"]
+        address = form_data.get("address")
 
         # extract municipality from address
         # ticket_municipality = ""
@@ -171,13 +175,15 @@ def create_ticket(ticket_data):
             "address": address,
             "dateClosed": "<empty>",
             "dateOpened": formatted_datetime,
-            "description": ticket_data["description"],
-            "imageURL": "https://lh3.googleusercontent.com/lWTkgY7Me1FOvsOrVdWxwn4_KbL7dNfIK6Pvtp_wkg-uIhn3ZkX1KxJhsc_2NrQn9EsrFVrnL2cgsDMnVQvl=s1028",
+            "description": form_data.get("description"),
+            "imageURL": image_link,
             "latitude": latitude,
             "longitude": longitude,
             "municipality_id": municipality_id,
-            "username": ticket_data["username"],
-            "state": ticket_data["state"],  # do not hard code, want to extend in future
+            "username": form_data.get("username"),
+            "state": form_data.get(
+                "state"
+            ),  # do not hard code, want to extend in future
             "upvotes": 0,
             "viewcount": 0,
             "ticketnumber": ticketnumber,
@@ -192,7 +198,7 @@ def create_ticket(ticket_data):
         watchlist_item = {
             "watchlist_id": watchlist_id,
             "ticket_id": ticket_id,
-            "user_id": ticket_data["username"],
+            "user_id": form_data.get("username"),
         }
         watchlist_table.put_item(Item=watchlist_item)
 

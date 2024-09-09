@@ -141,7 +141,7 @@ export default function CitizenLogin() {
               </button>
             </div>
             <Button
-                className="min-w-fit h-fit p-2 bg-white"
+                className="min-w-fit h-fit p-2 dark:bg-gray-800 dark:text-white bg-gray-100"
                 // onClick={f}
               >Forgot password?</Button>
 
@@ -169,7 +169,7 @@ export default function CitizenLogin() {
               onClick={googleButtonOnClick}
               name="google-submit"
               data-testid="google-login-btn"
-              className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+              className="rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
               type="button"
               disabled={isLoading}
             >

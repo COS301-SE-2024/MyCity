@@ -26,19 +26,22 @@ tickets_blueprint = Blueprint(__name__)
 
 
 @tickets_blueprint.route(
-    "/create", authorizer=cognito_authorizer, methods=["POST"], cors=True
+    "/create",
+    authorizer=cognito_authorizer,
+    methods=["POST"],
+    content_types=["multipart/form-data"],
+    cors=True,
 )
 def create_ticket_route():
     request = tickets_blueprint.current_request
-    ticket_data = request.json_body
-    response = create_ticket(ticket_data)
+    response = create_ticket(request)
     return response
 
 
 @tickets_blueprint.route(
     "/addwatchlist", authorizer=cognito_authorizer, methods=["POST"], cors=True
 )
-def create_ticket_route():
+def create_watchlist_route():
     request = tickets_blueprint.current_request
     ticket_data = request.json_body
     response = add_watchlist(ticket_data)
