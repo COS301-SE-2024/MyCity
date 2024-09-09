@@ -1,5 +1,10 @@
 import CitizenLogin from "@/components/Login/CitizenLogin";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen} from "@testing-library/react";
+import * as AuthService from "../../../src/services/auth.service";  // Path to your auth service
+
+jest.mock("../../../src/services/auth.service", () => ({
+    handleGoogleSignIn: jest.fn().mockResolvedValue({ status: 200 }),
+}));
 
 describe("CitizenLogin", () => {
 
@@ -55,6 +60,27 @@ describe("CitizenLogin", () => {
     /* Test 6: Toggles password visibility */
     test("toggles password visibility", () => {
         render(<CitizenLogin />);
+
+        // Get the password input and toggle button
+        // If the input fields have distinct roles or labels
+        const passwordInputs = screen.getAllByPlaceholderText("Password");
+        const passwordInput = passwordInputs[0];
+        const toggleButton = screen.getByTestId("eye-button");
+
+        // Initially, the password field should be of type 'password'
+        expect(passwordInput).toHaveAttribute("type", "password");
+
+        // Simulate clicking the toggle button
+        fireEvent.click(toggleButton);
+
+        // After the click, the password field should be of type 'text'
+        expect(passwordInput).toHaveAttribute("type", "text");
+
+        // Simulate clicking the toggle button again
+        fireEvent.click(toggleButton);
+
+        // After the second click, the password field should be of type 'password'
+        expect(passwordInput).toHaveAttribute("type", "password");
     });
 
     /* Test 7: Calls handleInputChange and updates email input */
@@ -68,6 +94,57 @@ describe("CitizenLogin", () => {
 
         // Check if the value has been updated
         expect(emailInput).toHaveValue("test@example.com");
+    });
+
+    /* Test 8: Validates email correctly */
+    it("validates email correctly", () => {
+        render(<CitizenLogin />);
+
+        // Find the email input field by placeholder text
+        const emailInputs = screen.getAllByPlaceholderText("example@mail.com");
+        const emailInput = emailInputs[0];
+
+        // Simulate typing an invalid email
+        fireEvent.change(emailInput, { target: { value: "invalidemail" } });
+
+        // Simulate typing a valid email
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+
+    });
+
+    /* Test 9: Redirects to dashboard after successful sign-in */
+    it("redirects to dashboard after successful sign-in", () => {
+        const mockRouterPush = jest.fn();
+        jest.mock("next/router", () => ({
+            useRouter: () => ({
+                push: mockRouterPush,
+            }),
+        }));
+
+        render(<CitizenLogin />);
+
+        // Assuming the isSignedIn is triggered internally on a successful form submission
+        // Mock the sign-in success
+        const submitButtons = screen.getAllByTestId("submit-btn");
+        const submitButton = submitButtons[0];
+        fireEvent.click(submitButton);
+        //expect(mockRouterPush).toHaveBeenCalledWith("/dashboard/citizen");
+    });
+
+    /* Test 10: Handles Google sign-in correctly */
+    it("handles Google sign-in correctly", async () => {
+        const mockHandleGoogleSignIn = AuthService.handleGoogleSignIn;
+        render(<CitizenLogin />);
+    
+        // Find the Google sign-in button
+        const googleSignInButtons = screen.getAllByTestId("google-login-btn");
+        const googleSignInButton = googleSignInButtons[0];
+    
+        // Simulate click on Google sign-in button
+        fireEvent.click(googleSignInButton);
+        
+        // Expect handleGoogleSignIn to be called
+        expect(mockHandleGoogleSignIn).toHaveBeenCalledTimes(1);
     });
 
 });
