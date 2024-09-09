@@ -53,4 +53,46 @@ describe("ServiceProviderLogin", () => {
         expect(mockFunction).toHaveBeenCalledTimes(1);
     });
 
+    /* Test 6: Toggles password visibility */
+    test("toggles password visibility", () => {
+        render(<ServiceProviderLogin />);
+
+        // Get the password input and toggle button
+        // If the input fields have distinct roles or labels
+        const passwordInputs = screen.getAllByPlaceholderText("Password");
+        const passwordInput = passwordInputs[0];
+        const toggleButton = screen.getByTestId("eye-button");
+
+        // Initially, the password field should be of type 'password'
+        expect(passwordInput).toHaveAttribute("type", "password");
+
+        // Simulate clicking the toggle button
+        fireEvent.click(toggleButton);
+
+        // After the click, the password field should be of type 'text'
+        expect(passwordInput).toHaveAttribute("type", "text");
+
+        // Simulate clicking the toggle button again
+        fireEvent.click(toggleButton);
+
+        // After the second click, the password field should be of type 'password'
+        expect(passwordInput).toHaveAttribute("type", "password");
+    });
+
+    /* Test 7: Calls handleInputChange and updates email input */
+    it("updates email input correctly", () => {
+        render(<ServiceProviderLogin />);
+        const emailInputs = screen.getAllByPlaceholderText("example@mail.com");
+        const emailInput = emailInputs[0];
+
+        // Simulate typing in the email field
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+
+        // Check if the value has been updated
+        expect(emailInput).toHaveValue("test@example.com");
+    });
+
+    /* Test 8: Validates email correctly */
+    /* Test 9: Redirects to dashboard after successful sign-in */
+
 });
