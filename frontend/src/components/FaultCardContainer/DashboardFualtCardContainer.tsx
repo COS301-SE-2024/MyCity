@@ -100,34 +100,17 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex flex-col items-center  w-full rounded-3xl shadow-md overflow-hidden">
-          <div
-            className="overflow-x-auto custom-scrollbar rounded-3xl"
-            style={{
-              paddingLeft: "16px",
-              paddingRight: "16px",
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent",
-            }}
-          >
-            <style jsx>{`
-              ::-webkit-scrollbar {
-                height: 4px; /* Smaller height for the scrollbar */
-              }
-              ::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.7); /* Lighter color */
-                border-radius: 9999px; /* Fully rounded scrollbar */
-                min-width: 20px; /* Minimum width to reduce the scrollbar thumb size */
-              }
-              ::-webkit-scrollbar-track {
-                background: transparent;
-                margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
-              }
-            `}</style>
-            <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mb-4 w-full">
+
+        <div className="flex flex-col items-center w-full h-full overflow-hidden">
+          
+
+            <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-4 w-full h-full">
               {visibleItems}
             </div>
-          </div>
+
+ 
+
+
           {showModal && selectedCard && (
             <FaultCardUserView
               show={showModal}
