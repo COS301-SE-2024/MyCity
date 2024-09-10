@@ -108,29 +108,38 @@ describe("CitizenLogin", () => {
     });
 
     /* Test 8: Validates email correctly */
-    it("validates email correctly", () => {
+    it("validates email correctly", async () => {
         render(<CitizenLogin />);
 
         // Find the email input field by placeholder text
         const emailInputs = screen.getAllByPlaceholderText("example@mail.com");
         const emailInput = emailInputs[0];
 
+        const submitButtons = screen.getAllByTestId("submit-btn");
+        const submitButton = submitButtons[0];
+
         // Simulate typing an invalid email
         fireEvent.change(emailInput, { target: { value: "invalidemail" } });
+        await waitFor(() => {
+            expect(submitButton).toBeDisabled();
+        });
 
         // Simulate typing a valid email
         fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        await waitFor(() => {
+            expect(submitButton).toBeDisabled();
+        });
 
     });
 
     /* Test 9: Redirects to dashboard after successful sign-in */
     it("redirects to dashboard after successful sign-in", async () => {
         // Mock the push method from useRouter
-        const mockRouterPush = jest.fn();
+        const mockPush = jest.fn();
         // Define the mock return value for useRouter
          // Define the mock return value for useRouter
         (useRouter as jest.Mock).mockReturnValue({
-            push: mockRouterPush, // Mock the push method
+            push: mockPush, // Mock the push method
         });
 
         // Mock the response of handleSignIn to simulate a successful login
@@ -141,19 +150,26 @@ describe("CitizenLogin", () => {
         // Render the CitizenLogin component
         render(<CitizenLogin />);
     
-        // Simulate form submission by triggering the form submit event directly
-        const forms = screen.getAllByTestId("citizen-login-form"); // Ensure you have a test ID for the form
-        const form = forms[0];
-        fireEvent.submit(form);
-    
-        // Wait for the mock handleSignIn to be called
-        await waitFor(() => expect(AuthService.handleSignIn).toHaveBeenCalled());
+        const emailInput = screen.getAllByPlaceholderText("example@mail.com")[0];
+        const passwordInput = screen.getAllByPlaceholderText("Password")[0];
+        const form = screen.getAllByTestId("citizen-login-form")[0];
 
-        const useRouterSpy = jest.spyOn(require('next/router'), 'useRouter');
-    
-        // Assert that after a successful login, the router pushes to /dashboard/citizen
-        //expect(mockRouterPush).toHaveBeenCalledWith("/dashboard/citizen");
-        
+        fireEvent.change(emailInput, { target: { value: "janedoe@example.com" } });
+        fireEvent.change(passwordInput, { target: { value: "Password@123" } });
+
+        await waitFor(() => {
+            fireEvent.submit(form);
+        });
+
+        await waitFor(() => {
+            expect(AuthService.handleSignIn).toHaveBeenCalled();
+        });
+
+        await waitFor(() => {
+            //expect(mockPush).toHaveBeenCalledWith("/dashboard/citizen");
+        }, { timeout: 3000 });
+
+        screen.debug();
     });
 
     /* Test 10: Handles Google sign-in correctly */
@@ -170,6 +186,48 @@ describe("CitizenLogin", () => {
         
         // Expect handleGoogleSignIn to be called
         expect(mockHandleGoogleSignIn).toHaveBeenCalledTimes(1);
+    });
+
+
+    /* Test 11: Displays error message on login failure */
+    it("displays error message on login failure", async () => {
+        (AuthService.handleSignIn as jest.Mock).mockRejectedValue(new Error("Login failed"));
+
+        render(<CitizenLogin />);
+
+        const emailInput = screen.getAllByPlaceholderText("example@mail.com")[0];
+        const passwordInput = screen.getAllByPlaceholderText("Password")[0];
+        const form = screen.getAllByTestId("citizen-login-form")[0];
+
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.submit(form);
+
+        await waitFor(() => {
+            const outputs = screen.getAllByText("An error occurred during login. Please try again.")
+            const out = outputs[0];
+            expect(out).toBeInTheDocument();
+            //expect(screen.getByText("An error occurred during login. Please try again.")).toBeInTheDocument();
+        });
+        
+    });;
+
+    /* Test 12: Disables submit button when form is invalid */
+    it("disables submit button when form is invalid", () => {
+        render(<CitizenLogin />);
+
+        const submitButton = screen.getAllByTestId("submit-btn")[0];
+        expect(submitButton).toBeDisabled();
+
+        const emailInput = screen.getAllByPlaceholderText("example@mail.com")[0];
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+
+        expect(submitButton).toBeDisabled();
+
+        const passwordInput = screen.getAllByPlaceholderText("Password")[0];
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+        expect(submitButton).not.toBeDisabled();
     });
 
 });
