@@ -87,7 +87,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ data, onClick }) => {
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div
-          className="w-72 h-48 bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden m-2 transform transition-transform duration-300 hover:scale-105 flex flex-col"
+          className="w-full h-[18vh] bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 flex flex-col"
           onClick={onClick}
         >
           <div className="relative flex-grow-0 h-2/3 w-full bg-gray-200 flex items-center justify-center">
