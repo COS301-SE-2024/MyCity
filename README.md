@@ -239,10 +239,18 @@
     <td>   
     <a href="https://aws.amazon.com/lambda/">
     <img src="/images/icon_lambda.png" alt="AWS Lambda" style="width: 80px; height: auto;"/>
-  </a>
-     <a href="https://placekit.io/">
-    <img src="/images/logo_placekit.png" alt="PlaceKit API" style="width: 80px; height: auto;"/>
-  </a>
+    </a>
+      <a href="https://placekit.io/">
+      <img src="/images/icon_placekit.png" alt="PlaceKit API" style="width: 80px; height: auto;"/>
+    </a>
+    </a>
+      <a href="https://developers.google.com/maps/documentation/directions/overview">
+      <img src="/images/icon_mapsDirections.png" alt="Google Directions API" style="width: 80px; height: auto;"/>
+    </a>
+    </a>
+      <a href="https://www.mapbox.com/">
+      <img src="/images/icon_mapbox.png" alt="MapBox API" style="width: 80px; height: auto;"/>
+    </a>
     </td>
   </tr>
   <tr>
@@ -382,7 +390,7 @@
             <h6 >I am a passionate software engineer with a background in computer science and multimedia. My expertise spans DevOps, front-end development, and data engineering. I have experience setting up and managing AWS infrastructure, configuring CI/CD pipelines, and developing user-friendly mobile interfaces. I thrive in collaborative environments and am dedicated to creating robust, scalable, and innovative solutions.</h6>
             <h4>Project Contributions: <h4>
             <h6>1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment. <br/><br/>
-            2.	Mobile Front-End Engineer: Developed all mobile screens.. 
+            2.	Mobile Front-End Engineer: Developed all mobile screens.
             <br/><br/>
             3.	Data Engineer: Created comprehensive data sets in the database for testing and validation during the app’s development.</h6>
           </td>          
