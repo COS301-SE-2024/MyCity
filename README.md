@@ -28,7 +28,7 @@
       <td>
         <div align="center">
         <a href="https://www.mycity.net.za">
-              <img height="auto"  src="/images/TryPWA.png" alt="Our PWA"/>
+              <img height="500"  src="/images/TryPWA.png" alt="Our PWA"/>
             </div>
             </a>
       </td>
