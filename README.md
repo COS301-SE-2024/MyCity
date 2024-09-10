@@ -32,16 +32,9 @@
             </div>
             </a>
       </td>
-      <td>
-        <div align="center">
-                <a href="https://forms.gle/PM9EN4EEMb61GkwU6">
-              <img height="auto" src="/images/UXTestser.png" alt="UX Tester"/>
-              </a>
-            </div>
-      </td>
     </tr>
   <tr>
-     <td colspan="2">
+     <td>
         <div align="center">
               <a href="https://www.mycity.net.za">
               <img height="auto" src="/images/Compatibility.png" alt="Compatibility"/>
@@ -247,8 +240,8 @@
     <a href="https://aws.amazon.com/lambda/">
     <img src="/images/icon_lambda.png" alt="AWS Lambda" style="width: 80px; height: auto;"/>
   </a>
-     <a href="https://developers.google.com/maps/documentation/javascript/overview">
-    <img src="/images/icon_maps.png" alt="Google Maps Javascript API" style="width: 80px; height: auto;"/>
+     <a href="https://placekit.io/">
+    <img src="/images/logo_placekit.png" alt="PlaceKit API" style="width: 80px; height: auto;"/>
   </a>
     </td>
   </tr>
@@ -307,7 +300,7 @@
           <td align="center">
             <img src="/images/profile_Dominique_Da_Silva.jpg" width="256" style="border-radius: 50%" >
             <h2>Dominique Da Silva<h2>
-            <h5>Team Leader | Documentation</h5>
+            <h5>Team Lead</h5>
             <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -319,7 +312,10 @@
             <h4>Bio: <h4>
             <h6 >I excel in delivering innovative solutions that generate tangible value. Driven by a passion for technology and a commitment to excellence, I am poised to contribute my expertise to impactful projects in the realms of backend development and AI.</h6>
             <h4>Project Contributions: <h4>
-            <h6></h6>
+            <h6>
+              1. Integration Engineer: Implemented functionality to pages.<br/><br/>
+              2. Testing Engineer: Wrote unit, integration and end-t-end tests for both frontend and backend.
+            </h6>
           </td>
         </tr>
       </table>
@@ -333,12 +329,14 @@
             <h6 >I am a dynamic and innovative individual with a keen eye for aesthetics and user experience. Combining creativity with logical thinking, I bring a unique approach to software engineering as a discipline. 
 </h6>
             <h4>Project Contributions: <h4>
-            <h6></h6>
+            <h6>
+            1.	Front-End Engineer: Designed and developed all desktop and mobile screens, ensuring a seamless and intuitive user experience. <br/><br/>
+            </h6>
           </td>          
           <td align="center" >
             <img src="/images/profile_Kyle_Marshall.jpg" width="256" style="border-radius: 50%" >
             <h2>Kyle Marshall<h2>
-            <h5>UI Engineer | Documentation</h5>
+            <h5>UI Engineer</h5>
             <a href="https://github.com/KyleMarshall23">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -356,7 +354,7 @@
           <td align="center">
             <img src="/images/profile_Tino_Gwanyanya.jpg" width="256" style="border-radius: 50%" >
             <h2>Tino Gwanyanya<h2>
-            <h5>Backend Engineer | Intergration Engineer | Documentation</h5>
+            <h5>Backend Engineer | DevOps Engineer</h5>
             <a href="https://github.com/Tinogwanz">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -368,7 +366,9 @@
             <h4>Bio: <h4>
             <h6 >My superpower? Rapid learning. This means I cannot only adapt to diverse scenarios but also excel in them. The result is then the ability to not only meet but exceed set objectives effectively. Driven by challenges, I possess the patience and resilience to see tasks through to completion.</h6>
             <h4>Project Contributions: <h4>
-            <h6></h6>
+            <h6>
+            1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment. <br/><br/>
+            </h6>
           </td>
         </tr>
       </table>
@@ -382,14 +382,14 @@
             <h6 >I am a passionate software engineer with a background in computer science and multimedia. My expertise spans DevOps, front-end development, and data engineering. I have experience setting up and managing AWS infrastructure, configuring CI/CD pipelines, and developing user-friendly mobile interfaces. I thrive in collaborative environments and am dedicated to creating robust, scalable, and innovative solutions.</h6>
             <h4>Project Contributions: <h4>
             <h6>1.	DevOps Engineer: Managed AWS setup and GitHub configuration, implementing CI/CD pipelines for efficient development and deployment. <br/><br/>
-            2.	Mobile Front-End Engineer: Designed and developed all mobile screens, ensuring a seamless and intuitive user experience. 
+            2.	Mobile Front-End Engineer: Developed all mobile screens.. 
             <br/><br/>
-            3.	Data Engineer & Intergration Engineer: Created comprehensive mock data sets for testing and validation during the app’s development.</h6>
+            3.	Data Engineer: Created comprehensive data sets in the database for testing and validation during the app’s development.</h6>
           </td>          
           <td align="center">
             <img src="/images/profile_Matthew_Els.jpg" width="256" style="border-radius: 50%" >
             <h2>Matthew Els<h2>
-            <h5>DevOps Engineer | Mobile Front-End Engineer | Data Engineer | Intergration Engineer | Documentation</h5>
+            <h5>DevOps Engineer</h5>
             <a href="https://github.com/MatthewEls">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -407,7 +407,7 @@
           <td align="center">
             <img src="/images/profile_Andinda_Bakainaga.jpg" width="256" style="border-radius: 50%" >
             <h2>Andinda Bakainaga<h2>
-            <h5>Backend Engineer | Documentation</h5>
+            <h5>Backend Engineer</h5>
             <a href="https://github.com/Dindosss">
               <img src="/images/icon_github.png" alt="GitHub" style="width: 60px; height: auto;"/>
             </a>
@@ -419,7 +419,10 @@
             <h4>Bio: <h4>
             <h6 >I am an energetic and relentless software developer, with a focus on backend development. I bring a blend of creativity and strategic thinking to problem-solving in this domain, consistently delivering innovative and efficient solutions</h6>
             <h4>Project Contributions: <h4>
-            <h6></h6>
+            <h6>
+              1. Integration Engineer: Implemented functionality to all major pages.<br/><br/>
+              2. Backend Engineer: Implemented logic and queries to database.
+            </h6>
           </td>
         </tr>
       </table>
