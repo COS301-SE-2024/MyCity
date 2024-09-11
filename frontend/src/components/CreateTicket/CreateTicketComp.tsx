@@ -206,6 +206,12 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       toast.error(`Error: ${error.message}`);
     }
   };
+////////handle div
+  const handleDivClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   //////handling image
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -508,7 +514,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                     </svg>
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-600" onClick={() => fileInputRef.current?.click()} >
+                  <div className="text-sm text-gray-600" onClick={handleDivClick}  >
                     Drag & drop files here, or click to browse
                     <input
                     type="file"
@@ -516,6 +522,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                     style={{ display: "none" }}
                     accept="image/*"
                     name="picture"
+                    onClick={(e) => e.stopPropagation()} 
                     onChange={handleImageChange}
                   />
                   {selectedImage && (
