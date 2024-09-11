@@ -53,3 +53,6 @@ next-env.d.ts
 
 # WSL Zone Identifier files
 *.Identifier
+
+# old directories
+backend
