@@ -105,19 +105,21 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ data, onClick }) => {
 
             {/* Status */}
             <div
-              className={`${color} bg-opacity-75 text-black font-bold text-lg text-center rounded-lg px-3 py-1 mt-1 absolute top-0 right-0 m-2`}
+              className={`${color} bg-opacity-75 text-black font-bold sm:text-xs md:text-sm lg:text-md text-center rounded-lg px-3 py-1 mt-1 absolute top-0 right-0 m-2`}
             >
               {state}
               {/* {"In Progress"} */}
             </div>
           </div>
 
-          <div className="flex-grow h-1/3 p-2 flex flex-col justify-center text-center">
-            <div className="font-bold text-lg mb-1 truncate">{title}</div>
-            <p className="text-black text-xs truncate">{address}</p>
+          <div className="flex-grow h-1/3 p-1 flex flex-col justify-center text-center">
+            <div className="font-bold sm:text-sm md:text-md lg:text-lg truncate">{title}</div>
+            <p className="text-black md:text-2xs lg:text-xs  truncate">{address}</p>
           </div>
         </div>
       </div>
+
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <div

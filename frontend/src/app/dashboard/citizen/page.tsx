@@ -216,6 +216,7 @@ export default function CitizenDashboard({
               zIndex: -1,
             }}
           ></div>
+
           <main className="flex justify-center">
             <div className="relative">
               <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
@@ -263,14 +264,14 @@ export default function CitizenDashboard({
               </div>
             )}
 
-            <div className="flex flex-col h-full mt-20 w-full items-center sm:h-3/4 md:h-full lg:mt-10 overflow-hidden">
-              <div className="flex h-[80vh]  dark:bg-gray-700 dark:text-white dark:bg-opacity-70 bg-gray-100 bg-opacity-70 flex-col items-center rounded-3xl w-3/4">
+            <div className="flex flex-col w-full h-[60%] items-center lg:mt-10 overflow-hidden">
+              <div className="flex h-full dark:bg-gray-700 dark:text-white dark:bg-opacity-70 bg-gray-100 bg-opacity-70 flex-col items-center rounded-3xl w-3/4">
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
                   className="flex justify-center w-full rounded-3xl pt-4"
                   classNames={{
-                    tab: "min-w-28 min-h-10 bg-white bg-opacity-30 text-black",
+                    tab: "min-w-28 bg-opacity-30 text-black",
                     panel: "w-full h-full",
                     cursor: "w-full border-3 border-blue-700/40",
                     tabContent:
@@ -282,9 +283,9 @@ export default function CitizenDashboard({
                     <Tabs
                       aria-label="Signup Options"
                       defaultSelectedKey={0}
-                      className="mt-2 flex justify-center w-full rounded-3xl "
+                      className="flex justify-center w-full rounded-3xl "
                       classNames={{
-                        tab: "min-w-24 min-h-8bg-white bg-opacity-30 text-black text-xs",
+                        tab: "min-w-24 bg-opacity-30 text-black text-xs",
                         panel: "w-full",
                         cursor: "w-full border-3 border-blue-700/40",
                         tabContent:
@@ -294,8 +295,8 @@ export default function CitizenDashboard({
                     >
                       {/* Watchlist */}
                       <Tab key={0} title="Watchlist" className=" h-full">
-                        <div className="  h-full">
-                          <h1 className="text-l text-opacity-80 text-white text-center mb-2">
+                        <div className="h-full">
+                          <h1 className="text-l text-opacity-80 text-white text-center">
                             All of the issues you have in your watchlist.
                           </h1>
 
@@ -313,7 +314,7 @@ export default function CitizenDashboard({
                               />
                             </div>
                           ) : dashWatchResults.length > 0 ? (
-                            <div className="h-full">
+                            <div className="h-[60%]">
                               <DashboardFaultCardContainer
                                 cardData={dashWatchResults}
                                 refreshwatch={refreshwatchlist}
@@ -331,12 +332,12 @@ export default function CitizenDashboard({
                       <Tab key={1} title="Most Upvoted">
                         <div className="w-full text-center"></div>
                         <div className="w-full text-center">
-                          <h1 className="text-l text-white text-opacity-80 mb-4">
+                          <h1 className="sm:text-sm md:text-md lg:text-lg text-white text-opacity-80">
                             Based on votes from the community in your area.
                           </h1>
                         </div>
                         {isLoading ? (
-                          <div className="flex justify-center items-center">
+                          <div className="flex justify-center items-center ">
                             <ThreeDots
                               height="40"
                               width="80"
@@ -362,7 +363,7 @@ export default function CitizenDashboard({
 
                       {/* Nearest to you*/}
                       <Tab key={2} title="Nearest to you">
-                        <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
+                        <h1 className="text-center text-white text-opacity-80">
                           Based on your proximity to the issue.
                         </h1>
 
