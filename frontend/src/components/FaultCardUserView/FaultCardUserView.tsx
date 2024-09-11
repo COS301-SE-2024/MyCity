@@ -219,8 +219,6 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const toggleComments = () => {
     setShowComments((prev) => !prev);
 
-    
-
     const toggleImageSize = () => {
       setIsImageExpanded((prev) => !prev);
     };
@@ -281,10 +279,9 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       const user_data = await userProfile.getUserProfile();
       const username = String(user_data.current?.email);
       const userSession = String(user_data.current?.session_token);
-      const rspaddwatch = await addWatchlist(ticketId,username,userSession);
+      const rspaddwatch = await addWatchlist(ticketId, username, userSession);
       refreshwatchlist();
-      if(rspaddwatch == true)
-      {
+      if (rspaddwatch == true) {
         setEyeColor("blue");
         const data = {
           arrowCount,
@@ -292,7 +289,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           viewCount: currentViewCount,
           arrowColor,
           commentColor,
-          eyeColor : "blue",
+          eyeColor: "blue",
         };
         localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
       }
@@ -312,10 +309,14 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const addressParts = address.split(",");
 
-  
-
   const toggleImageSize = () => {
     setIsImageExpanded((prev) => !prev);
+  };
+
+  const [isMapLeft, setIsMapLeft] = useState(true); // New state for swapping map and image
+
+  const toggleLayout = () => {
+    setIsMapLeft((prev) => !prev); // Toggle the layout
   };
 
   return (
@@ -324,7 +325,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       onClick={onClose} // Close modal when clicking outside
     >
       <div
-        className="bg-white rounded-lg shadow-lg w-full sm:w-2/3 sm:h-2/3 p-4 relative flex flex-col border border-red-300 justify-center"
+        className="dark:bg-gray-700 dark:text-white bg-white rounded-lg shadow-lg w-[66%] h-[66%] p-4 relative flex flex-col justify-center"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button
@@ -335,91 +336,119 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
         </button>
 
         {/* Desktop View */}
-        <div className="hidden sm:flex w-full h-full gap-4">
+        <div className="hidden sm:flex w-full h-full gap-4 border">
           {/* Left Section */}
-          <div className="relative w-1/3 lg:w-1/3 pr-1 flex flex-col items-center">
+          <div className="relative w-[33%] pr-1 flex flex-col items-center">
             {/* Title */}
             <div className="flex w-full justify-start items-center">
-              <div className="font-bold text-3xl pb-1">{title}</div>
+              <div className="font-bold lg:text-2xl md:text-xl sm:text-lg pb-1">
+                {title}
+              </div>
             </div>
 
             {/* Ticket Number */}
-            <div className="flex w-full justify-start items-center pb-2">
-              <div className="text-xl font-bold text-gray-400 ">
+            <div className="flex w-full justify-start items-center lg:pb-2 md:pb-1">
+              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-400 ">
                 {ticketNumber}
               </div>
             </div>
 
             {/* Description */}
-            <div className="mb-2 w-full">
-              <h3 className="font-bold text-black text-lg">Description</h3>
-              <div className="h-[5vh]">
+            <div className="lg:mb-2 md:mb-1 w-full">
+              <h3 className="font-bold text-black lg:text-lg md:text-md sm:text-sm">
+                Description
+              </h3>
+              <div className="h-[5%]">
                 <p className="text-gray-700">{description}</p>
               </div>
             </div>
 
             {/* Status */}
             <div
-              className={`${color} bg-opacity-75 text-black font-bold text-lg text-center rounded-lg px-3 py-1 mt-1 w-full`}
+              className={`${color} bg-opacity-75 text-black font-bold lg:text-lg md:text-md sm:text-sm text-center rounded-lg px-3 py-1 mt-1 w-full`}
             >
               {state}
             </div>
 
             {/* Date Opened */}
             <div className="flex justify-between mt-2 w-full">
-              <div className="text-lg font-bold text-gray-500">
+              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-500">
                 Date Opened:
               </div>
-              <div className="text-lg font-bold text-gray-500">
+              <div className="lg:text-md md:text-sm sm:text-xs font-bold text-gray-500">
                 2 August 2024
               </div>
             </div>
 
             {/* ETC */}
-            <div className="flex justify-between mb-2 w-full">
-              <div className="text-lg font-bold text-gray-500">
-                Estimated Time Left:
+            <div className="flex justify-between lg:mb-2 md:mb-1 w-full">
+              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-500">
+                ETC:
               </div>
-              <div className="text-lg font-bold text-gray-500">18 hours</div>
+              <div className="lg:text-md md:text-sm sm:text-xs font-bold text-gray-500">
+                18 hours
+              </div>
             </div>
 
             {/* Address */}
             <div className="flex w-full">
-              <div className="flex justify-between mt-2 mb-2 w-full">
-                <div className="text-sm font-bold text-gray-500">{address}</div>
+              <div className="flex justify-between lg:mb-2 md:mb-1 w-full">
+                <div className="lg:text-sm md:text-xs font-bold text-gray-500">
+                  {address}
+                </div>
               </div>
             </div>
 
             {/* Map */}
-            <div
-              className="w-full h-full flex items-center justify-center text-gray-500"
-              id="map"
-            >
-              <MapComponent
-                longitude={Number(longitude)}
-                latitude={Number(latitude)}
-                zoom={14}
-                containerId="map"
-                style="mapbox://styles/mapbox/streets-v12"
-              />
-            </div>
 
-            <div className="w-full flex pt-2">
+            {isMapLeft ? (
+              <div
+                className="w-full h-full flex items-center justify-center text-gray-500"
+                id="map"
+              >
+                <MapComponent
+                  longitude={Number(longitude)}
+                  latitude={Number(latitude)}
+                  zoom={14}
+                  containerId="map"
+                  style="mapbox://styles/mapbox/streets-v12"
+                />
+              </div>
+            ) : (
+              <>
+                {image && !imageError ? (
+                  <div className="flex justify-center">
+                    <img
+                      src={image}
+                      alt="Fault"
+                      className="rounded-lg object-cover"
+                      onError={() => setImageError(true)} // Set error state if image fails to load
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                    <ImageIcon size={48} color="#6B7280" />
+                  </div>
+                )}
+              </>
+            )}
+
+            <div className="w-full flex pt-2 border">
               {/* Google Maps */}
               <Button
-                className="w-1/2 bg-opacity-45 text-black font-bold text-md text-center rounded-lg py-1"
+                className="w-[50%] bg-opacity-45 text-black font-bold lg:text-md md:text-sm text-center rounded-lg lg:mx-2 md:mx-1"
                 onClick={showDirections}
               >
                 {"Google Maps"}
                 <img
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
-                  className="h-6"
+                  className="h-[50%] border"
                   alt="Google"
                 />
               </Button>
 
               {/* Actions */}
-              <div className="mb-4 flex justify-between w-1/2 px-4">
+              <div className="lg:mb-4 md:mb-2 flex justify-between w-[50%] lg:mx-2 md:mx-1">
                 {/* Upvotes */}
                 <div className="flex flex-col items-center justify-center">
                   <FaArrowUp
@@ -475,21 +504,48 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           </div>
 
           {/* Right Section */}
-          <div className="relative w-2/3 mt-5 mb-2 flex justify-center overflow-hidden">
-            {image && !imageError ? (
-              <div className="flex justify-center">
-                <img
-                  src={image}
-                  alt="Fault"
-                  className="rounded-lg object-cover"
-                  onError={() => setImageError(true)} // Set error state if image fails to load
+          <div className="relative w-2/3 mt-5 mb-2 flex flex-col justify-center overflow-hidden">
+            {isMapLeft ? (
+              <>
+                {image && !imageError ? (
+                  <div className="flex justify-center">
+                    <img
+                      src={image}
+                      alt="Fault"
+                      className="rounded-lg object-cover"
+                      onError={() => setImageError(true)} // Set error state if image fails to load
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                    <ImageIcon size={48} color="#6B7280" />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div
+                className="w-full h-full flex items-center justify-center text-gray-500"
+                id="map"
+              >
+                <MapComponent
+                  longitude={Number(longitude)}
+                  latitude={Number(latitude)}
+                  zoom={14}
+                  containerId="map"
+                  style="mapbox://styles/mapbox/streets-v12"
                 />
               </div>
-            ) : (
-              <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
-                <ImageIcon size={48} color="#6B7280" />
-              </div>
             )}
+
+            {/* Toggle Button to Swap Map and Image */}
+            <div className="flex justify-center mt-2">
+              <Button
+                onClick={toggleLayout}
+                className="text-black bg-gray-300 px-4 py-2 rounded-lg"
+              >
+                {"Swap Map and Images"}
+              </Button>
+            </div>
 
             {/* Comments Section with Slide Animation */}
             <div
