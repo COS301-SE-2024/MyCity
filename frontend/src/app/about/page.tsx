@@ -31,7 +31,7 @@ export default function About() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         {/* Navbar - Make sure it's fixed and above all other content */}
-        <Navbar showLogin={true}/>
+        <Navbar showLogin={true} />
         {/* Background Image */}
         <div
           style={{
@@ -147,6 +147,60 @@ export default function About() {
               </div>
             </div>
 
+            {/* Sponsorship*/}
+
+            <div className="flex flex-col justify-center w-3/4">
+              <div className="text-center">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80">
+                  Sponsorship
+                </h1>
+              </div>
+
+              <a href={"https://placekit.io/"}>
+              <div
+                className={`flex m-4 dark:bg-gray-700 dark:text-white bg-gray-100 p-4 justify-center rounded-3xl items-center w-full`}
+              >
+                <div className="w-full sm:w-1/4 text-center">
+                  <a href={"https://placekit.io/"}>
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_placekit.webp"
+                      alt="Vision"
+                      className="w-full h-auto object-cover rounded-lg mx-auto"
+                    />
+                  </a>
+                </div>
+                <div className="w-full sm:w-3/4 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left overflow-y-auto h-full">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white text-opacity-80 mb-4">
+                    Placekit.io
+                  </h2>
+                  <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
+                    We are incredibly thankful to PlaceKit for their generous
+                    sponsorship and unwavering support for the MyCity project.
+                    Initially, we were limited by the constraints of a free
+                    account with 10,000 requests per month. However, recognizing
+                    the potential and the significance of MyCity, PlaceKit
+                    generously upgraded us to a plan with 1 million requests per
+                    month at no cost. Their willingness to support student
+                    initiatives has made a profound difference in the
+                    development of our platform, allowing us to fully focus on
+                    creating a solution that benefits both the community and
+                    local governments.
+                  </p>
+                  <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
+                    In addition to the technical support, PlaceKit has gone
+                    above and beyond by sponsoring custom shirts for our team to
+                    wear on project day. This thoughtful gesture ensures that
+                    MyCity stands out and helps us present our project with a
+                    unified, professional look. Their kindness and commitment to
+                    empowering student-led projects like ours have been
+                    invaluable, and we are deeply appreciative of their
+                    contribution. Thanks to PlaceKit, we are ready to make an
+                    impact and showcase MyCity with confidence on project day.
+                  </p>
+                </div>
+              </div>
+              </a>
+            </div>
             {/* In Association With */}
             <div className="flex flex-col justify-center w-full">
               <div className="text-center">
