@@ -1,6 +1,13 @@
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
 import { colorVariants } from "@nextui-org/react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor} from "@testing-library/react";
+import * as AuthService from "../../../src/services/auth.service";
+import { useRouter } from "next/router";
+
+jest.mock("../../../src/services/auth.service", () => ({
+    handleGoogleSignIn: jest.fn().mockResolvedValue({ status: 200 }),
+    handleSignIn: jest.fn(),
+}));
 
 describe("ServiceProviderLogin", () => {
 
@@ -93,6 +100,71 @@ describe("ServiceProviderLogin", () => {
     });
 
     /* Test 8: Validates email correctly */
+    it("validates email correctly", async () => {
+        render(<ServiceProviderLogin />);
+
+        // Find the email input field by placeholder text
+        const emailInputs = screen.getAllByPlaceholderText("example@mail.com");
+        const emailInput = emailInputs[0];
+
+        const submitButtons = screen.getAllByTestId("submit-btn");
+        const submitButton = submitButtons[0];
+
+        // Simulate typing an invalid email
+        fireEvent.change(emailInput, { target: { value: "invalidemail" } });
+        await waitFor(() => {
+            expect(submitButton).toBeDisabled();
+        });
+
+        // Simulate typing a valid email
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        await waitFor(() => {
+            expect(submitButton).toBeDisabled();
+        });
+
+    });
+
     /* Test 9: Redirects to dashboard after successful sign-in */
+
+    /* Test 10: Displays error message on login failure */
+    it("displays error message on login failure", async () => {
+        (AuthService.handleSignIn as jest.Mock).mockRejectedValue(new Error("Login failed"));
+
+        render(<ServiceProviderLogin />);
+
+        const emailInput = screen.getAllByPlaceholderText("example@mail.com")[0];
+        const passwordInput = screen.getAllByPlaceholderText("Password")[0];
+        const form = screen.getAllByTestId("service-provider-login-form")[0];
+
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.submit(form);
+
+        await waitFor(() => {
+            const outputs = screen.getAllByText("An error occurred during login. Please try again.")
+            const out = outputs[0];
+            expect(out).toBeInTheDocument();
+            //expect(screen.getByText("An error occurred during login. Please try again.")).toBeInTheDocument();
+        });
+        
+    });;
+
+    /* Test 11: Disables submit button when form is invalid */
+    it("disables submit button when form is invalid", () => {
+        render(<ServiceProviderLogin />);
+
+        const submitButton = screen.getAllByTestId("submit-btn")[0];
+        expect(submitButton).toBeDisabled();
+
+        const emailInput = screen.getAllByPlaceholderText("example@mail.com")[0];
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+
+        expect(submitButton).toBeDisabled();
+
+        const passwordInput = screen.getAllByPlaceholderText("Password")[0];
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+
+        expect(submitButton).not.toBeDisabled();
+    });
 
 });
