@@ -84,6 +84,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false); // For mobile map modal
+  const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -211,6 +212,11 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     if (e.target.files && e.target.files[0]) {
       console.log("Selected file:", e.target.files[0]);
       setFile(e.target.files[0]);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(e.target.files[0]);
     }
   }
 
@@ -512,6 +518,12 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                     name="picture"
                     onChange={handleImageChange}
                   />
+                  {selectedImage && (
+                    <div>
+                      <h2>Image Preview:</h2>
+                      <img src={String(selectedImage)} alt="Uploaded" style={{ maxWidth: "50%", height: "auto" }} />
+                    </div>
+                  )}
                   </div>
                 )}
               </div>
