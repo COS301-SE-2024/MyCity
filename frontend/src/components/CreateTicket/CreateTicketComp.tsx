@@ -422,59 +422,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
           </div>
         </div>
 
-        {/* Fault Severity */}
-        <div>
-          <span className="font-semibold text-sm">Fault Severity</span>
-          <div className="flex h-[3.5rem] justify-center">
-            <ButtonGroup aria-label="Basic example" className="flex h-full">
-              <Button
-                variant="bordered"
-                className={`h-full ${getButtonStyle("Minor")}`}
-                onClick={() => handleSelect("Minor")}
-              >
-                <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
-                  <img
-                    width="25"
-                    height="auto"
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
-                    alt="Minor"
-                  />
-                  Minor
-                </div>
-              </Button>
-              <Button
-                variant="bordered"
-                className={`h-full ${getButtonStyle("Major")}`}
-                onClick={() => handleSelect("Major")}
-              >
-                <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
-                  <img
-                    width="25"
-                    height="auto"
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
-                    alt="Major"
-                  />
-                  Major
-                </div>
-              </Button>
-              <Button
-                variant="bordered"
-                className={`h-full ${getButtonStyle("Critical")}`}
-                onClick={() => handleSelect("Critical")}
-              >
-                <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
-                  <img
-                    width="25"
-                    height="auto"
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
-                    alt="Critical"
-                  />
-                  Critical
-                </div>
-              </Button>
-            </ButtonGroup>
-          </div>
-        </div>
+
 
         {/* Image Upload */}
         <div className="flex flex-col">
