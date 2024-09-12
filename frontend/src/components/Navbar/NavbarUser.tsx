@@ -166,6 +166,16 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
                 </DropdownItem>
 
                 <DropdownItem
+                  key="guide"
+                  href="/guide"
+                  role="link"
+                  className="h-9 hover:bg-grey-500"
+                  textValue="How it works"
+                >
+                  <span className="text-sm">How it works</span>
+                </DropdownItem>
+
+                <DropdownItem
                   key="logout"
                   onClick={onLogout}
                   role="button"
