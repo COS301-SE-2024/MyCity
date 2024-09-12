@@ -36,6 +36,7 @@ interface Props extends React.HTMLAttributes<HTMLElement> {
 const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [dataURL, setDataURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<File[]>([]);
+  const [file, setFile] = useState<File>();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach((file) => {
@@ -72,6 +73,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   } = useMapboxProp();
   const { getUserProfile } = useProfile();
   const formRef = useRef<HTMLFormElement>(null);
+  const formRefmobile = useRef<HTMLFormElement>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
 
   const [faultTypes, setFaultTypes] = useState<FaultType[]>([]);
@@ -82,6 +84,9 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false); // For mobile map modal
+  const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const memoizedApiKey = useMemo(
     () => String(process.env.PLACEKIT_API_KEY),
@@ -143,12 +148,103 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     event.preventDefault();
     const user_data = await getUserProfile();
     const formcovert = formRef.current;
+    const form_sending = new FormData();
 
     if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
       console.error("Form is not recognized as HTMLFormElement");
       return;
     }
 
+    if(!file)
+    {
+      toast.error("Please upload a image");
+      return;
+    }
+
+    const form = new FormData(formcovert);
+    const latitude = selectedAddress?.lat;
+    const longitude = selectedAddress?.lng;
+    const fullAddress = `${selectedAddress?.street?.name}, ${selectedAddress?.county}, ${selectedAddress?.city}, ${selectedAddress?.administrative}`;
+    const selectedFault = form.get("fault-type");
+    const faultDescription = form.get("fault-description");
+    const user_email = String(user_data.current?.email);
+
+    if (!selectedFault) {
+      toast.error("Fault type is required!");
+      return;
+    }
+
+    if (!user_data.current) {
+      toast.error("Please log in if you wish to create a ticket.");
+      return;
+    }
+
+    form_sending.append("latitude", String(latitude))
+    form_sending.append("longitude", String(longitude))
+    form_sending.append("address", String(fullAddress))
+    form_sending.append("asset", String(selectedFault))
+    form_sending.append("description", String(faultDescription))
+    form_sending.append("state", "Opened")
+    form_sending.append("username", user_email.toLowerCase())
+    form_sending.append("file",file);
+
+    try {
+      const sessiont = user_data.current?.session_token || " ";
+      const isCreated = await CreatTicket(
+        sessiont,
+        form_sending
+      );
+      console.log(isCreated)
+      if (isCreated === true) {
+        toast.success("Ticket created successfully!");
+        window.location.href = "/dashboard/citizen";
+      } else {
+        throw new Error("Ticket creation failed");
+      }
+    } catch (error: any) {
+      console.error("Error:", error);
+      toast.error(`Error: ${error.message}`);
+    }
+  };
+////////handle div
+  const handleDivClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  //////handling image
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      console.log("Selected file:", e.target.files[0]);
+      setFile(e.target.files[0]);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  }
+
+  ////////////Handle submit for mobile
+  const handleSubmitMobile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const user_data = await getUserProfile();
+    const formcovert = formRefmobile.current;
+    const form_sending = new FormData();
+
+    if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
+      console.error("Form is not recognized as HTMLFormElement");
+      return;
+    }
+
+    if(!file)
+    {
+      toast.error("Please upload a image");
+      return;
+    }
+
+    
     const form = new FormData(formcovert);
     const latitude = selectedAddress?.lat;
     const longitude = selectedAddress?.lng;
@@ -166,19 +262,24 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       return;
     }
 
+    form_sending.append("latitude", String(latitude))
+    form_sending.append("longitude", String(longitude))
+    form_sending.append("address", String(fullAddress))
+    form_sending.append("asset", String(selectedFault))
+    form_sending.append("description", String(faultDescription))
+    form_sending.append("state", "Opened")
+    form_sending.append("username", String(user_data.current?.email))
+    form_sending.append("file",file);
+
     try {
       const sessiont = user_data.current?.session_token || " ";
       const isCreated = await CreatTicket(
         sessiont,
-        String(selectedFault),
-        String(faultDescription),
-        String(latitude),
-        String(longitude),
-        String(fullAddress),
-        String(user_data.current.email)
+        form_sending
       );
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
+        
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -321,59 +422,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
           </div>
         </div>
 
-        {/* Fault Severity */}
-        <div>
-          <span className="font-semibold text-sm">Fault Severity</span>
-          <div className="flex h-[3.5rem] justify-center">
-            <ButtonGroup aria-label="Basic example" className="flex h-full">
-              <Button
-                variant="bordered"
-                className={`h-full ${getButtonStyle("Minor")}`}
-                onClick={() => handleSelect("Minor")}
-              >
-                <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
-                  <img
-                    width="25"
-                    height="auto"
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
-                    alt="Minor"
-                  />
-                  Minor
-                </div>
-              </Button>
-              <Button
-                variant="bordered"
-                className={`h-full ${getButtonStyle("Major")}`}
-                onClick={() => handleSelect("Major")}
-              >
-                <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
-                  <img
-                    width="25"
-                    height="auto"
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
-                    alt="Major"
-                  />
-                  Major
-                </div>
-              </Button>
-              <Button
-                variant="bordered"
-                className={`h-full ${getButtonStyle("Critical")}`}
-                onClick={() => handleSelect("Critical")}
-              >
-                <div className="flex flex-col min-w-32 px-2 font-sm rounded-3xl justify-center items-center h-full">
-                  <img
-                    width="25"
-                    height="auto"
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
-                    alt="Critical"
-                  />
-                  Critical
-                </div>
-              </Button>
-            </ButtonGroup>
-          </div>
-        </div>
+
 
         {/* Image Upload */}
         <div className="flex flex-col">
@@ -413,8 +462,23 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                     </svg>
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600" onClick={handleDivClick}  >
                     Drag & drop files here, or click to browse
+                    <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    name="picture"
+                    onClick={(e) => e.stopPropagation()} 
+                    onChange={handleImageChange}
+                  />
+                  {selectedImage && (
+                    <div>
+                      <h2>Image Preview:</h2>
+                      <img src={String(selectedImage)} alt="Uploaded" style={{ maxWidth: "50%", height: "auto" }} />
+                    </div>
+                  )}
                   </div>
                 )}
               </div>
@@ -495,8 +559,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             Report a Fault
           </h2>
           <form
-            ref={formRef}
-            onSubmit={handleSubmit}
+            ref={formRefmobile}
+            onSubmit={handleSubmitMobile}
             className="flex flex-col gap-y-4"
           >
             {/* Fault Type */}

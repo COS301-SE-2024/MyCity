@@ -102,6 +102,7 @@ export default function CitizenLogin() {
                   !isEmailValid ? "border-red-500" : ""
                 }`,
               }}
+              
               type="email"
               name="email"
               autoComplete="new-email"
@@ -141,7 +142,7 @@ export default function CitizenLogin() {
               </button>
             </div>
             <Button
-                className="min-w-fit h-fit p-2 bg-white"
+                className="min-w-fit h-fit p-2 dark:bg-gray-800 dark:text-white bg-gray-100"
                 // onClick={f}
               >Forgot password?</Button>
 
@@ -169,7 +170,7 @@ export default function CitizenLogin() {
               onClick={googleButtonOnClick}
               name="google-submit"
               data-testid="google-login-btn"
-              className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+              className="rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
               type="button"
               disabled={isLoading}
             >
@@ -252,6 +253,7 @@ export default function CitizenLogin() {
                 <button
                   type="button"
                   className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+                  data-testid="eye-button"
                   onClick={togglePasswordVisibility}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}

@@ -3,13 +3,13 @@
     {
       "name": "default-role",
       "resource_type": "iam_role",
-      "role_arn": "arn:aws:iam::637423247704:role/mycity-api-prod",
-      "role_name": "mycity-api-prod"
+      "role_arn": "arn:aws:iam::637423247704:role/mycity-python-api-prod",
+      "role_name": "mycity-python-api-prod"
     },
     {
       "name": "api_handler",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:eu-west-1:637423247704:function:mycity-api-prod"
+      "lambda_arn": "arn:aws:lambda:eu-west-1:637423247704:function:mycity-python-api-prod"
     },
     {
       "name": "rest_api",

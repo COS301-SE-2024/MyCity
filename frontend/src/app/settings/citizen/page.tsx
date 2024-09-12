@@ -9,8 +9,11 @@ import { User, HelpCircle, XCircle } from "lucide-react";
 import { Mail, BellOff, MapPin, Shield, Moon, Text } from "lucide-react";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
-
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
+import ToggleTheme from "@/components/Theme/ToggleTheme";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
+import LocationPrompt from "@/components/Location/LocationPrompt";
+
 
 export default function Settings() {
   const { getUserProfile } = useProfile();
@@ -26,6 +29,7 @@ export default function Settings() {
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [largerFont, setLargerFont] = useState(false);
+
 
   // const [profileImage, setProfileImage] = useState<string | null>(null);
   // const [firstName, setFirstName] = useState<string>("");
@@ -80,10 +84,6 @@ export default function Settings() {
 
     getProfileData();
   }, [getUserProfile]);
-
-  const toggleDarkMode = () => {
-    setDarkMode((prevState) => !prevState);
-  };
 
   const toggleLargerFont = () => {
     setLargerFont((prevState) => !prevState);
@@ -209,7 +209,7 @@ export default function Settings() {
             </button>
             {showConfirmation && (
               <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-                <div className="bg-white p-4 rounded">
+                <div className="dark:bg-gray-700 dark:text-white bg-white p-4 rounded">
                   <p>
                     Are you sure you want to delete your account? This action
                     cannot be undone.
@@ -242,7 +242,7 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
@@ -250,7 +250,7 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -307,71 +307,47 @@ export default function Settings() {
             </div>
           </div>
         );
-      case "SecurityPrivacy":
-        return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
-            <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
-            <div className="space-y-4">
-              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                <div className="flex items-center justify-between p-2 rounded">
-                  <div className="flex items-center">
-                    <MapPin className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">
-                      Enable Location Access
-                    </span>
-                  </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      locationAccess ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleLocationAccess}
-                  >
-                    <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        locationAccess ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  Enable or disable location access for better service
-                  recommendations.
-                </p>
-              </div>
 
-              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                <div className="flex items-center justify-between p-2 rounded">
-                  <div className="flex items-center">
-                    <Shield className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">
-                      Two-Factor Authentication
-                    </span>
-                  </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      twoFactorAuth ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleTwoFactorAuth}
-                  >
+        case "SecurityPrivacy":
+          return (
+            <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+              <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
+              <div className="space-y-4">
+                <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                  <div className="flex items-center justify-between p-2 rounded">
+                    <div className="flex items-center">
+                      <MapPin className="h-6 w-6 text-black mr-2" />
+                      <span className="text-lg font-semibold">
+                        Enable Location Access
+                      </span>
+                    </div>
                     <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        twoFactorAuth ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
+                      className={`relative w-12 h-6 rounded-full ${
+                        locationAccess ? "bg-green-400" : "bg-gray-400"
+                      }`}
+                      onClick={toggleLocationAccess} // Toggle access
+                    >
+                      <div
+                        className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                          locationAccess ? "translate-x-6" : "translate-x-0"
+                        } transition-transform`}
+                      ></div>
+                    </div>
                   </div>
+                  <p className="text-gray-600">
+                    Enable or disable location access for better service recommendations.
+                  </p>
                 </div>
-                <p className="text-gray-600">
-                  Add an extra layer of security to your account with two-factor
-                  authentication.
-                </p>
+  
+                {/* Conditionally render LocationPrompt */}
+                {locationAccess && <LocationPrompt />}
               </div>
             </div>
-          </div>
-        );
+          );
 
       case "Accessibility":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full dark:bg-gray-700 dark:text-white bg-white  bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -380,50 +356,17 @@ export default function Settings() {
                     <Moon className="h-6 w-6 text-black mr-2" />
                     <span className="text-lg font-semibold">Dark Mode</span>
                   </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      darkMode ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleDarkMode}
-                  >
-                    <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        darkMode ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  Toggle dark mode for a better viewing experience in low light.
-                </p>
-              </div>
 
-              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                <div className="flex items-center justify-between p-2 rounded">
-                  <div className="flex items-center">
-                    <Text className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">Larger Font</span>
-                  </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      largerFont ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleLargerFont}
-                  >
-                    <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        largerFont ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
-                  </div>
+                  <ToggleTheme />
                 </div>
-                <p className="text-gray-600">
-                  Enable larger font sizes for better readability.
+                <p className="dark:text-gray-200 text-gray-600">
+                  Toggle dark mode for a better viewing experience in low light.
                 </p>
               </div>
             </div>
           </div>
         );
+
       default:
         return null;
     }
@@ -433,7 +376,7 @@ export default function Settings() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
+        <div className="flex w-full h-full">
           <NavbarUser unreadNotifications={unreadNotifications} />
           <div
             style={{
@@ -451,7 +394,7 @@ export default function Settings() {
               zIndex: -1, // Ensures the background is behind other content
             }}
           ></div>
-          <main>
+          <main className="w-full h-full">
             <div className="flex items-center mb-2 mt-2 ml-2">
               <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
                 <h1 className="text-4xl font-bold text-white text-opacity-80">
@@ -459,6 +402,7 @@ export default function Settings() {
                 </h1>
               </div>
             </div>
+
             <div className="flex items-center mb-2 mt-2 ml-2">
               <button data-testid="open-help-menu" onClick={toggleHelpMenu}>
                 <HelpCircle
@@ -497,75 +441,77 @@ export default function Settings() {
               </div>
             )}
 
-            <div className="flex">
-              <div className="w-64 bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
-                <div className="flex items-center mb-4">
-                  {data?.picture ? (
-                    <img
-                      src={data?.picture}
-                      alt="Profile"
-                      width={12}
-                      height={12}
-                      className="w-12 h-12 rounded-full mr-4"
-                    />
-                  ) : (
-                    <User className="w-12 h-12 rounded-full mr-4" />
-                  )}
-                  <div>
-                    {/* <p className="text-lg font-semibold">{firstName} {surname}</p> */}
-                    <p className="text-lg font-semibold">
-                      {data?.given_name} {data?.family_name}
-                    </p>
+            <div className="flex w-full justify-center ">
+              <div className="flex w-[80%] ">
+                <div className="w-[30%] dark:bg-gray-700 dark:text-white  bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
+                  <div className="flex w-full items-center mb-4">
+                    {data?.picture ? (
+                      <img
+                        src={data?.picture}
+                        alt="Profile"
+                        width={12}
+                        height={12}
+                        className="w-12 h-12 rounded-full mr-4"
+                      />
+                    ) : (
+                      <User className="w-12 h-12 rounded-full mr-4" />
+                    )}
+                    <div>
+                      {/* <p className="text-lg font-semibold">{firstName} {surname}</p> */}
+                      <p className="text-lg font-semibold">
+                        {data?.given_name} {data?.family_name}
+                      </p>
+                    </div>
                   </div>
+                  <nav>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "AccountInformation"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("AccountInformation")}
+                    >
+                      Account Information
+                    </a>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "Notifications"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("Notifications")}
+                    >
+                      Notifications
+                    </a>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "SecurityPrivacy"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("SecurityPrivacy")}
+                    >
+                      Security &amp; Privacy
+                    </a>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "Accessibility"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("Accessibility")}
+                    >
+                      Accessibility
+                    </a>
+                  </nav>
                 </div>
-                <nav>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "AccountInformation"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("AccountInformation")}
-                  >
-                    Account Information
-                  </a>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "Notifications"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("Notifications")}
-                  >
-                    Notifications
-                  </a>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "SecurityPrivacy"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("SecurityPrivacy")}
-                  >
-                    Security &amp; Privacy
-                  </a>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "Accessibility"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("Accessibility")}
-                  >
-                    Accessibility
-                  </a>
-                </nav>
+                {renderTabContent()}
               </div>
-              {renderTabContent()}
             </div>
           </main>
         </div>
@@ -573,66 +519,123 @@ export default function Settings() {
 
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarUser unreadNotifications={unreadNotifications} />
+        <NavbarMobile />
+        {/* Background Image */}
         <div
           style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -1,
           }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
+        ></div>
 
-          {/* Background image */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
-            }}
-          ></div>
+        <main className="relative z-10 p-4">
+          <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
+            Settings
+          </h1>
 
-          {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
+          {/* Profile and Tabs */}
+          <div className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
+            <div className="flex items-center mb-4">
+              {data?.picture ? (
+                <img
+                  src={data?.picture}
+                  alt="Profile"
+                  width={12}
+                  height={12}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+              ) : (
+                <User className="w-12 h-12 rounded-full mr-4" />
+              )}
+              <div>
+                <p className="text-lg font-semibold">
+                  {data?.given_name} {data?.family_name}
+                </p>
+              </div>
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
+
+            {/* Tabs */}
+            <nav className="space-y-2">
+              <button
+                className={`w-full text-left py-2 px-4 rounded-t ${
+                  activeTab === "AccountInformation"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("AccountInformation")}
+              >
+                Account Information
+              </button>
+              <button
+                className={`w-full text-left py-2 px-4 ${
+                  activeTab === "Notifications"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("Notifications")}
+              >
+                Notifications
+              </button>
+              <button
+                className={`w-full text-left py-2 px-4 ${
+                  activeTab === "SecurityPrivacy"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("SecurityPrivacy")}
+              >
+                Security & Privacy
+              </button>
+              <button
+                className={`w-full text-left py-2 px-4 rounded-b ${
+                  activeTab === "Accessibility"
+                    ? "bg-gray-200"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setActiveTab("Accessibility")}
+              >
+                Accessibility
+              </button>
+            </nav>
           </div>
-        </div>
+
+          {/* Tab Content with Extra Padding at the Bottom for Scroll */}
+          <div
+            className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-b-lg shadow-md p-4 mt-0"
+            style={{
+              paddingBottom: "80px", // Add extra padding at the bottom
+              transition: "max-height 0.5s ease-out",
+              overflow: "hidden",
+              animation: "slide-down 0.5s ease-out forwards",
+            }}
+          >
+            {renderTabContent()}
+          </div>
+        </main>
+
+        {/* Style for the slide-down animation */}
+        <style jsx>{`
+          @keyframes slide-down {
+            0% {
+              max-height: 0;
+              opacity: 0;
+            }
+            100% {
+              max-height: 100vh;
+              opacity: 1;
+            }
+          }
+        `}</style>
       </div>
     </div>
   );

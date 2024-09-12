@@ -26,12 +26,12 @@ interface CardData {
 
 interface CardComponentProps {
   cardData: CardData[];
-  refreshwatch : () => void;
+  refreshwatch: () => void;
 }
 
 const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   cardData = [],
-  refreshwatch
+  refreshwatch,
 }) => {
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 15;
@@ -46,6 +46,26 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
 
     setSelectedCard(cardData);
     setShowModal(true);
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(cardData.length / itemsPerPage);
+
+  // Get the current page items
+  const currentPageItems = cardData.slice(startIndex, startIndex + itemsPerPage);
+
+  // Function to go to the next page
+  const goToNextPage = () => {
+    if (startIndex + itemsPerPage < cardData.length) {
+      setStartIndex(startIndex + itemsPerPage);
+    }
+  };
+
+  // Function to go to the previous page
+  const goToPreviousPage = () => {
+    if (startIndex - itemsPerPage >= 0) {
+      setStartIndex(startIndex - itemsPerPage);
+    }
   };
 
   const handleCloseModal = () => {
@@ -100,34 +120,40 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex flex-col items-center  w-full rounded-3xl shadow-md overflow-hidden">
-          <div
-            className="overflow-x-auto custom-scrollbar rounded-3xl"
-            style={{
-              paddingLeft: "16px",
-              paddingRight: "16px",
-              scrollbarWidth: "thin",
-              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent",
-            }}
-          >
-            <style jsx>{`
-              ::-webkit-scrollbar {
-                height: 4px; /* Smaller height for the scrollbar */
-              }
-              ::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.7); /* Lighter color */
-                border-radius: 9999px; /* Fully rounded scrollbar */
-                min-width: 20px; /* Minimum width to reduce the scrollbar thumb size */
-              }
-              ::-webkit-scrollbar-track {
-                background: transparent;
-                margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
-              }
-            `}</style>
-            <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mb-4 w-full">
-              {visibleItems}
-            </div>
+        <div className="flex flex-col items-center w-full overflow-hidden">
+          <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-2 w-full h-[60%]">
+            {visibleItems}
           </div>
+
+          {/* Pagination Controls */}
+          <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
+            <button
+              onClick={goToPreviousPage}
+              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
+                startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={startIndex === 0}
+            >
+              Previous
+            </button>
+
+            <span className="text-gray-700">
+              Page {startIndex / itemsPerPage + 1} of {totalPages}
+            </span>
+
+            <button
+              onClick={goToNextPage}
+              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
+                startIndex + itemsPerPage >= cardData.length
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={startIndex + itemsPerPage >= cardData.length}
+            >
+              Next
+            </button>
+          </div>
+
           {showModal && selectedCard && (
             <FaultCardUserView
               show={showModal}
@@ -155,7 +181,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
 
       {/* Mobile View */}
       <div className="block sm:hidden overflow-hidden">
-        <div className="flex h-[60vh] w-full rounded-3xl shadow-md overflow-hidden">
+        <div className="flex h-[60%] w-full rounded-3xl shadow-md overflow-hidden">
           <div
             className="w-full overflow-y-auto custom-scrollbar rounded-3xl"
             style={{

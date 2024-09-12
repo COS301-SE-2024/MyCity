@@ -53,6 +53,10 @@ To run tests inside the \__tests\__ folder, execute the following command:
 ```
 npm test
 ```
+To run tests inside the \__tests\__ folder for a specific file, execute the following command (example):
+```
+npm test -- __tests__/components/Login/CitizenLogin.test.tsx
+```
 
 ### Frameworks and libraries
 > [!Note]
