@@ -54,55 +54,33 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
     const user_data = await getUserProfile();
-    const formcovert = formRef.current;
-    if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
+    const formElement = formRef.current;
+    
+    if (!formElement || !(formElement instanceof HTMLFormElement)) {
       console.error("Form is not recognized as HTMLFormElement");
       return;
     }
-    const form = new FormData(formcovert as HTMLFormElement);
-
-    const latitude = selectedAddress?.lat;
-    const longitude = selectedAddress?.lng;
-    const fullAddress = `${selectedAddress?.street?.name}, ${selectedAddress?.county}, ${selectedAddress?.city}, ${selectedAddress?.administrative}`;
-    const selectedFault = form.get("fault-type");
-    const faultDescription = form.get("fault-description");
-
-    if (!selectedFault) {
-      toast.error("Fault type is required!");
-      return;
-    }
-
-    const userData = await getUserProfile();
-    if (!userData.current) {
-      toast.error("Please log in if you wish to create a ticket.");
-      return;
-    }
-
-    const userId = userData.current.email;
-
-    const params_data = {
-      asset: selectedFault,
-      description: faultDescription,
-      latitude: latitude,
-      longitude: longitude,
-      address: fullAddress,
-      username: userId,
-      state: "OPEN",
-    };
-
+  
+    const formData = new FormData(formElement);  // Create FormData object
+  
+    // Adding additional fields manually if they are not in the form
+    const latitude = selectedAddress?.lat || "";
+    const longitude = selectedAddress?.lng || "";
+    const fullAddress = `${selectedAddress?.street?.name || ''}, ${selectedAddress?.county || ''}, ${selectedAddress?.city || ''}, ${selectedAddress?.administrative || ''}`;
+    
+    formData.append("latitude", String(latitude));
+    formData.append("longitude", String(longitude));
+    formData.append("address", fullAddress);
+    formData.append("username", user_data.current?.email || "");
+    formData.append("state", "OPEN");
+  
     try {
-      const sessiont = user_data.current?.session_token || " ";
-      const isCreated = await CreatTicket(
-        sessiont,
-        String(selectedFault),
-        String(faultDescription),
-        String(latitude),
-        String(longitude),
-        String(fullAddress),
-        String(userId)
-      );
-      if (isCreated === true) {
+      const sessiont = user_data.current?.session_token || "";
+      const isCreated = await CreatTicket(sessiont, formData);
+      
+      if (isCreated) {
         toast.success("Ticket created successfully!");
       } else {
         throw new Error("Ticket creation failed");
@@ -112,6 +90,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
       toast.error(`Error: ${error.message}`);
     }
   };
+  
 
   return (
     <div className={cn("", className)}>

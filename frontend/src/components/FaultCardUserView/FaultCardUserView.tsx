@@ -191,6 +191,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [isInitialRender, setIsInitialRender] = useState(true);
   const userProfile = useProfile();
   const [isImageExpanded, setIsImageExpanded] = useState(false);
+  const [isMapLeft, setIsMapLeft] = useState(true);
 
   useEffect(() => {
     const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -313,7 +314,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     setIsImageExpanded((prev) => !prev);
   };
 
-  const [isMapLeft, setIsMapLeft] = useState(true); // New state for swapping map and image
+   // New state for swapping map and image
 
   const toggleLayout = () => {
     setIsMapLeft((prev) => !prev); // Toggle the layout

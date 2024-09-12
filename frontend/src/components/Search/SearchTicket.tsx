@@ -3,7 +3,6 @@ import { AlertTriangle } from "lucide-react";
 import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
-import { distance } from "framer-motion";
 
 interface SearchTicketProps {
   tickets: Ticket[];
@@ -73,7 +72,6 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
       return ""; // Or some other default value
     }
 
-    console.log("state", state);
     state.replace(/ /g, "");
 
     let text = "Default"; // Default text
@@ -89,33 +87,32 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
     return text;
   }
 
+  const [imageError, setImageError] = useState(false);
+  
   function calculateDistance(
     lat1: string,
     lon1: string,
     lat2: string,
     lon2: string
   ) {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return "N/A"; // If coordinates are missing, return N/A
 
     const removeSingleQuote = (str: string) => str.replace(/'/g, "");
 
-    // Remove single quotes from the input coordinates
     lat1 = removeSingleQuote(lat1);
     lon1 = removeSingleQuote(lon1);
     lat2 = removeSingleQuote(lat2);
     lon2 = removeSingleQuote(lon2);
 
-
     const toRadians = (degree: number) => (degree * Math.PI) / 180;
 
     const R = 6371; // Radius of the Earth in kilometers
 
-    // Convert string inputs to numbers and then to radians
     const lat1Rad = toRadians(parseFloat(lat1));
     const lon1Rad = toRadians(parseFloat(lon1));
     const lat2Rad = toRadians(parseFloat(lat2));
     const lon2Rad = toRadians(parseFloat(lon2));
 
-    // Haversine formula
     const dLat = lat2Rad - lat1Rad;
     const dLon = lon2Rad - lon1Rad;
 
@@ -143,14 +140,15 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
             let color = formatStatecolor(ticket.state);
             let title = formatStatetitle(ticket.state);
             let image = ticket.imageURL;
-            let distance = calculateDistance(
-              ticket.latitude,
-              ticket.longitude,
-              municipality.latitude,
-              municipality.longitude
-            );
+            let distance = municipality
+              ? calculateDistance(
+                  ticket.latitude,
+                  ticket.longitude,
+                  municipality.latitude ?? "",
+                  municipality.longitude ?? ""
+                )
+              : "N/A"; // Fallback if municipality data is unavailable
 
-            const [imageError, setImageError] = useState(false);
             return (
               <div
                 key={index}
@@ -196,7 +194,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                     {municipality ? (
                       <>
                         <ImageWithLoader
-                          src={municipality.municipalityLogo}
+                          src={municipality.municipalityLogo || ""}
                           alt={"Municipality Logo"}
                         />
                       </>
@@ -207,7 +205,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   {/* Municipality Name */}
                   <div className="flex flex-col items-center text-start break-words">
                     <span className="lg:text-md md:text-sm font-bold">
-                      {ticket.municipality_id}
+                      {municipality?.name || "Unknown"}
                     </span>
                   </div>
                 </div>

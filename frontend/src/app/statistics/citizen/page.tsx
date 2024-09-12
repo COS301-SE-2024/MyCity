@@ -129,73 +129,7 @@ export default function About() {
           }}
         ></div>
         <main className="h-full">
-          <div className="relative h-[5%]">
-            <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
-              Statistics
-            </h1>
-          </div>
 
-          <div className="flex flex-col w-full items-center h-full border">
-            <div className="flex m-4 p-2 dark:bg-gray-700 bg-gray-100 rounded-3xl items-center flex-col h-[80%] w-3/4">
-              <div className="flex h-[10%] w-full mb-2">
-                <div className="flex h-full w-full items-center justify-start">
-                  <div className="h-[90%] w-[9%] rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border">
-                    <img
-                      src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                        "City of Tshwane Metropolitan"
-                      )}.png`}
-                      alt=""
-                    />
-                  </div>
-                  <div className="ml-2">{"City of Tshwane Metropolitan"}</div>
-                </div>
-
-                <div className="flex h-full w-full items-center justify-end border">
-                  <div className="relative w-full">
-                    {loading ? (
-                      <div className="flex justify-center items-center h-[3em] rounded-lg">
-                        <FaSpinner
-                          className="animate-spin text-black"
-                          size={20}
-                        />
-                      </div>
-                    ) : (
-                      <Autocomplete
-                        label="Municipality"
-                        placeholder="Select a municipality"
-                        fullWidth
-                        defaultItems={municipalities}
-                        size={"lg"}
-                        onSelectionChange={(value) =>
-                          setSelectedMunicipality(value as string)
-                        }
-                      >
-                        {(municipality) => (
-                          <AutocompleteItem
-                            key={municipality.municipality_id}
-                            textValue={municipality.municipality_id}
-                          >
-                            {municipality.municipality_id}
-                          </AutocompleteItem>
-                        )}
-                      </Autocomplete>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="h-[90%] w-full grid grid-cols-2 gap-4 overflow-hidden justify-center">
-              {/* Bar and Pie Charts */}
-              <ChartContainer title="Ticket States">
-                <Pie data={pieData} options={pieOptions} />
-              </ChartContainer>
-
-              <ChartContainer title="Sales Overview">
-                <Bar data={barData} />
-              </ChartContainer>
-            </div>
-          </div>
         </main>
       </div>
 
