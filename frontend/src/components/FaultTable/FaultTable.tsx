@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaArrowUp } from "react-icons/fa";
+import {
+  FaArrowUp,
+  FaComment,
+  FaEye,
+  FaExclamationTriangle,
+  FaTimes,
+} from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import { AlertCircle } from "lucide-react";
@@ -152,18 +158,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
       ) : (
         <>
           {/* Desktop View */}
-          <div className="hidden sm:block w-full h-[80%] overflow-y-auto border">
-            <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 text-white text-opacity-80 font-bold">
-              <div className="col-span-1 flex justify-center">Urgency</div>
-              <div className="col-span-1 flex justify-center">
-                Ticket Number
-              </div>
-              <div className="col-span-1 flex justify-center">Fault Type</div>
-              <div className="col-span-1 flex justify-center">Status</div>
-              <div className="col-span-1 flex justify-center">ETC</div>
-              <div className="col-span-1 flex justify-center">Upvotes</div>
-              <div className="col-span-1 flex justify-center">Address</div>
-            </div>
+          <div className="hidden sm:block w-full h-[80%] overflow-hidden">
             {tableitems.map((incident, index) => {
               const formattedStateKey = formatState(incident.state);
 
@@ -184,48 +179,69 @@ const IncidentTable: React.FC<IncidentProps> = ({
               return (
                 <div
                   key={index}
-                  className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 h-[10%] border-red border rounded-3xl bg-white bg-opacity-70 text-black cursor-pointer transform transition-colors duration-300 hover:bg-gray-200"
+                  className="flex gap-4 items-center mb-2 px-2 py-1 h-[10%]  rounded-3xl bg-white bg-opacity-70 text-black cursor-pointer overflow-y-auto transform transition-colors duration-300 hover:bg-gray-200"
                   onClick={() => handleRowClick(incident)}
                 >
-                  <div className="col-span-1 flex justify-center">
+                  {/* Urgency */}
+                  <div className="w-[3%]  col-span-1 flex justify-center">
                     {urgencyMapping[getUrgency(incident.upvotes)].icon}
                   </div>
 
-                  <div className="col-span-1 flex justify-center font-bold">
+                  {/* Ticket Number */}
+                  <div className="w-[12%] lg:text-md md:text-sm  col-span-1 flex justify-start font-bold">
                     {incident.ticketnumber}
                   </div>
 
-                  <div className="col-span-1 flex justify-center">
+                  {/* Fault Type */}
+                  <div className=" w-[20%] font-bold h-full  col-span-1 flex justify-start">
                     {incident.asset_id}
                   </div>
 
+                  {/* Status */}
                   <div
-                    className={`${color} bg-opacity-75 text-black font-bold lg:text-md md:text-sm text-center rounded-lg px-3 py-2 mt-1 w-full`}
+                    className={`${color}  w-[15%] bg-opacity-75 text-black font-bold lg:text-md md:text-sm text-center rounded-lg px-3 py-2 mt-1`}
                   >
                     {incident.state}
                   </div>
 
-                  <div className="flex w-full h-full items-center justify-start">
-                    <div className=" h-[80%] rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                      <img
-                        src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                          incident.municipality_id
-                        )}.png`}
-                        alt=""
-                      />
+                  {/* Fault Image */}
+                  <div className="flex w-[7%] h-full items-center justify-start ">
+                    <div className=" h-[80%] rounded-lg overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+                      <img src={incident.imageURL} alt="" />
                     </div>
-                    <div className="ml-2">{incident.municipality_id}</div>
                   </div>
 
-                  <div className="col-span-1 flex justify-center text-center">
+                  {/* Municipality */}
+                  <div className="w-[15%]  overflow-hidden flex items-center justify-start ">
+                    <img
+                      src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                        incident.municipality_id
+                      )}.png`}
+                      alt="Ticket"
+                      className="w-[22%] h-full object-cover overflow-hidden rounded-full"
+                    />
+                    <div className="ml-2 lg:text-md md:text-sm font-bold">{incident.municipality_id}</div>
+                  </div>
+
+                  {/* Upvotes */}
+                  <div className="col-span-1 w-[3%]  flex justify-center text-center">
                     <div className="flex flex-col items-center">
                       <FaArrowUp />
                       <div>{formatNumber(incident.upvotes)}</div>
                     </div>
                   </div>
+                    
+                    {/* Comments */}
+                  <div className="col-span-1 w-[3%]  flex justify-center text-center">
+                    <div className="flex flex-col items-center">
+                      <FaComment />
+                      <div>{formatNumber(incident.commentcount)}</div>
+                    </div>
+                  </div>
 
+                  {/* Address */}
                   <div
-                    className="col-span-1 flex justify-center overflow-hidden whitespace-nowrap"
+                    className="w-[17%]  col-span-1 flex justify-start overflow-hidden whitespace-nowrap"
                     ref={(el) => {
                       addressRefs.current[index] = el;
                     }}
@@ -239,6 +255,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
                       {truncateAddress(incident.address)}
                     </div>
                   </div>
+
                 </div>
               );
             })}
