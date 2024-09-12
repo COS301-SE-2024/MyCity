@@ -9,6 +9,7 @@ from chalicelib.upvotes.upvotes_routes import upvotes_blueprint
 from chalicelib.watchlist.watchlist_routes import watchlist_blueprint
 from chalicelib.users.users_routes import users_blueprint
 from chalicelib.notifications.notification_routes import notifications_blueprint
+from chalicelib.analytics.analytics_routes import analytics_blueprint
 
 from chalicelib.authorisers import cognito_authorizer
 
@@ -36,6 +37,8 @@ app.register_blueprint(watchlist_blueprint, "Watchlist", "/watchlist")
 app.register_blueprint(users_blueprint, "Users", "/users")
 
 app.register_blueprint(notifications_blueprint, "Notifications", "/notifications")
+
+app.register_blueprint(analytics_blueprint,"Analytics","/analytics")
 
 
 @app.route("/", authorizer=cognito_authorizer, cors=True)
