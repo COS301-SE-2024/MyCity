@@ -167,28 +167,25 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
+  
   const handleTenderContractClick = async () => {
     setIsLoading(true); // Start loading
-
+  
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspgettenders = await getTicketTenders(
-        ticket_id,
-        user_session,
-        true
-      );
+      const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
       setTenders(rspgettenders);
-
+  
       if (!rspgettenders) return;
-
+  
       let tender_contract = "";
       rspgettenders.forEach((item: { status: string; tender_id: string }) => {
         if (item.status === "accepted" || item.status === "approved") {
           tender_contract = item.tender_id;
         }
       });
-
+  
       if (!tender_contract) {
         setShowTenderMax(false);
       } else {
@@ -199,6 +196,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         if (response_contract) {
           setContract(response_contract);
           setShowTenderMax(true);
+          setShowMuniTenders(false); // Hide MuniTenders if it's open
         } else {
           setShowTenderMax(false);
         }
@@ -209,6 +207,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       setIsLoading(false); // Stop loading after the operation is complete
     }
   };
+  
 
   const handleTenderMaxClose = () => {
     //setTicketstatus("Closed");
@@ -226,14 +225,19 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_session = String(user_data.current?.session_token);
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
     setIsLoading(false);
-
+  
     if (!rspgettenders || rspgettenders.length === 0) {
       setTenders(null);
     } else {
       setTenders(rspgettenders);
     }
-    setShowMuniTenders((prev) => !prev); // Toggle the dropdown
+  
+    // Ensure that only MuniTenders is shown, and TenderMax is hidden (similar to mobile)
+    setShowTenderMax(false);  // Hide TenderMax
+    setShowMuniTenders(true); // Show MuniTenders
   };
+  
+  
 
   const handleBack = (data: number) => {
     setShowMuniTenders(false);
@@ -245,8 +249,17 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
   return (
     <>
+    {showMuniTenders && (
+        <div className="mt-4">
+          <MuniTenders
+            tenders={tenders}
+            onBack={() => setShowMuniTenders(false)}
+          />
+        </div>
+      )}
+      {/* Desktop View */}
       {!showTenderMax && !showMuniTenders && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
+        <div className="hidden sm:flex fixed inset-0 bg-black bg-opacity-50 justify-center items-center z-50 overflow-auto">
           <div
             ref={modalRef}
             className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row"
@@ -459,14 +472,184 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         />
       )}
 
-      {showMuniTenders && (
-        <div className="mt-4">
-          <MuniTenders
-            tenders={tenders}
-            onBack={() => setShowMuniTenders(false)}
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        {!showTenderMax && !showMuniTenders && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
+            <div
+              ref={modalRef}
+              className="bg-white rounded-lg shadow-lg w-full max-h-[90vh] p-4 relative flex flex-col"
+            >
+              <button
+                className="absolute top-2 right-2 text-gray-700 z-20"
+                onClick={handleCloseClick}
+              >
+                <FaTimes size={24} />
+              </button>
+              <div className="flex flex-col w-full overflow-auto">
+                {/* Title and Status */}
+                <div className="text-center">
+                  <div className="font-bold text-lg">{title}</div>
+                  <div
+                    className={`text-sm font-bold ${getStatusColor(
+                      ticketstatus
+                    )}`}
+                  >
+                    {ticketstatus}
+                  </div>
+                </div>
+
+                {/* Image and Description */}
+                <div className="mt-2 text-center">
+                  <p className="text-gray-700 text-sm mt-2 mb-4">
+                    {description}
+                  </p>
+                  {imageURL ? (
+                    <img
+                      src={imageURL}
+                      alt="Fault"
+                      className="rounded-lg w-full h-40 object-cover"
+                      onLoad={() => setImageLoading(false)}
+                      style={{ display: imageLoading ? "none" : "block" }}
+                    />
+                  ) : (
+                    <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                      <ImageIcon size={48} color="#6B7280" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Address and Created By (Side by Side) */}
+                <div className="flex justify-around items-center mt-4">
+                  {/* Address */}
+                  <div className="flex flex-col items-center">
+                    <h3 className="font-bold text-md">Address</h3>
+                    {addressParts.map((part, index) => (
+                      <p key={index} className="text-gray-700 text-sm">
+                        {part.trim()}
+                      </p>
+                    ))}
+                  </div>
+                  {/* Created By */}
+                  <div className="flex flex-col items-center">
+                    <h3 className="font-bold text-md">Created By</h3>
+                    {user_picture ? (
+                      <img
+                        src={user_picture}
+                        alt="Created By"
+                        className="rounded-full mb-1 object-cover w-12 h-12"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center">
+                        <UserIcon size={24} color="#6B7280" />
+                      </div>
+                    )}
+                    <p className="text-gray-700 text-sm">{createdBy}</p>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="mt-4 flex justify-center gap-2">
+                  <button
+                    className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
+                    onClick={handleCloseClick}
+                  >
+                    Back
+                  </button>
+                  {(ticketstatus === "In Progress" ||
+                    ticketstatus === "Assigning Contract") && (
+                    <button
+                      className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
+                      onClick={handleTenderContractClick}
+                    >
+                      Tender Contract
+                    </button>
+                  )}
+                  {ticketstatus === "Taking Tenders" && (
+                    <button
+                      className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white transition duration-300"
+                      onClick={handleViewTendersClick}
+                    >
+                      View Bids
+                    </button>
+                  )}
+                  {ticketstatus === "Opened" && (
+                    <>
+                      <button
+                        className="bg-red-500 text-white rounded-lg px-2 py-1 hover:bg-red-600"
+                        onClick={handleCloseTicket}
+                      >
+                        Close
+                      </button>
+                      <button
+                        className="bg-blue-500 text-white rounded-lg px-2 py-1 hover:bg-blue-600"
+                        onClick={handleApproveTicket}
+                      >
+                        Take Tenders
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Arrow, Comment, View Counts */}
+              <div className="mt-4 flex justify-around w-full px-4">
+                <div className="flex items-center">
+                  <FaArrowUp className="text-gray-600 mr-2" />
+                  <span className="text-gray-700">{arrowCount}</span>
+                </div>
+                <div
+                  className="flex items-center cursor-pointer transform transition-transform hover:scale-105"
+                  onClick={toggleComments}
+                >
+                  <FaComment className="text-gray-600 mr-2" />
+                  <span className="text-gray-700">{commentCount}</span>
+                </div>
+                <div className="flex items-center">
+                  <FaEye className="text-gray-600 mr-2" />
+                  <span className="text-gray-700">{viewCount}</span>
+                </div>
+              </div>
+
+              {/* Comments Section with Slide Animation */}
+              <div
+                className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${
+                  showComments ? "translate-x-0" : "translate-x-full"
+                }`}
+                style={{ pointerEvents: showComments ? "auto" : "none" }}
+              >
+                <Comments
+                  ticketId={ticket_id}
+                  onBack={toggleComments}
+                  isCitizen={false}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TenderMax Section */}
+        {showTenderMax && (
+          <TenderMax
+            tender={{
+              tender_id: contract?.tender_id,
+              status: contract?.status,
+              companyname: tenders?.companyname,
+              contractdatetime: formatDate(String(contract?.contractdatetime)),
+              finalCost: contract?.finalCost,
+              finalDuration: contract?.finalDuration,
+              upload: null,
+              ticketnumber: ticketNumber,
+              latitude: Number(latitude),
+              longitude: Number(longitude),
+              completedatetime: contract?.completedatetime,
+              contractnumber: contract?.contractnumber,
+              hasReportedCompletion: false,
+            }}
+            onClose={handleTenderMaxClose}
           />
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };
