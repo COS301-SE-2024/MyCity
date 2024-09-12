@@ -12,6 +12,8 @@ import { useProfile } from "@/hooks/useProfile";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import ToggleTheme from "@/components/Theme/ToggleTheme";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
+import LocationPrompt from "@/components/Location/LocationPrompt";
+
 
 export default function Settings() {
   const { getUserProfile } = useProfile();
@@ -27,6 +29,7 @@ export default function Settings() {
   const [twoFactorAuth, setTwoFactorAuth] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [largerFont, setLargerFont] = useState(false);
+
 
   // const [profileImage, setProfileImage] = useState<string | null>(null);
   // const [firstName, setFirstName] = useState<string>("");
@@ -305,40 +308,42 @@ export default function Settings() {
           </div>
         );
 
-      case "SecurityPrivacy":
-        return (
-          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
-            <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
-            <div className="space-y-4">
-              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                <div className="flex items-center justify-between p-2 rounded">
-                  <div className="flex items-center">
-                    <MapPin className="h-6 w-6 text-black mr-2" />
-                    <span className="text-lg font-semibold">
-                      Enable Location Access
-                    </span>
-                  </div>
-                  <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      locationAccess ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                    onClick={toggleLocationAccess}
-                  >
+        case "SecurityPrivacy":
+          return (
+            <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+              <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
+              <div className="space-y-4">
+                <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                  <div className="flex items-center justify-between p-2 rounded">
+                    <div className="flex items-center">
+                      <MapPin className="h-6 w-6 text-black mr-2" />
+                      <span className="text-lg font-semibold">
+                        Enable Location Access
+                      </span>
+                    </div>
                     <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        locationAccess ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
-                    ></div>
+                      className={`relative w-12 h-6 rounded-full ${
+                        locationAccess ? "bg-green-400" : "bg-gray-400"
+                      }`}
+                      onClick={toggleLocationAccess} // Toggle access
+                    >
+                      <div
+                        className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
+                          locationAccess ? "translate-x-6" : "translate-x-0"
+                        } transition-transform`}
+                      ></div>
+                    </div>
                   </div>
+                  <p className="text-gray-600">
+                    Enable or disable location access for better service recommendations.
+                  </p>
                 </div>
-                <p className="text-gray-600">
-                  Enable or disable location access for better service
-                  recommendations.
-                </p>
+  
+                {/* Conditionally render LocationPrompt */}
+                {locationAccess && <LocationPrompt />}
               </div>
             </div>
-          </div>
-        );
+          );
 
       case "Accessibility":
         return (
@@ -371,7 +376,7 @@ export default function Settings() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div>
+        <div className="flex w-full h-full">
           <NavbarUser unreadNotifications={unreadNotifications} />
           <div
             style={{
@@ -389,7 +394,7 @@ export default function Settings() {
               zIndex: -1, // Ensures the background is behind other content
             }}
           ></div>
-          <main>
+          <main className="w-full h-full">
             <div className="flex items-center mb-2 mt-2 ml-2">
               <div className="flex items-center mb-2 mt-6 ml-9 pt-15">
                 <h1 className="text-4xl font-bold text-white text-opacity-80">
@@ -397,6 +402,7 @@ export default function Settings() {
                 </h1>
               </div>
             </div>
+
             <div className="flex items-center mb-2 mt-2 ml-2">
               <button data-testid="open-help-menu" onClick={toggleHelpMenu}>
                 <HelpCircle
@@ -435,75 +441,77 @@ export default function Settings() {
               </div>
             )}
 
-            <div className="flex">
-              <div className="w-64 dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
-                <div className="flex items-center mb-4">
-                  {data?.picture ? (
-                    <img
-                      src={data?.picture}
-                      alt="Profile"
-                      width={12}
-                      height={12}
-                      className="w-12 h-12 rounded-full mr-4"
-                    />
-                  ) : (
-                    <User className="w-12 h-12 rounded-full mr-4" />
-                  )}
-                  <div>
-                    {/* <p className="text-lg font-semibold">{firstName} {surname}</p> */}
-                    <p className="text-lg font-semibold">
-                      {data?.given_name} {data?.family_name}
-                    </p>
+            <div className="flex w-full justify-center ">
+              <div className="flex w-[80%] ">
+                <div className="w-[30%] dark:bg-gray-700 dark:text-white  bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
+                  <div className="flex w-full items-center mb-4">
+                    {data?.picture ? (
+                      <img
+                        src={data?.picture}
+                        alt="Profile"
+                        width={12}
+                        height={12}
+                        className="w-12 h-12 rounded-full mr-4"
+                      />
+                    ) : (
+                      <User className="w-12 h-12 rounded-full mr-4" />
+                    )}
+                    <div>
+                      {/* <p className="text-lg font-semibold">{firstName} {surname}</p> */}
+                      <p className="text-lg font-semibold">
+                        {data?.given_name} {data?.family_name}
+                      </p>
+                    </div>
                   </div>
+                  <nav>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "AccountInformation"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("AccountInformation")}
+                    >
+                      Account Information
+                    </a>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "Notifications"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("Notifications")}
+                    >
+                      Notifications
+                    </a>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "SecurityPrivacy"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("SecurityPrivacy")}
+                    >
+                      Security &amp; Privacy
+                    </a>
+                    <a
+                      href="#"
+                      className={
+                        activeTab === "Accessibility"
+                          ? "block py-2 px-4 rounded bg-gray-200"
+                          : "block py-2 px-4 rounded hover:bg-gray-100"
+                      }
+                      onClick={() => setActiveTab("Accessibility")}
+                    >
+                      Accessibility
+                    </a>
+                  </nav>
                 </div>
-                <nav>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "AccountInformation"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("AccountInformation")}
-                  >
-                    Account Information
-                  </a>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "Notifications"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("Notifications")}
-                  >
-                    Notifications
-                  </a>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "SecurityPrivacy"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("SecurityPrivacy")}
-                  >
-                    Security &amp; Privacy
-                  </a>
-                  <a
-                    href="#"
-                    className={
-                      activeTab === "Accessibility"
-                        ? "block py-2 px-4 rounded bg-gray-200"
-                        : "block py-2 px-4 rounded hover:bg-gray-100"
-                    }
-                    onClick={() => setActiveTab("Accessibility")}
-                  >
-                    Accessibility
-                  </a>
-                </nav>
+                {renderTabContent()}
               </div>
-              {renderTabContent()}
             </div>
           </main>
         </div>
