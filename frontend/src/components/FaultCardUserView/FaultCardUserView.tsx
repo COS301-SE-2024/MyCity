@@ -191,6 +191,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [isInitialRender, setIsInitialRender] = useState(true);
   const userProfile = useProfile();
   const [isImageExpanded, setIsImageExpanded] = useState(false);
+  const [isMapLeft, setIsMapLeft] = useState(true);
 
   useEffect(() => {
     const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -313,7 +314,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     setIsImageExpanded((prev) => !prev);
   };
 
-  const [isMapLeft, setIsMapLeft] = useState(true); // New state for swapping map and image
+  // New state for swapping map and image
 
   const toggleLayout = () => {
     setIsMapLeft((prev) => !prev); // Toggle the layout
@@ -336,7 +337,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
         </button>
 
         {/* Desktop View */}
-        <div className="hidden sm:flex w-full h-full gap-4 border">
+        <div className="hidden sm:flex w-full h-full gap-4">
           {/* Left Section */}
           <div className="relative w-[33%] pr-1 flex flex-col items-center">
             {/* Title */}
@@ -399,40 +400,41 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
             </div>
 
-            {/* Map */}
-
-            {isMapLeft ? (
-              <div
-                className="w-full h-full flex items-center justify-center text-gray-500"
-                id="map"
-              >
-                <MapComponent
-                  longitude={Number(longitude)}
-                  latitude={Number(latitude)}
-                  zoom={14}
-                  containerId="map"
-                  style="mapbox://styles/mapbox/streets-v12"
-                />
-              </div>
-            ) : (
-              <>
-                {image && !imageError ? (
-                  <div className="flex justify-center">
-                    <img
-                      src={image}
-                      alt="Fault"
-                      className="rounded-lg object-cover"
-                      onError={() => setImageError(true)} // Set error state if image fails to load
+            {/* Map or Image */}
+            <div className="w-full h-full border flex items-center justify-center">
+              {isMapLeft ? (
+                <>
+                  <div className="flex justify-center" id="map">
+                    <MapComponent
+                      longitude={Number(longitude)}
+                      latitude={Number(latitude)}
+                      zoom={14}
+                      containerId="map"
+                      style="mapbox://styles/mapbox/streets-v12"
                     />
                   </div>
-                ) : (
-                  <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
-                    <ImageIcon size={48} color="#6B7280" />
-                  </div>
-                )}
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  {image && !imageError ? (
+                    <div className="flex justify-center">
+                      <img
+                        src={image}
+                        alt="Fault"
+                        className="rounded-lg object-cover"
+                        onError={() => setImageError(true)} // Set error state if image fails to load
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                      <ImageIcon size={48} color="#6B7280" />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
 
+            {/*Google Maps and Actions*/}
             <div className="w-full flex pt-2 border">
               {/* Google Maps */}
               <Button
@@ -605,7 +607,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
           {/* Google Maps Button */}
           <Button
-            className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1"
+            className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1 border"
             onClick={showDirections}
           >
             Google Maps

@@ -320,7 +320,7 @@ export default function CreateTicket() {
                   );
                 }
                 if (selectedFilter === "myMunicipality") {
-                  return <SearchTicket key={index} tickets={[result]} />;
+                  return <SearchTicket key={index} tickets={[result]} municipalities={[result]} />;
                 }
                 return null;
               })}

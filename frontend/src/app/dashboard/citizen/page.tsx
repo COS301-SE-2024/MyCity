@@ -264,8 +264,8 @@ export default function CitizenDashboard({
               </div>
             )}
 
-            <div className="flex flex-col w-full h-[60%] items-center lg:mt-10 overflow-hidden">
-              <div className="flex h-full dark:bg-gray-700 dark:text-white dark:bg-opacity-70 bg-gray-100 bg-opacity-70 flex-col items-center rounded-3xl w-3/4">
+            <div className="flex flex-col w-[80%] h-[66%] items-center lg:mt-10 overflow-hidden">
+              <div className="flex w-full h-full dark:bg-gray-700 dark:text-white dark:bg-opacity-70 bg-gray-100 bg-opacity-70 border border-red flex-col items-center rounded-3xl overflow-hidden">
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
@@ -445,14 +445,14 @@ export default function CitizenDashboard({
             </div>
 
             {/* Dashboard Content */}
-            <div className="h-[85vh]">
+            <div className="h-[85%] border border-red">
               <div className="flex justify-center">
                 <h1 className="text-4xl font-bold text-white text-opacity-80">
                   Dashboard
                 </h1>
               </div>
 
-              <div className="flex h-[80vh] flex-col items-center rounded-3xl">
+              <div className="flex h-[80%] border border-red flex-col items-center rounded-3xl">
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
@@ -473,7 +473,7 @@ export default function CitizenDashboard({
                       className="mt-2 flex justify-center w-full rounded-3xl "
                       classNames={{
                         tab: "min-w-24 min-h-8bg-white bg-opacity-30 text-black text-xs",
-                        panel: "w-full",
+                        panel: "w-full]",
                         cursor: "w-full border-3 border-blue-700/40",
                         tabContent:
                           "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",

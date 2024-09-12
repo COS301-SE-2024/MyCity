@@ -146,19 +146,19 @@ export default function Notifications() {
   ];
 
   const visibleNotifications = allTickets
-    .slice(startIndex, Math.min(startIndex + itemsPerPage, allTickets.length))
-    .map((item, index) => {
-      const action = dashMostUpvoteResults.includes(item)
-        ? "upvoted"
-        : dashWatchResults.includes(item)
-        ? "watchlisted"
-        : dashMuniResults.includes(item)
-        ? "updated"
-        : "commented on";
+  .slice(startIndex, Math.min(startIndex + itemsPerPage, allTickets.length))
+  .map((item, index) => {
+    const action = dashMostUpvoteResults.includes(item)
+      ? "upvoted"
+      : dashWatchResults.includes(item)
+      ? "watchlisted"
+      : dashMuniResults.includes(item)
+      ? "updated"
+      : "commented on";
 
-      return (
+    return (
+      <div className="flex w-full h-[10%] my-2 justify-center" key={item.ticket_id}>
         <TicketNoti
-          key={index}
           ticketNumber={item.ticketnumber}
           image={item.imageURL || null}
           action={action}
@@ -178,8 +178,10 @@ export default function Notifications() {
           municipality_id={item.municipality_id}
           refreshwatch={refreshwatchlist}
         />
-      );
-    });
+      </div>
+    );
+  });
+
 
   return (
     <div>
@@ -212,8 +214,8 @@ export default function Notifications() {
           />
 
           {/* Content */}
-          <div className="fixed inset-0 overflow-y-auto">
-            <main>
+          <div className="fixed w-full h-full inset-0">
+            <main className="flex w-full h-full">
               <div className="relative pt-8">
                 <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
                   Notifications
@@ -234,8 +236,12 @@ export default function Notifications() {
                   />
                 </div>
               ) : (
-                <div className="pt-20 px-6 rounded-3xl">
-                  {visibleNotifications}
+                <div className="flex w-full h-full justify-center items-center overflow-hidden">
+                  <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center">
+                    <div className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto">
+                      {visibleNotifications}
+                    </div>
+                  </div>
                 </div>
               )}
 
