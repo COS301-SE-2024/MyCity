@@ -120,16 +120,16 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div className="flex flex-col items-center w-full  overflow-hidden border">
-          <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-4 w-full h-[60%] border">
+        <div className="flex flex-col items-center w-full overflow-hidden">
+          <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-2 w-full h-[60%]">
             {visibleItems}
           </div>
 
           {/* Pagination Controls */}
-          <div className="flex w-1/4 h-[10%] justify-between items-center mx-2">
+          <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[10%] bg-blue-500 text-white rounded-lg ${
+              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
                 startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={startIndex === 0}
@@ -143,7 +143,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
 
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[10%] bg-blue-500 text-white rounded-lg ${
+              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
                 startIndex + itemsPerPage >= cardData.length
                   ? "opacity-50 cursor-not-allowed"
                   : ""
