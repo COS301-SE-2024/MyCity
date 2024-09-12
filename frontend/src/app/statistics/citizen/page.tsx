@@ -2,109 +2,109 @@
 
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
-import { Bar, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import {
-  FaSpinner,
-} from "react-icons/fa";
-import {
-  Autocomplete,
-  AutocompleteItem,
-} from "@nextui-org/react";
+// import { Bar, Pie } from "react-chartjs-2";
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   ArcElement,
+//   Tooltip,
+//   Legend,
+// } from "chart.js";
+// import {
+//   FaSpinner,
+// } from "react-icons/fa";
+// import {
+//   Autocomplete,
+//   AutocompleteItem,
+// } from "@nextui-org/react";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend
-);
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   BarElement,
+//   ArcElement,
+//   Tooltip,
+//   Legend
+// );
 
-import { getMunicipalityList } from "@/services/municipalities.service";
-import { BasicMunicipality } from "@/types/custom.types";
+// import { getMunicipalityList } from "@/services/municipalities.service";
+// import { BasicMunicipality } from "@/types/custom.types";
 
 export default function About() {
-  const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
-  const [selectedMunicipality, setSelectedMunicipality] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  // const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
+  // const [selectedMunicipality, setSelectedMunicipality] = useState<string>("");
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMunicipalities = async () => {
-      try {
-        const data = await getMunicipalityList();
-        setMunicipalities(data);
-      } catch (error: any) {
-        console.error("Error fetching municipalities:", error);
-      } finally {
-        setLoading(false); // Set loading to false after fetching is complete
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMunicipalities = async () => {
+  //     try {
+  //       const data = await getMunicipalityList();
+  //       setMunicipalities(data);
+  //     } catch (error: any) {
+  //       console.error("Error fetching municipalities:", error);
+  //     } finally {
+  //       setLoading(false); // Set loading to false after fetching is complete
+  //     }
+  //   };
 
-    fetchMunicipalities();
-  }, []);
+  //   fetchMunicipalities();
+  // }, []);
 
-  const barData = {
-    labels: ["January", "February", "March", "April", "May"],
-    datasets: [
-      {
-        label: "Sales",
-        data: [12, 19, 3, 5, 2],
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-      },
-    ],
-  };
+  // const barData = {
+  //   labels: ["January", "February", "March", "April", "May"],
+  //   datasets: [
+  //     {
+  //       label: "Sales",
+  //       data: [12, 19, 3, 5, 2],
+  //       backgroundColor: "rgba(75, 192, 192, 0.6)",
+  //     },
+  //   ],
+  // };
 
-  // Data for the pie chart
-  const pieData = {
-    labels: [
-      "Open",
-      "Taking Tenders",
-      "Assigning Contracts",
-      "In Progress",
-      "Completed",
-    ],
-    datasets: [
-      {
-        label: "Votes",
-        data: [12, 19, 3, 5, 2],
-        backgroundColor: [
-          "rgb(191, 219, 254)",
-          "rgb(167, 243, 208)",
-          "rgb(254, 240, 138)",
-          "rgb(254, 202, 202)",
-          "rgb(233, 213, 255)",
-        ],
-      },
-    ],
-  };
+  // // Data for the pie chart
+  // const pieData = {
+  //   labels: [
+  //     "Open",
+  //     "Taking Tenders",
+  //     "Assigning Contracts",
+  //     "In Progress",
+  //     "Completed",
+  //   ],
+  //   datasets: [
+  //     {
+  //       label: "Votes",
+  //       data: [12, 19, 3, 5, 2],
+  //       backgroundColor: [
+  //         "rgb(191, 219, 254)",
+  //         "rgb(167, 243, 208)",
+  //         "rgb(254, 240, 138)",
+  //         "rgb(254, 202, 202)",
+  //         "rgb(233, 213, 255)",
+  //       ],
+  //     },
+  //   ],
+  // };
 
-  const pieOptions = {
-    plugins: {
-      legend: {
-        position: "right", // Move legend to the right side
-        labels: {
-          boxWidth: 20,
-          padding: 20,
-        },
-      },
-    },
-  };
+  // const pieOptions = {
+  //   plugins: {
+  //     legend: {
+  //       position: "right", // Move legend to the right side
+  //       labels: {
+  //         boxWidth: 20,
+  //         padding: 20,
+  //       },
+  //     },
+  //   },
+  // };
 
-  function formatMunicipalityID(mun: string): string {
-    if (typeof mun !== "string") {
-      return ""; // Or some other default value
-    }
-    return mun.replace(/ /g, "_");
-  }
+  // function formatMunicipalityID(mun: string): string {
+  //   if (typeof mun !== "string") {
+  //     return ""; // Or some other default value
+  //   }
+  //   return mun.replace(/ /g, "_");
+  // }
 
   return (
     <div className="h-screen w-screen">
