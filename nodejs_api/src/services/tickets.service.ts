@@ -34,400 +34,301 @@ interface TicketData {
 }
 
 
-
-export const getTicketsInMunicipality = async (municipality: string) => {
-    try {
-        if (!municipality) {
+export const addWatchlist = async (ticketData: TicketData) => {
+    const requiredFields = ["username", "ticket_id"];
+    for (const field of requiredFields) {
+        if (!(field in ticketData)) {
             const errorResponse = {
                 Error: {
                     Code: "IncorrectFields",
-                    Message: "Missing required field: municipality",
-                }
+                    Message: `Missing required field: ${field}`,
+                },
             };
-            throw new Error(JSON.stringify(errorResponse));
+            throw new ClientError(errorResponse, "InvalidFields");
         }
-
-        const queryCommand = new QueryCommand({
-            TableName: TICKETS_TABLE,
-            IndexName: "municipality_id-index",
-            KeyConditionExpression: "municipality_id = :municipality_id",
-            ExpressionAttributeValues: {
-                ":municipality_id": municipality
-            }
-        });
-
-        const response = await dynamoDBClient.send(queryCommand);
-        const items = response.Items;
-
-        if (items && items.length > 0) {
-            for (const item of items) {
-                const updateCommand = new QueryCommand({
-                    TableName: TICKET_UPDATE_TABLE,
-                    IndexName: "ticket_id-index",
-                    KeyConditionExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": item.ticket_id
-                    },
-                    Select: "COUNT"
-                });
-
-                const queryResponse = await dynamoDBClient.send(updateCommand);
-                item.commentcount = queryResponse.Count || 0;
-            }
-
-            await getUserProfile(items);
-            return items;
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "NoTickets",
-                    Message: "Doesn't have a ticket in municipality",
-                }
-            };
-            throw new Error(JSON.stringify(errorResponse));
-        }
-
-    } catch (e: any) {
-        return { Status: "FAILED", Error: `${e.message}` };
     }
-};
 
+    const userExistCommand = new ScanCommand({
+        TableName: WATCHLIST_TABLE,
+        FilterExpression: "user_id = :username AND ticket_id = :ticket_id",
+        ExpressionAttributeValues: {
+            ":username": { S: ticketData.username },
+            ":ticket_id": { S: ticketData.ticket_id },
+        },
+    });
 
-export const addWatchlist = async (ticketData: TicketData) => {
-    try {
-        const requiredFields = ["username", "ticket_id"];
-        for (const field of requiredFields) {
-            if (!(field in ticketData)) {
-                const errorResponse = {
-                    Error: {
-                        Code: "IncorrectFields",
-                        Message: `Missing required field: ${field}`,
-                    },
-                };
-                throw new ClientError(errorResponse, "InvalidFields");
-            }
-        }
-
-        const userExistCommand = new ScanCommand({
-            TableName: WATCHLIST_TABLE,
-            FilterExpression: "user_id = :username AND ticket_id = :ticket_id",
-            ExpressionAttributeValues: {
-                ":username": { S: ticketData.username },
-                ":ticket_id": { S: ticketData.ticket_id },
+    const userExist = await dynamoDBClient.send(userExistCommand);
+    if (userExist.Items && userExist.Items.length > 0) {
+        const errorResponse = {
+            Error: {
+                Code: "AlreadyExists",
+                Message: "Already have ticket in watchlist",
             },
-        });
-
-        const userExist = await dynamoDBClient.send(userExistCommand);
-        if (userExist.Items && userExist.Items.length > 0) {
-            const errorResponse = {
-                Error: {
-                    Code: "AlreadyExists",
-                    Message: "Already have ticket in watchlist",
-                },
-            };
-            throw new ClientError(errorResponse, "AlreadyExists");
-        }
-
-        if (!(await doesTicketExist(ticketData.ticket_id))) {
-            const errorResponse = {
-                Error: {
-                    Code: "TicketDoesntExists",
-                    Message: "Ticket doesn't exist",
-                },
-            };
-            throw new ClientError(errorResponse, "TicketDoesntExists");
-        }
-
-        const watchlistId = generateId();
-
-        const watchlistItem = {
-            watchlist_id: { S: watchlistId },
-            ticket_id: { S: ticketData.ticket_id },
-            user_id: { S: ticketData.username },
         };
-
-        const putItemCommand = new PutItemCommand({
-            TableName: WATCHLIST_TABLE,
-            Item: watchlistItem,
-        });
-
-        await dynamoDBClient.send(putItemCommand);
-
-        return {
-            Status: "Success",
-            Message: `Ticket has been added to ${ticketData.username} with id of: ${watchlistId}`,
-        };
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            return { Status: "FAILED", Error: e.response.Error.Message };
-        }
-        return { Status: "FAILED", Error: e.message };
+        throw new ClientError(errorResponse, "AlreadyExists");
     }
+
+    if (!(await doesTicketExist(ticketData.ticket_id))) {
+        const errorResponse = {
+            Error: {
+                Code: "TicketDoesntExists",
+                Message: "Ticket doesn't exist",
+            },
+        };
+        throw new ClientError(errorResponse, "TicketDoesntExists");
+    }
+
+    const watchlistId = generateId();
+
+    const watchlistItem = {
+        watchlist_id: { S: watchlistId },
+        ticket_id: { S: ticketData.ticket_id },
+        user_id: { S: ticketData.username },
+    };
+
+    const putItemCommand = new PutItemCommand({
+        TableName: WATCHLIST_TABLE,
+        Item: watchlistItem,
+    });
+
+    await dynamoDBClient.send(putItemCommand);
+
+    return {
+        Status: "Success",
+        Message: `Ticket has been added to ${ticketData.username} with id of: ${watchlistId}`,
+    };
 };
 
 export const getFaultTypes = async () => {
-    try {
-        const response = await dynamoDBClient.send(new ScanCommand({ TableName: ASSETS_TABLE }));
-        const assets = response.Items || [];
+    const response = await dynamoDBClient.send(new ScanCommand({ TableName: ASSETS_TABLE }));
+    const assets = response.Items || [];
 
-        const faultTypes = assets.map((asset: any) => ({
-            asset_id: asset.asset_id,
-            assetIcon: asset.assetIcon || "",
-            multiplier: asset.multiplier || 1,
-        }));
+    const faultTypes = assets.map((asset: any) => ({
+        asset_id: asset.asset_id,
+        assetIcon: asset.assetIcon || "",
+        multiplier: asset.multiplier || 1,
+    }));
 
-        return formatResponse(200, faultTypes);
-    } catch (error: any) {
-        const error_message = error.message;
-        return { Status: "FAILED", Error: error_message };
-    }
+    return formatResponse(200, faultTypes);
 };
 
 
 export const getMyTickets = async (tickets_data: string | null) => {
-    try {
-        if (!tickets_data) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: "Missing required field: username",
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-
-        const queryCommand = new QueryCommand({
-            TableName: TICKETS_TABLE,
-            IndexName: "username-index",
-            KeyConditionExpression: "username = :username",
-            ExpressionAttributeValues: {
-                ":username": { S: tickets_data },
+    if (!tickets_data) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required field: username",
             },
-        });
+        };
+        throw new ClientError(errorResponse, "InvalidFields");
+    }
 
-        const response = await dynamoDBClient.send(queryCommand);
-        const items = response.Items;
+    const queryCommand = new QueryCommand({
+        TableName: TICKETS_TABLE,
+        IndexName: "username-index",
+        KeyConditionExpression: "username = :username",
+        ExpressionAttributeValues: {
+            ":username": { S: tickets_data },
+        },
+    });
 
-        if (items && items.length > 0) {
-            return items;
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "NoTickets",
-                    Message: "Doesn't have ticket",
-                },
-            };
-            throw new ClientError(errorResponse, "NoTicket");
-        }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+    const response = await dynamoDBClient.send(queryCommand);
+    const items = response.Items;
+
+    if (items && items.length > 0) {
+        return items;
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "NoTickets",
+                Message: "Doesn't have ticket",
+            },
+        };
+        throw new ClientError(errorResponse, "NoTicket");
     }
 };
 
-export const getInMyMunicipality = async (ticketsData: string | null) => {
-    try {
-        if (!ticketsData) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: "Missing required field: municipality",
+export const getInMyMunicipality = async (municipality: string | null) => {
+    if (!municipality) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required field: municipality",
+            }
+        };
+        throw new Error(JSON.stringify(errorResponse));
+    }
+
+    const queryCommand = new QueryCommand({
+        TableName: TICKETS_TABLE,
+        IndexName: "municipality_id-index",
+        KeyConditionExpression: "municipality_id = :municipality_id",
+        ExpressionAttributeValues: {
+            ":municipality_id": municipality
+        }
+    });
+
+    const response = await dynamoDBClient.send(queryCommand);
+    const items = response.Items;
+
+    if (items && items.length > 0) {
+        for (const item of items) {
+            const updateCommand = new QueryCommand({
+                TableName: TICKET_UPDATE_TABLE,
+                IndexName: "ticket_id-index",
+                KeyConditionExpression: "ticket_id = :ticket_id",
+                ExpressionAttributeValues: {
+                    ":ticket_id": item.ticket_id
                 },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
+                Select: "COUNT"
+            });
+
+            const queryResponse = await dynamoDBClient.send(updateCommand);
+            item.commentcount = queryResponse.Count || 0;
         }
 
-        const queryCommand = new QueryCommand({
+        await getUserProfile(items);
+        return items;
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "NoTickets",
+                Message: "Doesn't have a ticket in municipality",
+            }
+        };
+        throw new Error(JSON.stringify(errorResponse));
+    }
+};
+
+export const getOpenTicketsInMunicipality = async (ticketsData: string | null) => {
+    if (!ticketsData) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required field: municipality",
+            },
+        };
+        throw new ClientError(errorResponse, "InvalidFields");
+    }
+
+    const response = await dynamoDBClient.send(
+        new QueryCommand({
             TableName: TICKETS_TABLE,
             IndexName: "municipality_id-index",
             KeyConditionExpression: "municipality_id = :municipality_id",
             ExpressionAttributeValues: {
                 ":municipality_id": ticketsData,
             },
-        });
+        })
+    );
+    const items = response.Items;
 
-        const response = await dynamoDBClient.send(queryCommand);
-        const items = response.Items;
-
-        if (items && items.length > 0) {
-            for (const item of items) {
-                const updateCommand = new QueryCommand({
+    if (items && items.length > 0) {
+        for (const item of items) {
+            const responseItem = await dynamoDBClient.send(
+                new QueryCommand({
                     TableName: TICKET_UPDATE_TABLE,
                     IndexName: "ticket_id-index",
                     KeyConditionExpression: "ticket_id = :ticket_id",
                     ExpressionAttributeValues: {
                         ":ticket_id": item.ticket_id,
                     },
-                });
+                })
+            );
+            item.commentcount = responseItem.Count || 0;
+        }
 
-                const queryResponse = await dynamoDBClient.send(updateCommand);
-                item.commentcount = queryResponse.Count || 0;
-            }
+        await getUserProfile(items);
+        const filteredItems = items.filter((item) => item.state === "Opened");
 
-            await getUserProfile(items);
-            return items;
-        } else {
+        if (filteredItems.length <= 0) {
             const errorResponse = {
                 Error: {
                     Code: "NoTickets",
-                    Message: "Doesn't have ticket in municipality",
+                    Message: "Doesn't have open tickets in municipality",
                 },
             };
             throw new ClientError(errorResponse, "NoTicket");
         }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
-    }
-};
 
-export const getOpenTicketsInMunicipality = async (ticketsData: string | null) => {
-    try {
-        if (!ticketsData) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: "Missing required field: municipality",
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-
-        const response = await dynamoDBClient.send(
-            new QueryCommand({
-                TableName: TICKETS_TABLE,
-                IndexName: "municipality_id-index",
-                KeyConditionExpression: "municipality_id = :municipality_id",
-                ExpressionAttributeValues: {
-                    ":municipality_id": ticketsData,
-                },
-            })
-        );
-        const items = response.Items;
-
-        if (items && items.length > 0) {
-            for (const item of items) {
-                const responseItem = await dynamoDBClient.send(
-                    new QueryCommand({
-                        TableName: TICKET_UPDATE_TABLE,
-                        IndexName: "ticket_id-index",
-                        KeyConditionExpression: "ticket_id = :ticket_id",
-                        ExpressionAttributeValues: {
-                            ":ticket_id": item.ticket_id,
-                        },
-                    })
-                );
-                item.commentcount = responseItem.Count || 0;
-            }
-
-            await getUserProfile(items);
-            const filteredItems = items.filter((item) => item.state === "Opened");
-
-            if (filteredItems.length <= 0) {
-                const errorResponse = {
-                    Error: {
-                        Code: "NoTickets",
-                        Message: "Doesn't have open tickets in municipality",
-                    },
-                };
-                throw new ClientError(errorResponse, "NoTicket");
-            }
-
-            return filteredItems;
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "NoTickets",
-                    Message: "Doesn't have ticket in municipality",
-                },
-            };
-            throw new ClientError(errorResponse, "NoTicket");
-        }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+        return filteredItems;
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "NoTickets",
+                Message: "Doesn't have ticket in municipality",
+            },
+        };
+        throw new ClientError(errorResponse, "NoTicket");
     }
 };
 
 
 export const getWatchlist = async (userId: string) => {
-    try {
-        const collective: any[] = [];
+    const collective: any[] = [];
 
-        if (!userId) {
-            throw new Error("IncorrectFields: Missing required query: username");
+    if (!userId) {
+        throw new Error("IncorrectFields: Missing required query: username");
+    }
+
+    const scanParams = {
+        TableName: "watchlist_table",
+        FilterExpression: "user_id = :user_id",
+        ExpressionAttributeValues: {
+            ":user_id": userId.toLowerCase()
         }
+    };
 
-        const scanParams = {
-            TableName: "watchlist_table",
-            FilterExpression: "user_id = :user_id",
-            ExpressionAttributeValues: {
-                ":user_id": userId.toLowerCase()
-            }
-        };
+    const scanCommand = new ScanCommand(scanParams);
+    const response = await dynamoDBClient.send(scanCommand);
+    const items = response.Items;
 
-        const scanCommand = new ScanCommand(scanParams);
-        const response = await dynamoDBClient.send(scanCommand);
-        const items = response.Items;
+    if (items && items.length > 0) {
+        for (const item of items) {
+            const queryParams = {
+                TableName: "tickets_table",
+                KeyConditionExpression: "ticket_id = :ticket_id",
+                ExpressionAttributeValues: {
+                    ":ticket_id": item.ticket_id
+                }
+            };
 
-        if (items && items.length > 0) {
-            for (const item of items) {
-                const queryParams = {
-                    TableName: "tickets_table",
-                    KeyConditionExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": item.ticket_id
+            const queryCommand = new QueryCommand(queryParams);
+            const respItem = await dynamoDBClient.send(queryCommand);
+            const ticketsItems = respItem.Items;
+
+            if (ticketsItems && ticketsItems.length > 0) {
+                for (const tckItem of ticketsItems) {
+                    const updateCommand = new QueryCommand({
+                        TableName: TICKET_UPDATE_TABLE,
+                        IndexName: "ticket_id-index",
+                        KeyConditionExpression: "ticket_id = :ticket_id",
+                        ExpressionAttributeValues: {
+                            ":ticket_id": tckItem.ticket_id
+                        },
+                        Select: "COUNT"
+                    });
+
+                    const queryResponse = await dynamoDBClient.send(updateCommand);
+                    tckItem.commentcount = queryResponse.Count || 0;
+                }
+            } else {
+                const errorResponse = {
+                    Error: {
+                        Code: "Inconsistency",
+                        Message: "Inconsistency in ticket_id",
                     }
                 };
-
-                const queryCommand = new QueryCommand(queryParams);
-                const respItem = await dynamoDBClient.send(queryCommand);
-                const ticketsItems = respItem.Items;
-
-                if (ticketsItems && ticketsItems.length > 0) {
-                    for (const tckItem of ticketsItems) {
-                        const updateCommand = new QueryCommand({
-                            TableName: TICKET_UPDATE_TABLE,
-                            IndexName: "ticket_id-index",
-                            KeyConditionExpression: "ticket_id = :ticket_id",
-                            ExpressionAttributeValues: {
-                                ":ticket_id": tckItem.ticket_id
-                            },
-                            Select: "COUNT"
-                        });
-
-                        const queryResponse = await dynamoDBClient.send(updateCommand);
-                        tckItem.commentcount = queryResponse.Count || 0;
-                    }
-                } else {
-                    const errorResponse = {
-                        Error: {
-                            Code: "Inconsistency",
-                            Message: "Inconsistency in ticket_id",
-                        }
-                    };
-                    throw new Error(JSON.stringify(errorResponse));
-                }
-
-                await getUserProfile(ticketsItems);
-                collective.push(...ticketsItems);
+                throw new Error(JSON.stringify(errorResponse));
             }
-            return collective;
-        } else {
-            throw new Error("NoWatchlist: Doesn't have a watchlist");
-        }
 
-    } catch (e: any) {
-        return { Status: "FAILED", Error: `${e.message}` };
+            await getUserProfile(ticketsItems);
+            collective.push(...ticketsItems);
+        }
+        return collective;
+    } else {
+        throw new Error("NoWatchlist: Doesn't have a watchlist");
     }
 };
 
@@ -572,11 +473,7 @@ export const interactTicket = async (ticketData: any) => {
             throw new ClientError(errorResponse, "NonExistence");
         }
     } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+        throw e;
     }
 };
 
@@ -661,393 +558,343 @@ export const getMostUpvoted = async () => {
             throw new Error("TicketDontExist: Seems tickets don't exist");
         }
     } catch (error: any) {
-        return { Status: "FAILED", Error: error.message };
+        throw error;
     }
 };
 
 export const closeTicket = async (ticketData: any) => {
-    try {
-        const requiredFields = ["ticket_id"];
+    const requiredFields = ["ticket_id"];
 
-        for (const field of requiredFields) {
-            if (!(field in ticketData)) {
-                const errorResponse = {
-                    Error: {
-                        Code: "IncorrectFields",
-                        Message: `Missing required field: ${field}`,
-                    },
-                };
-                throw new ClientError(errorResponse, "InvalidFields");
-            }
-        }
-
-        if (!(await doesTicketExist(ticketData.ticket_id))) {
+    for (const field of requiredFields) {
+        if (!(field in ticketData)) {
             const errorResponse = {
                 Error: {
-                    Code: "TicketDoesntExist",
-                    Message: "Ticket doesn't exist",
+                    Code: "IncorrectFields",
+                    Message: `Missing required field: ${field}`,
                 },
             };
-            throw new ClientError(errorResponse, "TicketDoesntExist");
+            throw new ClientError(errorResponse, "InvalidFields");
         }
+    }
 
-        const ticketId = ticketData.ticket_id;
-        const updateExpression = "set #state = :r";
-        const expressionAttributeNames = { "#state": "state" };
-        const expressionAttributeValues = { ":r": "Closed" };
+    if (!(await doesTicketExist(ticketData.ticket_id))) {
+        const errorResponse = {
+            Error: {
+                Code: "TicketDoesntExist",
+                Message: "Ticket doesn't exist",
+            },
+        };
+        throw new ClientError(errorResponse, "TicketDoesntExist");
+    }
 
-        const response = await updateTicketTable(
-            ticketId,
-            updateExpression,
-            expressionAttributeNames,
-            expressionAttributeValues
-        );
+    const ticketId = ticketData.ticket_id;
+    const updateExpression = "set #state = :r";
+    const expressionAttributeNames = { "#state": "state" };
+    const expressionAttributeValues = { ":r": "Closed" };
 
-        const dateExpression = "set #dateClosed = :r";
-        const closeExpressionAttributeNames = { "#dateClosed": "dateClosed" };
-        const currentDatetime = new Date();
-        const formattedDatetime = currentDatetime.toISOString();
-        const closeExpressionAttributeValues = { ":r": formattedDatetime };
+    const response = await updateTicketTable(
+        ticketId,
+        updateExpression,
+        expressionAttributeNames,
+        expressionAttributeValues
+    );
 
-        const responseClosed = await updateTicketTable(
-            ticketId,
-            dateExpression,
-            closeExpressionAttributeNames,
-            closeExpressionAttributeValues
-        );
+    const dateExpression = "set #dateClosed = :r";
+    const closeExpressionAttributeNames = { "#dateClosed": "dateClosed" };
+    const currentDatetime = new Date();
+    const formattedDatetime = currentDatetime.toISOString();
+    const closeExpressionAttributeValues = { ":r": formattedDatetime };
 
-        if (response.$metadata) {
-            return {
-                Status: "Success",
-                Ticket_id: ticketId,
-            };
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "UpdateError",
-                    Message: "Error occurred while trying to update",
-                },
-            };
-            throw new ClientError(errorResponse, "UpdateError");
-        }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+    const responseClosed = await updateTicketTable(
+        ticketId,
+        dateExpression,
+        closeExpressionAttributeNames,
+        closeExpressionAttributeValues
+    );
+
+    if (response.$metadata) {
+        return {
+            Status: "Success",
+            Ticket_id: ticketId,
+        };
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "UpdateError",
+                Message: "Error occurred while trying to update",
+            },
+        };
+        throw new ClientError(errorResponse, "UpdateError");
     }
 };
 
 export const acceptTicket = async (ticketData: any) => {
-    try {
-        const requiredFields = ["ticket_id"];
+    const requiredFields = ["ticket_id"];
 
-        for (const field of requiredFields) {
-            if (!(field in ticketData)) {
-                const errorResponse = {
-                    Error: {
-                        Code: "IncorrectFields",
-                        Message: `Missing required field: ${field}`,
-                    },
-                };
-                throw new ClientError(errorResponse, "InvalidFields");
-            }
-        }
-
-        if (!(await doesTicketExist(ticketData.ticket_id))) {
+    for (const field of requiredFields) {
+        if (!(field in ticketData)) {
             const errorResponse = {
                 Error: {
-                    Code: "TicketDoesntExist",
-                    Message: "Ticket doesn't exist",
+                    Code: "IncorrectFields",
+                    Message: `Missing required field: ${field}`,
                 },
             };
-            throw new ClientError(errorResponse, "TicketDoesntExist");
+            throw new ClientError(errorResponse, "InvalidFields");
         }
+    }
 
-        const ticketId = ticketData.ticket_id;
-        const updateExpression = "set #state = :r";
-        const expressionAttributeNames = { "#state": "state" };
-        const expressionAttributeValues = { ":r": "Taking Tenders" };
+    if (!(await doesTicketExist(ticketData.ticket_id))) {
+        const errorResponse = {
+            Error: {
+                Code: "TicketDoesntExist",
+                Message: "Ticket doesn't exist",
+            },
+        };
+        throw new ClientError(errorResponse, "TicketDoesntExist");
+    }
 
-        const response = await updateTicketTable(
-            ticketId,
-            updateExpression,
-            expressionAttributeNames,
-            expressionAttributeValues
-        );
+    const ticketId = ticketData.ticket_id;
+    const updateExpression = "set #state = :r";
+    const expressionAttributeNames = { "#state": "state" };
+    const expressionAttributeValues = { ":r": "Taking Tenders" };
 
-        if (response.$metadata) {
-            return {
-                Status: "Success",
-                Ticket_id: ticketId,
-            };
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "UpdateError",
-                    Message: "Error occurred while trying to update",
-                },
-            };
-            throw new ClientError(errorResponse, "UpdateError");
-        }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+    const response = await updateTicketTable(
+        ticketId,
+        updateExpression,
+        expressionAttributeNames,
+        expressionAttributeValues
+    );
+
+    if (response.$metadata) {
+        return {
+            Status: "Success",
+            Ticket_id: ticketId,
+        };
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "UpdateError",
+                Message: "Error occurred while trying to update",
+            },
+        };
+        throw new ClientError(errorResponse, "UpdateError");
     }
 };
 
 
 export const getCompanyTickets = async (companyname: string | null): Promise<any> => {
-    try {
-        if (!companyname) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: "Missing required query: company",
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-
-        const collective: any[] = [];
-        const company_id = await getCompanyIDFromName(companyname);
-
-        const responseTender = await dynamoDBClient.send(new ScanCommand({
-            TableName: "tenders_table",
-            FilterExpression: "company_id = :company_id",
-            ExpressionAttributeValues: {
-                ":company_id": { S: company_id },
+    if (!companyname) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required query: company",
             },
-        }));
+        };
+        throw new ClientError(errorResponse, "InvalidFields");
+    }
 
-        const tenderItems = responseTender.Items;
+    const collective: any[] = [];
+    const company_id = await getCompanyIDFromName(companyname);
 
-        if (tenderItems && tenderItems.length > 0) {
-            for (const item of tenderItems) {
-                const responseCompanyTickets = await dynamoDBClient.send(new QueryCommand({
-                    TableName: "tickets_table",
-                    KeyConditionExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": { S: item["ticket_id"].S },
-                    },
-                }));
+    const responseTender = await dynamoDBClient.send(new ScanCommand({
+        TableName: "tenders_table",
+        FilterExpression: "company_id = :company_id",
+        ExpressionAttributeValues: {
+            ":company_id": { S: company_id },
+        },
+    }));
 
-                const companyTickets = responseCompanyTickets.Items;
+    const tenderItems = responseTender.Items;
 
-                if (companyTickets && companyTickets.length > 0) {
-                    await getUserProfile(companyTickets);
-                    collective.push(...companyTickets);
-                }
-            }
-        }
-
-        const response = await dynamoDBClient.send(new ScanCommand({
-            TableName: TICKETS_TABLE,
-            FilterExpression: "attribute_exists(upvotes)",
-        }));
-
-        const items = response.Items!;
-        const sortedItems = items.sort((a, b) => b["upvotes"].N - a["upvotes"].N);
-        const filteredItems = sortedItems.filter(item => item["state"].S === "Taking Tenders");
-        const topItems = filteredItems.slice(0, 6);
-
-        if (topItems.length > 0) {
-            for (const item of topItems) {
-                const responseItem = await dynamoDBClient.send(new ScanCommand({
-                    TableName: TICKET_UPDATE_TABLE,
-                    FilterExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": { S: item["ticket_id"].S },
-                    },
-                }));
-
-                item.commentcount = responseItem.Count || 0;
-            }
-            await getUserProfile(topItems);
-            collective.push(...topItems);
-            return collective;
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "TicketDontExist",
-                    Message: "Seems tickets don't exist",
+    if (tenderItems && tenderItems.length > 0) {
+        for (const item of tenderItems) {
+            const responseCompanyTickets = await dynamoDBClient.send(new QueryCommand({
+                TableName: "tickets_table",
+                KeyConditionExpression: "ticket_id = :ticket_id",
+                ExpressionAttributeValues: {
+                    ":ticket_id": { S: item["ticket_id"].S },
                 },
-            };
-            throw new ClientError(errorResponse, "NonExistence");
+            }));
+
+            const companyTickets = responseCompanyTickets.Items;
+
+            if (companyTickets && companyTickets.length > 0) {
+                await getUserProfile(companyTickets);
+                collective.push(...companyTickets);
+            }
         }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
+    }
+
+    const response = await dynamoDBClient.send(new ScanCommand({
+        TableName: TICKETS_TABLE,
+        FilterExpression: "attribute_exists(upvotes)",
+    }));
+
+    const items = response.Items!;
+    const sortedItems = items.sort((a, b) => b["upvotes"].N - a["upvotes"].N);
+    const filteredItems = sortedItems.filter(item => item["state"].S === "Taking Tenders");
+    const topItems = filteredItems.slice(0, 6);
+
+    if (topItems.length > 0) {
+        for (const item of topItems) {
+            const responseItem = await dynamoDBClient.send(new ScanCommand({
+                TableName: TICKET_UPDATE_TABLE,
+                FilterExpression: "ticket_id = :ticket_id",
+                ExpressionAttributeValues: {
+                    ":ticket_id": { S: item["ticket_id"].S },
+                },
+            }));
+
+            item.commentcount = responseItem.Count || 0;
         }
-        return { Status: "FAILED", Error: e.message };
+        await getUserProfile(topItems);
+        collective.push(...topItems);
+        return collective;
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "TicketDontExist",
+                Message: "Seems tickets don't exist",
+            },
+        };
+        throw new ClientError(errorResponse, "NonExistence");
     }
 };
 
 
 export const getOpenCompanyTickets = async (): Promise<any> => {
-    try {
-        const collective: any[] = [];
+    const collective: any[] = [];
 
-        const response = await dynamoDBClient.send(new ScanCommand({
-            TableName: TICKETS_TABLE,
-            FilterExpression: "attribute_exists(upvotes)",
-        }));
+    const response = await dynamoDBClient.send(new ScanCommand({
+        TableName: TICKETS_TABLE,
+        FilterExpression: "attribute_exists(upvotes)",
+    }));
 
-        const items = response.Items || [];
-        const sortedItems = items.sort((a, b) => b["upvotes"].N - a["upvotes"].N);
-        const filteredItems = sortedItems.filter(item => item["state"].S === "Taking Tenders");
-        const topItems = filteredItems.slice(0, 6);
+    const items = response.Items || [];
+    const sortedItems = items.sort((a, b) => b["upvotes"].N - a["upvotes"].N);
+    const filteredItems = sortedItems.filter(item => item["state"].S === "Taking Tenders");
+    const topItems = filteredItems.slice(0, 6);
 
-        if (topItems.length > 0) {
-            for (const item of topItems) {
-                const responseItem = await dynamoDBClient.send(new QueryCommand({
-                    TableName: TICKET_UPDATE_TABLE,
-                    IndexName: "ticket_id-index",
-                    KeyConditionExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": { S: item["ticket_id"].S },
-                    },
-                }));
-
-                item["commentcount"] = responseItem.Count || 0;
-            }
-            await getUserProfile(topItems);
-            return topItems;
-        } else {
-            const errorResponse = {
-                Error: {
-                    Code: "TicketDontExist",
-                    Message: "Seems tickets don't exist",
+    if (topItems.length > 0) {
+        for (const item of topItems) {
+            const responseItem = await dynamoDBClient.send(new QueryCommand({
+                TableName: TICKET_UPDATE_TABLE,
+                IndexName: "ticket_id-index",
+                KeyConditionExpression: "ticket_id = :ticket_id",
+                ExpressionAttributeValues: {
+                    ":ticket_id": { S: item["ticket_id"].S },
                 },
-            };
-            throw new ClientError(errorResponse, "NonExistence");
+            }));
+
+            item["commentcount"] = responseItem.Count || 0;
         }
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+        await getUserProfile(topItems);
+        return topItems;
+    } else {
+        const errorResponse = {
+            Error: {
+                Code: "TicketDontExist",
+                Message: "Seems tickets don't exist",
+            },
+        };
+        throw new ClientError(errorResponse, "NonExistence");
     }
 };
 
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
-    try {
-        // Validate required fields
-        if (!comment || !ticket_id || !image_url || !user_id) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: "Missing required field: comment, ticket_id, or image_url",
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-
-        // Validate ticket_id
-        ticket_id = validateTicketId(ticket_id);
-
-        // Generate unique ticket update ID (just to keep track of the comments)
-        const ticketupdate_id = generateId();
-
-        // Get current date and time
-        const currentDatetime = new Date();
-        const formattedDatetime = currentDatetime.toISOString();
-
-        // Prepare comment item
-        const commentItem = {
-            ticketupdate_id: { S: ticketupdate_id },
-            comment: { S: comment },
-            date: { S: formattedDatetime },
-            imageURL: { S: image_url },
-            ticket_id: { S: ticket_id },
-            user_id: { S: user_id },
+    // Validate required fields
+    if (!comment || !ticket_id || !image_url || !user_id) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required field: comment, ticket_id, or image_url",
+            },
         };
-
-        // Insert comment into ticket_updates table
-        const putItemCommand = new PutItemCommand({
-            TableName: "ticket_updates",
-            Item: commentItem,
-        });
-
-        await dynamoDBClient.send(putItemCommand);
-
-        const response = {
-            message: "Comment added successfully",
-            ticketupdate_id: ticketupdate_id,
-        };
-        return formatResponse(200, response);
-
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+        throw new ClientError(errorResponse, "InvalidFields");
     }
+
+    // Validate ticket_id
+    ticket_id = validateTicketId(ticket_id);
+
+    // Generate unique ticket update ID (just to keep track of the comments)
+    const ticketupdate_id = generateId();
+
+    // Get current date and time
+    const currentDatetime = new Date();
+    const formattedDatetime = currentDatetime.toISOString();
+
+    // Prepare comment item
+    const commentItem = {
+        ticketupdate_id: { S: ticketupdate_id },
+        comment: { S: comment },
+        date: { S: formattedDatetime },
+        imageURL: { S: image_url },
+        ticket_id: { S: ticket_id },
+        user_id: { S: user_id },
+    };
+
+    // Insert comment into ticket_updates table
+    const putItemCommand = new PutItemCommand({
+        TableName: "ticket_updates",
+        Item: commentItem,
+    });
+
+    await dynamoDBClient.send(putItemCommand);
+
+    const response = {
+        message: "Comment added successfully",
+        ticketupdate_id: ticketupdate_id,
+    };
+    return formatResponse(200, response);
 };
 
 
 export const addTicketCommentWithoutImage = async (comment: string, ticket_id: string, user_id: string) => {
-    try {
-        // Validate required fields
-        if (!comment || !ticket_id || !user_id) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: "Missing required field: comment or ticket_id",
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-
-        // Validate ticket_id
-        ticket_id = validateTicketId(ticket_id);
-
-        // Generate unique ticket update ID
-        const ticketupdate_id = generateId();
-
-        // Get current date and time
-        const currentDatetime = new Date();
-        const formattedDatetime = currentDatetime.toISOString();
-
-        // Prepare comment item
-        const commentItem = {
-            ticketupdate_id: { S: ticketupdate_id },
-            comment: { S: comment },
-            date: { S: formattedDatetime },
-            imageURL: { S: "<empty>" },  // Set to <empty> if no image is provided
-            ticket_id: { S: ticket_id },
-            user_id: { S: user_id },
+    // Validate required fields
+    if (!comment || !ticket_id || !user_id) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required field: comment or ticket_id",
+            },
         };
-
-        // Insert comment into ticket_updates table
-        const putItemCommand = new PutItemCommand({
-            TableName: TICKET_UPDATE_TABLE,
-            Item: commentItem,
-        });
-
-        await dynamoDBClient.send(putItemCommand);
-
-        const response = {
-            message: "Comment added successfully",
-            ticketupdate_id: ticketupdate_id,
-        };
-        return formatResponse(200, response);
-
-    } catch (e: any) {
-        if (e instanceof ClientError) {
-            const errorMessage = e.response.Error.Message;
-            return { Status: "FAILED", Error: errorMessage };
-        }
-        return { Status: "FAILED", Error: e.message };
+        throw new ClientError(errorResponse, "InvalidFields");
     }
+
+    // Validate ticket_id
+    ticket_id = validateTicketId(ticket_id);
+
+    // Generate unique ticket update ID
+    const ticketupdate_id = generateId();
+
+    // Get current date and time
+    const currentDatetime = new Date();
+    const formattedDatetime = currentDatetime.toISOString();
+
+    // Prepare comment item
+    const commentItem = {
+        ticketupdate_id: { S: ticketupdate_id },
+        comment: { S: comment },
+        date: { S: formattedDatetime },
+        imageURL: { S: "<empty>" },  // Set to <empty> if no image is provided
+        ticket_id: { S: ticket_id },
+        user_id: { S: user_id },
+    };
+
+    // Insert comment into ticket_updates table
+    const putItemCommand = new PutItemCommand({
+        TableName: TICKET_UPDATE_TABLE,
+        Item: commentItem,
+    });
+
+    await dynamoDBClient.send(putItemCommand);
+
+    const response = {
+        message: "Comment added successfully",
+        ticketupdate_id: ticketupdate_id,
+    };
+    return formatResponse(200, response);
 };
 
 

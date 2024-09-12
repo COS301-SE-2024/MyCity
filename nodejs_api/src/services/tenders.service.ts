@@ -1,8 +1,8 @@
-import { PutItemCommand, QueryCommand, ScanCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
-import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBClient, TENDERS_TABLE, TICKETS_TABLE } from '../config/dynamodb.config';
-import { ClientError } from '../types/error.types';
-import { generateId, getCompanyIDFromName } from '../utils/tickets.utils';
-import { assignCompanyName, assignLongLat, assignMuni } from '../utils/tenders.utils';
+import { PutItemCommand, QueryCommand, ScanCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
+import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { ClientError } from "../types/error.types";
+import { generateId, getCompanyIDFromName } from "../utils/tickets.utils";
+import { assignCompanyName, assignLongLat, assignMuni } from "../utils/tenders.utils";
 
 interface TenderData {
     company_name: string;
