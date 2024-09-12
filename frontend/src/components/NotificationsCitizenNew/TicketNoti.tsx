@@ -121,8 +121,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
             </div>
 
             {/* Fault's Municipality */}
-            <div className="flex items-center justify-end gap-2  w-[25%]">
-              <div className="ml-2 lg:text-md md:text-sm font-bold">
+            <div className="flex items-center justify-end gap-2  w-[30%]">
+              <div className="lg:text-md md:text-sm font-bold">
                 {municipality_id}
               </div>
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
