@@ -36,6 +36,9 @@ export interface Municipality {
     province: string;
     email: string;
     contactNumber: string;
+    municipalityLogo: string;
+    latitude: string;
+    longitude: string;
 }
 
 
@@ -56,6 +59,9 @@ export interface Ticket {
     state: string;
     upvotes: number;
     viewCount: number;
+    imageURL: string;
+    latitude: string;
+    longitude: string;
 }
 
 export interface FaultGeoData {
