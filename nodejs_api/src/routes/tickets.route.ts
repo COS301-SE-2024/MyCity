@@ -16,6 +16,8 @@ router.post("/close", ticketsController.closeTicket);
 
 router.get("/view", ticketsController.viewTicketData);
 
+router.get("/fault-types", ticketsController.getFaultTypes);
+
 router.get("/getmytickets", ticketsController.getMyTickets);
 
 // get tickets within a given municipality
