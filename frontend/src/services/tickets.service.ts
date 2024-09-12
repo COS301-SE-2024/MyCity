@@ -410,31 +410,27 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 }
 
-export async function CreatTicket(sessiont: string, assett: string, descrip: string, lat: string, longi: string, fullAddress: string, usern: string): Promise<boolean> {
-    const data = {
-        asset: assett,
-        description: descrip,
-        latitude: lat,
-        longitude: longi,
-        address: fullAddress,
-        username: usern,
-        state: "Opened"
-    }
-    const apiURL = "/api/tickets/create";
+export async function CreatTicket(sessiont: string,formData : FormData): Promise<boolean> {
+    // const API_BASE_URL = process.env.API_BASE_URL;
+
+    // if (!API_BASE_URL) {
+    //     throw new Error("missing api base url");
+    // }
+    console.log(sessiont)
+    const apiURL = "https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
             "Authorization": `Bearer ${sessiont}`,
         },
-        body: JSON.stringify(data),
+        body: formData,
     });
 
     if (!response.ok) {
         return false;
     }
     const result = await response.json();
-    if(result.data.Status)
+    if(result.data?.Status)
     {
         return false;
     }
