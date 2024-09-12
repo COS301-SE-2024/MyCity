@@ -314,7 +314,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     setIsImageExpanded((prev) => !prev);
   };
 
-   // New state for swapping map and image
+  // New state for swapping map and image
 
   const toggleLayout = () => {
     setIsMapLeft((prev) => !prev); // Toggle the layout
@@ -401,20 +401,19 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             </div>
 
             {/* Map or Image */}
-            <div className="w-full border flex items-center justify-center">
+            <div className="w-full h-full border flex items-center justify-center">
               {isMapLeft ? (
-                <div
-                  className="w-full h-full flex items-center justify-center text-gray-500"
-                  id="map"
-                >
-                  <MapComponent
-                    longitude={Number(longitude)}
-                    latitude={Number(latitude)}
-                    zoom={14}
-                    containerId="map"
-                    style="mapbox://styles/mapbox/streets-v12"
-                  />
-                </div>
+                <>
+                  <div className="flex justify-center" id="map">
+                    <MapComponent
+                      longitude={Number(longitude)}
+                      latitude={Number(latitude)}
+                      zoom={14}
+                      containerId="map"
+                      style="mapbox://styles/mapbox/streets-v12"
+                    />
+                  </div>
+                </>
               ) : (
                 <>
                   {image && !imageError ? (
