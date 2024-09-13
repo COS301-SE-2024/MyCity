@@ -52,7 +52,7 @@ def create_deployment(api_id, stage_name):
 
 
 if __name__ == "__main__":
-    app_name = "mycity-api"
+    app_name = "mycity-python-api"
     stage_name = os.getenv("API_STAGE_NAME")
 
     if stage_name == None:
