@@ -2,7 +2,7 @@ import { PutItemCommand, QueryCommand, ScanCommand, UpdateItemCommand } from "@a
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { ClientError } from "../types/error.types";
 import { generateId, getCompanyIDFromName } from "../utils/tickets.utils";
-import { assignCompanyName, assignLongLat, assignMuni } from "../utils/tenders.utils";
+import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 
 interface TenderData {
     company_name: string;
@@ -49,7 +49,7 @@ export const createTender = async (senderData: TenderData) => {
 
     const companyId = companyPid;
     const responseCheck = await dynamoDBClient.send(new ScanCommand({
-        TableName: COMPANIES_TABLE,
+        TableName: TENDERS_TABLE,
         FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":company_id": { S: companyId },
@@ -86,7 +86,7 @@ export const createTender = async (senderData: TenderData) => {
     };
 
     await dynamoDBClient.send(new PutItemCommand({
-        TableName: COMPANIES_TABLE,
+        TableName: TENDERS_TABLE,
         Item: tenderItem,
     }));
 
@@ -126,7 +126,7 @@ export const inReview = async (senderData: InReviewData) => {
 
     const companyId = companyPid;
     const responseTender = await dynamoDBClient.send(new ScanCommand({
-        TableName: COMPANIES_TABLE,
+        TableName: TENDERS_TABLE,
         FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":company_id": { S: companyId },
@@ -145,7 +145,7 @@ export const inReview = async (senderData: InReviewData) => {
         throw new ClientError(errorResponse, "TenderDoesntExist");
     }
 
-    const tenderId = tenderItems[0].tender_id.S;
+    const tenderId = tenderItems[0].tender_id.S!;
     const currentTime = new Date();
     const reviewedTime = currentTime.toISOString();
     const updateExp = "set #status = :r, datetimereviewed = :p";
@@ -155,13 +155,7 @@ export const inReview = async (senderData: InReviewData) => {
         ":p": { S: reviewedTime },
     };
 
-    const response = await dynamoDBClient.send(new UpdateItemCommand({
-        TableName: COMPANIES_TABLE,
-        Key: { tender_id: { S: tenderId! } },
-        UpdateExpression: updateExp,
-        ExpressionAttributeNames: expattrName,
-        ExpressionAttributeValues: expattrValue,
-    }));
+    const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
 
     if (response.$metadata.httpStatusCode === 200) {
         return { Status: "Success", Message: "Tender updated successfully" };
@@ -193,7 +187,7 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     }
 
     const responseTender = await dynamoDBClient.send(new ScanCommand({
-        TableName: COMPANIES_TABLE,
+        TableName: TENDERS_TABLE,
         FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":company_id": { S: senderData.company_id },
@@ -218,16 +212,10 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     const expattrName = { "#status": "status" };
     const expattrValue = { ":r": { S: "accepted" } };
 
-    await dynamoDBClient.send(new UpdateItemCommand({
-        TableName: COMPANIES_TABLE,
-        Key: { tender_id: { S: tenderId } },
-        UpdateExpression: updateExp,
-        ExpressionAttributeNames: expattrName,
-        ExpressionAttributeValues: expattrValue,
-    }));
+    const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
 
     const responseTickets = await dynamoDBClient.send(new ScanCommand({
-        TableName: COMPANIES_TABLE,
+        TableName: TENDERS_TABLE,
         FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":ticket_id": { S: ticketId },
@@ -239,13 +227,7 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         for (const data of responseItems) {
             if (data.tender_id.S !== tenderId) {
                 const rejectExpattrValue = { ":r": { S: "rejected" } };
-                await dynamoDBClient.send(new UpdateItemCommand({
-                    TableName: COMPANIES_TABLE,
-                    Key: { tender_id: { S: data.tender_id.S! } },
-                    UpdateExpression: updateExp,
-                    ExpressionAttributeNames: expattrName,
-                    ExpressionAttributeValues: rejectExpattrValue,
-                }));
+                const responseReject = await updateTenderTable(data.tender_id.S!, updateExp, expattrName, rejectExpattrValue);
             }
         }
     }
@@ -310,7 +292,7 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
     }
 
     const responseTender = await dynamoDBClient.send(new ScanCommand({
-        TableName: COMPANIES_TABLE,
+        TableName: TENDERS_TABLE,
         FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":company_id": { S: senderData.company_id },
@@ -334,13 +316,7 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
     const expattrName = { "#status": "status" };
     const expattrValue = { ":r": { S: "rejected" } };
 
-    const response = await dynamoDBClient.send(new UpdateItemCommand({
-        TableName: COMPANIES_TABLE,
-        Key: { tender_id: { S: tenderId } },
-        UpdateExpression: updateExp,
-        ExpressionAttributeNames: expattrName,
-        ExpressionAttributeValues: expattrValue,
-    }));
+    const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
 
     if (response.$metadata.httpStatusCode === 200) {
         return {
@@ -398,13 +374,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
     const expattrName = { "#status": "status" };
     const expattrValue = { ":r": { S: "completed" } };
 
-    const response = await dynamoDBClient.send(new UpdateItemCommand({
-        TableName: CONTRACT_TABLE,
-        Key: { contract_id: { S: senderData.contract_id } },
-        UpdateExpression: updateExp,
-        ExpressionAttributeNames: expattrName,
-        ExpressionAttributeValues: expattrValue,
-    }));
+    const response = await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
 
     if (response.$metadata.httpStatusCode === 200) {
         return {
