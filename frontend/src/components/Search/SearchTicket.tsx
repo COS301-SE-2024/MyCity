@@ -43,10 +43,13 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
 }) => {
   // Helper function to find the corresponding municipality by id
   const findMunicipality = (municipalityId: string) => {
-    return municipalities?.find(
-      (muni) => muni.municipality_id === municipalityId
-    );
+    // Ensure municipalities is an array before calling .find()
+    if (Array.isArray(municipalities)) {
+      return municipalities.find((muni) => muni.municipality_id === municipalityId);
+    }
+    return null; // Return null if municipalities is not an array
   };
+  
 
   function formatStatecolor(state: string | undefined): string {
     if (typeof state !== "string") {
