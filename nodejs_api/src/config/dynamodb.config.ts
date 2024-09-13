@@ -3,7 +3,6 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 
 const AWS_REGION = process.env.AWS_REGION;
-
 const cognitoClient = new CognitoIdentityProviderClient({ region: AWS_REGION });
 const dynamoDBClient = new DynamoDBClient({ region: AWS_REGION });
 
@@ -16,6 +15,7 @@ const WATCHLIST_TABLE = "watchlist";
 const TICKET_UPDATE_TABLE = "ticket_updates";
 const CONTRACT_TABLE = "contracts";
 const UPVOTES_TABLE = "upvotes";
+const NOTIFICATIONS_TABLE = "notifications";
 
 export {
     cognitoClient,
@@ -28,5 +28,6 @@ export {
     WATCHLIST_TABLE,
     TICKET_UPDATE_TABLE,
     CONTRACT_TABLE,
-    UPVOTES_TABLE
+    UPVOTES_TABLE,
+    NOTIFICATIONS_TABLE
 };

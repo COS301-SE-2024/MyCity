@@ -1,6 +1,6 @@
 import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 import { ClientError } from "../types/error.types";
-import { dynamoDBClient } from "../config/dynamodb.config";
+import { dynamoDBClient, NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
 import { formatResponse } from "../utils/tickets.utils";
 
 interface TokenData {
@@ -31,7 +31,7 @@ export const insertNotificationToken = async (tokenData: TokenData) => {
     };
 
     const response = await dynamoDBClient.send(new PutItemCommand({
-        TableName: 'NotificationsTable',
+        TableName: NOTIFICATIONS_TABLE,
         Item: notificationItem,
     }));
 
@@ -45,7 +45,7 @@ export const getNotificationTokens = async (username: string) => {
     }
 
     const response = await dynamoDBClient.send(new QueryCommand({
-        TableName: 'NotificationsTable',
+        TableName: NOTIFICATIONS_TABLE,
         KeyConditionExpression: "username = :username",
         ExpressionAttributeValues: {
             ":username": { S: username },

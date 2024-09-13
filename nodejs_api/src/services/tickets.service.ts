@@ -1,7 +1,7 @@
 import { PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { ScanCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
-import { ASSETS_TABLE, dynamoDBClient, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
+import { ASSETS_TABLE, dynamoDBClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { doesTicketExist, formatResponse, generateId, getCompanyIDFromName, getUserProfile, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 
 
@@ -109,7 +109,8 @@ export const getFaultTypes = async () => {
         multiplier: asset.multiplier || 1,
     }));
 
-    return formatResponse(200, faultTypes);
+    // return formatResponse(200, faultTypes);
+    return faultTypes;
 };
 
 
@@ -273,7 +274,7 @@ export const getWatchlist = async (userId: string) => {
     }
 
     const scanParams = {
-        TableName: "watchlist_table",
+        TableName: WATCHLIST_TABLE,
         FilterExpression: "user_id = :user_id",
         ExpressionAttributeValues: {
             ":user_id": userId.toLowerCase()
@@ -287,7 +288,7 @@ export const getWatchlist = async (userId: string) => {
     if (items && items.length > 0) {
         for (const item of items) {
             const queryParams = {
-                TableName: "tickets_table",
+                TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": item.ticket_id
@@ -697,7 +698,7 @@ export const getCompanyTickets = async (companyname: string | null): Promise<any
     const company_id = await getCompanyIDFromName(companyname);
 
     const responseTender = await dynamoDBClient.send(new ScanCommand({
-        TableName: "tenders_table",
+        TableName: TENDERS_TABLE,
         FilterExpression: "company_id = :company_id",
         ExpressionAttributeValues: {
             ":company_id": { S: company_id },
@@ -709,7 +710,7 @@ export const getCompanyTickets = async (companyname: string | null): Promise<any
     if (tenderItems && tenderItems.length > 0) {
         for (const item of tenderItems) {
             const responseCompanyTickets = await dynamoDBClient.send(new QueryCommand({
-                TableName: "tickets_table",
+                TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": { S: item["ticket_id"].S },
@@ -836,7 +837,7 @@ export const addTicketCommentWithImage = async (comment: string, ticket_id: stri
 
     // Insert comment into ticket_updates table
     const putItemCommand = new PutItemCommand({
-        TableName: "ticket_updates",
+        TableName: TICKET_UPDATE_TABLE,
         Item: commentItem,
     });
 
