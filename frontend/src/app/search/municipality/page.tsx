@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, FormEvent } from "react";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import SearchTicket from "@/components/Search/SearchTicket";
 import SearchMunicipality from "@/components/Search/SearchMunicipality";
@@ -368,62 +369,190 @@ export default function CreateTicket() {
 
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
+        <NavbarMobile />
+        {/* Background Image */}
         <div
           style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -1,
           }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
+        ></div>
+
+        {/* Main Search Section */}
+        <main className="relative z-10 p-4">
+          <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
+            Search
+          </h1>
+
+          {/* Search Input */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className="relative w-full max-w-sm mx-auto"
+          >
+            <div className="flex items-center">
+              <div className="relative flex-grow">
+                <input
+                  data-testid="searchbox-mobile"
+                  type="text"
+                  className="w-full p-2 pr-16 border border-gray-300 rounded-full"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleSearchInputChange}
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <button
+                data-testid="search-btn-mobile"
+                type="submit"
+                className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${
+                  searchTerm.trim() === ""
+                    ? "bg-gray-400 text-gray-300 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+                disabled={searchTerm.trim() === ""}
+              >
+                Search
+              </button>
+            </div>
+          </form>
+
+          {/* Filter Buttons */}
+          <div className="flex justify-center mt-4">
+            {["myMunicipality", "municipalities", "serviceProviders"].map(
+              (filter) => (
+                <div
+                  key={filter}
+                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 text-center ${
+                    selectedFilter === filter
+                      ? "bg-gray-500 text-white"
+                      : "bg-transparent text-white"
+                  } flex items-center justify-center`} // Removed the white border
+                  onClick={() => handleFilterChange(filter as any)}
+                >
+                  {filter === "myMunicipality"
+                    ? "My Municipality"
+                    : filter === "municipalities"
+                    ? "Municipalities"
+                    : "Service Providers"}
+                </div>
+              )
+            )}
           </div>
 
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1,
-            }}
-          ></div>
+          {/* Subfilters (for My Municipality only) */}
+          {selectedFilter === "myMunicipality" && (
+            <div className="flex justify-center mt-4">
+              {["Near Me", "Asset"].map((subfilter, index) => (
+                <div
+                  key={subfilter}
+                  className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 text-center ${
+                    selectedSubfilter === index
+                      ? "bg-gray-500 text-white"
+                      : "bg-transparent text-gray-300 border border-gray-300"
+                  }`}
+                  onClick={() => handleSubfilterChange(index)}
+                >
+                  {subfilter}
+                </div>
+              ))}
+            </div>
+          )}
 
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
+          {/* Loading Spinner */}
+          {loading && (
+            <div className="flex justify-center items-center mt-8">
+              <ThreeDots
+                height="40"
+                width="80"
+                color="#ADD8E6"
+                ariaLabel="three-dots-loading"
+                visible={true}
               />
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
-          </div>
-        </div>
+          )}
+
+          {/* No Results */}
+          {!loading && hasSearched && searchResults.length === 0 && (
+            <div className="flex justify-center items-center mt-4">
+              <p className="mt-16 text-white text-opacity-80">
+                No results found. Please try a different search term.
+              </p>
+            </div>
+          )}
+
+          {/* Display Search Results */}
+          {hasSearched && !loading && searchResults.length > 0 && (
+            <>
+              {currentResults.map((result, index) => {
+                // Use the original backend filters in the logic
+                if (selectedFilter === "serviceProviders") {
+                  return <SearchSP key={index} serviceProviders={[result]} />;
+                }
+                if (selectedFilter === "municipalities") {
+                  return (
+                    <SearchMunicipality key={index} municipalities={[result]} />
+                  );
+                }
+                if (selectedFilter === "myMunicipality") {
+                  return <SearchTicket key={index} tickets={[result]} municipalities={result} />;
+;
+                }
+                return null;
+              })}
+
+              {/* Pagination Controls */}
+              <div className="flex justify-between mt-4 text-white">
+                <button
+                  onClick={handlePrevPage}
+                  className={`px-4 py-2 ${
+                    currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of{" "}
+                  {Math.ceil(searchResults.length / resultsPerPage)}
+                </span>
+                <button
+                  onClick={handleNextPage}
+                  className={`px-4 py-2 ${
+                    currentPage ===
+                    Math.ceil(searchResults.length / resultsPerPage)
+                      ? "cursor-not-allowed opacity-50"
+                      : ""
+                  }`}
+                  disabled={
+                    currentPage ===
+                    Math.ceil(searchResults.length / resultsPerPage)
+                  }
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Toast Notification */}
+          {showToast && totalResults > 0 && (
+            <div className="fixed bottom-4 left-4 bg-white text-black px-4 py-2 rounded-3xl shadow-lg">
+              <span>{totalResults} results found in </span>
+              <span className="text-blue-500">{searchTime.toFixed(2)}</span>
+              <span> seconds</span>
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );

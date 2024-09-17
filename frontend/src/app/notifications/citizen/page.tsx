@@ -146,42 +146,44 @@ export default function Notifications() {
   ];
 
   const visibleNotifications = allTickets
-  .slice(startIndex, Math.min(startIndex + itemsPerPage, allTickets.length))
-  .map((item, index) => {
-    const action = dashMostUpvoteResults.includes(item)
-      ? "upvoted"
-      : dashWatchResults.includes(item)
-      ? "watchlisted"
-      : dashMuniResults.includes(item)
-      ? "updated"
-      : "commented on";
+    .slice(startIndex, Math.min(startIndex + itemsPerPage, allTickets.length))
+    .map((item, index) => {
+      const action = dashMostUpvoteResults.includes(item)
+        ? "upvoted"
+        : dashWatchResults.includes(item)
+        ? "watchlisted"
+        : dashMuniResults.includes(item)
+        ? "updated"
+        : "commented on";
 
-    return (
-      <div className="flex w-full h-[10%] my-2 justify-center" key={item.ticket_id}>
-        <TicketNoti
-          ticketNumber={item.ticketnumber}
-          image={item.imageURL || null}
-          action={action}
-          isNew={item.isNew || false}
-          title={item.title}
-          address={item.address}
-          description={item.description}
-          createdBy={item.createdby}
-          arrowCount={item.upvotes}
-          commentCount={item.commentcount}
-          viewCount={item.viewcount}
-          latitude={item.latitude}
-          longitude={item.longitude}
-          urgency={item.urgency}
-          ticket_id={item.ticket_id}
-          state={item.state}
-          municipality_id={item.municipality_id}
-          refreshwatch={refreshwatchlist}
-        />
-      </div>
-    );
-  });
-
+      return (
+        <div
+          className="flex w-full h-[10%] my-2 justify-center"
+          key={item.ticket_id}
+        >
+          <TicketNoti
+            ticketNumber={item.ticketnumber}
+            image={item.imageURL || null}
+            action={action}
+            isNew={item.isNew || false}
+            title={item.title}
+            address={item.address}
+            description={item.description}
+            createdBy={item.createdby}
+            arrowCount={item.upvotes}
+            commentCount={item.commentcount}
+            viewCount={item.viewcount}
+            latitude={item.latitude}
+            longitude={item.longitude}
+            urgency={item.urgency}
+            ticket_id={item.ticket_id}
+            state={item.state}
+            municipality_id={item.municipality_id}
+            refreshwatch={refreshwatchlist}
+          />
+        </div>
+      );
+    });
 
   return (
     <div>

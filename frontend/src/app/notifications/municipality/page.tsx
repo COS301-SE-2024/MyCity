@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
+import { ThreeDots } from "react-loader-spinner"; 
 import TicketNoti from "@/components/NotificationsMuniNew/TicketNoti";
 import Alert from "@/components/NotificationsMuniNew/Alert";
 import TenderNoti from "@/components/NotificationsMuniNew/TenderNoti";
 
 export default function Notifications() {
+  // State for loading and visible notifications
+  const [isLoading, setIsLoading] = useState(true);
+  const [visibleNotifications, setVisibleNotifications] = useState<any[]>([]);
+
   const notifications = [
     {
       ticketNumber: "12345",
@@ -33,6 +39,7 @@ export default function Notifications() {
       isNew: false,
     },
   ];
+  
   const alerts = [
     {
       message: "this ticket has 25 upvotes.",
@@ -41,7 +48,16 @@ export default function Notifications() {
       ticketNumber: "328",
     },
   ];
+
   const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+
+  // Simulate loading delay (e.g., fetching notifications from an API)
+  useEffect(() => {
+    setTimeout(() => {
+      setVisibleNotifications(notifications);
+      setIsLoading(false);
+    }, 1500); // Simulate a 1.5s delay before loading the notifications
+  }, []);
 
   return (
     <div>
@@ -82,29 +98,44 @@ export default function Notifications() {
                 </h1>
               </div>
               <div className="pt-20 px-6 rounded-3xl">
-                {notifications.map((notification, index) => (
-                  <TicketNoti
-                    key={index}
-                    ticketNumber={notification.ticketNumber}
-                    image={notification.image}
-                    action={notification.action}
-                    isNew={notification.isNew}
-                  />
-                ))}
+                {isLoading ? (
+                  <div className="flex justify-center items-center h-64">
+                    <ThreeDots
+                      height="80"
+                      width="80"
+                      radius="9"
+                      color="#ADD8E6"
+                      ariaLabel="three-dots-loading"
+                      visible={true}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {visibleNotifications.map((notification, index) => (
+                      <TicketNoti
+                        key={index}
+                        ticketNumber={notification.ticketNumber}
+                        image={notification.image}
+                        action={notification.action}
+                        isNew={notification.isNew}
+                      />
+                    ))}
 
-                <TenderNoti
-                  tenderId="TND-001"
-                  image=""
-                  action="bid received"
-                  isNew={true}
-                />
-                <TenderNoti
-                  tenderId="TND-002"
-                  image=""
-                  action="completion report received"
-                  isNew={true}
-                />
-                <Alert alerts={alerts} />
+                    <TenderNoti
+                      tenderId="TND-001"
+                      image=""
+                      action="bid received"
+                      isNew={true}
+                    />
+                    <TenderNoti
+                      tenderId="TND-002"
+                      image=""
+                      action="completion report received"
+                      isNew={true}
+                    />
+                    <Alert alerts={alerts} />
+                  </>
+                )}
               </div>
             </main>
           </div>
@@ -113,6 +144,7 @@ export default function Notifications() {
 
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
         <div
           style={{
             position: "relative",
@@ -120,15 +152,8 @@ export default function Notifications() {
             overflow: "hidden",
           }}
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
+          {/* Mobile Navbar */}
+          <NavbarMobile />
 
           {/* Background image */}
           <div
@@ -148,27 +173,49 @@ export default function Notifications() {
           />
 
           {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
+          <div className="fixed inset-0 overflow-y-auto pt-4 pb-20">
+            <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mt-2">
+              Notifications
             </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
-            </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
+            <main>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <ThreeDots
+                    height="80"
+                    width="80"
+                    radius="9"
+                    color="#ADD8E6"
+                    ariaLabel="three-dots-loading"
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <div className="px-2 mt-2">
+                  {visibleNotifications.map((notification, index) => (
+                    <TicketNoti
+                      key={index}
+                      ticketNumber={notification.ticketNumber}
+                      image={notification.image}
+                      action={notification.action}
+                      isNew={notification.isNew}
+                    />
+                  ))}
+                  <TenderNoti
+                    tenderId="TND-001"
+                    image=""
+                    action="bid received"
+                    isNew={true}
+                  />
+                  <TenderNoti
+                    tenderId="TND-002"
+                    image=""
+                    action="completion report received"
+                    isNew={true}
+                  />
+                  <Alert alerts={alerts} />
+                </div>
+              )}
+            </main>
           </div>
         </div>
       </div>
