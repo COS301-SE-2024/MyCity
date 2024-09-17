@@ -100,8 +100,9 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
   ) {
     if (!lat1 || !lon1 || !lat2 || !lon2) return "N/A"; // If coordinates are missing, return N/A
 
-    const removeSingleQuote = (str: string) => str.replace(/'/g, "");
+    const removeSingleQuote = (str: any) => String(str).replace(/'/g, "");
 
+    
     lat1 = removeSingleQuote(lat1);
     lon1 = removeSingleQuote(lon1);
     lat2 = removeSingleQuote(lat2);
