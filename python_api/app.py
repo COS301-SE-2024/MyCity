@@ -12,7 +12,7 @@ from chalicelib.notifications.notification_routes import notifications_blueprint
 
 from chalicelib.authorisers import cognito_authorizer
 
-app = Chalice(app_name="mycity-api")
+app = Chalice(app_name="mycity-python-api")
 cors_config = CORSConfig(
     allow_origin="*",  # Adjust this as needed
     allow_headers=["Content-Type"],  # Include headers as needed
