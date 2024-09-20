@@ -10,6 +10,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { getTicketsInMunicipality } from "@/services/tickets.service";
 import { getMunicipalityTenders } from "@/services/tender.service";
 import { ThreeDots } from "react-loader-spinner";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 
 export default function MuniTenders() {
   const userProfile: any = useProfile();
@@ -18,6 +19,8 @@ export default function MuniTenders() {
   const [loadingOpenTickets, setLoadingOpenTickets] = useState(true);
   const [loadingActiveTenders, setLoadingActiveTenders] = useState(true);
   const [loadingClosedTenders, setLoadingClosedTenders] = useState(true);
+
+  
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -164,65 +167,111 @@ export default function MuniTenders() {
         </div>
       </div>
 
-      {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div
-          style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden",
+{/* Mobile View */}
+<div className="block sm:hidden">
+  <NavbarMunicipality unreadNotifications={unreadNotifications} />
+  <NavbarMobile />
+  <div
+    style={{
+      position: "relative",
+      height: "100vh",
+      overflow: "hidden", // Prevents content overflow
+    }}
+  >
+    {/* Background image */}
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundImage:
+          'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        zIndex: -1, // Ensures the background is behind other content
+      }}
+    ></div>
+
+    {/* Content */}
+    <div className="container mx-auto relative z-10 pt-10 px-4">
+      <h1 className="text-3xl text-white font-bold mb-4 text-center">
+        Tenders
+      </h1>
+
+      {/* Tab Layout */}
+      <div className="bg-transparent rounded-lg">
+        <Tabs
+          aria-label="Tender options"
+          defaultSelectedKey={0}
+          className="w-full"
+          classNames={{
+            tab: "min-w-24 min-h-8 text-black",
+            tabContent:
+              "group-data-[selected=true]:font-bold group-data-[selected=true]:bg-transparent text-black",
+            panel: "w-full",
           }}
+          onSelectionChange={handleTabChange}
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
+          <Tab key={0} title="Open Tickets">
+            {loadingOpenTickets ? (
+              <div className="flex justify-center items-center mt-4">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <OpenTicketsTable records={dashMuniResults} />
+            )}
+          </Tab>
 
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1,
-            }}
-          ></div>
+          <Tab key={1} title="Active Tenders">
+            {loadingActiveTenders ? (
+              <div className="flex justify-center items-center mt-4">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <ActiveTenders tenders={muniTenders} refresh={fetchTenders} />
+            )}
+          </Tab>
 
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
-            </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
-          </div>
-        </div>
+          <Tab key={2} title="Closed Tenders">
+            {loadingClosedTenders ? (
+              <div className="flex justify-center items-center mt-4">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <ClosedTenders tickets={dashMuniResults} />
+            )}
+          </Tab>
+        </Tabs>
       </div>
+    </div>
+  </div>
+</div>
+
+
     </div>
   );
 }

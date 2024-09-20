@@ -156,51 +156,61 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
-        {/* Bottom Bar */}
-        <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center z-50">
-          <nav className="z-51 fixed w-full p-0 flex items-center justify-between">
-            <div className="flex w-full text-[0.95rem] items-center justify-between px-6">
-              <Link href="/dashboard/municipality" passHref>
-                <div className={getNavItemClass("/dashboard/municipality")}>
-                  <div className="flex flex-col gap-1 items-center">
-                    <Home size={50} />
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/create-ticket/municipality" passHref>
-                <div className={getNavItemClass("/create-ticket/municipality")}>
-                  <div className="flex flex-col gap-1 items-center">
-                    <PlusCircle size={50} />
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/notifications/municipality" passHref>
-                <div className={getNavItemClass("/notifications/municipality")}>
-                  <div className="relative flex flex-col gap-1 items-center">
-                    <Bell size={50} />
-                    {unreadNotifications > 0 && (
-                      <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
-                        {unreadNotifications}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Link>
-
-              <Link href="/search/municipality" passHref>
-                <div className={getNavItemClass("/search/municipality")}>
-                  <div className="flex flex-col gap-1 items-center">
-                    <Search size={50} />
-                  </div>
-                </div>
-              </Link>
+<div className="block sm:hidden">
+  {/* Bottom Bar */}
+  <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center z-50">
+    <nav className="z-51 fixed w-full p-0 flex items-center justify-between">
+      <div className="flex w-full text-[0.95rem] items-center justify-between px-6">
+        <Link href="/dashboard/municipality" passHref>
+          <div className={getNavItemClass("/dashboard/municipality")}>
+            <div className="flex flex-col gap-1 items-center">
+              <Home size={50} />
             </div>
-          </nav>
-        </div>
+          </div>
+        </Link>
+
+        <Link href="/create-ticket/municipality" passHref>
+          <div className={getNavItemClass("/create-ticket/municipality")}>
+            <div className="flex flex-col gap-1 items-center">
+              <PlusCircle size={50} />
+            </div>
+          </div>
+        </Link>
+
+        <Link href="/notifications/municipality" passHref>
+          <div className={getNavItemClass("/notifications/municipality")}>
+            <div className="relative flex flex-col gap-1 items-center">
+              <Bell size={50} />
+              {unreadNotifications > 0 && (
+                <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
+                  {unreadNotifications}
+                </div>
+              )}
+            </div>
+          </div>
+        </Link>
+
+        <Link href="/search/municipality" passHref>
+          <div className={getNavItemClass("/search/municipality")}>
+            <div className="flex flex-col gap-1 items-center">
+              <Search size={50} />
+            </div>
+          </div>
+        </Link>
+
+        {/* Add Tenders Page Option */}
+        <Link href="/tenders/municipality" passHref>
+          <div className={getNavItemClass("/tenders/municipality")}>
+            <div className="flex flex-col gap-1 items-center">
+              <FileText size={50} />
+            </div>
+          </div>
+        </Link>
       </div>
+    </nav>
+  </div>
+</div>
+
     </div>
   );
 }

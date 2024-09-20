@@ -58,19 +58,58 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
   };
 
   return (
-    <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
-      <div className="min-w-full text-white text-opacity-80 rounded-t-lg relative">
-      <div className="text-xl font-bold text-center">
-          Click on a Tender to view more details.
+    <>
+      {/* Desktop View */}
+      <div className="hidden sm:block overflow-x-auto bg-transparent rounded-lg shadow-md">
+        <div className="min-w-full text-white text-opacity-80 rounded-t-lg relative">
+          <div className="text-xl font-bold text-center">
+            Click on a Tender to view more details.
+          </div>
+          <div className="grid grid-cols-6 gap-4 items-center mb-2 mt-6 px-2 py-1 font-bold text-center border-b border-gray-200">
+            <div className="col-span-1">Status</div>
+            <div className="col-span-1">Tender ID</div>
+            <div className="col-span-1">Service Provider</div>
+            <div className="col-span-1">Issue Date</div>
+            <div className="col-span-1">Price</div>
+            <div className="col-span-1">Estimated Duration</div>
+          </div>
+          <div className="min-w-full">
+            {currentTenders.length > 0 ? (
+              currentTenders.map((tender) => (
+                <Tender key={tender.tender_id} onClose={handleClose} tender={tender} />
+              ))
+            ) : (
+              <div className="mt-16 text-white text-opacity-80 text-center">No Active Tenders to display.</div>
+            )}
+          </div>
+  
+          {currentTenders.length > 0 && (
+            <div className="flex justify-between mt-4 text-white">
+              <button
+                onClick={handlePrevPage}
+                className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={handleNextPage}
+                className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
-        <div className="grid grid-cols-6 gap-4 items-center mb-2 mt-6 px-2 py-1 font-bold text-center border-b border-gray-200">
-          <div className="col-span-1">Status</div>
-          <div className="col-span-1">Tender ID</div>
-          <div className="col-span-1">Service Provider</div>
-          <div className="col-span-1">Issue Date</div>
-          <div className="col-span-1">Price</div>
-          <div className="col-span-1">Estimated Duration</div>
-        </div>
+      </div>
+  
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">Click on a Tender to view more details.</div>
         <div className="min-w-full">
           {currentTenders.length > 0 ? (
             currentTenders.map((tender) => (
@@ -80,22 +119,20 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
             <div className="mt-16 text-white text-opacity-80 text-center">No Active Tenders to display.</div>
           )}
         </div>
-
+  
         {currentTenders.length > 0 && (
           <div className="flex justify-between mt-4 text-white">
             <button
               onClick={handlePrevPage}
-              className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+              className={`px-48 py-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
               disabled={currentPage === 1}
             >
               Previous
             </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
+            <span>Page {currentPage} of {totalPages}</span>
             <button
               onClick={handleNextPage}
-              className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+              className={`px-48 py-2 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
               disabled={currentPage === totalPages}
             >
               Next
@@ -103,6 +140,7 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
           </div>
         )}
       </div>
-    </div>
+    </>
   );
+  
 }

@@ -111,7 +111,7 @@ export default function Record({ record }: { record: RecordType }) {
   return (
     <>
       <div
-        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-lg bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleClick}
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
