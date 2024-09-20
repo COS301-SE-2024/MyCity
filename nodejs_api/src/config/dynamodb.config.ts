@@ -1,10 +1,11 @@
 import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-
 
 const AWS_REGION = process.env.AWS_REGION;
 const cognitoClient = new CognitoIdentityProviderClient({ region: AWS_REGION });
 const dynamoDBClient = new DynamoDBClient({ region: AWS_REGION });
+const dynamoDBDocumentClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 const TICKETS_TABLE = "tickets";
 const ASSETS_TABLE = "asset";
@@ -19,7 +20,7 @@ const NOTIFICATIONS_TABLE = "notifications";
 
 export {
     cognitoClient,
-    dynamoDBClient,
+    dynamoDBDocumentClient,
     TICKETS_TABLE,
     ASSETS_TABLE,
     TENDERS_TABLE,

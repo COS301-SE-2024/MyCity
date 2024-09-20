@@ -1,15 +1,16 @@
-import { ScanCommand } from "@aws-sdk/client-dynamodb";
-import { dynamoDBClient, WATCHLIST_TABLE } from "../config/dynamodb.config";
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { dynamoDBDocumentClient, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
+import { capitaliseUserEmail } from "../utils/tickets.utils";
 
 export const searchWatchlist = async (searchTerm: string) => {
     searchTerm = validateSearchTerm(searchTerm);
     try {
-        const response = await dynamoDBClient.send(new ScanCommand({
+        const response = await dynamoDBDocumentClient.send(new ScanCommand({
             TableName: WATCHLIST_TABLE,
             FilterExpression: "contains(user_id, :searchTerm)",
             ExpressionAttributeValues: {
-                ":searchTerm": { S: searchTerm }
+                ":searchTerm": capitaliseUserEmail(searchTerm)
             }
         }));
         const items = response.Items || [];
@@ -18,6 +19,7 @@ export const searchWatchlist = async (searchTerm: string) => {
         throw new BadRequestError(`Failed to search service providers: ${e.message}`);
     }
 };
+
 
 //----- UTILITY FUNCTIONS --------
 const validateSearchTerm = (searchTerm: string): string => {

@@ -1,23 +1,27 @@
-import { ScanCommand } from "@aws-sdk/client-dynamodb";
-import { dynamoDBClient, UPVOTES_TABLE } from "../config/dynamodb.config";
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { dynamoDBDocumentClient, UPVOTES_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
-
+import { capitaliseUserEmail } from "../utils/tickets.utils";
 
 export const searchUpvotes = async (searchTerm: string) => {
     searchTerm = validateSearchTerm(searchTerm);
     try {
-        const response = await dynamoDBClient.send(new ScanCommand({ TableName: UPVOTES_TABLE }));
+        const response = await dynamoDBDocumentClient.send(new ScanCommand({
+            TableName: UPVOTES_TABLE,
+            FilterExpression: "contains(user_id, :searchTerm)",
+            ExpressionAttributeValues: {
+                ":searchTerm": capitaliseUserEmail(searchTerm)
+            }
+        }));
         const items = response.Items || [];
-        const filteredItems = items.filter(item =>
-            item.user_id?.S?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        return filteredItems;
+        return items;
     } catch (e: any) {
         throw new BadRequestError(`Failed to search upvotes: ${e.message}`);
     }
 };
 
-//----- UTILITY FUNCTIONS --------
+
+//----- INTERNAL UTILITY FUNCTIONS --------
 const validateSearchTerm = (searchTerm: string): string => {
     // Allow only alphanumeric characters and spaces to prevent injection attacks
     const regex = /^[a-zA-Z \-]*$/;

@@ -41,7 +41,7 @@ router.post("/add-comment-with-image", ticketsController.addCommentWithImage);
 
 router.post("/add-comment-without-image", ticketsController.addCommentWithoutImage);
 
-router.get("comments", ticketsController.getTicketComments);
+router.get("/comments", ticketsController.getTicketComments);
 
 // get geodata of all tickets
 router.get("/geodata/all", ticketsController.getGeoData);

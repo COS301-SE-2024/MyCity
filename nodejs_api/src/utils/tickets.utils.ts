@@ -1,11 +1,8 @@
-import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { cognitoClient, COMPANIES_TABLE, dynamoDBClient, TICKETS_TABLE } from "../config/dynamodb.config";
+import { GetCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
-import { GetItemCommand, QueryCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
-
 
 interface Company {
     name: string;
@@ -44,17 +41,17 @@ export const getUserProfile = async (ticketData: any[]) => {
             ticket["user_picture"] = userImage;
             ticket["createdby"] = userName;
 
-            const responseMunicipality = await dynamoDBClient.send(
-                new GetItemCommand({
+            const responseMunicipality = await dynamoDBDocumentClient.send(
+                new GetCommand({
                     TableName: "municipalities",
                     Key: {
-                        "municipality_id": marshall(ticket.municipality_id)
+                        "municipality_id": ticket.municipality_id
                     }
                 })
             );
 
             if (responseMunicipality.Item) {
-                const municipality = unmarshall(responseMunicipality.Item);
+                const municipality = responseMunicipality.Item;
                 ticket.municipality_picture = municipality["municipalityLogo"];
                 ticket.municipality = municipality["municipality_id"];
             } else {
@@ -74,12 +71,12 @@ export const getUserProfile = async (ticketData: any[]) => {
 
 export const doesTicketExist = async (ticket_id: string) => {
     try {
-        const checking_ticket = await dynamoDBClient.send(
+        const checking_ticket = await dynamoDBDocumentClient.send(
             new QueryCommand({
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
-                    ":ticket_id": marshall(ticket_id)
+                    ":ticket_id": ticket_id
                 }
             })
         );
@@ -99,22 +96,6 @@ export const convertDecimalToFloat = (obj: any) => {
     throw new TypeError();
 };
 
-export const formatResponse = (statusCode: number, body: any) => {
-    return new Response(
-        JSON.stringify(body, (key, value) => {
-            return typeof value === 'object' && value !== null ? convertDecimalToFloat(value) : value;
-        }),
-        {
-            status: statusCode,
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-                "Access-Control-Allow-Headers": "Authorization,Content-Type,X-Amz-Date,X-Amz-Security-Token,X-Api-Key",
-            },
-        }
-    );
-};
-
 export const validateTicketId = (ticketId: string): string => {
     // Allow only UUID format to prevent injection attacks
     if (!/^[a-fA-F0-9-]{36}$/.test(ticketId)) {
@@ -126,7 +107,7 @@ export const validateTicketId = (ticketId: string): string => {
 
 export const updateTicketTable = async (ticket_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
-        const response = await dynamoDBClient.send(
+        const response = await dynamoDBDocumentClient.send(
             new UpdateCommand({
                 TableName: TICKETS_TABLE,
                 Key: {
@@ -144,14 +125,24 @@ export const updateTicketTable = async (ticket_id: string, update_expression: st
     }
 };
 
-
 export const getCompanyIDFromName = async (companyName: string) => {
     try {
-        const command = new ScanCommand({ TableName: COMPANIES_TABLE });
-        const response = await dynamoDBClient.send(command);
-        const items = response.Items?.map(item => unmarshall(item)) as Company[] || [];
+        const response = await dynamoDBDocumentClient.send(new QueryCommand({
+            TableName: COMPANIES_TABLE,
+            IndexName: "name-index",
+            KeyConditionExpression: "#name = :name",
+            ExpressionAttributeNames: {
+                "#name": "name"
+            },
+            ExpressionAttributeValues: {
+                ":name": companyName
+            },
+            ProjectionExpression: "pid"
+        }
+        ));
+        const items = response.Items as Company[] || [];
 
-        const company = items.find(item => item.name.toLowerCase() === companyName.toLowerCase());
+        const company = items.length > 0 ? items[0] : null;
         return company ? company.pid : null;
     } catch (error) {
         console.error('Error fetching company ID:', error);
@@ -172,14 +163,14 @@ export const generateTicketNumber = (municipalityName: string): string => {
     // Get the current date
     const now = new Date();
     const year = now.getFullYear().toString().slice(-2); // Last two digits of the year
-    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Month in two digits
-    const day = now.getDate().toString().padStart(2, '0'); // Day in two digits
+    const month = (now.getMonth() + 1).toString().padStart(2, "0"); // Month in two digits
+    const day = now.getDate().toString().padStart(2, "0"); // Day in two digits
 
     const year1 = year.charAt(0);
     const restOfTheYear = year.slice(1);
 
     // Generate the 4 random digits or letters in uppercase
-    const randomItem = uuidv4().replace(/-/g, '').slice(0, 4).toUpperCase();
+    const randomItem = uuidv4().replace(/-/g, "").slice(0, 4).toUpperCase();
 
     // Construct the ticket number according to the format mmmY-YMMD-DRRR
     const ticketNumber = `${municipalityCode}${muni}${year1}-${restOfTheYear}${month}${day}-${randomItem}`;
@@ -187,4 +178,53 @@ export const generateTicketNumber = (municipalityName: string): string => {
     return ticketNumber;
 };
 
+export const updateCommentCounts = async (items: any[], batchSize: number = 7) =>{
+    // split items into smaller batches
+    for (let i = 0; i < items.length; i += batchSize) {
+        const batch = items.slice(i, i + batchSize);
 
+        const queryPromises = batch.map(async (item) => {
+            const updateCommand = new QueryCommand({
+                TableName: TICKET_UPDATE_TABLE,
+                IndexName: "ticket_id-index",
+                KeyConditionExpression: "ticket_id = :ticket_id",
+                ExpressionAttributeValues: {
+                    ":ticket_id": item.ticket_id
+                },
+                Select: "COUNT"
+            });
+
+            const queryResponse = await dynamoDBDocumentClient.send(updateCommand);
+            item.commentcount = queryResponse.Count || 0;
+        });
+
+        // wait for this batch of queries to complete before continuing
+        await Promise.all(queryPromises);
+    }
+}
+
+
+export const capitaliseUserEmail = (email: string): string => {
+    const emailParts = email.split("@");
+    const namepart = emailParts[0];
+    const domainpart = emailParts[1];
+    const capitalisedNamePart = namepart.toLowerCase().split(".").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(".");
+    const result = capitalisedNamePart + "@" + domainpart;
+    return result;
+};
+
+// export const formatResponse = (statusCode: number, body: any) => {
+//     return new Response(
+//         JSON.stringify(body, (key, value) => {
+//             return typeof value === 'object' && value !== null ? convertDecimalToFloat(value) : value;
+//         }),
+//         {
+//             status: statusCode,
+//             headers: {
+//                 "Access-Control-Allow-Origin": "*",
+//                 "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+//                 "Access-Control-Allow-Headers": "Authorization,Content-Type,X-Amz-Date,X-Amz-Security-Token,X-Api-Key",
+//             },
+//         }
+//     );
+// };

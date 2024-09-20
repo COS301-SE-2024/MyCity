@@ -1,7 +1,6 @@
-import { ScanCommand } from "@aws-sdk/client-dynamodb";
-import { COMPANIES_TABLE, dynamoDBClient, MUNICIPALITIES_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
-import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { capitaliseString } from "../utils/searching.utils";
 
 export const searchTickets = async (userMunicipality: string, searchTerm: string) => {
@@ -16,7 +15,7 @@ export const searchTickets = async (userMunicipality: string, searchTerm: string
     //         }
     //     });
 
-    //     const response = await dynamoDBClient.send(scanCommand);
+    //     const response = await dynamoDBDocumentClient.send(scanCommand);
     //     const items = response.Items ? response.Items.map(item => unmarshall(item)) : [];
     //     return items;
     // } catch (e: any) {
@@ -33,8 +32,8 @@ export const searchMunicipalities = async (searchTerm: string) => {
             TableName: MUNICIPALITIES_TABLE
         });
 
-        const response = await dynamoDBClient.send(scanCommand);
-        const items = response.Items ? response.Items.map(item => unmarshall(item)) : [];
+        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const items = response.Items || [];
         const filteredItems = items.filter(item =>
             item.municipality_id.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -51,8 +50,8 @@ export const searchAltMunicipalityTickets = async (municipalityName: string) => 
             TableName: TICKETS_TABLE
         });
 
-        const response = await dynamoDBClient.send(scanCommand);
-        const items = response.Items ? response.Items.map(item => unmarshall(item)) : [];
+        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const items = response.Items || [];
         const filteredItems = items.filter(item =>
             item.municipality_id.toLowerCase().includes(municipalityName.toLowerCase())
         );
@@ -69,8 +68,8 @@ export const searchServiceProviders = async (searchTerm: string) => {
             TableName: COMPANIES_TABLE
         });
 
-        const response = await dynamoDBClient.send(scanCommand);
-        const items = response.Items ? response.Items.map(item => unmarshall(item)) : [];
+        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const items = response.Items || [];
         const filteredItems = items.filter(item =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -81,16 +80,13 @@ export const searchServiceProviders = async (searchTerm: string) => {
 };
 
 
-
-
-//----- UTILITY FUNCTIONS --------
+//----- INTERNAL UTILITY FUNCTIONS --------
 const validateSearchTerm = (searchTerm: string) => {
     // Allow only alphanumeric characters and spaces to prevent injection attacks
     if (!/^[a-zA-Z \-]*$/.test(searchTerm)) {
         throw new BadRequestError("Invalid search term");
     }
 };
-
 
 const searchTicketsFuzzy = async (userMunicipality: string, searchTerm: string) => {
     validateSearchTerm(searchTerm);
@@ -99,8 +95,8 @@ const searchTicketsFuzzy = async (userMunicipality: string, searchTerm: string) 
             TableName: TICKETS_TABLE
         });
 
-        const response = await dynamoDBClient.send(scanCommand);
-        const items = response.Items ? response.Items.map(item => unmarshall(item)) : [];
+        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const items = response.Items || [];
         const filteredItems = items.filter(item =>
             item.municipality_id.toLowerCase().includes(userMunicipality.toLowerCase()) &&
             (item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
