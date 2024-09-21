@@ -29,21 +29,6 @@ def sample_data():
     }
 
 
-# Unit tests for "inreview"
-"""
-def test_inreview_success():
-    sample_data = {
-        "company_name": "TownRoots Services",
-        "ticket_id": "9645fd66-8f4c-4a29-82e7-eab0a8db8ccb",
-    }
-    # Mocking the getCompanIDFromName function to return a list of dictionaries
-    with patch("chalicelib.tenders.tenders_controllers.getCompanIDFromName", return_value=[{"pid": "some_company_id"}]):
-        response = inreview(sample_data)
-        print(response)  # Print the response for debugging purposes
-        assert response["Status"] == "Success"
-"""
-
-
 def test_inreview_missing_fields():
     sample_data = {
         "ticket_id": "ticket123",
@@ -111,27 +96,15 @@ def sample_data_duplicate_tender():
 
 
 def test_create_tender_tender_exists(sample_data_duplicate_tender):
-    """
+    '''
     # Ensure a tender with the same company and ticket_id exists
     response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "Success"
     # Try to create the same tender again
-    """
+    '''
     response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "FAILED"
     assert response["Error"] == "Company already has a tender on this Ticket"
-
-
-# Unit tests for "accept_tender"
-"""
-def test_accept_tender_success():
-    sample_data = {
-        "company_name": "CityAlliance Maintenance",
-        "ticket_id": "6be96e97-1554-4bd1-a234-998b4544a9b0",
-    }
-    response = accept_tender(sample_data)
-    assert response["Status"] == "Success"
-"""
 
 
 def test_accept_tender_missing_fields():
