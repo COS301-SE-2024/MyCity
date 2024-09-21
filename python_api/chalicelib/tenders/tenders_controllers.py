@@ -3,6 +3,8 @@ import boto3
 from botocore.exceptions import ClientError
 from chalice import BadRequestError, Chalice, Response
 import uuid
+import time
+from concurrent.futures import ThreadPoolExecutor
 from boto3.dynamodb.conditions import Key
 from boto3.dynamodb.conditions import Attr
 import re
@@ -16,6 +18,8 @@ ticket_table = dynamodb.Table("tickets")
 tenders_table = dynamodb.Table("tenders")
 companies_table = dynamodb.Table("private_companies")
 contract_table = dynamodb.Table("contracts")
+
+collective_tenders = []
 
 
 def create_tender(sender_data):
@@ -369,9 +373,14 @@ def getMunicipalityTenders(municipality):
             }
             raise ClientError(error_response, "InvalideFields")
 
+        start_time = time.perf_counter()
         response_tickets = ticket_table.query(
             IndexName="municipality_id-index",
             KeyConditionExpression=Key("municipality_id").eq(municipality),
+        )
+        query_time = time.perf_counter()  # Time after querying
+        print(
+            f"Query execution time municipality-index: {query_time - start_time:.4f} seconds"
         )
         if len(response_tickets["Items"]) <= 0:
             error_response = {
@@ -382,19 +391,16 @@ def getMunicipalityTenders(municipality):
             }
             raise ClientError(error_response, "TicketsDontExist")
 
-        collective = []
+        start_time = time.perf_counter()
         tickets = response_tickets["Items"]
-        for item in tickets:
-            response_tender = tenders_table.scan(
-                FilterExpression=Attr("ticket_id").eq(item["ticket_id"])
-            )
-            if len(response_tender["Items"]) > 0:
-                assignMuni(response_tender["Items"])
-                assignLongLat(response_tender["Items"])
-                assignCompanyName(response_tender["Items"])
-                collective.extend(response_tender["Items"])
+        with ThreadPoolExecutor(5) as exe:
+            exe.map(assignEverythingIndividual, tickets)
+        query_time = time.perf_counter()  # Time after querying
+        print(
+            f"Query execution time after threading: {query_time - start_time:.4f} seconds"
+        )
 
-        return collective
+        return collective_tenders
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -651,6 +657,18 @@ def assignCompanyName(data):
             item["companyname"] = items["name"]
 
 
+def assignIndividualCompanyName(data):
+
+    response_name = companies_table.query(
+        KeyConditionExpression=Key("pid").eq(data["company_id"])
+    )
+    if len(response_name["Items"]) <= 0:
+        data["companyname"] = "Xero industries"
+    else:
+        items = response_name["Items"][0]
+        data["companyname"] = items["name"]
+
+
 def assignLongLat(data):
     for item in data:
         response = ticket_table.query(
@@ -664,6 +682,20 @@ def assignLongLat(data):
             item["longitude"] = tickets["longitude"]
             item["latitude"] = tickets["latitude"]
             item["ticketnumber"] = tickets["ticketnumber"]
+
+
+def assignIndividualLongLat(data):
+    response = ticket_table.query(
+        KeyConditionExpression=Key("ticket_id").eq(data["ticket_id"])
+    )
+    if len(response["Items"]) <= 0:
+        data["longitude"] = "26.5623685320641"
+        data["latitude"] = "-32.90383"
+    else:
+        tickets = response["Items"][0]
+        data["longitude"] = tickets["longitude"]
+        data["latitude"] = tickets["latitude"]
+        data["ticketnumber"] = tickets["ticketnumber"]
 
 
 def assignMuni(data):
@@ -686,3 +718,41 @@ def assignMuni(data):
                 ticket_details = response_tickets["Items"][0]
                 item["municipality"] = ticket_details["municipality_id"]
                 item["ticketnumber"] = ticket_details["ticketnumber"]
+
+
+def assignIndividualMuni(data):
+
+    response_tender = tenders_table.query(
+        KeyConditionExpression=Key("tender_id").eq(data["tender_id"])
+    )
+    if len(response_tender["Items"]) <= 0:
+        data["municipality"] = "Stellenbosch Local"
+        data["ticketnumber"] = "MAA2-4052-8NAS"
+    else:
+        tenders = response_tender["Items"][0]
+        response_tickets = ticket_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(tenders["ticket_id"])
+        )
+        if len(response_tickets["Items"]) <= 0:
+            data["municipality"] = "Stellenbosch Local"
+            data["ticketnumber"] = "MAA2-4052-8NAS"
+        else:
+            ticket_details = response_tickets["Items"][0]
+            data["municipality"] = ticket_details["municipality_id"]
+            data["ticketnumber"] = ticket_details["ticketnumber"]
+
+
+def assignEverythingIndividual(item):
+    response_tender = tenders_table.query(
+        IndexName="ticket_id-index",
+        KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+    )
+    # start_time = time.perf_counter()
+    if len(response_tender["Items"]) > 0:
+        with ThreadPoolExecutor(5) as exe:
+            exe.map(assignIndividualCompanyName, response_tender["Items"])
+            exe.map(assignIndividualLongLat, response_tender["Items"])
+            exe.map(assignIndividualMuni, response_tender["Items"])
+        collective_tenders.extend(response_tender["Items"])
+    # query_time = time.perf_counter()  # Time after querying
+    # print(f"Query execution time Assigning: {query_time - start_time:.4f} seconds")
