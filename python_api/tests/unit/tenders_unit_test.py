@@ -127,11 +127,11 @@ def test_accept_tender_tender_doesnt_exist():
 
 
 # Unit tests for "getCompanyTenders"
-'''
+"""
 def test_getCompanyTenders_success():
     response = getCompanyTenders("CityAlliance Maintenance")
     assert isinstance(response, list)
-'''
+"""
 
 
 def test_getCompanyTenders_missing_fields():
@@ -147,11 +147,11 @@ def test_getCompanyTenders_company_doesnt_exist():
 
 
 # Unit tests for "getTicketTender"
-'''
+"""
 def test_getTicketTender_success():
     response = getTicketTender("6be96e97-1554-4bd1-a234-998b4544a9b0")
     assert isinstance(response, list)
-'''
+"""
 
 
 def test_getTicketTender_missing_fields():
