@@ -83,7 +83,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
   };
 
   return (
-    <div className="relative h-full flex flex-col">
+    <div className="relative h-full rounded-3xl flex flex-col">
       <div className="flex items-center mb-4">
         <button className="text-gray-700 mr-4" onClick={onBack}>
           <FaArrowLeft size={24} />
