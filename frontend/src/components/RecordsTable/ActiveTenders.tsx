@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
 import { FaInfoCircle, FaTimes } from "react-icons/fa";
 
@@ -12,7 +12,7 @@ interface TenderType {
   datetimesubmitted: string;
   ticket_id: string;
   ticketnumber: string;
-  status: string;
+  status: Status;
   quote: number;
   estimatedTimeHours: number;
   longitude: string;
@@ -21,19 +21,69 @@ interface TenderType {
   hasReportedCompletion: boolean;
 }
 
-const statusStyles = {
-  Unassigned: "text-blue-500 border-blue-500 rounded-full",
-  Active: "text-black bg-green-200 rounded-full",
-  Rejected: "text-black bg-red-200 rounded-full",
-  Closed: "text-black bg-gray-200 rounded-full",
-};
+// Mock Data
+const mockTenders: TenderType[] = [
+  {
+    tender_id: "1",
+    tendernumber: "TN001",
+    company_id: "C001",
+    companyname: "ACME Corp",
+    datetimesubmitted: "2024-01-12",
+    ticket_id: "T001",
+    ticketnumber: "TK001",
+    status: "Active",
+    quote: 1000,
+    estimatedTimeHours: 48,
+    longitude: "34.0522",
+    latitude: "-118.2437",
+    upload: null,
+    hasReportedCompletion: false,
+  },
+  {
+    tender_id: "2",
+    tendernumber: "TN002",
+    company_id: "C002",
+    companyname: "Global Solutions",
+    datetimesubmitted: "2024-01-15",
+    ticket_id: "T002",
+    ticketnumber: "TK002",
+    status: "Rejected",
+    quote: 1500,
+    estimatedTimeHours: 72,
+    longitude: "40.7128",
+    latitude: "-74.0060",
+    upload: null,
+    hasReportedCompletion: false,
+  },
+  {
+    tender_id: "3",
+    tendernumber: "TN003",
+    company_id: "C003",
+    companyname: "Tech Innovations",
+    datetimesubmitted: "2024-01-18",
+    ticket_id: "T003",
+    ticketnumber: "TK003",
+    status: "Closed",
+    quote: 2000,
+    estimatedTimeHours: 96,
+    longitude: "51.5074",
+    latitude: "-0.1278",
+    upload: null,
+    hasReportedCompletion: true,
+  },
+];
 
-export default function ActiveTenders({ tenders, refresh }: { tenders: TenderType[]; refresh: () => void }) {
+export default function ActiveTenders({ tenders = mockTenders, refresh }: { tenders?: TenderType[]; refresh: () => void }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
   // Ensure tenders is an array
   const safeTenders = tenders || [];
+
+  // Log the data to confirm it's being loaded
+  useEffect(() => {
+    console.log("Tenders: ", safeTenders);
+  }, [safeTenders]);
 
   // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
@@ -82,7 +132,7 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
               <div className="mt-16 text-white text-opacity-80 text-center">No Active Tenders to display.</div>
             )}
           </div>
-  
+
           {currentTenders.length > 0 && (
             <div className="flex justify-between mt-4 text-white">
               <button
@@ -106,7 +156,7 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
           )}
         </div>
       </div>
-  
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">Click on a Tender to view more details.</div>
@@ -119,7 +169,7 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
             <div className="mt-16 text-white text-opacity-80 text-center">No Active Tenders to display.</div>
           )}
         </div>
-  
+
         {currentTenders.length > 0 && (
           <div className="flex justify-between mt-4 text-white">
             <button
@@ -142,5 +192,4 @@ export default function ActiveTenders({ tenders, refresh }: { tenders: TenderTyp
       </div>
     </>
   );
-  
 }

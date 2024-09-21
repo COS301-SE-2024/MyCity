@@ -105,13 +105,12 @@ export default function Record({ record }: { record: RecordType }) {
       setIsOverflowing(addressRef.current.scrollWidth > addressRef.current.clientWidth);
     }
   }, []);
-
-
-
-  return (
-    <>
+return (
+  <>
+    {/* Desktop View */}
+    <div className="hidden sm:block">
       <div
-        className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="grid grid-cols-6 gap-4 items-center mb-2 px-4 py-2 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleClick}
       >
         <div className="col-span-1 flex justify-center">{urgency.icon}</div>
@@ -123,56 +122,66 @@ export default function Record({ record }: { record: RecordType }) {
           </span>
         </div>
         <div className="col-span-1 flex justify-center">{record.createdby}</div>
-        <div className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap" ref={addressRef}>
-          <div
-            style={{
-              display: "inline-block",
-              animation: isOverflowing ? "scroll 10s linear infinite" : "none",
-              animationTimingFunction: "linear",
-              animationDelay: "5s",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {record.address}
+        <div className="col-span-1 flex justify-center truncate overflow-hidden">
+          {record.address}
+        </div>
+      </div>
+    </div>
+
+    {/* Mobile View */}
+    <div className="block sm:hidden">
+      <div
+        className="grid grid-cols-2 gap-4 items-center mb-2 px-4 py-2 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+        onClick={handleClick}
+      >
+        {/* Column 1 - Urgency & Ticket Number */}
+        <div className="col-span-1 flex flex-col justify-center items-center text-center">
+          <div>{urgency.icon}</div>
+          <div className="font-bold text-lg">{record.ticketnumber}</div>
+        </div>
+
+        {/* Column 2 - Other Details */}
+        <div className="col-span-1 flex flex-col space-y-1">
+          <div className="text-sm"><strong>Asset:</strong> {record.asset_id}</div>
+          <div className="text-sm">
+            <strong>Status:</strong>{' '}
+            <span className={`px-2 py-1 rounded ${statusStyles[getStatus(record.state)]}`}>
+              {record.state}
+            </span>
+          </div>
+          <div className="text-sm"><strong>Created By:</strong> {record.createdby}</div>
+          <div className="text-sm truncate">
+            <strong>Address:</strong> {record.address}
           </div>
         </div>
       </div>
-      {showTicketView && (
-        <TicketViewMuni
-          show={showTicketView}
-          onClose={handleClose}
-          title={record.asset_id}
-          address={record.address}
-          arrowCount={record.upvotes}  // Update this as per your data source
-          commentCount={record.commentcount} // Update this as per your data source
-          viewCount={record.viewcount} // Update this as per your data source
-          ticketNumber={record.ticketnumber}
-          description={record.description} // Update this as per your data source
-          user_picture={record.user_picture} // Update this as per your data source
-          createdBy={record.createdby}
-          imageURL={record.imageURL}
-          status={record.state}
-          municipalityImage={record.municipality_picture} // Update this as per your data source
-          upvotes={record.upvotes}
-          latitude={record.latitude}
-          longitude={record.longitude}
-          urgency={record.urgency} // Pass urgency to TicketViewMuni
-          ticket_id={record.ticket_id}
-        />
-      )}
-      <style jsx>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(20%);
-          }
-          50% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-20%);
-          }
-        }
-      `}</style>
-    </>
-  );
+    </div>
+
+    {/* Ticket View - Same for both desktop and mobile */}
+    {showTicketView && (
+      <TicketViewMuni
+        show={showTicketView}
+        onClose={handleClose}
+        title={record.asset_id}
+        address={record.address}
+        arrowCount={record.upvotes}
+        commentCount={record.commentcount}
+        viewCount={record.viewcount}
+        ticketNumber={record.ticketnumber}
+        description={record.description}
+        user_picture={record.user_picture}
+        createdBy={record.createdby}
+        imageURL={record.imageURL}
+        status={record.state}
+        municipalityImage={record.municipality_picture}
+        upvotes={record.upvotes}
+        latitude={record.latitude}
+        longitude={record.longitude}
+        urgency={record.urgency}
+        ticket_id={record.ticket_id}
+      />
+    )}
+  </>
+);
+
 }
