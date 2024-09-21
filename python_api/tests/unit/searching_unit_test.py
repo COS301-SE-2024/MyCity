@@ -101,12 +101,14 @@ def test_search_tickets_empty_search_term(test_client):
         # If the search term is empty, we only expect the results filtered by the municipality
         assert isinstance(response, list), "Response should be a list"
         # Check if it returns items for the municipality, ignoring the empty search term
-        assert all(user_municipality.lower() in item.get("municipality_id", "").lower() for item in response), (
-            "All returned tickets should match the user municipality"
-        )
+        assert all(
+            user_municipality.lower() in item.get("municipality_id", "").lower()
+            for item in response
+        ), "All returned tickets should match the user municipality"
     except BadRequestError as e:
-        pytest.fail(f"BadRequestError was not expected for an empty search term: {str(e)}")
-
+        pytest.fail(
+            f"BadRequestError was not expected for an empty search term: {str(e)}"
+        )
 
 
 # Invalid search term should return bad request (due to the valid search term check)

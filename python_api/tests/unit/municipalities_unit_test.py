@@ -235,5 +235,5 @@ muni_list = [
     {"municipality_id": "Maquassi Hills"},
     {"municipality_id": "Tokologo"},
     {"municipality_id": "Moses Kotane"},
-    {"municipality_id": "Kareeberg"}
+    {"municipality_id": "Kareeberg"},
 ]

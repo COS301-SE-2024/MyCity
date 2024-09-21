@@ -96,12 +96,12 @@ def sample_data_duplicate_tender():
 
 
 def test_create_tender_tender_exists(sample_data_duplicate_tender):
-    '''
+    """
     # Ensure a tender with the same company and ticket_id exists
     response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "Success"
     # Try to create the same tender again
-    '''
+    """
     response = create_tender(sample_data_duplicate_tender)
     assert response["Status"] == "FAILED"
     assert response["Error"] == "Company already has a tender on this Ticket"
