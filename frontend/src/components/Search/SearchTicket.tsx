@@ -43,10 +43,13 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
 }) => {
   // Helper function to find the corresponding municipality by id
   const findMunicipality = (municipalityId: string) => {
-    return municipalities?.find(
-      (muni) => muni.municipality_id === municipalityId
-    );
+    // Ensure municipalities is an array before calling .find()
+    if (Array.isArray(municipalities)) {
+      return municipalities.find((muni) => muni.municipality_id === municipalityId);
+    }
+    return null; // Return null if municipalities is not an array
   };
+  
 
   function formatStatecolor(state: string | undefined): string {
     if (typeof state !== "string") {
@@ -97,8 +100,9 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
   ) {
     if (!lat1 || !lon1 || !lat2 || !lon2) return "N/A"; // If coordinates are missing, return N/A
 
-    const removeSingleQuote = (str: string) => str.replace(/'/g, "");
+    const removeSingleQuote = (str: any) => String(str).replace(/'/g, "");
 
+    
     lat1 = removeSingleQuote(lat1);
     lon1 = removeSingleQuote(lon1);
     lat2 = removeSingleQuote(lat2);

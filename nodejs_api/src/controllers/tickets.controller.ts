@@ -1,42 +1,190 @@
-import { Request, Response } from 'express';
-import * as ticketsService from '../services/tickets.service';
+import { Request, Response } from "express";
+import * as ticketsService from "../services/tickets.service";
+
+
+// -----------------------------
+// MISSING FUNCTION FOR ENDPOINT -> tickets/create
+// create ticket controller goes here
+// -----------------------------
+
+
+export const addWatchlist = async (req: Request, res: Response) => {
+    try {
+        const ticketData = req.body;
+        const response = await ticketsService.addWatchlist(ticketData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const acceptTicket = async (req: Request, res: Response) => {
+    try {
+        const ticketData = req.body;
+        const response = await ticketsService.acceptTicket(ticketData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const closeTicket = async (req: Request, res: Response) => {
+    try {
+        const ticketData = req.body;
+        const response = await ticketsService.closeTicket(ticketData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const viewTicketData = async (req: Request, res: Response) => {
+    try {
+        const ticketId = req.query["ticket_id"] as string;
+        if (!ticketId) {
+            return res.status(400).json({ error: "Ticket Not Found" });
+        }
+        const result = await ticketsService.viewTicketData(ticketId);
+        return res.status(200).json(result);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+
+export const getFaultTypes = async (req: Request, res: Response) => {
+    try {
+        const faultTypes = await ticketsService.getFaultTypes();
+        return res.status(200).json(faultTypes);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const getMyTickets = async (req: Request, res: Response) => {
+    try {
+        const username = req.query["username"] as string;
+        const response = await ticketsService.getMyTickets(username);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const getInArea = async (req: Request, res: Response) => {
+    try {
+        const municipality = req.query["municipality"] as string;
+        const response = await ticketsService.getInMyMunicipality(municipality);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const getOpenTicketsInMunicipality = async (req: Request, res: Response) => {
+    try {
+        const municipality = req.query["municipality"] as string;
+        const response = await ticketsService.getOpenTicketsInMunicipality(municipality);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const getMyWatchlist = async (req: Request, res: Response) => {
+    try {
+        const username = req.query["username"] as string;
+        const response = await ticketsService.getWatchlist(username);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const interactTicket = async (req: Request, res: Response) => {
+    try {
+        const ticketData = req.body;
+        const response = await ticketsService.interactTicket(ticketData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
 
 export const getMostUpvoted = async (req: Request, res: Response) => {
     try {
         const result = await ticketsService.getMostUpvoted();
-
         return res.status(200).json(result);
-
-    } catch (error) {
-        //return an error message
-        return res.status(500).json({ error: "Something bad happened and the server could not process your request" });
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
     }
-}
+};
 
 
-export const getWatchlist = async (req: Request, res: Response) => {
+export const getCompanyTickets = async (req: Request, res: Response) => {
     try {
-        const username = req.query["username"] as string;
-        const result = await ticketsService.getWatchlist(username);
-
-        return res.status(200).json(result);
-
-    } catch (error) {
-        //return an error message
-        return res.status(500).json({ error: "Something bad happened and the server could not process your request" });
+        const companyName = req.query["company"] as string;
+        const response = await ticketsService.getCompanyTickets(companyName);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
     }
-}
+};
 
-
-export const getTicketsInMunicipality = async (req: Request, res: Response) => {
+export const getOpenCompanyTickets = async (req: Request, res: Response) => {
     try {
-        const municipality = req.query.municipality as string;
-        const result = await ticketsService.getTicketsInMunicipality(municipality);
-
-        return res.status(200).json(result);
-
-    } catch (error) {
-        //return an error message
-        return res.status(500).json({ error: "Something bad happened and the server could not process your request" });
+        const response = await ticketsService.getOpenCompanyTickets();
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
     }
-}
+};
+
+export const addCommentWithImage = async (req: Request, res: Response) => {
+    try {
+        const { comment, ticket_id, image_url, user_id } = req.body;
+        if (!comment || !ticket_id || !image_url || !user_id) {
+            return res.status(400).json({ error: "Missing required field: comment, ticket_id, image_url, or user_id" });
+        }
+        const response = await ticketsService.addTicketCommentWithImage(comment, ticket_id, image_url, user_id);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const addCommentWithoutImage = async (req: Request, res: Response) => {
+    try {
+        const { comment, ticket_id, user_id } = req.body;
+        if (!comment || !ticket_id || !user_id) {
+            return res.status(400).json({ error: "Missing required field: comment, ticket_id, or user_id" });
+        }
+        const response = await ticketsService.addTicketCommentWithoutImage(comment, ticket_id, user_id);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const getTicketComments = async (req: Request, res: Response) => {
+    try {
+        const ticketId = req.headers["X-Ticket-ID"] as string;
+        if (!ticketId) {
+            return res.status(400).json({ error: "Missing required header: X-Ticket-ID" });
+        }
+        const response = await ticketsService.getTicketComments(ticketId);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+
+export const getGeoData = async (req: Request, res: Response) => {
+    try {
+        const response = await ticketsService.getGeodataAll();
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};

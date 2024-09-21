@@ -199,6 +199,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         if (response_contract) {
           setContract(response_contract);
           setShowTenderMax(true);
+          setShowMuniTenders(false); // Hide MuniTenders if it's open
         } else {
           setShowTenderMax(false);
         }
@@ -221,6 +222,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleViewTendersClick = async () => {
+    console.log("View Bids Clicked");
     setIsLoading(true);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
@@ -232,7 +234,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     } else {
       setTenders(rspgettenders);
     }
-    setShowMuniTenders((prev) => !prev); // Toggle the dropdown
+
+    // Ensure that only MuniTenders is shown, and TenderMax is hidden (similar to mobile)
+    setShowTenderMax(false); // Hide TenderMax
+    setShowMuniTenders(true); // Show MuniTenders
   };
 
   const handleBack = (data: number) => {
@@ -245,69 +250,56 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
   return (
     <>
-      {!showTenderMax && !showMuniTenders && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
-          <div
-            ref={modalRef}
-            className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row"
-          >
-            <button
-              className="absolute top-2 right-2 text-gray-700 z-20"
-              onClick={handleCloseClick}
-            >
-              <FaTimes size={24} />
-            </button>
-            <div className="flex flex-col lg:flex-row w-full overflow-auto">
-              {/* Left Section */}
-              <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
-                <div className="absolute top-2 left-2 z-10">
-                  {urgencyMapping[getUrgency(upvotes)].icon}
-                </div>
-                <div className="flex items-center justify-center mb-2">
-                  <div
-                    className={`flex items-center ${getStatusColor(
-                      ticketstatus
-                    )} border-2 rounded-full px-2 py-1`}
-                  >
-                    <span className="ml-1">{ticketstatus}</span>
+      {/* Render MuniTenders if it is visible */}
+      {showMuniTenders && (
+        <div className="mt-4">
+          <MuniTenders tenders={tenders} onBack={() => setShowMuniTenders(false)} />
+        </div>
+      )}
+  
+      {/* Mobile-first layout with centered content */}
+      {!showMuniTenders && (
+        <div className={`fixed inset-0 flex justify-center items-center ${!showTenderMax ? "bg-black bg-opacity-50" : ""} z-50`}>
+          {!showTenderMax && !showMuniTenders && (
+            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col">
+              <button
+                className="absolute top-2 right-2 text-gray-700 z-20"
+                onClick={handleCloseClick}
+              >
+                <FaTimes size={24} />
+              </button>
+  
+              <div className="flex flex-col w-full overflow-auto">
+                {/* Title and Status */}
+                <div className="text-center mb-2">
+                  <div className="font-bold text-lg">{title}</div>
+                  <div className={`text-sm font-bold ${getStatusColor(ticketstatus)}`}>
+                    {ticketstatus}
                   </div>
                 </div>
-                <div className="mt-2 mb-2 text-center">
-                  <p className="text-gray-700 font-bold">{title}</p>
-                </div>
-
-                <div className="mb-2 text-center">
-                  <p className="text-gray-700 text-sm">{description}</p>
-                </div>
-
-                {imageURL ? (
-                  <div className="mb-2 flex justify-center">
-                    {imageLoading && (
-                      <div className="flex items-center justify-center w-48 h-36">
-                        <ThreeDots
-                          height="20"
-                          width="20"
-                          radius="9"
-                          color="#000000"
-                          ariaLabel="loading"
-                          visible={true}
-                        />
+  
+                {/* Image and Description */}
+                <div className="text-center">
+                  <div className="relative">
+                    {imageURL ? (
+                      <img
+                        src={imageURL}
+                        alt="Fault"
+                        className="rounded-lg w-full h-[300px] object-cover"
+                        onLoad={() => setImageLoading(false)}
+                        style={{ display: imageLoading ? "none" : "block" }}
+                      />
+                    ) : (
+                      <div className="flex justify-center items-center w-full h-[300px] rounded-lg bg-gray-200 border border-gray-300">
+                        <ImageIcon size={48} color="#6B7280" />
                       </div>
                     )}
-                    <img
-                      src={imageURL}
-                      alt="Fault"
-                      className="rounded-lg w-48 h-36 object-cover"
-                      onLoad={() => setImageLoading(false)}
-                      style={{ display: imageLoading ? "none" : "block" }}
-                    />
                   </div>
-                ) : (
-                  <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
-                    <ImageIcon size={48} color="#6B7280" />
-                  </div>
-                )}
-                <div className="mb-4 flex justify-between w-full px-4">
+                  <p className="text-gray-700 text-sm mt-2 mb-4">{description}</p>
+                </div>
+  
+                {/* Interactions */}
+                <div className="mt-2 flex justify-around w-full px-4">
                   <div className="flex items-center">
                     <FaArrowUp className="text-gray-600 mr-2" />
                     <span className="text-gray-700">{arrowCount}</span>
@@ -324,40 +316,41 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                     <span className="text-gray-700">{viewCount}</span>
                   </div>
                 </div>
-                <div className="flex justify-around mb-2 w-full">
-                  <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-md">Address</h3>
+  
+                {/* Address and Created By */}
+                <div className="flex justify-around items-center mt-4">
+                  <div className="flex flex-col items-center">
+                    <h3 className="font-bold text-sm">Address</h3>
                     {addressParts.map((part, index) => (
-                      <p key={index} className="text-gray-700 text-sm">
-                        {part.trim()}
-                      </p>
+                      <p key={index} className="text-gray-700 text-xs">{part.trim()}</p>
                     ))}
                   </div>
-                  <div className="flex flex-col items-center justify-center">
+                  <div className="flex flex-col items-center">
                     <h3 className="font-bold text-sm">Created By</h3>
                     {user_picture ? (
                       <img
                         src={user_picture}
                         alt="Created By"
-                        className="rounded-full mb-1 object-cover w-12 h-12"
+                        className="rounded-full mb-1 object-cover w-10 h-10"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center">
                         <UserIcon size={24} color="#6B7280" />
                       </div>
                     )}
-                    <p className="text-gray-700 text-sm">{createdBy}</p>
+                    <p className="text-gray-700 text-xs">{createdBy}</p>
                   </div>
                 </div>
-                <div className="mt-2 flex justify-center gap-2">
+  
+                {/* Buttons */}
+                <div className="mt-4 flex justify-center gap-2">
                   <button
                     className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
                     onClick={handleCloseClick}
                   >
                     Back
                   </button>
-                  {(ticketstatus === "In Progress" ||
-                    ticketstatus === "Assigning Contract") && (
+                  {(ticketstatus === "In Progress" || ticketstatus === "Assigning Contract") && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleTenderContractClick}
@@ -373,7 +366,6 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       View Bids
                     </button>
                   )}
-
                   {ticketstatus === "Opened" && (
                     <>
                       <button
@@ -392,39 +384,13 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   )}
                 </div>
               </div>
-              {/* Right Section (Map Placeholder) */}
-              <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center relative overflow-hidden">
-                {isLoading ? (
-                  <div className="flex items-center justify-center w-full h-full">
-                    <ThreeDots
-                      height="40"
-                      width="80"
-                      radius="9"
-                      color="#ADD8E6"
-                      ariaLabel="three-dots-loading"
-                      visible={true}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center text-gray-500"
-                    id="map"
-                  >
-                    <MapComponent
-                      longitude={Number(longitude)}
-                      latitude={Number(latitude)}
-                      zoom={14}
-                      containerId="map"
-                      style="mapbox://styles/mapbox/streets-v12"
-                    />
-                  </div>
-                )}
-                {/* Comments Section with Slide Animation */}
+  
+              {/* Comments Section with Right-to-Left Slide Animation */}
+              {showComments && (
                 <div
-                  className={`absolute top-0 left-0 w-full h-full bg-white z-10 transform transition-transform duration-300 ${
+                  className={`absolute top-0 left-0 w-full h-full bg-white z-20 rounded-3xl transform transition-transform duration-500 ease-in-out ${
                     showComments ? "translate-x-0" : "translate-x-full"
                   }`}
-                  style={{ pointerEvents: showComments ? "auto" : "none" }}
                 >
                   <Comments
                     ticketId={ticket_id}
@@ -432,43 +398,36 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                     isCitizen={false}
                   />
                 </div>
-              </div>
+              )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {showTenderMax && (
-        <TenderMax
-          tender={{
-            tender_id: contract?.tender_id,
-            status: contract?.status,
-            companyname: tenders?.companyname,
-            contractdatetime: formatDate(String(contract?.contractdatetime)),
-            finalCost: contract?.finalCost,
-            finalDuration: contract?.finalDuration,
-            upload: null,
-            ticketnumber: ticketNumber,
-            latitude: Number(latitude),
-            longitude: Number(longitude),
-            completedatetime: contract?.completedatetime,
-            contractnumber: contract?.contractnumber,
-            hasReportedCompletion: false,
-          }}
-          onClose={handleTenderMaxClose}
-        />
-      )}
-
-      {showMuniTenders && (
-        <div className="mt-4">
-          <MuniTenders
-            tenders={tenders}
-            onBack={() => setShowMuniTenders(false)}
-          />
+          )}
+  
+          {/* TenderMax Section */}
+          {showTenderMax && (
+            <TenderMax
+              tender={{
+                tender_id: contract?.tender_id,
+                status: contract?.status,
+                companyname: tenders?.companyname,
+                contractdatetime: formatDate(String(contract?.contractdatetime)),
+                finalCost: contract?.finalCost,
+                finalDuration: contract?.finalDuration,
+                upload: null,
+                ticketnumber: ticketNumber,
+                latitude: Number(latitude),
+                longitude: Number(longitude),
+                completedatetime: contract?.completedatetime,
+                contractnumber: contract?.contractnumber,
+                hasReportedCompletion: false,
+              }}
+              onClose={handleTenderMaxClose}
+            />
+          )}
         </div>
       )}
     </>
   );
-};
+  
+};  
 
 export default TicketViewMuni;
