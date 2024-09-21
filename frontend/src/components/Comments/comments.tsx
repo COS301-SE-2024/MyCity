@@ -26,8 +26,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
     try {
       const user_data = await userProfile.getUserProfile();
       const userSession = String(user_data.current?.session_token);
-      const response = await getTicketComments(ticketId, userSession);
-      const commentsData = response.data;
+      const commentsData = await getTicketComments(ticketId, userSession);
 
       const userPoolId = process.env.USER_POOL_ID;
       if (!userPoolId) {

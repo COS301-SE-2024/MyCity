@@ -18,11 +18,13 @@ export async function StoreToken(sessiont: string, username: string, deviceID: s
     if (!response.ok) {
         return false;
     }
-    else return true;
+    else {
+        return true;
+    }
 }
 
 export async function GetTokens(sessiont: string, username: string): Promise<boolean> {
-    const apiURL = `/api/notifications/get-tokens?username=${username}`;
+    const apiURL = `/api/notifications/get-tokens?username=${encodeURIComponent(username)}`;
     const response = await fetch(apiURL, {
         method: "GET",
         headers: {

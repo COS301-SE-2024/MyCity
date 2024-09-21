@@ -21,7 +21,7 @@ export async function getMunicipalityList(revalidate?: boolean) {
 
         const result = await response.json();
 
-        const data = result.data as BasicMunicipality[];
+        const data = result as BasicMunicipality[];
 
         return data;
 
