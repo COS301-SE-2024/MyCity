@@ -213,7 +213,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                       Tender Contract
                     </button>
                   )}
-                  {(status === "Opened" || status === "Taking Tenders" || status === "Closed") && (
+                  {(status === "Opened" || status === "Taking Tenders") && (
                     <button
                       className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600"
                       onClick={handleBidClick}

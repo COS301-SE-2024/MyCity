@@ -1,5 +1,8 @@
 from venv import logger
+import asyncio
+import time
 import boto3
+from concurrent.futures import ThreadPoolExecutor
 from botocore.exceptions import ClientError
 from chalice import BadRequestError, Chalice, Response
 import uuid
@@ -334,9 +337,20 @@ def getMyTickets(tickets_data):
         return {"Status": "FAILED", "Error": error_message}
 
 
+def fetch_comment_count(item):
+    # Query the ticketupdate_table for each ticket_id
+    response_item = ticketupdate_table.query(
+        IndexName="ticket_id-index",
+        KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+    )
+
+    # Set the comment count based on the response
+    item["commentcount"] = len(response_item.get("Items", []))
+
+
 def get_in_my_municipality(tickets_data):
     try:
-
+        start_time = time.perf_counter()
         if tickets_data == None:
             error_response = {
                 "Error": {
@@ -350,14 +364,25 @@ def get_in_my_municipality(tickets_data):
             KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
+        query_time = time.perf_counter()  # Time after querying
+        print(f"Query execution time: {query_time - start_time:.4f} seconds")
+        start_comment_fetch_time = time.perf_counter()
         if len(items) > 0:
-            for item in items:
-                response_item = ticketupdate_table.query(
-                    IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
-                )
-                item["commentcount"] = len(response_item["Items"])
+
+            with ThreadPoolExecutor(15) as exe:
+                exe.map(fetch_comment_count, items)
+            # for item in items:
+            #     response_item = ticketupdate_table.query(
+            #         IndexName="ticket_id-index",
+            #         KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+            #     )
+            #     item["commentcount"] = len(response_item["Items"])
+
             getUserprofile(items)
+            query_time = time.perf_counter()
+            print(
+                f"Query execution time for commentcount: {query_time - start_comment_fetch_time:.4f} seconds"
+            )
             return items
         else:
             error_response = {
@@ -390,12 +415,14 @@ def get_open_tickets_in_municipality(tickets_data):
         )
         items = response["Items"]
         if len(items) > 0:
-            for item in items:
-                response_item = ticketupdate_table.query(
-                    IndexName="ticket_id-index",
-                    KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
-                )
-                item["commentcount"] = len(response_item["Items"])
+            with ThreadPoolExecutor(15) as exe:
+                exe.map(fetch_comment_count, items)
+            # for item in items:
+            #     response_item = ticketupdate_table.query(
+            #         IndexName="ticket_id-index",
+            #         KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"]),
+            #     )
+            #     item["commentcount"] = len(response_item["Items"])
             getUserprofile(items)
             filtered_items = [item for item in items if item["state"] == "Opened"]
 
@@ -434,8 +461,8 @@ def get_watchlist(tickets_data):
                 }
             }
             raise ClientError(error_response, "InvalideFields")
-        response = watchlist_table.scan(
-            FilterExpression=Attr("user_id").eq(tickets_data.lower())
+        response = watchlist_table.query(
+            KeyConditionExpression=Key("user_id").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -829,7 +856,7 @@ def getUserprofile(ticket_data):
         for username in ticket_data:
 
             user_response = cognito_cient.admin_get_user(
-                UserPoolId=user_poolid, Username=username["username"]
+                UserPoolId=user_poolid, Username=username["username"].lower()
             )
             for attr in user_response["UserAttributes"]:
                 if attr["Name"] == "picture":
@@ -853,6 +880,8 @@ def getUserprofile(ticket_data):
 
     except cognito_cient.exceptions.UserNotFoundException:
         print(f"User {username['username']} not found.")
+        username["createdby"] = username["username"].split(".")[0]
+        username["user_picture"] = "https://i.imgur.com/uR8YLas.png"
         return "username not found"
         # for item in user_list:
         #     index= index+1
@@ -871,6 +900,37 @@ def getUserprofile(ticket_data):
         #                          ProjectionExpression="upvotes,viewcount")
 
     # return json.dumps(user_list, cls=DateTimeEncoder)
+
+
+def givingUserprofile(username):
+    try:
+        user_response = cognito_cient.admin_get_user(
+            UserPoolId=user_poolid, Username=username["username"].lower()
+        )
+        for attr in user_response["UserAttributes"]:
+            if attr["Name"] == "picture":
+                user_image = attr["Value"]
+            if attr["Name"] == "given_name":
+                user_name = attr["Value"]
+        username["user_picture"] = user_image
+        username["createdby"] = user_name
+        response_municipality = municipality_table.query(
+            KeyConditionExpression=Key("municipality_id").eq(
+                username["municipality_id"]
+            )
+        )
+        if len(response_municipality["Items"]) > 0:
+            logo = response_municipality["Items"][0]
+            username["municipality_picture"] = logo["municipalityLogo"]
+            username["municipality"] = logo["municipality_id"]
+        else:
+            username["municipality_picture"] = ""
+            username["municipality"] = ""
+
+    except cognito_cient.exceptions.UserNotFoundException:
+        print(f"User {username['username']} not found.")
+        username["createdby"] = username["username"].split(".")[0]
+        username["user_picture"] = "https://i.imgur.com/uR8YLas.png"
 
 
 class DateTimeEncoder(json.JSONEncoder):
