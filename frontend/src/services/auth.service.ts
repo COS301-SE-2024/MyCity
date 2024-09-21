@@ -41,6 +41,7 @@ export async function handleUpdatePassword(form: FormData) {
 }
 
 export async function handleSignUp(form: FormData, userRole: UserRole) {
+    await setUserPathSuffix(userRole);
     const signupOptions: SignUpInput = {
         username: String(form.get("email")).toLowerCase(),
         password: String(form.get("password")),
