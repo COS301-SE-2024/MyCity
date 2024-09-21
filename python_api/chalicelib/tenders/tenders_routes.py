@@ -100,7 +100,7 @@ def getmunitenders():
 @tenders_blueprint.route(
     "/getcontracts", authorizer=cognito_authorizer, methods=["GET"], cors=True
 )
-def getmunitenders():
+def getcontract():
     request = tenders_blueprint.current_request
     tender_id = request.query_params.get("tender")
     response = getContracts(tender_id)

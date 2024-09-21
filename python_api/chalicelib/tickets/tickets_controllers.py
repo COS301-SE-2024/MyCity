@@ -434,8 +434,8 @@ def get_watchlist(tickets_data):
                 }
             }
             raise ClientError(error_response, "InvalideFields")
-        response = watchlist_table.scan(
-            FilterExpression=Attr("user_id").eq(tickets_data.lower())
+        response = watchlist_table.query(
+            KeyConditionExpression=Key("user_id").eq(tickets_data)
         )
         items = response["Items"]
         if len(items) > 0:
@@ -829,7 +829,7 @@ def getUserprofile(ticket_data):
         for username in ticket_data:
 
             user_response = cognito_cient.admin_get_user(
-                UserPoolId=user_poolid, Username=username["username"]
+                UserPoolId=user_poolid, Username=username["username"].lower()
             )
             for attr in user_response["UserAttributes"]:
                 if attr["Name"] == "picture":
@@ -853,6 +853,8 @@ def getUserprofile(ticket_data):
 
     except cognito_cient.exceptions.UserNotFoundException:
         print(f"User {username['username']} not found.")
+        username["createdby"] = username["username"].split(".")[0]
+        username["user_picture"] = "https://i.imgur.com/uR8YLas.png"
         return "username not found"
         # for item in user_list:
         #     index= index+1
