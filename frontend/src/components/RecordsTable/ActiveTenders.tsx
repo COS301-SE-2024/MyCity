@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
 import { FaInfoCircle, FaTimes } from "react-icons/fa";
 
-type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
+type TenderStatus = "under_review" | "rejected" | "submitted" | "approved";
 
 interface TenderType {
   tender_id: string;
@@ -12,7 +12,7 @@ interface TenderType {
   datetimesubmitted: string;
   ticket_id: string;
   ticketnumber: string;
-  status: Status;
+  status: TenderStatus;
   quote: number;
   estimatedTimeHours: number;
   longitude: string;
@@ -22,60 +22,11 @@ interface TenderType {
 }
 
 // Mock Data
-const mockTenders: TenderType[] = [
-  {
-    tender_id: "1",
-    tendernumber: "TN001",
-    company_id: "C001",
-    companyname: "ACME Corp",
-    datetimesubmitted: "2024-01-12",
-    ticket_id: "T001",
-    ticketnumber: "TK001",
-    status: "Active",
-    quote: 1000,
-    estimatedTimeHours: 48,
-    longitude: "34.0522",
-    latitude: "-118.2437",
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    tender_id: "2",
-    tendernumber: "TN002",
-    company_id: "C002",
-    companyname: "Global Solutions",
-    datetimesubmitted: "2024-01-15",
-    ticket_id: "T002",
-    ticketnumber: "TK002",
-    status: "Rejected",
-    quote: 1500,
-    estimatedTimeHours: 72,
-    longitude: "40.7128",
-    latitude: "-74.0060",
-    upload: null,
-    hasReportedCompletion: false,
-  },
-  {
-    tender_id: "3",
-    tendernumber: "TN003",
-    company_id: "C003",
-    companyname: "Tech Innovations",
-    datetimesubmitted: "2024-01-18",
-    ticket_id: "T003",
-    ticketnumber: "TK003",
-    status: "Closed",
-    quote: 2000,
-    estimatedTimeHours: 96,
-    longitude: "51.5074",
-    latitude: "-0.1278",
-    upload: null,
-    hasReportedCompletion: true,
-  },
-];
+
 
 export default function ActiveTenders({ tenders, refresh }: { tenders?: TenderType[]; refresh: () => void }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeTenders, setActiveTenders] = useState<TenderType[]>(mockTenders); // Explicitly set mock data
+  const [activeTenders, setActiveTenders] = useState<TenderType[]>([]); // Explicitly set mock data
 
   const tendersPerPage = 10;
 
@@ -83,9 +34,7 @@ export default function ActiveTenders({ tenders, refresh }: { tenders?: TenderTy
     // If tenders prop is passed, use that; otherwise, use mockTenders
     if (tenders && tenders.length > 0) {
       setActiveTenders(tenders);
-    } else {
-      setActiveTenders(mockTenders); // Fall back to mock data
-    }
+    } 
 
     console.log("Tenders: ", activeTenders); // Check what's in tenders array
   }, [tenders]);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TenderMax from "./MuniTenderMax"; // Assuming the detailed view component is in the same directory
 import TenderContainer from "./TendersTemplate";
 
-type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
+type TenderStatus = "under_review" | "rejected" | "submitted" | "approved";
 
 interface TenderType {
   tender_id: string;
@@ -12,7 +12,7 @@ interface TenderType {
   datetimesubmitted: string;
   ticket_id: string;
   ticketnumber: string;
-  status: string;
+  status: TenderStatus;
   quote: number;
   estimatedTimeHours: number;
   longitude: string;
@@ -77,28 +77,39 @@ export default function Tender({ tender, onClose }: { tender: TenderType, onClos
   return (
     <>
       {/* Desktop View */}
-      <div className="hidden sm:grid grid-cols-6 gap-4 items-center mb-2 rounded-3xl py-1 text-black bg-white bg-opacity-70 hover:bg-gray-100 cursor-pointer transition duration-200" onClick={handleTenderClick} style={{ boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}>
-        <div className="col-span-1 flex justify-center">
-          <span className={`px-2 py-1 rounded-full border ${statusStyles(status)}`}>
-            {status}
-          </span>
-        </div>
-        <div className="col-span-1 flex justify-center font-bold">
-          {tender.tendernumber}
-        </div>
-        <div className="col-span-1 flex justify-center">
-          {tender.companyname}
-        </div>
-        <div className="col-span-1 flex justify-center">
-          {datesubmitted}
-        </div>
-        <div className="col-span-1 flex justify-center">
-          R{tender.quote.toFixed(2)}
-        </div>
-        <div className="col-span-1 flex justify-center">
-          {getDays(tender.estimatedTimeHours)} days
-        </div>
-      </div>
+<div
+  className="hidden sm:grid grid-cols-6 gap-4 items-center mb-2 rounded-3xl py-1 text-black bg-white bg-opacity-70 hover:bg-gray-100 cursor-pointer transition duration-200"
+  onClick={handleTenderClick}
+  style={{ boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)" }}
+>
+  <div className="col-span-1 flex justify-center">
+    <span className={`px-2 py-1 rounded-full border ${statusStyles(status)}`}>
+      {/* Capitalize the first letter of the status */}
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  </div>
+
+  <div className="col-span-1 flex justify-center font-bold">
+    {tender.tendernumber}
+  </div>
+  
+  <div className="col-span-1 flex justify-center">
+    {tender.companyname}
+  </div>
+  
+  <div className="col-span-1 flex justify-center">
+    {datesubmitted}
+  </div>
+  
+  <div className="col-span-1 flex justify-center">
+    R{tender.quote.toFixed(2)}
+  </div>
+  
+  <div className="col-span-1 flex justify-center">
+    {getDays(tender.estimatedTimeHours)} days
+  </div>
+</div>
+
 
       {/* Mobile View */}
 <div className="block sm:hidden bg-white bg-opacity-70 text-black rounded-3xl mb-2 shadow-md" onClick={handleTenderClick}>
