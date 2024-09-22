@@ -73,23 +73,28 @@ const mockTenders: TenderType[] = [
   },
 ];
 
-export default function ActiveTenders({ tenders = mockTenders, refresh }: { tenders?: TenderType[]; refresh: () => void }) {
+export default function ActiveTenders({ tenders, refresh }: { tenders?: TenderType[]; refresh: () => void }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeTenders, setActiveTenders] = useState<TenderType[]>(mockTenders); // Explicitly set mock data
+
   const tendersPerPage = 10;
 
-  // Ensure tenders is an array
-  const safeTenders = tenders || [];
-
-  // Log the data to confirm it's being loaded
   useEffect(() => {
-    console.log("Tenders: ", safeTenders);
-  }, [safeTenders]);
+    // If tenders prop is passed, use that; otherwise, use mockTenders
+    if (tenders && tenders.length > 0) {
+      setActiveTenders(tenders);
+    } else {
+      setActiveTenders(mockTenders); // Fall back to mock data
+    }
+
+    console.log("Tenders: ", activeTenders); // Check what's in tenders array
+  }, [tenders]);
 
   // Calculate pagination details
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
-  const currentTenders = safeTenders.slice(indexOfFirstTender, indexOfLastTender);
-  const totalPages = Math.ceil(safeTenders.length / tendersPerPage);
+  const currentTenders = activeTenders.slice(indexOfFirstTender, indexOfLastTender);
+  const totalPages = Math.ceil(activeTenders.length / tendersPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -157,39 +162,50 @@ export default function ActiveTenders({ tenders = mockTenders, refresh }: { tend
         </div>
       </div>
 
-      {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">Click on a Tender to view more details.</div>
-        <div className="min-w-full">
-          {currentTenders.length > 0 ? (
-            currentTenders.map((tender) => (
-              <Tender key={tender.tender_id} onClose={handleClose} tender={tender} />
-            ))
-          ) : (
-            <div className="mt-16 text-white text-opacity-80 text-center">No Active Tenders to display.</div>
-          )}
-        </div>
+  {/* Mobile View */}
+<div className="block sm:hidden">
+  <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">
+    Click on a Tender to view more details.
+  </div>
 
-        {currentTenders.length > 0 && (
-          <div className="flex justify-between mt-4 text-white">
-            <button
-              onClick={handlePrevPage}
-              className={`px-48 py-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button
-              onClick={handleNextPage}
-              className={`px-48 py-2 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
+  {/* Tenders Listing and Pagination Container */}
+  <div className="min-w-full space-y-2 overflow-y-auto pb-32" style={{ maxHeight: "75vh" }}>
+    {currentTenders.length > 0 ? (
+      currentTenders.map((tender) => (
+        <Tender key={tender.tender_id} onClose={handleClose} tender={tender} />
+      ))
+    ) : (
+      <div className="mt-16 text-white text-opacity-80 text-center">
+        No Active Tenders to display.
       </div>
+    )}
+
+    {/* Pagination (comes directly after the last tender) */}
+    {currentTenders.length > 0 && (
+      <div className="flex justify-center text-center items-center mt-4 text-white space-x-4">
+        <button
+          onClick={handlePrevPage}
+          className={`px-4 py-2 text-md ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="text-md">Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={handleNextPage}
+          className={`px-4 py-2 text-md ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
+
+
+
     </>
   );
 }

@@ -113,39 +113,48 @@ export default function OpenTicketsTable({ records }: OpenTicketsTableProps) {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">Select a Ticket to see all Tender Bids submitted for it.</div>
-        <div className="min-w-full">
-          {currentRecords.length > 0 ? (
-            currentRecords.map((record: RecordType) => (
-              <div key={record.ticket_id} onClick={() => handleRecordClick(record)}>
-                <Record record={record} />
-              </div>
-            ))
-          ) : (
-            <div className="mt-16 text-white text-center text-opacity-80">No Open Tickets to display.</div>
-          )}
+<div className="block sm:hidden">
+  <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">
+    Select a Ticket to see all Tender Bids submitted for it.
+  </div>
+
+  {/* Tickets Listing and Pagination Container */}
+  <div className="min-w-full space-y-2 overflow-y-auto pb-32" style={{ maxHeight: "75vh" }}>
+    {currentRecords.length > 0 ? (
+      currentRecords.map((record: RecordType) => (
+        <div key={record.ticket_id} onClick={() => handleRecordClick(record)}>
+          <Record record={record} />
         </div>
-        {currentRecords.length > 0 && (
-          <div className="flex justify-center items-center mt-4 text-white">
-            <button 
-              onClick={handlePrevPage} 
-              className={`px-6 py-2 mx-2 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span className="mx-4">Page {currentPage} of {totalPages}</span>
-            <button 
-              onClick={handleNextPage} 
-              className={`px-6 py-2 mx-2 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        )}
+      ))
+    ) : (
+      <div className="mt-16 text-white text-center text-opacity-80">
+        No Open Tickets to display.
       </div>
+    )}
+
+    {/* Pagination (comes directly after the last ticket) */}
+    {currentRecords.length > 0 && (
+      <div className="flex justify-center items-center mt-4 text-white space-x-4">
+        <button
+          onClick={handlePrevPage}
+          className={`px-4 py-2 text-md ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="text-md">Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={handleNextPage}
+          className={`px-4 py-2 text-md ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
     </>
   );
 }
