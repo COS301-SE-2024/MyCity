@@ -439,9 +439,9 @@ export const getMunicipalityTenders = async (municipality: string) => {
         }));
 
         if (responseTender.Items && responseTender.Items.length > 0) {
-            assignMuni(responseTender.Items);
-            assignLongLat(responseTender.Items);
-            assignCompanyName(responseTender.Items);
+            await assignMuni(responseTender.Items);
+            await assignLongLat(responseTender.Items);
+            await assignCompanyName(responseTender.Items);
             collective.push(...responseTender.Items);
         }
     }
@@ -481,9 +481,9 @@ export const getCompanyTenders = async (company_name: string) => {
     }));
 
     const items = responseTenders.Items || [];
-    assignCompanyName(items);
-    assignLongLat(items);
-    assignMuni(items);
+    await assignCompanyName(items);
+    await assignLongLat(items);
+    await assignMuni(items);
 
     return items;
 };
@@ -519,9 +519,9 @@ export const getTicketTender = async (ticket_id: string) => {
         throw new ClientError(errorResponse, "TenderDoesntExist");
     }
 
-    assignCompanyName(items);
-    assignLongLat(items);
-    assignMuni(items);
+    await assignCompanyName(items);
+    await assignLongLat(items);
+    await assignMuni(items);
 
     return items;
 };
