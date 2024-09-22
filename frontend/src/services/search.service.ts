@@ -23,7 +23,7 @@ export async function searchIssue(sessionToken: string | undefined, param: strin
         }
 
         const result = await response.json();
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
     } catch (error: any) {
@@ -32,8 +32,6 @@ export async function searchIssue(sessionToken: string | undefined, param: strin
         return data;
     }
 }
-
-
 
 export async function searchServiceProvider(sessionToken: string | undefined, param: string, revalidate?: boolean) {
     if (revalidate) {
@@ -56,17 +54,15 @@ export async function searchServiceProvider(sessionToken: string | undefined, pa
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-
     } catch (error: any) {
         console.log(error.message);
         const data: any[] = [];
         return data;
     }
 }
-
 
 export async function searchMunicipality(sessionToken: string | undefined, param: string, revalidate?: boolean) {
     if (revalidate) {
@@ -89,17 +85,15 @@ export async function searchMunicipality(sessionToken: string | undefined, param
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-
     } catch (error: any) {
         console.log(error.message);
         const data: any[] = [];
         return data;
     }
 }
-
 
 export async function searchMunicipalityTickets(sessionToken: string | undefined, municipalityId: string, revalidate?: boolean) {
     if (revalidate) {
@@ -122,10 +116,9 @@ export async function searchMunicipalityTickets(sessionToken: string | undefined
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-
     } catch (error: any) {
         console.log(error.message);
         const data: any[] = [];
