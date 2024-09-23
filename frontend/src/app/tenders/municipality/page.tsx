@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { Key, useEffect, useState } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
@@ -10,6 +10,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { getTicketsInMunicipality } from "@/services/tickets.service";
 import { getMunicipalityTenders } from "@/services/tender.service";
 import { ThreeDots } from "react-loader-spinner";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 
 export default function MuniTenders() {
   const userProfile: any = useProfile();
@@ -33,8 +34,11 @@ export default function MuniTenders() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
-    const rspmunitenders = await getMunicipalityTenders(user_municipality,user_session);
-    setMuniTenders(rspmunitenders)
+    const rspmunitenders = await getMunicipalityTenders(
+      user_municipality,
+      user_session
+    );
+    setMuniTenders(rspmunitenders);
   };
 
   useEffect(() => {
@@ -47,8 +51,11 @@ export default function MuniTenders() {
         user_municipality,
         user_session
       );
-      const rspmunitenders = await getMunicipalityTenders(user_municipality,user_session);
-      setMuniTenders(rspmunitenders)
+      const rspmunitenders = await getMunicipalityTenders(
+        user_municipality,
+        user_session
+      );
+      setMuniTenders(rspmunitenders);
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
       setLoadingOpenTickets(false);
     };
@@ -136,7 +143,10 @@ export default function MuniTenders() {
                       />
                     </div>
                   ) : (
-                    <ActiveTenders tenders={muniTenders} refresh={fetchTenders} />
+                    <ActiveTenders
+                      tenders={muniTenders}
+                      refresh={fetchTenders}
+                    />
                   )}
                 </Tab>
 
@@ -166,23 +176,17 @@ export default function MuniTenders() {
 
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
+        <NavbarMobile />
+
         <div
           style={{
             position: "relative",
             height: "100vh",
-            overflow: "hidden",
+            overflow: "hidden", // Prevents content overflow
           }}
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
-
+          {/* Background image */}
           <div
             style={{
               position: "absolute",
@@ -195,31 +199,88 @@ export default function MuniTenders() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              zIndex: -1,
+              zIndex: -1, // Ensures the background is behind other content
             }}
           ></div>
 
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
+          {/* Content */}
+          <div className="container mx-auto relative pt-10 px-4">
+            {/* Add a border around the heading */}
+            <div className=" rounded-lg mt-10 mb-4">
+              <h1 className="text-3xl text-white font-bold text-center">
+                Tenders
+              </h1>
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
+
+            {/* Tab Layout with a border */}
+            <div className="bg-transparent rounded-lg">
+              <Tabs
+                aria-label="Tender options"
+                defaultSelectedKey={0}
+                className="w-full"
+                classNames={{
+                  tab: "min-w-24 min-h-8 text-black",
+                  tabContent:
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:bg-transparent text-black",
+                  panel: "w-full",
+                }}
+                onSelectionChange={handleTabChange}
+              >
+                <Tab key={0} title="Open Tickets">
+                  {loadingOpenTickets ? (
+                    <div className="flex justify-center items-center mt-4">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <OpenTicketsTable records={dashMuniResults} />
+                  )}
+                </Tab>
+
+                <Tab key={1} title="Active Tenders">
+                  {loadingActiveTenders ? (
+                    <div className="flex justify-center items-center mt-4">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <ActiveTenders
+                      tenders={muniTenders}
+                      refresh={fetchTenders}
+                    />
+                  )}
+                </Tab>
+
+                <Tab key={2} title="Closed Tenders">
+                  {loadingClosedTenders ? (
+                    <div className="flex justify-center items-center mt-4">
+                      <ThreeDots
+                        height="40"
+                        width="80"
+                        radius="9"
+                        color="#ADD8E6"
+                        ariaLabel="three-dots-loading"
+                        visible={true}
+                      />
+                    </div>
+                  ) : (
+                    <ClosedTenders tickets={dashMuniResults} />
+                  )}
+                </Tab>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>

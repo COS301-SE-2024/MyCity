@@ -253,13 +253,20 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {/* Render MuniTenders if it is visible */}
       {showMuniTenders && (
         <div className="mt-4">
-          <MuniTenders tenders={tenders} onBack={() => setShowMuniTenders(false)} />
+          <MuniTenders
+            tenders={tenders}
+            onBack={() => setShowMuniTenders(false)}
+          />
         </div>
       )}
-  
+
       {/* Mobile-first layout with centered content */}
       {!showMuniTenders && (
-        <div className={`fixed inset-0 flex justify-center items-center ${!showTenderMax ? "bg-black bg-opacity-50" : ""} z-50`}>
+        <div
+          className={`fixed inset-0 flex justify-center items-center ${
+            !showTenderMax ? "bg-black bg-opacity-50" : ""
+          } z-50`}
+        >
           {!showTenderMax && !showMuniTenders && (
             <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col">
               <button
@@ -268,36 +275,52 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               >
                 <FaTimes size={24} />
               </button>
-  
-              <div className="flex flex-col w-full overflow-auto">
+
+              <div className="flex flex-col w-full text-black overflow-auto">
                 {/* Title and Status */}
                 <div className="text-center mb-2">
                   <div className="font-bold text-lg">{title}</div>
-                  <div className={`text-sm font-bold ${getStatusColor(ticketstatus)}`}>
+                  <div
+                    className={`text-sm font-bold ${getStatusColor(
+                      ticketstatus
+                    )}`}
+                  >
                     {ticketstatus}
                   </div>
                 </div>
-  
+
                 {/* Image and Description */}
                 <div className="text-center">
                   <div className="relative">
-                    {imageURL ? (
-                      <img
-                        src={imageURL}
-                        alt="Fault"
-                        className="rounded-lg w-full h-[300px] object-cover"
-                        onLoad={() => setImageLoading(false)}
-                        style={{ display: imageLoading ? "none" : "block" }}
-                      />
-                    ) : (
-                      <div className="flex justify-center items-center w-full h-[300px] rounded-lg bg-gray-200 border border-gray-300">
-                        <ImageIcon size={48} color="#6B7280" />
+                    <img
+                      src={imageURL}
+                      alt="Fault"
+                      className="rounded-lg w-full h-[300px] object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = ""; // Empty the src to hide broken image icon
+                        e.currentTarget.style.display = "none"; // Hide the image tag if it fails to load
+                        document
+                          .getElementById("image-placeholder")
+                          ?.classList.remove("hidden"); // Show the placeholder div
+                      }}
+                      style={{ display: imageURL ? "block" : "none" }} // Conditionally render image if URL exists
+                    />
+                    <div
+                      id="image-placeholder"
+                      className={`${
+                        imageURL ? "hidden" : "flex"
+                      } justify-center items-center w-full h-[300px] rounded-lg bg-gray-200 border border-gray-300`}
+                    >
+                      <div className="flex justify-center items-center w-full h-full">
+                        <ImageIcon size={48} className="text-gray-500" />
                       </div>
-                    )}
+                    </div>
                   </div>
-                  <p className="text-gray-700 text-sm mt-2 mb-4">{description}</p>
+                  <p className="text-gray-700 text-sm mt-2 mb-4">
+                    {description}
+                  </p>
                 </div>
-  
+
                 {/* Interactions */}
                 <div className="mt-2 flex justify-around w-full px-4">
                   <div className="flex items-center">
@@ -316,13 +339,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                     <span className="text-gray-700">{viewCount}</span>
                   </div>
                 </div>
-  
+
                 {/* Address and Created By */}
                 <div className="flex justify-around items-center mt-4">
                   <div className="flex flex-col items-center">
                     <h3 className="font-bold text-sm">Address</h3>
                     {addressParts.map((part, index) => (
-                      <p key={index} className="text-gray-700 text-xs">{part.trim()}</p>
+                      <p key={index} className="text-gray-700 text-xs">
+                        {part.trim()}
+                      </p>
                     ))}
                   </div>
                   <div className="flex flex-col items-center">
@@ -332,6 +357,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                         src={user_picture}
                         alt="Created By"
                         className="rounded-full mb-1 object-cover w-10 h-10"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "/path/to/placeholder-avatar.jpg"; // Fallback for avatar
+                        }}
                       />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center">
@@ -341,7 +370,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                     <p className="text-gray-700 text-xs">{createdBy}</p>
                   </div>
                 </div>
-  
+
                 {/* Buttons */}
                 <div className="mt-4 flex justify-center gap-2">
                   <button
@@ -350,7 +379,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   >
                     Back
                   </button>
-                  {(ticketstatus === "In Progress" || ticketstatus === "Assigning Contract") && (
+                  {(ticketstatus === "In Progress" ||
+                    ticketstatus === "Assigning Contract") && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
                       onClick={handleTenderContractClick}
@@ -384,7 +414,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   )}
                 </div>
               </div>
-  
+
               {/* Comments Section with Right-to-Left Slide Animation */}
               {showComments && (
                 <div
@@ -401,7 +431,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               )}
             </div>
           )}
-  
+
           {/* TenderMax Section */}
           {showTenderMax && (
             <TenderMax
@@ -409,7 +439,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                 tender_id: contract?.tender_id,
                 status: contract?.status,
                 companyname: tenders?.companyname,
-                contractdatetime: formatDate(String(contract?.contractdatetime)),
+                contractdatetime: formatDate(
+                  String(contract?.contractdatetime)
+                ),
                 finalCost: contract?.finalCost,
                 finalDuration: contract?.finalDuration,
                 upload: null,
@@ -427,7 +459,6 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       )}
     </>
   );
-  
-};  
+};
 
 export default TicketViewMuni;
