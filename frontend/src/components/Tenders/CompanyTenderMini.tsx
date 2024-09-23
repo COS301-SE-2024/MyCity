@@ -113,7 +113,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
           {tender.municipality}
         </div>
         <div className="col-span-1 flex justify-center">{formattedDate}</div>
-        <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
+        <div className="col-span-1 flex justify-center">R{tender.quote}</div>
         <div className="col-span-1 flex justify-center">{estimatedDays} days</div>
       </div>
 

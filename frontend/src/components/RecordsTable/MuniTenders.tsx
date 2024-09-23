@@ -11,25 +11,6 @@ export default function MuniTenders({
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
-  // Hardcoded mock tenders for testing
-  /*const mockTenders = [
-    {
-      ticket_id: "TND1234",
-      status: "Pending",
-      service_provider: "ABC Services",
-      issue_date: "2024-09-12",
-      price: "$1200",
-      estimated_duration: "3 weeks",
-    },
-    {
-      ticket_id: "TND5678",
-      status: "Accepted",
-      service_provider: "XYZ Contractors",
-      issue_date: "2024-09-11",
-      price: "$1500",
-      estimated_duration: "2 weeks",
-    },
-  ];*/
 
   const tendersToDisplay = tenders; //|| mockTenders; // Use mock data if tenders is null
 
@@ -99,10 +80,10 @@ export default function MuniTenders({
                   className="grid grid-cols-6 gap-4 items-center px-2 py-1 text-center border-b border-gray-100"
                 >
                   <div className="col-span-1">{tender.status}</div>
-                  <div className="col-span-1">{tender.ticket_id}</div>
-                  <div className="col-span-1">{tender.service_provider}</div>
+                  <div className="col-span-1">{tender.tendernumber}</div>
+                  <div className="col-span-1">{tender.companyname}</div>
                   <div className="col-span-1">{tender.issue_date}</div>
-                  <div className="col-span-1">{tender.price}</div>
+                  <div className="col-span-1">{tender.quote}</div>
                   <div className="col-span-1">{tender.estimated_duration}</div>
                 </div>
               ))}
@@ -159,11 +140,11 @@ export default function MuniTenders({
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-sm">Tender ID:</span>
-                <span className="text-sm">{tender.ticket_id}</span>
+                <span className="text-sm">{tender.tendernumber}</span>
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-sm">Service Provider:</span>
-                <span className="text-sm">{tender.service_provider}</span>
+                <span className="text-sm">{tender.companyname}</span>
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-sm">Issue Date:</span>

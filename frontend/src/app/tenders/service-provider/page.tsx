@@ -37,6 +37,7 @@ export default function MuniTenders() {
         setOpenTickets(rspmostupvotes);
       } else if (tab === "activeTenders") {
         const rsptenders = await getCompanyTenders(user_company, user_session, true);
+        console.log(rsptenders)
         setMytenders(rsptenders);
       }
       // You could handle fetching for "closedTenders" similarly if needed

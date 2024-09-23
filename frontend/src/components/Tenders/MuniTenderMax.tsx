@@ -3,10 +3,13 @@ import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MapComponent from "@/context/MapboxMap";
+import { CompleteContract } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
+  contract_id : string;
   tender_id: string;
   status: string;
   companyname: string;
@@ -53,9 +56,9 @@ const TenderMax = ({
     show: false,
   });
   const modalRef = useRef<HTMLDivElement>(null);
-
-  const tenderStatus =
-    tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+  const userProfile = useProfile();
+  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+  
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -74,13 +77,23 @@ const TenderMax = ({
   }, [onClose]);
 
   const handleAction = (action: string) => {
+    console.log("Trying to understand")
     setDialog({ action, show: true });
   };
 
-  const confirmAction = () => {
+  const confirmAction = async () => {
+    console.log("Trying to understand")
     toast.success(`${dialog.action} action confirmed.`);
+    console.log("In this one")
+    if(dialog.action == "Mark as Complete")
+    {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      console.log(response_contract)
+    }
     setDialog({ action: "", show: false });
-    onClose(); // Handle the action here, e.g., terminate or mark complete.
+    // onClose(); // Handle the action here, e.g., terminate or mark complete.
   };
 
   const getDialogText = (action: string) => {
@@ -94,13 +107,18 @@ const TenderMax = ({
     }
   };
 
-  const handleConfirmClick = () => {
+  const handleConfirmClick = async () => {
     // Here you handle the action and only then call onClose with the appropriate data
-    confirmAction(); // This will display a toast and close the dialog
+    console.log("Trying to understand")
+    // confirmAction(); // This will display a toast and close the dialog
     if (dialog.action === "Mark as Complete") {
-      onClose(); // Example: Mark as complete would close the ticket
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      console.log(response_contract)
+      // onClose(); // Example: Mark as complete would close the ticket
     } else if (dialog.action === "Terminate Contract") {
-      onClose(); // Example: Terminate contract would also close the ticket
+      // onClose(); // Example: Terminate contract would also close the ticket
     }
   };
 
