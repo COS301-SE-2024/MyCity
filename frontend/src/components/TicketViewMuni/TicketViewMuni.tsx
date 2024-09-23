@@ -211,9 +211,12 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  const handleTenderMaxClose = () => {
-    //setTicketstatus("Closed");
-    //onClose(-2);
+  const handleTenderMaxClose = (data : number) => {
+    if(data == -2)
+    {
+      setTicketstatus("Closed");
+      onClose(-2);
+    }
     setShowTenderMax(false);
   };
 

@@ -49,7 +49,7 @@ const TenderMax = ({
   onClose,
 }: {
   tender: TenderType;
-  onClose: () => void;
+  onClose: (data: number) => void;
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({
     action: "",
@@ -60,26 +60,30 @@ const TenderMax = ({
   const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
   
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        onClose();
-      }
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event: MouseEvent) {
+  //     if (
+  //       modalRef.current &&
+  //       !modalRef.current.contains(event.target as Node)
+  //     ) {
+  //       onClose();
+  //     }
+  //   }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [onClose]);
 
   const handleAction = (action: string) => {
     console.log("Trying to understand")
     setDialog({ action, show: true });
   };
+
+  const Closeapp = () => {
+    onClose(0);
+  }
 
   const confirmAction = async () => {
     console.log("Trying to understand")
@@ -93,7 +97,7 @@ const TenderMax = ({
       console.log(response_contract)
     }
     setDialog({ action: "", show: false });
-    // onClose(); // Handle the action here, e.g., terminate or mark complete.
+    onClose(0); // Handle the action here, e.g., terminate or mark complete.
   };
 
   const getDialogText = (action: string) => {
@@ -116,9 +120,9 @@ const TenderMax = ({
       const user_session = String(user_data.current?.session_token);
       const response_contract = await CompleteContract(tender.contract_id,user_session)
       console.log(response_contract)
-      // onClose(); // Example: Mark as complete would close the ticket
+      onClose(-2); // Example: Mark as complete would close the ticket
     } else if (dialog.action === "Terminate Contract") {
-      // onClose(); // Example: Terminate contract would also close the ticket
+      onClose(0); // Example: Terminate contract would also close the ticket
     }
   };
 
@@ -133,7 +137,7 @@ const TenderMax = ({
         >
           <button
             className="absolute top-2 right-2 text-gray-700"
-            onClick={onClose}
+            onClick={Closeapp}
           >
             <FaTimes size={24} />
           </button>
@@ -190,7 +194,7 @@ const TenderMax = ({
               <div className="mt-2 flex justify-center gap-2">
                 <button
                   className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
-                  onClick={onClose}
+                  onClick={Closeapp}
                 >
                   Back
                 </button>
