@@ -3,7 +3,7 @@ import { FaTimes, FaArrowUp, FaComment, FaEye } from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
-import MuniTenders from "../RecordsTable/MuniTenders";
+import MuniTenders from "../RecordsTableCompany/MuniTenders";
 import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { getTicketTenders, getContract } from "@/services/tender.service";
@@ -211,9 +211,12 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  const handleTenderMaxClose = () => {
-    //setTicketstatus("Closed");
-    //onClose(-2);
+  const handleTenderMaxClose = (data : number) => {
+    if(data == -2)
+    {
+      setTicketstatus("Closed");
+      onClose(-2);
+    }
     setShowTenderMax(false);
   };
 
@@ -227,17 +230,19 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
+    console.log(rspgettenders)
     setIsLoading(false);
 
     if (!rspgettenders || rspgettenders.length === 0) {
       setTenders(null);
     } else {
       setTenders(rspgettenders);
+      setShowTenderMax(false); // Hide TenderMax
+      setShowMuniTenders(true);
     }
 
     // Ensure that only MuniTenders is shown, and TenderMax is hidden (similar to mobile)
-    setShowTenderMax(false); // Hide TenderMax
-    setShowMuniTenders(true); // Show MuniTenders
+    // Show MuniTenders
   };
 
   const handleBack = (data: number) => {
@@ -436,6 +441,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
           {showTenderMax && (
             <TenderMax
               tender={{
+                contract_id : contract?.contract_id,
                 tender_id: contract?.tender_id,
                 status: contract?.status,
                 companyname: tenders?.companyname,
