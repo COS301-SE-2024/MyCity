@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
 
-type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
+type TenderStatus = "under_review" | "rejected" | "submitted" | "approved";
 interface TenderType {
   tender_id: string;
   tendernumber: string;
@@ -11,7 +11,7 @@ interface TenderType {
   datetimesubmitted: string;
   ticketnumber : string;
   ticket_id: string;
-  status: Status;
+  status: TenderStatus;
   quote: number;
   longitude : string;
   latitude : string;
