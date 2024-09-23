@@ -340,7 +340,122 @@ def complete_contract(sender_data):
         response = updateContractTable(
             sender_data["contract_id"], updateExp, expattrName, expattrValue
         )
+        current_time = datetime.now()
+        submitted_time = current_time.strftime("%Y-%m-%dT%H:%M:%S")
+        updateExp2 = "set #completedatetime=:r"
+        expattrName2 = {"#completedatetime": "completedatetime"}
+        expattrValue2 = {":r": submitted_time}
+        response2 = updateContractTable(
+            sender_data["contract_id"], updateExp2, expattrName2, expattrValue2
+        )
 
+        # editing ticket to Closed
+        contract = response_contract["Items"][0]
+        resp_tender = tenders_table.query(
+            KeyConditionExpression=Key("tender_id").eq(contract["tender_id"])
+        )
+        if len(resp_tender["Items"]) > 0:
+            tender = resp_tender["Items"][0]
+            resp_ticket = ticket_table.query(
+                KeyConditionExpression=Key("ticket_id").eq(tender["ticket_id"])
+            )
+            if len(resp_ticket["Items"]) > 0:
+                ticket_change = resp_ticket["Items"][0]
+                updateExpT = "set #state=:r"
+                expattrNameT = {"#state": "state"}
+                expattrValueT = {":r": "Closed"}
+                rsp_changed_ticket = updateTicketTable(
+                    ticket_change["ticket_id"], updateExpT, expattrNameT, expattrValueT
+                )
+
+        # editing ticket as well to In Progress
+        if response["ResponseMetadata"]:
+            return {
+                "Status": "Success",
+                "Contact_id": sender_data["contract_id"],
+            }
+        else:
+            error_response = {
+                "Error": {
+                    "Code": "UpdateError",
+                    "Message": "Error occured trying to update",
+                }
+            }
+            raise ClientError(error_response, "UpdateError")
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def terminate_contract(sender_data):
+    try:
+        required_fields = ["contract_id"]
+
+        for field in required_fields:
+            if field not in sender_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        response_contract = contract_table.query(
+            KeyConditionExpression=Key("contract_id").eq(sender_data["contract_id"])
+        )
+        contract_items = response_contract["Items"]
+        if len(contract_items) <= 0:  # To see that company does exist
+            error_response = {
+                "Error": {
+                    "Code": "ContractDoesntExist",
+                    "Message": "Contract Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "ContractDoesntExist")
+        updateExp = "set #status=:r"
+        expattrName = {"#status": "status"}
+        expattrValue = {":r": "closed"}
+        response = updateContractTable(
+            sender_data["contract_id"], updateExp, expattrName, expattrValue
+        )
+
+        # editing ticket to taking tenders when rejected
+        contract = response_contract["Items"][0]
+        resp_tender = tenders_table.query(
+            KeyConditionExpression=Key("tender_id").eq(contract["tender_id"])
+        )
+        if len(resp_tender["Items"]) > 0:
+            tender = resp_tender["Items"][0]
+            updateExpTender = "set #status=:r"
+            expattrNameTender = {"#status": "status"}
+            expattrValueTender = {":r": "rejected"}
+            rsp_changed_tender = updateTenderTable(
+                tender["tender_id"],
+                updateExpTender,
+                expattrNameTender,
+                expattrValueTender,
+            )
+            # changing tender to rejected
+            if rsp_changed_tender["ResponseMetadata"]:
+                print("Successfully changed")
+
+            resp_ticket = ticket_table.query(
+                KeyConditionExpression=Key("ticket_id").eq(tender["ticket_id"])
+            )
+
+            # Check that there is ticket
+            if len(resp_ticket["Items"]) > 0:
+                ticket_change = resp_ticket["Items"][0]
+                updateExpT = "set #state=:r"
+                expattrNameT = {"#state": "state"}
+                expattrValueT = {":r": "Taking Tenders"}
+                rsp_changed_ticket = updateTicketTable(
+                    ticket_change["ticket_id"], updateExpT, expattrNameT, expattrValueT
+                )
+                if rsp_changed_ticket["ResponseMetadata"]:
+                    print("Successfully changed Ticket")
         # editing ticket as well to In Progress
         if response["ResponseMetadata"]:
             return {
@@ -611,6 +726,22 @@ def updateTenderTable(
 ):
     response = tenders_table.update_item(
         Key={"tender_id": tender_id},
+        UpdateExpression=update_expression,
+        ExpressionAttributeNames=expression_attribute_names,
+        ExpressionAttributeValues=expression_attribute_values,
+    )
+
+    return response
+
+
+def updateTicketTable(
+    ticket_id,
+    update_expression,
+    expression_attribute_names,
+    expression_attribute_values,
+):
+    response = ticket_table.update_item(
+        Key={"ticket_id": ticket_id},
         UpdateExpression=update_expression,
         ExpressionAttributeNames=expression_attribute_names,
         ExpressionAttributeValues=expression_attribute_values,
