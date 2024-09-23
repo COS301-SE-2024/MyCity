@@ -789,12 +789,12 @@ export default function CitizenDashboard({
             }}
           >
             {/* Navbar Top*/}
-            <NavbarMobile />
+            
 
             {/* Dashboard Content */}
             <div className="h-[85vh]">
               <div className="flex justify-center">
-                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                <h1 className="text-4xl font-bold text-white text-opacity-80 mt-2">
                   Dashboard
                 </h1>
               </div>
