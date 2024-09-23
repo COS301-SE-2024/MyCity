@@ -69,8 +69,9 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
 
   return (
     <>
+      {/* Desktop View */}
       <div
-        className="flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-8 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="hidden sm:flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-8 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleNotificationClick}
       >
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
@@ -88,7 +89,23 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           </div>
         </div>
       </div>
-
+  
+      {/* Mobile View */}
+      <div className="block sm:hidden flex flex-col text-black bg-white bg-opacity-70 rounded-3xl p-3 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors">
+        <div className="flex flex-col items-center w-full" onClick={handleNotificationClick}>
+          <div className="text-sm text-center font-bold mb-2">
+            Ticket #{ticketNumber} was {getActionText()}.
+          </div>
+          <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300">
+            {image ? (
+              <img src={image} alt="Ticket" className="w-full h-full object-cover" />
+            ) : (
+              <FaUserCircle size={32} color="#6B7280" />
+            )}
+          </div>
+        </div>
+      </div>
+  
       {showTicketView && ticketData && (
         <TicketViewCompany
           show={true}
@@ -96,8 +113,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           title={ticketData.title}
           address={ticketData.address}
           arrowCount={ticketData.upvotes}
-          commentCount={3}  // Mocked value
-          viewCount={15}  // Mocked value
+          commentCount={3} // Mocked value
+          viewCount={15} // Mocked value
           description={ticketData.description}
           user_picture={ticketData.user_picture}
           createdBy={ticketData.createdBy}
@@ -114,6 +131,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
       )}
     </>
   );
+  
 };
 
 export default TicketNotification;
