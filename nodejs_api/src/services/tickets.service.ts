@@ -1,7 +1,8 @@
-import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
-import { capitaliseUserEmail, doesTicketExist, generateId, getCompanyIDFromName, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
+import { capitaliseUserEmail, doesTicketExist, generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
+import { uploadFile } from "../config/s3bucket.config";
 
 interface Ticket {
     dateClosed: string;
@@ -31,6 +32,121 @@ interface TicketData {
     ticket_id: string;
 }
 
+
+export const createTicket = async (formData: any, file: Express.Multer.File) => {
+    try {
+        // Validate required fields
+        const requiredFields = [
+            "address",
+            "asset",
+            "description",
+            "latitude",
+            "longitude",
+            "state",
+            "username",
+        ];
+
+        for (const field of requiredFields) {
+            const reqField = formData[field];
+            if (!reqField) {
+                const errorResponse = {
+                    Error: {
+                        Code: "IncorrectFields",
+                        Message: `Missing required field: ${field}`,
+                    },
+                };
+                throw new ClientError(errorResponse, "InvalidFields");
+            }
+        }
+
+        const username = formData["username"] as string;
+        const imageLink = await uploadFile("ticket_images", username, file);
+
+        // Ensure asset exists
+        const assetId = String(formData.asset);
+        const assetResponse = await dynamoDBDocumentClient.send(new GetCommand({
+            TableName: ASSETS_TABLE,
+            Key: { asset_id: assetId },
+        }));
+
+        if (!assetResponse.Item) {
+            const errorResponse = {
+                Error: {
+                    Code: "ResourceNotFoundException",
+                    Message: `Asset with ID ${assetId} does not exist`,
+                },
+            };
+            throw new ClientError(errorResponse, "NoItems");
+        }
+
+        // Generate ticket ID
+        const ticketId = generateId();
+
+        const latitude = parseFloat(formData.latitude);
+        const longitude = parseFloat(formData.longitude);
+
+        // Get the address
+        const address = formData.address;
+
+        const municipalityId = await getMunicipality(latitude, longitude);
+
+        const currentDatetime = new Date();
+        const formattedDatetime = currentDatetime.toISOString();
+
+        const ticketNumber = generateTicketNumber(municipalityId);
+
+        // Create the ticket item
+        const ticketItem = {
+            ticket_id: ticketId,
+            asset_id: assetId,
+            address: address,
+            dateClosed: "<empty>",
+            dateOpened: formattedDatetime,
+            description: formData.description,
+            imageURL: imageLink,
+            latitude: latitude,
+            longitude: longitude,
+            municipality_id: municipalityId,
+            username: formData.username,
+            state: formData.state, // do not hard code, want to extend in future
+            upvotes: 0,
+            viewcount: 0,
+            ticketnumber: ticketNumber,
+        };
+
+        // Put the ticket item into the tickets table
+        await dynamoDBDocumentClient.send(new PutCommand({
+            TableName: TICKETS_TABLE,
+            Item: ticketItem,
+        }));
+
+        // Put ticket on their watchlist
+        const watchlistId = generateId();
+
+        const watchlistItem = {
+            watchlist_id: watchlistId,
+            ticket_id: ticketId,
+            user_id: formData.username,
+        };
+
+        await dynamoDBDocumentClient.send(new PutCommand({
+            TableName: WATCHLIST_TABLE,
+            Item: watchlistItem,
+        }));
+
+        // After accepting
+        const accResponse = {
+            message: "Ticket created successfully",
+            ticket_id: ticketId,
+            watchlist_id: watchlistId,
+        };
+
+        return accResponse;
+
+    } catch (error: any) {
+        throw error;
+    }
+};
 
 export const addWatchlist = async (ticketData: TicketData) => {
     const requiredFields = ["username", "ticket_id"];
@@ -858,4 +974,3 @@ export const getGeodataAll = async () => {
         throw new BadRequestError(`Failed to retrieve all tickets: ${e.message}`);
     }
 };
-

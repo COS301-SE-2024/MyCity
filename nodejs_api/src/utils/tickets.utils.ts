@@ -1,5 +1,5 @@
-import { GetCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { GetCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
@@ -201,8 +201,65 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 7) =
         // wait for this batch of queries to complete before continuing
         await Promise.all(queryPromises);
     }
-}
+};
 
+export const getDistance = (origin: [number, number], destination: [number, number]): number => {
+    const [lat1, lon1] = origin;
+    const [lat2, lon2] = destination;
+    const radius = 6371; // km
+
+    const toRadians = (degrees: number): number => degrees * (Math.PI / 180);
+
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = radius * c;
+
+    return d;
+};
+
+export const getMunicipality = async (latitude: number, longitude: number): Promise<string> => {
+    let municipality = "";
+    let minDistance = Number.MAX_SAFE_INTEGER;
+
+    let responseMuni:any;
+    let items:any = [];
+    let lastEvaluatedKey;
+
+    do {
+        responseMuni = await dynamoDBDocumentClient.send(new ScanCommand({
+            TableName: MUNICIPALITIES_TABLE,
+            ProjectionExpression: "longitude, latitude, municipality_id",
+            ExclusiveStartKey: lastEvaluatedKey
+        }));
+
+        if (responseMuni.Items) {
+            items = items.concat(responseMuni.Items);
+        }
+
+        lastEvaluatedKey = responseMuni.LastEvaluatedKey;
+    } while (lastEvaluatedKey);
+
+    if (items && items.length > 0) {
+        for (const item of items) {
+            const cleanLat = parseFloat(item.latitude.toString().trim());
+            const cleanLong = parseFloat(item.longitude.toString().trim());
+            const origin: [number, number] = [cleanLat, cleanLong];
+            const destination: [number, number] = [latitude, longitude];
+            const distance = getDistance(origin, destination);
+
+            if (minDistance > distance) {
+                municipality = item.municipality_id;
+                minDistance = distance;
+            }
+        }
+    }
+
+    return municipality === "" ? "NOT APPLICABLE" : municipality;
+};
 
 export const capitaliseUserEmail = (email: string): string => {
     const emailParts = email.split("@");
