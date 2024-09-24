@@ -52,9 +52,10 @@ def create_tender(sender_data):
             raise ClientError(error_response, "CompanyDoesntExist")
 
         company_id = company_pid
-        response_check = tenders_table.scan(
-            FilterExpression=Attr("company_id").eq(company_id)
-            & Attr("ticket_id").eq(sender_data["ticket_id"]),
+        response_check = tenders_table.query(
+            IndexName="company_id-index",
+            KeyConditionExpression=Key("company_id").eq(company_id),
+            FilterExpression=Attr("ticket_id").eq(sender_data["ticket_id"]),
         )
 
         if len(response_check["Items"]) > 0:
@@ -522,6 +523,44 @@ def getMunicipalityTenders(municipality):
         return {"Status": "FAILED", "Error": error_message}
 
 
+def DidMakeTender(sender_data):
+    try:
+        required_fields = [
+            "companyname",
+            "ticket_id",
+        ]
+
+        for field in required_fields:
+            if field not in sender_data:
+                error_response = {
+                    "Error": {
+                        "Code": "IncorrectFields",
+                        "Message": f"Missing required field: {field}",
+                    }
+                }
+                raise ClientError(error_response, "InvalideFields")
+
+        company_id = getCompanIDFromName(sender_data["companyname"])
+        response_tender = tenders_table.query(
+            IndexName="company_id-index",
+            KeyConditionExpression=Key("company_id").eq(company_id),
+            FilterExpression=Attr("ticket_id").eq(sender_data["ticket_id"]),
+        )
+
+        if len(response_tender["Items"]) > 0:
+            tender = response_tender["Items"][0]
+            assignIndividualCompanyName(tender)
+            assignIndividualLongLat(tender)
+            assignIndividualMuni(tender)
+            return tender
+        else:
+            return {"Status": "NotFound", "Message": "Company hasnt bid for ticket"}
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 # company tenders
 def getCompanyTenders(company_name):
     try:
@@ -542,8 +581,9 @@ def getCompanyTenders(company_name):
                 }
             }
             raise ClientError(error_response, "CompanyDoesntExist")
-        response_tenders = tenders_table.scan(
-            FilterExpression=Attr("company_id").eq(company_id)
+        response_tenders = tenders_table.query(
+            IndexName="company_id-index",
+            KeyConditionExpression=Key("company_id").eq(company_id),
         )
         assignCompanyName(response_tenders["Items"])
         assignLongLat(response_tenders["Items"])

@@ -185,7 +185,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
   
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingTabs.closedTenders ? (
                     <div className="flex justify-center items-center h-64">
                       <ThreeDots
@@ -200,7 +200,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </main>
