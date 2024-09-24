@@ -808,13 +808,16 @@ def get_Open_Company_Tickets():
     try:
         collective = []
 
-        response = tickets_table.scan(FilterExpression=Attr("upvotes").exists())
+        response = tickets_table.scan(
+            FilterExpression=Attr("upvotes").exists()
+            & Attr("state").eq("Taking Tenders")
+            & Attr("municipality_id").ne("City of Johannesburg Metropolitan")
+            & Attr("municipality_id").ne("City of Cape Town Metropolitan")
+        )
         items = response["Items"]
         sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
-        filtered_items = [
-            item for item in sorted_items if item["state"] == "Taking Tenders"
-        ]
-        top_items = filtered_items[:6]
+
+        top_items = sorted_items[:15]
         if len(top_items) > 0:
             for item in top_items:
                 response_item = ticketupdate_table.query(
