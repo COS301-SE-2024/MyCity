@@ -42,9 +42,28 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
     setIsMapVisible((prev) => !prev);
   };
 
-  const handleOutsideClick = (e: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      onClose(0);
+
+  const handleDecline = () => {
+    onClose(2); // Example number to send back
+  };
+
+  // Map "Fix in progress" to "Active" for the tender's status
+  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+
+  console.log(tender.company_id)
+  const handleAction = async (action: string) => {
+    if(action == "Accept")
+    {  
+        setDialog({ action, show: true });
+        console.log("inside true")
+    }
+    else if(action == "Decline")
+    {
+        
+        setDialog({ action, show: true });
+        console.log("inside true")
+        ///uhygiygh
+
     }
   };
 
