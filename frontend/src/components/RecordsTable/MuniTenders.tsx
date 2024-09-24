@@ -11,13 +11,32 @@ export default function MuniTenders({
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
+  // Hardcoded mock tenders for testing
+  /*const mockTenders = [
+    {
+      ticket_id: "TND1234",
+      status: "Pending",
+      service_provider: "ABC Services",
+      issue_date: "2024-09-12",
+      price: "$1200",
+      estimated_duration: "3 weeks",
+    },
+    {
+      ticket_id: "TND5678",
+      status: "Accepted",
+      service_provider: "XYZ Contractors",
+      issue_date: "2024-09-11",
+      price: "$1500",
+      estimated_duration: "2 weeks",
+    },
+  ];*/
 
   const tendersToDisplay = tenders; //|| mockTenders; // Use mock data if tenders is null
 
   if (!tendersToDisplay || tendersToDisplay.length === 0) {
     return (
       <div
-        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 relative z-0"
+        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 mb-4 relative z-0"
         style={{
           boxShadow:
             "0px -10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
@@ -48,7 +67,7 @@ export default function MuniTenders({
     <div>
       {/* Desktop View */}
       <div
-        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 relative z-0 hidden sm:block"
+        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 mb-4 relative z-0 hidden sm:block"
         style={{
           boxShadow:
             "0px -10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
@@ -80,10 +99,10 @@ export default function MuniTenders({
                   className="grid grid-cols-6 gap-4 items-center px-2 py-1 text-center border-b border-gray-100"
                 >
                   <div className="col-span-1">{tender.status}</div>
-                  <div className="col-span-1">{tender.tendernumber}</div>
-                  <div className="col-span-1">{tender.companyname}</div>
+                  <div className="col-span-1">{tender.ticket_id}</div>
+                  <div className="col-span-1">{tender.service_provider}</div>
                   <div className="col-span-1">{tender.issue_date}</div>
-                  <div className="col-span-1">{tender.quote}</div>
+                  <div className="col-span-1">{tender.price}</div>
                   <div className="col-span-1">{tender.estimated_duration}</div>
                 </div>
               ))}
@@ -116,7 +135,7 @@ export default function MuniTenders({
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-4 mr-4 relative z-0">
+      <div className="block sm:hidden bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-4 mr-4 mb-4 relative z-0">
         <div className="relative">
           <button
             onClick={onBack}
@@ -140,11 +159,11 @@ export default function MuniTenders({
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-sm">Tender ID:</span>
-                <span className="text-sm">{tender.tendernumber}</span>
+                <span className="text-sm">{tender.ticket_id}</span>
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-sm">Service Provider:</span>
-                <span className="text-sm">{tender.companyname}</span>
+                <span className="text-sm">{tender.service_provider}</span>
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-bold text-sm">Issue Date:</span>

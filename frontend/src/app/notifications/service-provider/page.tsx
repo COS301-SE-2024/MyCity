@@ -1,12 +1,11 @@
-"use client";
+"use client"
 
 import { useState } from "react";
-
-//import Navbar from "@/components/Navbar/Navbar"; implemented later
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import TicketNoti from "@/components/NotificationsCompanyNew/TicketNoti";
 import TenderNoti from "@/components/NotificationsCompanyNew/TenderNoti";
-import Comments from "@/components/Comments/comments";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
+
 export default function Notifications() {
   const handleDelete = () => {
     console.log("Delete notification");
@@ -15,10 +14,13 @@ export default function Notifications() {
 
   return (
     <div>
+      {/* Navbar */}
       <NavbarCompany unreadNotifications={unreadNotifications} />
+
+      {/* Background Image */}
       <div
         style={{
-          position: "fixed", // Change position to 'fixed'
+          position: "fixed",
           top: 0,
           left: 0,
           width: "100%",
@@ -28,65 +30,128 @@ export default function Notifications() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed", // Ensures the background is fixed regardless of scrolling
-          zIndex: -1, // Ensures the background is behind other content
+          zIndex: -1,
         }}
       ></div>
+
       <main>
-        <div className="relative pt-8">
-          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
-            Notifications
-          </h1>
+        {/* Desktop View */}
+        <div className="hidden sm:block">
+          <div className="relative pt-8">
+            <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+              Notifications
+            </h1>
+          </div>
+          <div className="pt-20 px-6 rounded-3xl">
+            <TicketNoti
+              ticketNumber="12345"
+              image={null}
+              action="upvoted"
+              isNew={true}
+            />
+            <TicketNoti
+              ticketNumber="67890"
+              image={null}
+              action="commented on"
+              isNew={false}
+            />
+            <TicketNoti
+              ticketNumber="11223"
+              image=""
+              action="watchlisted"
+              isNew={true}
+            />
+            <TicketNoti
+              ticketNumber="44556"
+              image=""
+              action="updated status to:"
+              isNew={false}
+            />
+            <TenderNoti
+              tenderId="12345"
+              image=""
+              action="bid accepted"
+              isNew={true}
+            />
+            <TenderNoti
+              tenderId="67890"
+              image=""
+              action="bid rejected"
+              isNew={false}
+            />
+            <TenderNoti
+              tenderId="54321"
+              image={null}
+              action="contract terminated"
+              isNew={true}
+            />
+            <TenderNoti
+              tenderId="09876"
+              image=''
+              action="contract completed"
+              isNew={false}
+            />
+          </div>
         </div>
-        <div className="pt-20 px-6 rounded-3xl">
-        <TicketNoti
-          ticketNumber="12345"
-          image="" // No image provided, so the profile icon will be shown
-          action="upvoted"
-          isNew={true} // New notification
-        />
-        <TicketNoti
-          ticketNumber="67890"
-          image="https://via.placeholder.com/150" // Image provided
-          action="commented on"
-          isNew={false} // Viewed notification
-        />
-        <TicketNoti
-          ticketNumber="11223"
-          image="" // No image provided, so the profile icon will be shown
-          action="watchlisted"
-          isNew={true} // New notification
-        />
-        <TicketNoti
-          ticketNumber="44556"
-          image="https://via.placeholder.com/150" // Image provided
-          action="updated status to:"
-          isNew={false} // Viewed notification
-        />
-        <TenderNoti
-          tenderId="12345"
-          image="https://via.placeholder.com/50"
-          action="bid accepted"
-          isNew={true}
-        />
-        <TenderNoti
-          tenderId="67890"
-          image="https://via.placeholder.com/50"
-          action="bid rejected"
-          isNew={false}
-        />
-        <TenderNoti
-          tenderId="54321"
-          image={null} // No image provided
-          action="contract terminated"
-          isNew={true}
-        />
-        <TenderNoti
-          tenderId="09876"
-          image="https://via.placeholder.com/50"
-          action="contract completed"
-          isNew={false}
-        />
+
+        {/* Mobile View */}
+        <div className="block sm:hidden">
+          <NavbarMobile />
+          <div className="relative">
+          <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mt-2">
+              Notifications
+            </h1>
+          </div>
+          <div className="pt-6 mb-24">
+            <TicketNoti
+              ticketNumber="12345"
+              image=""
+              action="upvoted"
+              isNew={true}
+            />
+            <TicketNoti
+              ticketNumber="67890"
+              image="https://via.placeholder.com/150"
+              action="commented on"
+              isNew={false}
+            />
+            <TicketNoti
+              ticketNumber="11223"
+              image=""
+              action="watchlisted"
+              isNew={true}
+            />
+            <TicketNoti
+              ticketNumber="44556"
+              image="https://via.placeholder.com/150"
+              action="updated status to:"
+              isNew={false}
+            />
+            <TenderNoti
+              tenderId="12345"
+              image="https://via.placeholder.com/50"
+              action="bid accepted"
+              isNew={true}
+            />
+            <TenderNoti
+              tenderId="67890"
+              image="https://via.placeholder.com/50"
+              action="bid rejected"
+              isNew={false}
+            />
+            <TenderNoti
+              tenderId="54321"
+              image={null}
+              action="contract terminated"
+              isNew={true}
+            />
+            <TenderNoti
+              tenderId="09876"
+              image="https://via.placeholder.com/50"
+              action="contract completed"
+              isNew={false}
+            />
+          </div>
         </div>
       </main>
     </div>
