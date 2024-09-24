@@ -113,7 +113,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
           {tender.municipality}
         </div>
         <div className="col-span-1 flex justify-center">{formattedDate}</div>
-        <div className="col-span-1 flex justify-center">R{tender.quote.toFixed(2)}</div>
+        <div className="col-span-1 flex justify-center">R{tender.quote}</div>
         <div className="col-span-1 flex justify-center">{estimatedDays} days</div>
       </div>
 
@@ -121,7 +121,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
         <TenderMax
           contract_id={contract.contract_id}
           status={contract.status}
-          companyname={tender.companyname}
+          companyname={contract.companyname}
           contractdatetime={contract.contractdatetime}
           finalCost={contract.finalCost}
           finalDuration={contract.finalDuration}
