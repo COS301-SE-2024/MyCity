@@ -40,8 +40,8 @@ const MapboxMap: React.FC = () => {
       }, [map, setMap]);
 
     return (
-        <div className="w-full h-full relative z-40" ref={mapContainerRef}></div>
-        // <div ref={mapContainerRef} style={{ width: '100%', height: '400px' }}></div>
+        // <div className="w-full h-full relative z-40" ref={mapContainerRef}></div>
+        <div ref={mapContainerRef} className="z-40" style={{ width: '800px', height: '400px' }}></div>
     );
 };
 

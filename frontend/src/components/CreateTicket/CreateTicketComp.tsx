@@ -28,8 +28,12 @@ import CustomMarker from "../../../public/customMarker.svg";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import CameraPrompt from "@/components/Camera/CameraPrompt";
-import MapboxMap from "../MapboxMap/MapboxMap";
 import { useMapbox } from "@/hooks/useMapbox";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
 
