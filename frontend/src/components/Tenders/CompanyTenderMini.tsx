@@ -95,8 +95,9 @@ export default function Tender({ tender }: { tender: TenderType }) {
 
   return (
     <>
+      {/* Desktop View */}
       <div
-        className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 hover:bg-opacity-80 cursor-pointer"
+        className="hidden sm:grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 hover:bg-opacity-80 cursor-pointer"
         onClick={handleTenderClick}
       >
         <div className="col-span-1 flex justify-center">
@@ -109,14 +110,42 @@ export default function Tender({ tender }: { tender: TenderType }) {
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
         <div className="col-span-1 flex justify-center">{tender.ticketnumber}</div>
-        <div className="col-span-1 flex justify-center">
-          {tender.municipality}
-        </div>
+        <div className="col-span-1 flex justify-center">{tender.municipality}</div>
         <div className="col-span-1 flex justify-center">{formattedDate}</div>
         <div className="col-span-1 flex justify-center">R{tender.quote}</div>
         <div className="col-span-1 flex justify-center">{estimatedDays} days</div>
       </div>
-
+  
+      {/* Mobile View */}
+      <div
+        className="block sm:hidden bg-white bg-opacity-70 text-black rounded-3xl mb-2 shadow-md"
+        onClick={handleTenderClick}
+      >
+        <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+          <div>
+            <div className="font-bold text-lg">{tender.companyname}</div>
+            <div className="text-sm text-gray-500">Submitted: {formattedDate}</div>
+          </div>
+          <span className={`px-2 py-1 rounded-full border ${statusClass}`}>
+            {tenderStatus}
+          </span>
+        </div>
+        <div className="p-4 flex justify-between">
+          <div className="text-sm">
+            <span className="font-bold">Tender No: </span>{tender.tendernumber}
+          </div>
+          <div className="text-sm">
+            <span className="font-bold">Quote: </span>R{tender.quote}
+          </div>
+        </div>
+        <div className="p-4 flex justify-between">
+          <div className="text-sm">
+            <span className="font-bold">Duration: </span>{estimatedDays} days
+          </div>
+        </div>
+      </div>
+  
+      {/* Detailed View */}
       {showDetails && (
         <TenderMax
           contract_id={contract.contract_id}
@@ -138,4 +167,5 @@ export default function Tender({ tender }: { tender: TenderType }) {
       )}
     </>
   );
+  
 }

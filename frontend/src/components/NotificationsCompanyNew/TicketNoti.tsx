@@ -26,14 +26,14 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         address: "1234 Mock Street, Happy City",
         description: "Help me.",
         status: "Opened",
-        municipalityImage: "https://via.placeholder.com/50",
-        user_picture: "https://via.placeholder.com/50",
+        municipalityImage: "",
+        user_picture: "",
         createdBy: "Kyle Marshall",
         longitude: "30.0",
         latitude: "-25.0",
         upvotes: 15,
         ticket_id: "12345",
-        imageURL: "https://via.placeholder.com/200",
+        imageURL: "",
         urgency: "high",
       };
       setTicketData(mockData);

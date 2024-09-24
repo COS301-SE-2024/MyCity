@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaTimes } from "react-icons/fa";
-import { AlertCircle } from "lucide-react";
-import TenderMax from "../Tenders/CompanyTenderMax"; 
-import CreateBid from "../Tenders/CreateBid"; 
-import ViewBid from "../Tenders/ViewBid"; 
+import { AlertCircle, Image as ImageIcon } from "lucide-react";
+import TenderMax from "../Tenders/CompanyTenderMax";
+import CreateBid from "../Tenders/CreateBid";
+import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
 import MapComponent from "@/context/MapboxMap";
 import { getCompanyTenders } from "@/services/tender.service";
-import { ImageIcon } from "lucide-react";
 
 interface TicketViewCompanyProps {
   show: boolean;
@@ -18,16 +17,16 @@ interface TicketViewCompanyProps {
   commentCount: number;
   viewCount: number;
   ticketNumber: string;
-  ticket_id : string;
+  ticket_id: string;
   description: string;
   user_picture: string;
   createdBy: string;
   status: string;
-  imageURL : string;
+  imageURL: string;
   municipalityImage: string;
-  upvotes : number;
-  latitude : string;
-  longitude : string;
+  upvotes: number;
+  latitude: string;
+  longitude: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -64,6 +63,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   const [tender, setTender] = useState<any>(null);
   const [reRender, setReRender] = useState(Boolean);
   const [mapKey, setMapKey] = useState(0);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,12 +71,12 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
       setCompany(user_company);
-      const rsptenders = await getCompanyTenders(user_company, user_session,true);
+      const rsptenders = await getCompanyTenders(user_company, user_session, true);
       if (rsptenders == null) {
         setHasBidded(false);
       } else {
         rsptenders.forEach((item: { ticket_id: string }) => {
-          if (item.ticket_id == ticket_id) {
+          if (item.ticket_id === ticket_id) {
             setTender(item);
             setHasBidded(true);
           }
@@ -128,9 +128,9 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     const user_data = await userProfile.getUserProfile();
     const company_name = String(user_data.current?.company_name);
     const user_session = String(user_data.current?.session_token);
-    const rsptenders = await getCompanyTenders(company_name, user_session,true);
+    const rsptenders = await getCompanyTenders(company_name, user_session, true);
     rsptenders.forEach((item: { ticket_id: string }) => {
-      if (item.ticket_id == ticket_id) {
+      if (item.ticket_id === ticket_id) {
         setTender(item);
         setHasBidded(true);
       }
@@ -184,13 +184,13 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 </div>
                 {/* Image Placeholder Logic */}
                 <div className="mb-2 flex justify-center">
-                  {imageURL ? (
+                  {!imageError ? (
                     <img
                       src={imageURL}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = "/path/to/placeholder-image.jpg";
+                        setImageError(true); // Set state to show placeholder
                       }}
                     />
                   ) : (
@@ -246,7 +246,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
           </div>
         </div>
       )}
-  
+
       {showBid && hasBidded && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
           <div className="transform scale-100 w-full">
@@ -271,10 +271,10 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
           </div>
         </div>
       )}
-  
+
       {showBid && !hasBidded && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className=" text-black transform scale-100 w-full">
+          <div className="text-black transform scale-100 w-full">
             <CreateBid
               longitude={longitude}
               latitude={latitude}
@@ -292,7 +292,6 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
       )}
     </>
   );
-  
 };
 
 export default TicketViewCompany;

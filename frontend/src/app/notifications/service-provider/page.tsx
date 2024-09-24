@@ -45,13 +45,13 @@ export default function Notifications() {
           <div className="pt-20 px-6 rounded-3xl">
             <TicketNoti
               ticketNumber="12345"
-              image=""
+              image={null}
               action="upvoted"
               isNew={true}
             />
             <TicketNoti
               ticketNumber="67890"
-              image="https://via.placeholder.com/150"
+              image={null}
               action="commented on"
               isNew={false}
             />
@@ -63,19 +63,19 @@ export default function Notifications() {
             />
             <TicketNoti
               ticketNumber="44556"
-              image="https://via.placeholder.com/150"
+              image=""
               action="updated status to:"
               isNew={false}
             />
             <TenderNoti
               tenderId="12345"
-              image="https://via.placeholder.com/50"
+              image=""
               action="bid accepted"
               isNew={true}
             />
             <TenderNoti
               tenderId="67890"
-              image="https://via.placeholder.com/50"
+              image=""
               action="bid rejected"
               isNew={false}
             />
@@ -87,7 +87,7 @@ export default function Notifications() {
             />
             <TenderNoti
               tenderId="09876"
-              image="https://via.placeholder.com/50"
+              image=''
               action="contract completed"
               isNew={false}
             />
