@@ -84,10 +84,10 @@ export default function MuniTenders({
                   className="grid grid-cols-6 gap-4 items-center px-2 py-1 text-center border-b border-gray-100"
                 >
                   <div className="col-span-1">{tender.status || "N/A"}</div>
-                  <div className="col-span-1">{tender.ticket_id || "N/A"}</div>
-                  <div className="col-span-1">{tender.service_provider || "N/A"}</div>
+                  <div className="col-span-1">{tender.tendernumber || "N/A"}</div>
+                  <div className="col-span-1">{tender.companyname || "N/A"}</div>
                   <div className="col-span-1">{tender.issue_date || "N/A"}</div>
-                  <div className="col-span-1">{tender.price || "N/A"}</div>
+                  <div className="col-span-1">{tender.quote || "N/A"}</div>
                   <div className="col-span-1">{tender.estimated_duration || "N/A"}</div>
                 </div>
               ))}
