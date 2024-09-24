@@ -122,7 +122,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
               toast.error("Couldnt Decline this tender")
           }
           handleDecline();
-          ///derere
+      
         }
         console.log("inside reject")
         break;
