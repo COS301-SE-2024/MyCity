@@ -57,7 +57,7 @@ export default function Settings() {
                 <User className="h-6 w-6 text-black mr-2" />
                 <span className="text-lg font-semibold">Change Company Information</span>
               </div>
-              <p className="text-gray-600">See and change your company's information.</p>
+              <p className="text-gray-600">See and change your company&apos;s information.</p>
             </button>
             <button className="w-full text-left hover:bg-gray-100 p-2 rounded" onClick={() => setSubPage("ChangePassword")}>
               <div className="flex items-center">
@@ -71,7 +71,7 @@ export default function Settings() {
                 <User className="h-6 w-6 text-red-600 mr-2" />
                 <span className="text-lg font-semibold">Delete Employee Account</span>
               </div>
-              <p className="text-gray-600">Remove your account from MyCity's system.</p>
+              <p className="text-gray-600">Remove your account from MyCity&apos;s system.</p>
             </button>
             {showConfirmation && (
               <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
