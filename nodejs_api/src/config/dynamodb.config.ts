@@ -17,6 +17,9 @@ const TICKET_UPDATE_TABLE = "ticket_updates";
 const CONTRACT_TABLE = "contracts";
 const UPVOTES_TABLE = "upvotes";
 const NOTIFICATIONS_TABLE = "notifications";
+const TICKETS_PER_MUNICIPALITY_TABLE = "tickets_per_municipality";
+const CONTRACTS_PER_SERVICE_PROVIDER_TABLE = "contracts_per_service_provider";
+const TENDERS_PER_SERVICE_PROVIDER_TABLE = "tenders_per_service_provider";
 
 export {
     cognitoClient,
@@ -30,5 +33,8 @@ export {
     TICKET_UPDATE_TABLE,
     CONTRACT_TABLE,
     UPVOTES_TABLE,
-    NOTIFICATIONS_TABLE
+    NOTIFICATIONS_TABLE,
+    TICKETS_PER_MUNICIPALITY_TABLE,
+    CONTRACTS_PER_SERVICE_PROVIDER_TABLE,
+    TENDERS_PER_SERVICE_PROVIDER_TABLE
 };

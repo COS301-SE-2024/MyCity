@@ -12,6 +12,7 @@ import tendersRouter from "./src/routes/tenders.route";
 import upvotesRouter from "./src/routes/upvotes.route";
 import usersRouter from "./src/routes/users.route";
 import watchlistRouter from "./src/routes/watchlist.route";
+import analyticsRouter from "./src/routes/analytics.route";
 import { corsOptions } from "./src/config/cors";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/tenders", tendersRouter);
 app.use("/upvotes", upvotesRouter);
 app.use("/users", usersRouter);
 app.use("/watchlist", watchlistRouter);
+app.use("/analytics", analyticsRouter);
 
 
 app.use((req: Request, res: Response, next: NextFunction) => {
