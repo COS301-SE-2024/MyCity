@@ -258,7 +258,7 @@ export default function Settings() {
         return (
           <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Municode</h2>
-            {renderSubPageContent()}
+            <Municode />
           </div>
         );
 

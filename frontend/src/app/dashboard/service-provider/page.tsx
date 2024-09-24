@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import NavbarCompany from '@/components/Navbar/NavbarCompany';
-import RecordsTable from '@/components/RecordsTableCompany/RecordsTable';
-import { ChevronDown } from 'lucide-react';
-import { getCompanyTickets } from '@/services/tickets.service';
+import { useState, useEffect } from "react";
+import NavbarCompany from "@/components/Navbar/NavbarCompany";
+import RecordsTable from "@/components/RecordsTableCompany/RecordsTable";
+import { ChevronDown } from "lucide-react";
+import { getCompanyTickets } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
-import { ThreeDots } from 'react-loader-spinner';
-import { FaTimes } from 'react-icons/fa';
-import { HelpCircle, Image as ImageIcon } from 'lucide-react'; // Import ImageIcon from Lucide
+import { ThreeDots } from "react-loader-spinner";
+import { FaTimes } from "react-icons/fa";
+import { HelpCircle, Image as ImageIcon } from "lucide-react"; // Import ImageIcon from Lucide
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 
 export default function Dashboard() {
   const userProfile = useProfile();
@@ -26,7 +27,10 @@ export default function Dashboard() {
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
       const user_pic = String(user_data.current?.picture);
-      const rspmostupvotes = await getCompanyTickets(user_company, user_session);
+      const rspmostupvotes = await getCompanyTickets(
+        user_company,
+        user_session
+      );
       setCompanypicture(user_pic);
       setCompany(user_company);
       setUpvoteTickets(rspmostupvotes);
@@ -57,7 +61,7 @@ export default function Dashboard() {
           onClick={toggleHelpMenu}
         />
       </div>
-
+  
       {isHelpOpen && (
         <div
           data-testid="help"
@@ -78,90 +82,45 @@ export default function Dashboard() {
               <li>Sort tickets by various criteria such as urgency, status, or fault type.</li>
               <li>Keep track of tickets that are upvoted or have high importance.</li>
             </ul>
-            <p>
-              Use the dropdown menu to sort tickets, and click on any ticket to view more details or take action.
-            </p>
+            <p>Use the dropdown menu to sort tickets, and click on any ticket to view more details or take action.</p>
           </div>
         </div>
       )}
-
+  
       {/* Desktop View */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage:
-            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          zIndex: -1,
-        }}
-      ></div>
-      <NavbarCompany unreadNotifications={unreadNotifications} />
-      <main className="p-8 relative">
-        <div className="flex items-center mb-2 mt-2 ml-2">
-          <h1 className="text-4xl font-bold text-white text-opacity-80">
-            Dashboard
-          </h1>
-        </div>
-        <div className="flex flex-col items-center justify-center text-white text-opacity-80">
-          <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-            <img
-              src={companypicture}
-              alt="Description of image"
-              width={20}
-              height={20}
-              className="w-full h-full object-cover"
-            />
+      <div className="hidden sm:block">
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundAttachment: "fixed",
+            zIndex: -1,
+          }}
+        ></div>
+        <NavbarCompany unreadNotifications={unreadNotifications} />
+        <main className="p-8 relative">
+          <div className="flex items-center mb-2 mt-2 ml-2">
+            <h1 className="text-4xl font-bold text-white text-opacity-80">Dashboard</h1>
           </div>
-          {isLoading ? (
-            <ThreeDots
-              height="40"
-              width="80"
-              radius="9"
-              color="#ADD8E6"
-              ariaLabel="three-dots-loading"
-              visible={true}
-            />
-          ) : (
-            <span className="text-xl">{company}</span>
-          )}
-        </div>
-        <div className="flex items-center justify-between mt-8">
-          <div className="relative inline-block text-left">
-            <button
-              className="flex items-center text-white text-opacity-80 hover:bg-gray-600 px-4 py-2 rounded transform transition-transform duration-200 hover:scale-105"
-              onClick={toggleDropdown}
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0)' }} // Transparent background
-            >
-              <span>Issues ordered by:</span>
-              <ChevronDown className="ml-2" size={16} />
-            </button>
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div className="py-1">
-                  {['Urgency', 'Ticket Number', 'Fault Type', 'Status', 'Created By', 'Address'].map(field => (
-                    <a
-                      key={field}
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {field}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="mt-8">
-          {isLoading ? (
-            <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center text-white text-opacity-80">
+            <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+              <img
+                src={companypicture}
+                alt="Description of image"
+                width={20}
+                height={20}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {isLoading ? (
               <ThreeDots
                 height="40"
                 width="80"
@@ -170,72 +129,153 @@ export default function Dashboard() {
                 ariaLabel="three-dots-loading"
                 visible={true}
               />
+            ) : (
+              <span className="text-xl">{company}</span>
+            )}
+          </div>
+          <div className="flex items-center justify-between mt-8">
+            <div className="relative inline-block text-left">
+              <button
+                className="flex items-center text-white text-opacity-80 hover:bg-gray-600 px-4 py-2 rounded transform transition-transform duration-200 hover:scale-105"
+                onClick={toggleDropdown}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
+              >
+                <span>Issues ordered by:</span>
+                <ChevronDown className="ml-2" size={16} />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    {["Urgency", "Ticket Number", "Fault Type", "Status", "Created By", "Address"].map((field) => (
+                      <a
+                        key={field}
+                        href="#"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {field}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <RecordsTable records={upvotedTickets} />
-          )}
-        </div>
-      </main>
-
+          </div>
+          <div className="mt-8">
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <RecordsTable records={upvotedTickets} />
+            )}
+          </div>
+        </main>
+      </div>
+  
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarCompany unreadNotifications={unreadNotifications} />
+        <NavbarMobile />
+        
+  
+        {/* Background Image */}
         <div
           style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -1,
           }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1,
-            }}
-          ></div>
-
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
+        ></div>
+  
+        <main className="relative z-10 p-4 pb-16">
+        <h1 className="text-4xl font-bold text-center mb-4 text-white text-opacity-80">Dashboard</h1>
+          {/* Company Logo and Info */}
+          <div className="flex flex-col items-center justify-center text-white text-opacity-80 mb-6">
+            <div className="w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden mb-4">
               <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
+                src={companypicture}
+                alt="Company Logo"
+                className="w-full h-full object-cover"
               />
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
+            {isLoading ? (
+              <ThreeDots
+                height="40"
+                width="80"
+                radius="9"
+                color="#ADD8E6"
+                ariaLabel="three-dots-loading"
+                visible={true}
+              />
+            ) : (
+              <span className="text-xl font-bold">{company}</span>
+            )}
           </div>
-        </div>
+  
+          {/* Dropdown and Report Fault Button */}
+          <div className="flex items-center justify-between mt-6">
+            <div className="relative inline-block text-center items-center justify-center">
+              <button
+                className="flex items-center text-white text-opacity-80 hover:bg-gray-600 px-4 py-2 rounded transform transition-transform duration-200 hover:scale-105"
+                onClick={toggleDropdown}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
+              >
+                <span>Issues ordered by:</span>
+                <ChevronDown className="ml-2" size={16} />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    {["Urgency", "Ticket Number", "Fault Type", "Status", "Created By", "Address"].map((field) => (
+                      <a
+                        key={field}
+                        href="#"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {field}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+  
+          {/* Records Table */}
+          <div className="mt-8 mb-4">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <RecordsTable records={upvotedTickets} />
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );
+  
 }

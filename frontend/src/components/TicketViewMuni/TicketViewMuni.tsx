@@ -225,25 +225,23 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   };
 
   const handleViewTendersClick = async () => {
-    console.log("View Bids Clicked");
     setIsLoading(true);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
+    
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
-    console.log(rspgettenders)
+    console.log(rspgettenders); // Add this line to inspect the data
+  
     setIsLoading(false);
-
+  
     if (!rspgettenders || rspgettenders.length === 0) {
-      setTenders(null);
+      setTenders(null); // No tenders available
     } else {
-      setTenders(rspgettenders);
-      setShowTenderMax(false); // Hide TenderMax
-      setShowMuniTenders(true);
+      setTenders(rspgettenders); // Ensure tenders data is set
+      setShowMuniTenders(true);  // Show the MuniTenders component
     }
-
-    // Ensure that only MuniTenders is shown, and TenderMax is hidden (similar to mobile)
-    // Show MuniTenders
   };
+  
 
   const handleBack = (data: number) => {
     setShowMuniTenders(false);
