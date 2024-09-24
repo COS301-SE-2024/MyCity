@@ -72,10 +72,12 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
       const user_session = String(user_data.current?.session_token);
       setCompany(user_company);
       const rsptenders = await getCompanyTenders(user_company, user_session, true);
+      console.log(rsptenders)
       if (rsptenders == null) {
         setHasBidded(false);
       } else {
         rsptenders.forEach((item: { ticket_id: string }) => {
+          console.log("Item ticket id:" + item.ticket_id + "  compared to: " + ticket_id)
           if (item.ticket_id === ticket_id) {
             setTender(item);
             setHasBidded(true);
