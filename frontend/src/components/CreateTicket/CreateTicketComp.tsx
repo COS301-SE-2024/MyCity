@@ -28,12 +28,14 @@ import CustomMarker from "../../../public/customMarker.svg";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import CameraPrompt from "@/components/Camera/CameraPrompt";
+import MapboxMap from "../MapboxMap/MapboxMap";
+import { useMapbox } from "@/hooks/useMapbox";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
-  useMapboxProp: () => MapboxContextProps;
+
 }
 
-const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
+const CreateTicketComp: React.FC<Props> = ({ className }) => {
   const [dataURL, setDataURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<File[]>([]);
   const [file, setFile] = useState<File>();
@@ -65,12 +67,11 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
   const {
     selectedAddress,
-    map,
-    initialiseMap,
-    dropPin,
-    panMapTo,
-    panToCurrentLocation,
-  } = useMapboxProp();
+    dropMarker,
+    liftMarker,
+    flyTo,
+    flyToCurrentLocation,
+  } = useMapbox();
   const { getUserProfile } = useProfile();
   const formRef = useRef<HTMLFormElement>(null);
   const formRefmobile = useRef<HTMLFormElement>(null);
@@ -80,7 +81,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [selectedFault, setSelectedFault] = useState<string | null>(null);
   const [faultDescription, setFaultDescription] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [isPinDropped, setIsPinDropped] = useState(false);
+  const [isMarkerDropped, setIsMarkerDropped] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false); // For mobile map modal
@@ -155,8 +156,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       return;
     }
 
-    if(!file)
-    {
+    if (!file) {
       toast.error("Please upload a image");
       return;
     }
@@ -186,7 +186,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     form_sending.append("description", String(faultDescription))
     form_sending.append("state", "Opened")
     form_sending.append("username", user_email.toLowerCase())
-    form_sending.append("file",file);
+    form_sending.append("file", file);
 
     try {
       const sessiont = user_data.current?.session_token || " ";
@@ -206,7 +206,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       toast.error(`Error: ${error.message}`);
     }
   };
-////////handle div
+  ////////handle div
   const handleDivClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -238,13 +238,12 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       return;
     }
 
-    if(!file)
-    {
+    if (!file) {
       toast.error("Please upload a image");
       return;
     }
 
-    
+
     const form = new FormData(formcovert);
     const latitude = selectedAddress?.lat;
     const longitude = selectedAddress?.lng;
@@ -269,7 +268,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
     form_sending.append("description", String(faultDescription))
     form_sending.append("state", "Opened")
     form_sending.append("username", String(user_data.current?.email))
-    form_sending.append("file",file);
+    form_sending.append("file", file);
 
     try {
       const sessiont = user_data.current?.session_token || " ";
@@ -279,7 +278,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       );
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
-        
+
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -291,23 +290,23 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
   const handleSuggestionPick = useCallback(
     (value: string, item: PKResult, index: number) => {
-      setIsPinDropped(true);
-      dropPin(true, item);
-      panMapTo(item.lng, item.lat);
+      setIsMarkerDropped(true);
+      dropMarker(item);
+      flyTo(item.lng, item.lat);
     },
-    [dropPin, panMapTo]
+    [dropMarker, flyTo]
   );
 
   const onPinClick = () => {
-    setIsPinDropped(!isPinDropped);
-    dropPin(!isPinDropped);
-  };
-
-  useEffect(() => {
-    if (mapContainer.current) {
-      initialiseMap(mapContainer);
+    if (isMarkerDropped) {
+      setIsMarkerDropped(false);
+      liftMarker();
     }
-  }, [initialiseMap]);
+    else {
+      setIsMarkerDropped(true);
+      dropMarker();
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -339,214 +338,215 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
       <ToastContainer />
 
       {/* Desktop View */}
-<div className="hidden sm:flex w-full max-w-screen-xl h-[40rem] rounded-lg overflow-hidden z-10">
-  {/* Form Section */}
-  <div className="w-1/2 p-6 bg-white flex flex-col overflow-hidden">
-    <h2 className="text-2xl text-center font-bold mt-2 mb-6">
-      Report a Fault
-    </h2>
-    <div className="flex-1 overflow-y-auto">
-      <form
-        ref={formRef}
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-y-8"
-      >
-        {/* Fault Type */}
-        {faultTypes.length > 0 ? (
-          <Autocomplete
-            label={
-              <span className="font-semibold text-sm">
-                Fault type <sup className="text-blue-500">*</sup>
-              </span>
-            }
-            labelPlacement="outside"
-            name="fault-type"
-            placeholder="Fault Type"
-            fullWidth
-            defaultItems={faultTypes}
-            disableSelectorIconRotation
-            isClearable={false}
-            menuTrigger={"input"}
-            size={"lg"}
-            type="text"
-            autoComplete="new-fault"
-            onSelectionChange={(key) => setSelectedFault(key as string)}
-          >
-            {(faultType) => (
-              <AutocompleteItem
-                key={faultType.asset_id}
-                textValue={faultType.asset_id}
-              >
-                <div className="flex gap-2 items-center">
-                  <img
-                    src={faultType.assetIcon}
-                    alt={faultType.asset_id}
-                    className="flex-shrink-0 w-6 h-6"
-                  />
-                  <span className="text-small">{faultType.asset_id}</span>
-                </div>
-              </AutocompleteItem>
-            )}
-          </Autocomplete>
-        ) : (
-          <p>Loading fault types...</p>
-        )}
-
-        {/* Description */}
-        <Textarea
-          label={<span className="font-semibold text-sm">Description</span>}
-          labelPlacement="outside"
-          name="fault-description"
-          placeholder="Add Description..."
-          onChange={(e) => setFaultDescription(e.target.value)}
-        />
-
-        {/* Address */}
-        <div className="w-full">
-          <span className="font-semibold text-sm">Address:</span>
-          <PlaceKit
-            apiKey={memoizedApiKey}
-            options={pkaOptions}
-            className="w-full"
-            onPick={handleSuggestionPick}
-            placeholder="Search for an address..."
-          />
-
-          <div>
-            <div className="flex flex-col gap-y-0.5 text-xs ps-2">
-              <span>{selectedAddress?.street?.name}</span>
-              <span>{selectedAddress?.county}</span>
-              <span>{selectedAddress?.city}</span>
-              <span>{selectedAddress?.administrative}</span>
-            </div>
-          </div>
-        </div>
-
-
-
-        {/* Image Upload */}
-        <div className="flex flex-col">
-          <span className="font-semibold text-sm mb-2">Attach Image</span>
-          <div className="flex border rounded-lg overflow-hidden">
-            {/* Camera upload */}
-            <div className="flex justify-center p-2 w-1/5 bg-gray-100">
-              <img
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
-                alt="Camera Icon"
-                className="h-10 w-10"
-              />
-            </div>
-
-            {/* Drag and drop */}
-            <div className="flex border-l w-4/5 p-3 bg-white">
-              <div
-                className="w-full flex justify-center items-center"
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <div>
-                    <svg
-                      xmlns="https://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      height="40"
-                      width="40"
+      <div className="hidden sm:flex w-full max-w-screen-xl h-[40rem] rounded-lg overflow-hidden z-10">
+        {/* Form Section */}
+        <div className="w-1/2 p-6 bg-white flex flex-col overflow-hidden">
+          <h2 className="text-2xl text-center font-bold mt-2 mb-6">
+            Report a Fault
+          </h2>
+          <div className="flex-1 overflow-y-auto">
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-y-8"
+            >
+              {/* Fault Type */}
+              {faultTypes.length > 0 ? (
+                <Autocomplete
+                  label={
+                    <span className="font-semibold text-sm">
+                      Fault type <sup className="text-blue-500">*</sup>
+                    </span>
+                  }
+                  labelPlacement="outside"
+                  name="fault-type"
+                  placeholder="Fault Type"
+                  fullWidth
+                  defaultItems={faultTypes}
+                  disableSelectorIconRotation
+                  isClearable={false}
+                  menuTrigger={"input"}
+                  size={"lg"}
+                  type="text"
+                  autoComplete="new-fault"
+                  onSelectionChange={(key) => setSelectedFault(key as string)}
+                >
+                  {(faultType) => (
+                    <AutocompleteItem
+                      key={faultType.asset_id}
+                      textValue={faultType.asset_id}
                     >
-                      <path
-                        d="M1 14.5C1 12.1716 2.22429 10.1291 4.34315 8.65685C6.46201 7.18458 9.03799 6.5 12 6.5C14.962 6.5 17.538 7.18458 19.6569 8.65685C21.7757 10.1291 23 12.1716 23 14.5V15.5C23 17.8284 21.7757 19.8709 19.6569 21.3431C17.538 22.8154 14.962 23.5 12 23.5C9.03799 23.5 6.46201 22.8154 4.34315 21.3431C2.22429 19.8709 1 17.8284 1 15.5V14.5Z"
-                        stroke="#333"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-600" onClick={handleDivClick}  >
-                    Drag & drop files here, or click to browse
-                    <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    accept="image/*"
-                    name="picture"
-                    onClick={(e) => e.stopPropagation()} 
-                    onChange={handleImageChange}
-                  />
-                  {selectedImage && (
-                    <div>
-                      <h2>Image Preview:</h2>
-                      <img src={String(selectedImage)} alt="Uploaded" style={{ maxWidth: "50%", height: "auto" }} />
-                    </div>
+                      <div className="flex gap-2 items-center">
+                        <img
+                          src={faultType.assetIcon}
+                          alt={faultType.asset_id}
+                          className="flex-shrink-0 w-6 h-6"
+                        />
+                        <span className="text-small">{faultType.asset_id}</span>
+                      </div>
+                    </AutocompleteItem>
                   )}
+                </Autocomplete>
+              ) : (
+                <p>Loading fault types...</p>
+              )}
+
+              {/* Description */}
+              <Textarea
+                label={<span className="font-semibold text-sm">Description</span>}
+                labelPlacement="outside"
+                name="fault-description"
+                placeholder="Add Description..."
+                onChange={(e) => setFaultDescription(e.target.value)}
+              />
+
+              {/* Address */}
+              <div className="w-full">
+                <span className="font-semibold text-sm">Address:</span>
+                <PlaceKit
+                  apiKey={memoizedApiKey}
+                  options={pkaOptions}
+                  className="w-full"
+                  onPick={handleSuggestionPick}
+                  placeholder="Search for an address..."
+                />
+
+                <div>
+                  <div className="flex flex-col gap-y-0.5 text-xs ps-2">
+                    <span>{selectedAddress?.street?.name}</span>
+                    <span>{selectedAddress?.county}</span>
+                    <span>{selectedAddress?.city}</span>
+                    <span>{selectedAddress?.administrative}</span>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
+
+
+
+              {/* Image Upload */}
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm mb-2">Attach Image</span>
+                <div className="flex border rounded-lg overflow-hidden">
+                  {/* Camera upload */}
+                  <div className="flex justify-center p-2 w-1/5 bg-gray-100">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
+                      alt="Camera Icon"
+                      className="h-10 w-10"
+                    />
+                  </div>
+
+                  {/* Drag and drop */}
+                  <div className="flex border-l w-4/5 p-3 bg-white">
+                    <div
+                      className="w-full flex justify-center items-center"
+                      {...getRootProps()}
+                    >
+                      <input {...getInputProps()} />
+                      {isDragActive ? (
+                        <div>
+                          <svg
+                            xmlns="https://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            height="40"
+                            width="40"
+                          >
+                            <path
+                              d="M1 14.5C1 12.1716 2.22429 10.1291 4.34315 8.65685C6.46201 7.18458 9.03799 6.5 12 6.5C14.962 6.5 17.538 7.18458 19.6569 8.65685C21.7757 10.1291 23 12.1716 23 14.5V15.5C23 17.8284 21.7757 19.8709 19.6569 21.3431C17.538 22.8154 14.962 23.5 12 23.5C9.03799 23.5 6.46201 22.8154 4.34315 21.3431C2.22429 19.8709 1 17.8284 1 15.5V14.5Z"
+                              stroke="#333"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-600" onClick={handleDivClick}  >
+                          Drag & drop files here, or click to browse
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: "none" }}
+                            accept="image/*"
+                            name="picture"
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={handleImageChange}
+                          />
+                          {selectedImage && (
+                            <div>
+                              <h2>Image Preview:</h2>
+                              <img src={String(selectedImage)} alt="Uploaded" style={{ maxWidth: "50%", height: "auto" }} />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={!isFormValid}
+                className={cn(
+                  "m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300",
+                  isFormValid
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-blue-200 text-white cursor-not-allowed"
+                )}
+              >
+                Submit
+              </Button>
+            </form>
           </div>
         </div>
 
-        {/* Submit Button */}
-        <Button
-          type="submit"
-          disabled={!isFormValid}
-          className={cn(
-            "m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300",
-            isFormValid
-              ? "bg-blue-500 text-white hover:bg-blue-600"
-              : "bg-blue-200 text-white cursor-not-allowed"
-          )}
-        >
-          Submit
-        </Button>
-      </form>
-    </div>
-  </div>
+        {/* Graphical Section */}
+        <div className="w-1/2 relative bg-gray-200">
+          {/* Map Section */}
+          <div className="relative">
+            <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
+              <Button
+                className="min-w-fit h-fit p-2 bg-white"
+                onClick={flyToCurrentLocation}
+              >
+                <Locate size={21} />
+              </Button>
+              <Button
+                className="min-w-fit h-fit p-2 bg-white"
+                onClick={onPinClick}
+              >
+                {!isMarkerDropped ? <Pin size={21} /> : <PinOff size={21} />}
+              </Button>
+            </div>
 
-  {/* Graphical Section */}
-  <div className="w-1/2 relative bg-gray-200">
-    {/* Map Section */}
-    <div>
-      <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
-        <Button
-          className="min-w-fit h-fit p-2 bg-white"
-          onClick={panToCurrentLocation}
-        >
-          <Locate size={21} />
-        </Button>
-        <Button
-          className="min-w-fit h-fit p-2 bg-white"
-          onClick={onPinClick}
-        >
-          {!isPinDropped ? <Pin size={21} /> : <PinOff size={21} />}
-        </Button>
-      </div>
+            {!isMarkerDropped && (
+              <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
+                <CustomMarker fill="#BE0505" />
+              </div>
+            )}
 
-      {!isPinDropped && (
-        <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
-          <CustomMarker fill="#BE0505" />
+            <div className="absolute text-sm bottom-5 left-1/2 transform -translate-x-1/2 z-40 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
+              <div
+                className="flex justify-center cursor-pointer"
+                onClick={handleTooltipToggle}
+              >
+                <Info size={24} className="text-blue-500" />
+              </div>
+              {tooltipVisible && (
+                <p>
+                  Click on the pin in the bottom right corner to select this
+                  location as the fault address.
+                </p>
+              )}
+            </div>
+
+            {/* <div className="w-full h-full relative" ref={mapContainer}></div> */}
+            <MapboxMap />
+          </div>
         </div>
-      )}
-
-      <div className="absolute text-sm bottom-5 left-1/2 transform -translate-x-1/2 z-40 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
-        <div
-          className="flex justify-center cursor-pointer"
-          onClick={handleTooltipToggle}
-        >
-          <Info size={24} className="text-blue-500" />
-        </div>
-        {tooltipVisible && (
-          <p>
-            Click on the pin in the bottom right corner to select this
-            location as the fault address.
-          </p>
-        )}
       </div>
-
-      <div className="w-full h-full relative" ref={mapContainer}></div>
-    </div>
-  </div>
-</div>
 
 
       {/* Mobile View */}
@@ -644,61 +644,58 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
             </div>
 
             {/* Fault Severity */}
-<div>
-  <span className="font-semibold text-sm">Fault Severity</span>
-  <div className="flex h-[2.5rem] justify-center space-x-2">
-    <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
-      <Button
-        variant="bordered"
-        className={`flex-1 h-full ${
-          selectedFault === "Minor" ? "border-blue-500 border-2" : ""
-        }`}
-        onClick={() => setSelectedFault("Minor")}
-      >
-        <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-          <img
-            width="20"
-            height="auto"
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
-            alt="Minor"
-          />
-        </div>
-      </Button>
-      <Button
-        variant="bordered"
-        className={`flex-1 h-full ${
-          selectedFault === "Major" ? "border-blue-500 border-2" : ""
-        }`}
-        onClick={() => setSelectedFault("Major")}
-      >
-        <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-          <img
-            width="20"
-            height="auto"
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
-            alt="Major"
-          />
-        </div>
-      </Button>
-      <Button
-        variant="bordered"
-        className={`flex-1 h-full ${
-          selectedFault === "Critical" ? "border-blue-500 border-2" : ""
-        }`}
-        onClick={() => setSelectedFault("Critical")}
-      >
-        <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-          <img
-            width="20"
-            height="auto"
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
-            alt="Critical"
-          />
-        </div>
-      </Button>
-    </ButtonGroup>
-  </div>
-</div>
+            <div>
+              <span className="font-semibold text-sm">Fault Severity</span>
+              <div className="flex h-[2.5rem] justify-center space-x-2">
+                <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
+                  <Button
+                    variant="bordered"
+                    className={`flex-1 h-full ${selectedFault === "Minor" ? "border-blue-500 border-2" : ""
+                      }`}
+                    onClick={() => setSelectedFault("Minor")}
+                  >
+                    <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                      <img
+                        width="20"
+                        height="auto"
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
+                        alt="Minor"
+                      />
+                    </div>
+                  </Button>
+                  <Button
+                    variant="bordered"
+                    className={`flex-1 h-full ${selectedFault === "Major" ? "border-blue-500 border-2" : ""
+                      }`}
+                    onClick={() => setSelectedFault("Major")}
+                  >
+                    <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                      <img
+                        width="20"
+                        height="auto"
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
+                        alt="Major"
+                      />
+                    </div>
+                  </Button>
+                  <Button
+                    variant="bordered"
+                    className={`flex-1 h-full ${selectedFault === "Critical" ? "border-blue-500 border-2" : ""
+                      }`}
+                    onClick={() => setSelectedFault("Critical")}
+                  >
+                    <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                      <img
+                        width="20"
+                        height="auto"
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
+                        alt="Critical"
+                      />
+                    </div>
+                  </Button>
+                </ButtonGroup>
+              </div>
+            </div>
 
 
             {/* Submit Button */}
@@ -751,8 +748,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                         administrative: "",
                       };
 
-                      panMapTo(longitude, latitude);
-                      dropPin(true, location as PKResult); // Cast to PKResult to satisfy TypeScript
+                      flyTo(longitude, latitude);
+                      dropMarker(location as PKResult); // Cast to PKResult to satisfy TypeScript
                     },
                     (error) => {
                       console.error("Error fetching location:", error);
@@ -773,10 +770,8 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               </div>
 
               {/* Map Container */}
-              <div
-                className="w-full h-full relative z-40"
-                ref={mapContainer}
-              ></div>
+              {/* <div className="w-full h-full relative z-40" ref={mapContainer}></div> */}
+              <MapboxMap />
             </div>
           </div>
         )}

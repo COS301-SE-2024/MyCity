@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { MutableRefObject, ReactNode, createContext, useRef, useState } from 'react';
+import { ReactNode, createContext, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import mapboxgl, { LngLatLike, Map, Marker } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -9,25 +9,37 @@ import { FaultGeoData } from '@/types/custom.types';
 import CustomMarker from '../../public/customMarker.svg';
 
 export interface MapboxContextProps {
-    faultMap: MutableRefObject<mapboxgl.Map | null>;
-    map: MutableRefObject<mapboxgl.Map | null>;
+    map: Map | null;
+    setMap: (map: Map | null) => void;
     selectedAddress: PKResult | null;
-    dropPin: (shouldDrop: boolean, pkResult?: PKResult) => void;
-    panMapTo: (lng: number | undefined, lat: number | undefined) => void;
-    panToCurrentLocation: () => void;
-    initialiseMap: (mapContainerRef: React.RefObject<HTMLDivElement>) => MutableRefObject<mapboxgl.Map | null>;
-    initialiseFaultMap: (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[], municipality?: string) => Promise<MutableRefObject<mapboxgl.Map | null>>;
+    dropMarker: (pkResult?: PKResult) => void;
+    liftMarker: () => void;
+    flyTo: (lng: number | undefined, lat: number | undefined) => void;
+    flyToCurrentLocation: () => void;
 }
 
-mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
-const MapboxContext = createContext<MapboxContextProps | undefined>(undefined);
+const MapboxContext = createContext<MapboxContextProps>({
+    map: null,
+    setMap: () => {},
+    selectedAddress: null,
+    dropMarker: () => { },
+    liftMarker: () => { },
+    flyTo: () => { },
+    flyToCurrentLocation: () => { }
+});
+
+interface MapboxProviderProps {
+    children: ReactNode;
+}
 
 const apiKey = String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY);
-
 const pk = placekit(apiKey);
 
-export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const map = useRef<Map | null>(null);
+export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
+    const [map, setMap] = useState<Map | null>(null);
+    const markerRef = useRef<Marker | null>(null); // store marker reference
+
+
     const faultMap = useRef<Map | null>(null);
     let faultMapMarkers: Marker[] = [];
 
@@ -38,77 +50,26 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     const municipalityCoordinates = useRef<LngLatLike | null>(null);
 
-    const initialiseMap = (mapContainerRef: React.RefObject<HTMLDivElement>) => {
-        // if (map.current) {
-        //     map.current.resize();
-        //     return map;
-        // }
 
-        //set max bounds to lock the map to South Africa
-        const boundsSA: [LngLatLike, LngLatLike] = [
-            [16.0, -35.0], // Southwest coordinates (lng, lat)
-            [33.0, -22.0]  // Northeast coordinates (lng, lat)
-        ];
+    // const setMap = (map: Map) => {
+    //     setMap(map);
+    // }
 
-        map.current = new mapboxgl.Map({
-            container: mapContainerRef.current!,
-            center: [28.23142, -25.75442],
-            zoom: 10,
-            maxBounds: boundsSA
-        });
 
-        return map;
-    };
-
-    const panMapTo = (lng: number | undefined, lat: number | undefined) => {
-        if (lng && lat) {
-            map.current!.easeTo({ center: [lng, lat], zoom: 14, duration: 1000 });
-        }
-    };
-
-    const panToCurrentLocation = () => {
-        if (navigator.geolocation) {
-            if (map.current) {
-
-                navigator.geolocation.getCurrentPosition(
-                    (position: GeolocationPosition) => {
-                        //pan map to center on user's current location
-                        map.current!.easeTo({ center: [position.coords.longitude, position.coords.latitude], zoom: 14, duration: 1000 });
-
-                    },
-                    () => {
-                        handleLocationError(true);
-                    }
-                );
+    const dropMarker = async(pkResult?: PKResult) => {
+        if (map) {
+            if (markerRef.current) {
+                markerRef.current.remove(); // remove existing marker if present
             }
-        }
-        else {
-            handleLocationError(false);
-        }
-    };
 
-
-    const dropPin = async (shouldDrop: boolean, pkResult?: PKResult) => {
-        if (!currentMarker.current) {
-            const marker: Marker = new Marker({ anchor: "bottom" })
-                .setLngLat(map.current!.getCenter())
-            // .setDraggable(true)
-            // .addTo(map.current!);
-
-            currentMarker.current = marker;
-        }
-
-
-        if (shouldDrop) {
-            currentMarker.current.remove();
-
-            //if pk result is missing, make a request to get address of current location
             if (!pkResult) {
-                //place marker on center of map
-                currentMarker.current.setLngLat(map.current!.getCenter())
-                    .addTo(map.current!);
+                //drop marker on center of map (current location)
+                const mapCenter = map.getCenter();
+                markerRef.current = new mapboxgl.Marker({ anchor: "bottom" })
+                    .setLngLat(mapCenter)
+                    .addTo(map);
 
-                const mapCenter = map.current!.getCenter();
+                //get address of current location
                 const response = await pk.reverse({
                     coordinates: `${mapCenter.lat},${mapCenter.lng}`,
                     countries: ["za"],
@@ -121,24 +82,56 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     setSelectedAddress(response.results[0]);
                 }
             }
-
-            //otherwise save pkResult
             else {
-                //place marker on pkresult coordinates
+                //drop marker at coordinates given in pkResult
                 if (pkResult.lng && pkResult.lat) {
-                    currentMarker.current.setLngLat([pkResult.lng, pkResult.lat])
-                        .addTo(map.current!);
+                    markerRef.current = new mapboxgl.Marker({ anchor: "bottom" })
+                        .setLngLat([pkResult.lng, pkResult.lat])
+                        .addTo(map);
                 }
 
                 setSelectedAddress(pkResult);
             }
         }
-        else {
-            //remove marker and address
-            currentMarker.current.remove();
-            setSelectedAddress(null);
+    };
+
+    const liftMarker = () => {
+        if (markerRef.current) {
+            markerRef.current.remove();
         }
     };
+
+    const flyTo = (lng: number | undefined, lat: number | undefined) => {
+        if (map) {
+            if (lng && lat) {
+                map.flyTo({ center: [lng, lat], zoom: 14, essential: true });
+            }
+        }
+    }
+
+    const flyToCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position: GeolocationPosition) => {
+                    const { longitude, latitude } = position.coords;
+                    if (map) {
+                        map.flyTo({
+                            center: [longitude, latitude],
+                            zoom: 14,
+                            essential: true, // animation is considered essential for accessibility
+                        });
+                    }
+                },
+                (error: GeolocationPositionError) => {
+                    handleLocationError(error);
+                }
+            );
+        }
+        else {
+            handleLocationError();
+        }
+    };
+
 
     const initialiseFaultMap = async (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[], municipality?: string) => {
         if (faultMap.current) {
@@ -158,12 +151,12 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                     language: "en"
                 });
 
-                if (response.resultsCount > 0) {
-                    const coordinates = response.results[0].coordinates.split(",");
-                    const muniLat = Number(coordinates[0].trim());
-                    const muniLng = Number(coordinates[1].trim());
-                    municipalityCoordinates.current = [muniLng, muniLat];
-                }
+            if (response.resultsCount > 0) {
+                const coordinates = response.results[0].coordinates.split(",");
+                const muniLat = Number(coordinates[0].trim());
+                const muniLng = Number(coordinates[1].trim());
+                municipalityCoordinates.current = [muniLng, muniLat];
+            }
         }
 
 
@@ -174,7 +167,7 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             [33.0, -22.0]  // Northeast coordinates (lng, lat)
         ];
 
-        if(!municipalityCoordinates.current){
+        if (!municipalityCoordinates.current) {
             municipalityCoordinates.current = [28.23142, -25.75442];
         }
 
@@ -274,21 +267,21 @@ export const MapboxProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         return result;
     };
 
-    const handleLocationError = (browserHasGeolocation: boolean) => {
-        if (browserHasGeolocation) {
-            console.log("The geolocation service failed");
+    const handleLocationError = (error?: GeolocationPositionError) => {
+        if (error) {
+            console.error(`The geolocation service failed, ${error.message}`);
         }
         else {
-            console.log("Error: Browser does not support geolocation");
+            console.error("Error: Browser does not support geolocation");
         }
     };
 
 
     return (
-        <MapboxContext.Provider value={{ map, dropPin, panMapTo, selectedAddress, panToCurrentLocation, initialiseMap, faultMap, initialiseFaultMap }}>
+        <MapboxContext.Provider value={{ map, setMap, selectedAddress, dropMarker, liftMarker, flyTo, flyToCurrentLocation }}>
             {children}
         </MapboxContext.Provider>
     );
-}
+};
 
 export default MapboxContext;
