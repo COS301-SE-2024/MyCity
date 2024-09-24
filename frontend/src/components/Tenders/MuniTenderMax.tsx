@@ -3,7 +3,7 @@ import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MapComponent from "@/context/MapboxMap";
-import { CompleteContract } from "@/services/tender.service";
+import { CompleteContract,TerminateContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
@@ -122,6 +122,10 @@ const TenderMax = ({
       console.log(response_contract)
       onClose(-2); // Example: Mark as complete would close the ticket
     } else if (dialog.action === "Terminate Contract") {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await TerminateContract(tender.contract_id,user_session)
+      console.log(response_contract)
       onClose(0); // Example: Terminate contract would also close the ticket
     }
   };
