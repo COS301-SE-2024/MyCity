@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
-import TicketViewMuni from '../TicketViewMuni/TicketViewMuni';
+import TicketViewCompany from '../TicketViewCompany/TicketViewCompany'; // Replacing TicketViewMuni with TicketViewCompany
 
 type Urgency = 'high' | 'medium' | 'low';
 type Status = 'Fix in progress' | 'Unaddressed';
@@ -160,7 +160,7 @@ export default function Record({ record }: { record: RecordType }) {
 
       {/* Ticket View - Same for both desktop and mobile */}
       {showTicketView && (
-        <TicketViewMuni
+        <TicketViewCompany
           show={showTicketView}
           onClose={handleClose}
           title={record.asset_id}
