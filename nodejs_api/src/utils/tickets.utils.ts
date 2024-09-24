@@ -10,13 +10,15 @@ interface Company {
 }
 
 export const getUserProfile = async (ticketData: any[]) => {
+    let cognitoUsername = "";
     try {
         const USER_POOL_ID = process.env.USER_POOL_ID;
         for (let ticket of ticketData) {
+            cognitoUsername = (ticket["username"] as string).toLowerCase();
             const userResponse: AdminGetUserCommandOutput = await cognitoClient.send(
                 new AdminGetUserCommand({
                     UserPoolId: USER_POOL_ID,
-                    Username: String(ticket["username"]).toLowerCase()
+                    Username: cognitoUsername
                 })
             );
 
@@ -62,7 +64,7 @@ export const getUserProfile = async (ticketData: any[]) => {
 
     } catch (error: any) {
         if (error.name === "UserNotFoundException") {
-            console.error(`User ${ticketData[0]?.username} not found.`);
+            console.error(`${error.message}: ${cognitoUsername}`);
         } else {
             console.error("An error occurred:", error);
         }
@@ -178,7 +180,7 @@ export const generateTicketNumber = (municipalityName: string): string => {
     return ticketNumber;
 };
 
-export const updateCommentCounts = async (items: any[], batchSize: number = 7) =>{
+export const updateCommentCounts = async (items: any[], batchSize: number = 7) => {
     // split items into smaller batches
     for (let i = 0; i < items.length; i += batchSize) {
         const batch = items.slice(i, i + batchSize);
@@ -225,8 +227,8 @@ export const getMunicipality = async (latitude: number, longitude: number): Prom
     let municipality = "";
     let minDistance = Number.MAX_SAFE_INTEGER;
 
-    let responseMuni:any;
-    let items:any = [];
+    let responseMuni: any;
+    let items: any = [];
     let lastEvaluatedKey;
 
     do {

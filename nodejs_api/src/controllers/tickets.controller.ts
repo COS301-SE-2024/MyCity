@@ -88,7 +88,7 @@ export const getInArea = async (req: Request, res: Response) => {
         const response = await ticketsService.getInMyMunicipality(municipality);
 
         // if (response && response.length > 0) {
-        //     cacheResponse(req.url, 3600, response); //cache response for 1 hour
+        //     cacheResponse(req, 3600, response); //cache response for 1 hour
         // }
         return res.status(200).json(response);
     } catch (error: any) {
@@ -111,7 +111,7 @@ export const getMyWatchlist = async (req: Request, res: Response) => {
         const username = req.query["username"] as string;
         const response = await ticketsService.getWatchlist(username);
         // if (response && response.length > 0) {
-        //     cacheResponse(req.url, 3600, response); //cache response for 1 hour
+        //     cacheResponse(req, 3600, response); //cache response for 1 hour
         // }
         return res.status(200).json(response);
     } catch (error: any) {
@@ -133,7 +133,7 @@ export const getMostUpvoted = async (req: Request, res: Response) => {
     try {
         const response = await ticketsService.getMostUpvoted();
         if (response && response.length > 0) {
-            cacheResponse(req.url, 3600, response); //cache response for 1 hour
+            cacheResponse(req, 3600, response); //cache response for 1 hour
         }
         return res.status(200).json(response);
     } catch (error: any) {

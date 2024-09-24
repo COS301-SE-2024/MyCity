@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createClient, RedisClientType  } from "redis";
+import { createClient, RedisClientType } from "redis";
 
 const REDIS_HOST = String(process.env.REDIS_HOST);
 const REDIS_PORT = Number(process.env.REDIS_PORT);
@@ -35,7 +35,6 @@ const getRedisClient = async () => {
 // middleware to cache responses
 export const cacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const cacheKey = `${req.baseUrl}${req.url}`;
-    console.log("cache key:", cacheKey);
 
     try {
         const client = await getRedisClient();
@@ -51,8 +50,10 @@ export const cacheMiddleware = async (req: Request, res: Response, next: NextFun
     }
 };
 
-export const cacheResponse = async (cacheKey: string, duration: number, response: any[]) => {
-    //cache response for duration amount of time (default is 1 hour)
+export const cacheResponse = async (req: Request, duration: number, response: any[]) => {
+    const cacheKey = `${req.baseUrl}${req.url}`;
+
+    //cache response for duration amount of time 
     const client = await getRedisClient();
     client.setEx(cacheKey, duration, JSON.stringify(response));
 };
