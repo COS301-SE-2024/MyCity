@@ -6,7 +6,7 @@ import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
 import MapComponent from "@/context/MapboxMap";
-import { getCompanyTenders } from "@/services/tender.service";
+import { DidBid, getCompanyTenders } from "@/services/tender.service";
 
 interface TicketViewCompanyProps {
   show: boolean;
@@ -71,18 +71,13 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
       setCompany(user_company);
-      const rsptenders = await getCompanyTenders(user_company, user_session, true);
+      const rsptenders = await DidBid(user_company, ticket_id, user_session);
       console.log(rsptenders)
       if (rsptenders == null) {
         setHasBidded(false);
       } else {
-        rsptenders.forEach((item: { ticket_id: string }) => {
-          console.log("Item ticket id:" + item.ticket_id + "  compared to: " + ticket_id)
-          if (item.ticket_id === ticket_id) {
-            setTender(item);
-            setHasBidded(true);
-          }
-        });
+        setTender(rsptenders);
+        setHasBidded(true);
       }
     };
 

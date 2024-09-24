@@ -147,6 +147,36 @@ export async function CompleteContract(contract_id: string, user_session: string
     }
 }
 
+export async function DidBid(comp_name: string,ticket : string, user_session: string) {
+    const data = {
+        companyname: comp_name,
+        ticket_id : ticket
+    }
+
+    const apiURL = "/api/tenders/didbid";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json();
+    if (result.Status) {
+        return null;
+    }
+    else {
+        return result;
+    }
+}
+
+
 export async function TerminateContract(contract_id: string, user_session: string) {
     const data = {
         contract_id: contract_id,

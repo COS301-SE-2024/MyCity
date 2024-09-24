@@ -548,7 +548,11 @@ def DidMakeTender(sender_data):
         )
 
         if len(response_tender["Items"]) > 0:
-            return {"Status": "Found", "Message": "Company has bid for ticket"}
+            tender = response_tender["Items"][0]
+            assignIndividualCompanyName(tender)
+            assignIndividualLongLat(tender)
+            assignIndividualMuni(tender)
+            return tender
         else:
             return {"Status": "NotFound", "Message": "Company hasnt bid for ticket"}
 
