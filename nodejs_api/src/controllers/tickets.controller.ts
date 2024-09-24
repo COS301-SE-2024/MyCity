@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as ticketsService from "../services/tickets.service";
-// import { cacheResponse } from "../config/elasticache.config";
+import { cacheResponse } from "../config/elasticache.config";
 
 
 export const createTicket = async (req: Request, res: Response) => {
@@ -132,9 +132,9 @@ export const interactTicket = async (req: Request, res: Response) => {
 export const getMostUpvoted = async (req: Request, res: Response) => {
     try {
         const response = await ticketsService.getMostUpvoted();
-        // if (response && response.length > 0) {
-        //     cacheResponse(req.url, 3600, response); //cache response for 1 hour
-        // }
+        if (response && response.length > 0) {
+            cacheResponse(req.url, 3600, response); //cache response for 1 hour
+        }
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });

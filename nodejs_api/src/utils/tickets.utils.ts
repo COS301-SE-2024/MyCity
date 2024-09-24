@@ -16,7 +16,7 @@ export const getUserProfile = async (ticketData: any[]) => {
             const userResponse: AdminGetUserCommandOutput = await cognitoClient.send(
                 new AdminGetUserCommand({
                     UserPoolId: USER_POOL_ID,
-                    Username: ticket["username"]
+                    Username: String(ticket["username"]).toLowerCase()
                 })
             );
 
