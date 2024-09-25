@@ -6,7 +6,6 @@ import { Rings } from "react-loader-spinner"; // Importing the Rings loader
 
 export default function FaultMapView() {
   const faultMapContainer = useRef<HTMLDivElement>(null);
-  const { initialiseFaultMap } = useMapbox();
   const { getUserProfile } = useProfile();
   const [faultCount, setFaultCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
