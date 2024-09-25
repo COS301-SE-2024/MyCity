@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
-import { useMapbox } from "@/hooks/useMapbox";
 import NavbarUser from "@/components/Navbar/NavbarUser";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import { FaTimes } from "react-icons/fa";
@@ -87,7 +86,7 @@ export default function CreateTicket() {
             <div className="relative"></div>
             <div className="w-full max-w-7xl px-5">
               <div className="mt-20">
-                <CreateTicketComp useMapboxProp={useMapbox} />
+                <CreateTicketComp />
               </div>
             </div>
             {/* Help Menu Button */}
@@ -112,7 +111,7 @@ export default function CreateTicket() {
     </h1>
     <div className="w-full max-w-7xl px-2 mt-16">
       <div className="mt-10">
-        <CreateTicketComp useMapboxProp={useMapbox} />
+        <CreateTicketComp />
       </div>
     </div>
   </main>

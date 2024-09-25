@@ -4,7 +4,6 @@ import { ThreeDots } from "react-loader-spinner";
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTableCompany/MuniTenders";
-import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { getTicketTenders, getContract } from "@/services/tender.service";
 import { AcceptTicket, CloseTicket } from "@/services/tickets.service";
@@ -211,9 +210,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     }
   };
 
-  const handleTenderMaxClose = (data : number) => {
-    if(data == -2)
-    {
+  const handleTenderMaxClose = (data: number) => {
+    if (data == -2) {
       setTicketstatus("Closed");
       onClose(-2);
     }
@@ -228,21 +226,21 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     setIsLoading(true);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
-    
+
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
     console.log(ticket_id)
     console.log(rspgettenders); // Add this line to inspect the data
-  
+
     setIsLoading(false);
-  
+
     if (!rspgettenders || rspgettenders.length === 0) {
       setTenders(null); // No tenders available
     } else {
       setTenders(rspgettenders); // Ensure tenders data is set
-      setShowMuniTenders(true);  // Show the MuniTenders component
+       // Show the MuniTenders component
     }
+    setShowMuniTenders(true);
   };
-  
 
   const handleBack = (data: number) => {
     setShowMuniTenders(false);
@@ -345,17 +343,26 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                 </div>
 
                 {/* Address and Created By */}
-                <div className="flex justify-around items-center mt-4">
-                  <div className="flex flex-col items-center">
-                    <h3 className="font-bold text-sm">Address</h3>
-                    {addressParts.map((part, index) => (
-                      <p key={index} className="text-gray-700 text-xs">
-                        {part.trim()}
-                      </p>
-                    ))}
+                <div className="flex justify-between items-center mt-4">
+                  {/* Address Section */}
+                  <div className="flex flex-col items-center w-1/2 text-center">
+                    <h3 className="font-bold text-sm whitespace-nowrap">
+                      Address
+                    </h3>
+                    <div className="text-center">
+                      {addressParts.map((part, index) => (
+                        <p key={index} className="text-gray-700 text-xs">
+                          {part.trim()}
+                        </p>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <h3 className="font-bold text-sm">Created By</h3>
+
+                  {/* Created By Section */}
+                  <div className="flex flex-col items-center w-1/2">
+                    <h3 className="font-bold text-sm whitespace-nowrap">
+                      Created By
+                    </h3>
                     {user_picture ? (
                       <img
                         src={user_picture}
@@ -371,7 +378,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                         <UserIcon size={24} color="#6B7280" />
                       </div>
                     )}
-                    <p className="text-gray-700 text-xs">{createdBy}</p>
+                    <p className="text-gray-700 text-xs text-center">
+                      {createdBy}
+                    </p>
                   </div>
                 </div>
 
@@ -440,7 +449,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
           {showTenderMax && (
             <TenderMax
               tender={{
-                contract_id : contract?.contract_id,
+                contract_id: contract?.contract_id,
                 tender_id: contract?.tender_id,
                 status: contract?.status,
                 companyname: tenders?.companyname,

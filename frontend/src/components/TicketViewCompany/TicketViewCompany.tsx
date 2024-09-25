@@ -5,8 +5,12 @@ import TenderMax from "../Tenders/CompanyTenderMax";
 import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
-import MapComponent from "@/context/MapboxMap";
 import { DidBid, getCompanyTenders } from "@/services/tender.service";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface TicketViewCompanyProps {
   show: boolean;
@@ -198,7 +202,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 </div>
                 <div className="flex justify-around mb-2 w-full">
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-md">Address</h3>
+                    <h3 className="font-bold text-md text-black">Address</h3>
                     {addressParts.map((part, index) => (
                       <p key={index} className="text-gray-700 text-sm">
                         {part.trim()}
@@ -206,7 +210,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                     ))}
                   </div>
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-sm">Created By</h3>
+                    <h3 className="font-bold text-sm text-black">Created By</h3>
                     <img src={user_picture} alt="Created By" className="rounded-full mb-1 w-12 h-12 object-cover" />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
@@ -236,7 +240,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-                  <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+                  <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
                 </div>
               </div>
             </div>

@@ -4,8 +4,11 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CompleteContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
-import MapComponent from "@/context/MapboxMap";
+import dynamic from "next/dynamic";
 
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
@@ -203,7 +206,7 @@ const TenderMax : React.FC<TenderType> = ({
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-              <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+              <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
               </div>
             </div>
           </div>
