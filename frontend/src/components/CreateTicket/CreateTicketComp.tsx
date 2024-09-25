@@ -89,7 +89,9 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false); // For mobile map modal
-  const [selectedImage, setSelectedImage] = useState<string | ArrayBuffer | null>(null);
+  const [selectedImage, setSelectedImage] = useState<
+    string | ArrayBuffer | null
+  >(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -183,22 +185,19 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
       return;
     }
 
-    form_sending.append("latitude", String(latitude))
-    form_sending.append("longitude", String(longitude))
-    form_sending.append("address", String(fullAddress))
-    form_sending.append("asset", String(selectedFault))
-    form_sending.append("description", String(faultDescription))
-    form_sending.append("state", "Opened")
-    form_sending.append("username", user_email.toLowerCase())
+    form_sending.append("latitude", String(latitude));
+    form_sending.append("longitude", String(longitude));
+    form_sending.append("address", String(fullAddress));
+    form_sending.append("asset", String(selectedFault));
+    form_sending.append("description", String(faultDescription));
+    form_sending.append("state", "Opened");
+    form_sending.append("username", user_email.toLowerCase());
     form_sending.append("file", file);
 
     try {
       const sessiont = user_data.current?.session_token || " ";
-      const isCreated = await CreatTicket(
-        sessiont,
-        form_sending
-      );
-      console.log(isCreated)
+      const isCreated = await CreatTicket(sessiont, form_sending);
+      console.log(isCreated);
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
         window.location.href = "/dashboard/citizen";
@@ -228,7 +227,7 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-  }
+  };
 
   ////////////Handle submit for mobile
   const handleSubmitMobile = async (event: FormEvent<HTMLFormElement>) => {
@@ -247,7 +246,6 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
       return;
     }
 
-
     const form = new FormData(formcovert);
     const latitude = selectedAddress?.lat;
     const longitude = selectedAddress?.lng;
@@ -265,24 +263,20 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
       return;
     }
 
-    form_sending.append("latitude", String(latitude))
-    form_sending.append("longitude", String(longitude))
-    form_sending.append("address", String(fullAddress))
-    form_sending.append("asset", String(selectedFault))
-    form_sending.append("description", String(faultDescription))
-    form_sending.append("state", "Opened")
-    form_sending.append("username", String(user_data.current?.email))
+    form_sending.append("latitude", String(latitude));
+    form_sending.append("longitude", String(longitude));
+    form_sending.append("address", String(fullAddress));
+    form_sending.append("asset", String(selectedFault));
+    form_sending.append("description", String(faultDescription));
+    form_sending.append("state", "Opened");
+    form_sending.append("username", String(user_data.current?.email));
     form_sending.append("file", file);
 
     try {
       const sessiont = user_data.current?.session_token || " ";
-      const isCreated = await CreatTicket(
-        sessiont,
-        form_sending
-      );
+      const isCreated = await CreatTicket(sessiont, form_sending);
       if (isCreated === true) {
         toast.success("Ticket created successfully!");
-
       } else {
         throw new Error("Ticket creation failed");
       }
@@ -397,7 +391,9 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
 
               {/* Description */}
               <Textarea
-                label={<span className="font-semibold text-sm">Description</span>}
+                label={
+                  <span className="font-semibold text-sm">Description</span>
+                }
                 labelPlacement="outside"
                 name="fault-description"
                 placeholder="Add Description..."
@@ -424,8 +420,6 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
                   </div>
                 </div>
               </div>
-
-
 
               {/* Image Upload */}
               <div className="flex flex-col">
@@ -465,7 +459,10 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
                           </svg>
                         </div>
                       ) : (
-                        <div className="text-sm text-gray-600" onClick={handleDivClick}  >
+                        <div
+                          className="text-sm text-gray-600"
+                          onClick={handleDivClick}
+                        >
                           Drag & drop files here, or click to browse
                           <input
                             type="file"
@@ -479,7 +476,11 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
                           {selectedImage && (
                             <div>
                               <h2>Image Preview:</h2>
-                              <img src={String(selectedImage)} alt="Uploaded" style={{ maxWidth: "50%", height: "auto" }} />
+                              <img
+                                src={String(selectedImage)}
+                                alt="Uploaded"
+                                style={{ maxWidth: "50%", height: "auto" }}
+                              />
                             </div>
                           )}
                         </div>
@@ -553,203 +554,261 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
 
 
       {/* Mobile View */}
-      <div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-2 rounded-3xl overflow-hidden">
-        <ToastContainer />
+<div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-2 rounded-3xl overflow-hidden">
+  <ToastContainer />
 
-        <div className="w-full max-w-screen-md p-6 bg-white flex flex-col rounded-3xl justify-center overflow-y-auto">
-          {/* Heading */}
-          <h2 className="text-2xl text-center font-bold mt-2 mb-6">
-            Report a Fault
-          </h2>
-          <form
-            ref={formRefmobile}
-            onSubmit={handleSubmitMobile}
-            className="flex flex-col gap-y-4"
-          >
-            {/* Fault Type */}
-            {faultTypes.length > 0 ? (
-              <Autocomplete
-                label={
-                  <span className="font-semibold text-sm">
-                    Fault type <sup className="text-blue-500">*</sup>
-                  </span>
-                }
-                labelPlacement="outside"
-                name="fault-type"
-                placeholder="Fault Type"
-                fullWidth
-                defaultItems={faultTypes}
-                disableSelectorIconRotation
-                isClearable={false}
-                menuTrigger={"input"}
-                size={"lg"}
-                type="text"
-                autoComplete="new-fault"
-                onSelectionChange={(key) => setSelectedFault(key as string)}
-              >
-                {(faultType) => (
-                  <AutocompleteItem
-                    key={faultType.asset_id}
-                    textValue={faultType.asset_id}
-                  >
-                    <div className="flex gap-2 items-center">
-                      <img
-                        src={faultType.assetIcon}
-                        alt={faultType.asset_id}
-                        className="flex-shrink-0 w-6 h-6"
-                      />
-                      <span className="text-small">{faultType.asset_id}</span>
-                    </div>
-                  </AutocompleteItem>
-                )}
-              </Autocomplete>
-            ) : (
-              <p>Loading fault types...</p>
-            )}
+  <div className="w-full max-w-screen-md p-6 mb-16 bg-white flex flex-col rounded-3xl justify-center overflow-y-auto">
+    {/* Heading */}
+    <h2 className="text-2xl text-center font-bold mt-2 mb-6">
+      Report a Fault
+    </h2>
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-y-4"
+    >
+      {/* Fault Type */}
+      {faultTypes.length > 0 ? (
+        <Autocomplete
+          label={
+            <span className="font-semibold text-sm">
+              Fault type <sup className="text-blue-500">*</sup>
+            </span>
+          }
+          labelPlacement="outside"
+          name="fault-type"
+          placeholder="Fault Type"
+          fullWidth
+          defaultItems={faultTypes}
+          disableSelectorIconRotation
+          isClearable={false}
+          menuTrigger={"input"}
+          size={"lg"}
+          type="text"
+          autoComplete="new-fault"
+          onSelectionChange={(key) => setSelectedFault(key as string)}
+        >
+          {(faultType) => (
+            <AutocompleteItem
+              key={faultType.asset_id}
+              textValue={faultType.asset_id}
+            >
+              <div className="flex gap-2 items-center">
+                <img
+                  src={faultType.assetIcon}
+                  alt={faultType.asset_id}
+                  className="flex-shrink-0 w-6 h-6"
+                />
+                <span className="text-small">{faultType.asset_id}</span>
+              </div>
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
+      ) : (
+        <p>Loading fault types...</p>
+      )}
 
-            {/* Description */}
-            <Textarea
-              label={<span className="font-semibold text-sm">Description</span>}
-              labelPlacement="outside"
-              name="fault-description"
-              placeholder="Add Description..."
-              onChange={(e) => setFaultDescription(e.target.value)}
+      {/* Description */}
+      <Textarea
+        label={<span className="font-semibold text-sm">Description</span>}
+        labelPlacement="outside"
+        name="fault-description"
+        placeholder="Add Description..."
+        onChange={(e) => setFaultDescription(e.target.value)}
+      />
+
+      {/* Address */}
+      <div className="w-full">
+        <span className="font-semibold text-sm">Address:</span>
+        <PlaceKit
+          apiKey={memoizedApiKey}
+          options={pkaOptions}
+          className="w-full"
+          onPick={handleSuggestionPick}
+          placeholder="Search for an address..."
+        />
+        <div>
+          <div className="flex flex-col gap-y-0.5 text-xs ps-2">
+            <span>{selectedAddress?.street?.name}</span>
+            <span>{selectedAddress?.county}</span>
+            <span>{selectedAddress?.city}</span>
+            <span>{selectedAddress?.administrative}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Image Upload */}
+      <div className="flex flex-col">
+        <span className="font-semibold text-sm mb-2">Attach Image</span>
+        <div className="flex border rounded-lg overflow-hidden">
+          <div className="flex justify-center p-2 w-1/5 bg-gray-100">
+            <img
+              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
+              alt="Camera Icon"
+              className="h-10 w-10"
             />
-
-            {/* Address */}
-            <div className="w-full">
-              <span className="font-semibold text-sm">Address:</span>
-              <PlaceKit
-                apiKey={memoizedApiKey}
-                options={pkaOptions}
-                className="w-full"
-                onPick={handleSuggestionPick}
-                placeholder="Search for an address..."
-              />
-
-              <div>
-                <div className="flex flex-col gap-y-0.5 text-xs ps-2">
-                  <span>{selectedAddress?.street?.name}</span>
-                  <span>{selectedAddress?.county}</span>
-                  <span>{selectedAddress?.city}</span>
-                  <span>{selectedAddress?.administrative}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Map Toggle */}
+          </div>
+          <div className="flex border-l w-4/5 p-3 bg-white">
             <div
-              className="flex items-center justify-center mt-4 cursor-pointer"
-              onClick={() => setIsMapOpen(true)}
+              className="w-full flex justify-center items-center"
+              {...getRootProps()}
             >
-              <FiMap size={24} className="text-blue-500" />
-              <FiArrowRight size={24} className="text-blue-500 ml-2" />
-            </div>
-
-            {/* Fault Severity */}
-            <div>
-              <span className="font-semibold text-sm">Fault Severity</span>
-              <div className="flex h-[2.5rem] justify-center space-x-2">
-                <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
-                  <Button
-                    variant="bordered"
-                    className={`flex-1 h-full ${selectedFault === "Minor" ? "border-blue-500 border-2" : ""
-                      }`}
-                    onClick={() => setSelectedFault("Minor")}
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <div>
+                  <svg
+                    xmlns="https://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    height="40"
+                    width="40"
                   >
-                    <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                    <path
+                      d="M1 14.5C1 12.1716 2.22429 10.1291 4.34315 8.65685C6.46201 7.18458 9.03799 6.5 12 6.5C14.962 6.5 17.538 7.18458 19.6569 8.65685C21.7757 10.1291 23 12.1716 23 14.5V15.5C23 17.8284 21.7757 19.8709 19.6569 21.3431C17.538 22.8154 14.962 23.5 12 23.5C9.03799 23.5 6.46201 22.8154 4.34315 21.3431C2.22429 19.8709 1 17.8284 1 15.5V14.5Z"
+                      stroke="#333"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              ) : (
+                <div
+                  className="text-sm text-gray-600"
+                  onClick={handleDivClick}
+                >
+                  Drag & drop files here, or click to browse
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    name="picture"
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={handleImageChange}
+                  />
+                  {selectedImage && (
+                    <div>
+                      <h2>Image Preview:</h2>
                       <img
-                        width="20"
-                        height="auto"
-                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
-                        alt="Minor"
+                        src={String(selectedImage)}
+                        alt="Uploaded"
+                        style={{ maxWidth: "50%", height: "auto" }}
                       />
                     </div>
-                  </Button>
-                  <Button
-                    variant="bordered"
-                    className={`flex-1 h-full ${selectedFault === "Major" ? "border-blue-500 border-2" : ""
-                      }`}
-                    onClick={() => setSelectedFault("Major")}
-                  >
-                    <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-                      <img
-                        width="20"
-                        height="auto"
-                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
-                        alt="Major"
-                      />
-                    </div>
-                  </Button>
-                  <Button
-                    variant="bordered"
-                    className={`flex-1 h-full ${selectedFault === "Critical" ? "border-blue-500 border-2" : ""
-                      }`}
-                    onClick={() => setSelectedFault("Critical")}
-                  >
-                    <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-                      <img
-                        width="20"
-                        height="auto"
-                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
-                        alt="Critical"
-                      />
-                    </div>
-                  </Button>
-                </ButtonGroup>
-              </div>
-            </div>
-
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={!isFormValid}
-              className={cn(
-                "m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0",
-                isFormValid
-                  ? "bg-blue-500 text-white hover:bg-blue-600"
-                  : "bg-blue-200 text-white cursor-not-allowed"
+                  )}
+                </div>
               )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Fault Severity */}
+      <div>
+        <span className="font-semibold text-sm">Fault Severity</span>
+        <div className="flex h-[2.5rem] justify-center space-x-2">
+          <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
+            <Button
+              variant="bordered"
+              className={`flex-1 h-full ${
+                selectedFault === "Minor" ? "border-blue-500 border-2" : ""
+              }`}
+              onClick={() => setSelectedFault("Minor")}
             >
-              Submit
+              <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                <img
+                  width="20"
+                  height="auto"
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
+                  alt="Minor"
+                />
+              </div>
             </Button>
-          </form>
+            <Button
+              variant="bordered"
+              className={`flex-1 h-full ${
+                selectedFault === "Major" ? "border-blue-500 border-2" : ""
+              }`}
+              onClick={() => setSelectedFault("Major")}
+            >
+              <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                <img
+                  width="20"
+                  height="auto"
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
+                  alt="Major"
+                />
+              </div>
+            </Button>
+            <Button
+              variant="bordered"
+              className={`flex-1 h-full ${
+                selectedFault === "Critical" ? "border-blue-500 border-2" : ""
+              }`}
+              onClick={() => setSelectedFault("Critical")}
+            >
+              <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
+                <img
+                  width="20"
+                  height="auto"
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
+                  alt="Critical"
+                />
+              </div>
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <Button
+        type="submit"
+        disabled={!isFormValid}
+        className={cn(
+          "m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0",
+          isFormValid
+            ? "bg-blue-500 text-white hover:bg-blue-600"
+            : "bg-blue-200 text-white cursor-not-allowed"
+        )}
+      >
+        Submit
+      </Button>
+    </form>
+  </div>
+
+  {/* Map Modal */}
+  {isMapOpen && (
+    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex flex-col items-center justify-center">
+      <div className="w-full h-full relative bg-white">
+        {/* Button to close the map and return to the form view */}
+        <div
+          className="absolute top-4 left-4 z-50 text-black cursor-pointer bg-white p-2 rounded-full shadow-lg flex items-center"
+          onClick={() => setIsMapOpen(false)}
+        >
+          <FiArrowRight
+            size={24}
+            className="text-blue-500 rotate-180 mr-2"
+          />{" "}
+          Back to Form
         </div>
 
-        {/* Map Modal */}
-        {isMapOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex flex-col items-center justify-center">
-            <div className="w-full h-full relative bg-white">
-              {/* Button to close the map and return to the form view */}
-              <div
-                className="absolute top-4 left-4 z-50 text-black cursor-pointer bg-white p-2 rounded-full shadow-lg flex items-center"
-                onClick={() => setIsMapOpen(false)}
-              >
-                <FiArrowRight
-                  size={24}
-                  className="text-blue-500 rotate-180 mr-2"
-                />{" "}
-                Back to Form
-              </div>
+        {/* Button to pin current location */}
+        <div
+          className="absolute bottom-10 left-4 z-50 text-black cursor-pointer bg-white p-2 rounded-full shadow-lg"
+          onClick={() => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const { latitude, longitude } = position.coords;
 
-              {/* Button to pin current location */}
-              <div
-                className="absolute bottom-10 left-4 z-50 text-black cursor-pointer bg-white p-2 rounded-full shadow-lg"
-                onClick={() => {
-                  navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                      const { latitude, longitude } = position.coords;
-
-                      // Create a partial PKResult object with necessary fields
-                      const location: Partial<PKResult> = {
-                        lng: longitude,
-                        lat: latitude,
-                        name: "Current Location", // Use a placeholder or actual name if available
-                        city: "",
-                        county: "",
-                        administrative: "",
-                      };
+                // Create a partial PKResult object with necessary fields
+                const location: Partial<PKResult> = {
+                  lng: longitude,
+                  lat: latitude,
+                  name: "Current Location", // Use a placeholder or actual name if available
+                  city: "",
+                  county: "",
+                  administrative: "",
+                };
 
                       flyTo(longitude, latitude);
                       dropMarker(location as PKResult); // Cast to PKResult to satisfy TypeScript
@@ -764,13 +823,13 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
                 <FiMapPin size={24} className="text-black" />
               </div>
 
-              {/* Info Box */}
-              <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
-                <p>
-                  Click on the map to place a pin, or use the button on the left
-                  to pin your current location.
-                </p>
-              </div>
+        {/* Info Box */}
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
+          <p>
+            Click on the map to place a pin, or use the button on the left to
+            pin your current location.
+          </p>
+        </div>
 
               {/* Map Container */}
               {/* <div className="w-full h-full relative z-40" ref={mapContainer}></div> */}

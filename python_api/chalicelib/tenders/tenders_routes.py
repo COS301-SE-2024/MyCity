@@ -11,6 +11,7 @@ from chalicelib.tenders.tenders_controllers import (
     complete_contract,
     getMunicipalityTenders,
     terminate_contract,
+    DidMakeTender,
 )
 
 from chalicelib.authorisers import cognito_authorizer
@@ -75,6 +76,16 @@ def terminate_the_contract():
     request = tenders_blueprint.current_request
     sender_data = request.json_body
     response = terminate_contract(sender_data)
+    return response
+
+
+@tenders_blueprint.route(
+    "/didbid", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
+def Check_if_bid():
+    request = tenders_blueprint.current_request
+    sender_data = request.json_body
+    response = DidMakeTender(sender_data)
     return response
 
 

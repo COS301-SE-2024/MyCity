@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { CompleteContract } from "@/services/tender.service";
+import { CompleteContract,TerminateContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 import dynamic from "next/dynamic";
 
@@ -124,8 +124,14 @@ const TenderMax = ({
       const user_session = String(user_data.current?.session_token);
       const response_contract = await CompleteContract(tender.contract_id,user_session)
       console.log(response_contract)
+      toast.success(`${dialog.action} action confirmed.`);
       onClose(-2); // Example: Mark as complete would close the ticket
     } else if (dialog.action === "Terminate Contract") {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await TerminateContract(tender.contract_id,user_session)
+      console.log(response_contract)
+      toast.success(`${dialog.action} action confirmed.`);
       onClose(0); // Example: Terminate contract would also close the ticket
     }
   };

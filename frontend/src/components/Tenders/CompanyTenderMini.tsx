@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import TenderMax from './CompanyTenderMax'; // Assuming the detailed view component is in the same directory
 import { useProfile } from "@/hooks/useProfile";
-import { getCompanyContract } from '@/services/tender.service';
+import { getCompanyContract,DidBid } from '@/services/tender.service';
 
 type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
 

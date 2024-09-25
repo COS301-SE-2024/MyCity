@@ -848,10 +848,12 @@ export default function CitizenDashboard({
                             </div>
                           ) : dashWatchResults.length > 0 ? (
                             <div className="h-full">
+                              <div className="flex justify-center items-center">
                               <DashboardFaultCardContainer
                                 cardData={dashWatchResults}
                                 refreshwatch={refreshwatchlist}
                               />
+                              </div>
                             </div>
                           ) : (
                             <p className="text-center text-white text-opacity-60 text-sm">
@@ -882,10 +884,12 @@ export default function CitizenDashboard({
                             />
                           </div>
                         ) : dashMostUpvoteResults.length > 0 ? (
+                          <div className="flex justify-center items-center">
                           <DashboardFaultCardContainer
                             cardData={dashMostUpvoteResults}
                             refreshwatch={refreshwatchlist}
                           />
+                          </div>
                         ) : (
                           <p className="text-center text-white text-opacity-60 text-sm">
                             There are no faults to display.
@@ -912,10 +916,12 @@ export default function CitizenDashboard({
                             />
                           </div>
                         ) : dashMuniResults.length > 0 ? (
+                          <div className="flex justify-center items-center">
                           <DashboardFaultCardContainer
                             cardData={dashMuniResults}
                             refreshwatch={refreshwatchlist}
                           />
+                          </div>
                         ) : (
                           <p className="text-center text-sm text-opacity-60 text-white">
                             There are no faults to display.

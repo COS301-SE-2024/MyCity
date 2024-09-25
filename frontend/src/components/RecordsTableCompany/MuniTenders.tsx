@@ -1,75 +1,76 @@
-import React, { useState, useEffect } from "react";
-import { ChevronUp } from "lucide-react";
+import React, { useState } from "react";
+import Tender from "../Tenders/MuniTenderMini"; // Update the import path if necessary
+
+type Status = 'Unassigned' | 'Active' | 'Rejected' | 'Closed';
+interface TenderType {
+  tender_id: string;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  serviceProvider: string;
+  datetimesubmitted: string;
+  ticketnumber: string;
+  ticket_id: string;
+  status: Status;
+  quote: number;
+  longitude: string;
+  latitude: string;
+  estimatedTimeHours: number;
+  upload: File | null;
+  hasReportedCompletion: boolean; // New prop
+}
+
+interface TenderTypeProps {
+  tenders: TenderType[] | null; // Allow tenders to be null
+}
 
 export default function MuniTenders({
-  tenders,
+  tenders = null, // Default to null if tenders are not provided
   onBack,
 }: {
-  tenders: any[] | null;
+  tenders: TenderType[] | null; // Allow tenders to be null
   onBack: () => void;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
-  // Log tenders to ensure the data is being passed correctly
-  useEffect(() => {
-    console.log("Tenders data:", tenders);
-  }, [tenders]);
-
-  const tendersToDisplay = tenders || []; // If tenders is null, use an empty array
-
-  if (tendersToDisplay.length === 0) {
-    return (
-      <div
-        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 mb-4 relative z-0"
-        style={{
-          boxShadow:
-            "0px -10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        }}
-      >
-        <div className="min-w-full rounded-t-lg relative">
-          <button
-            onClick={onBack}
-            className="absolute top-2 left-2 text-sm font-bold text-gray-700 underline hover:scale-110 transition-transform duration-200"
-          >
-            <ChevronUp size={20} />
-          </button>
-          <div className="text-center py-16">This ticket has no bids yet.</div>
-        </div>
-      </div>
-    );
-  }
-
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
-  const currentTenders = tendersToDisplay.slice(
-    indexOfFirstTender,
-    indexOfLastTender
-  );
-  const totalPages = Math.ceil(tendersToDisplay.length / tendersPerPage);
+  
+  // Check if tenders is null before using slice
+  const currentTenders = tenders ? tenders.slice(indexOfFirstTender, indexOfLastTender) : [];
+  const totalPages = tenders ? Math.ceil(tenders.length / tendersPerPage) : 1;
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
-    <div>
-      {/* Desktop View */}
-      <div
-        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 mb-4 relative z-0 hidden sm:block"
-        style={{
-          boxShadow:
-            "0px -10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        }}
-      >
-        <div className="min-w-full rounded-3xl relative">
+    <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
+      <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
+        <div className="flex justify-between items-center mb-2 px-2 py-1 font-bold text-center relative">
           <button
             onClick={onBack}
-            className="absolute top-2 left-2 text-sm font-bold text-gray-700 hover:scale-110 transition-transform duration-200"
+            className="bg-white bg-opacity-70 text-black ml-2 px-3 py-1 rounded-xl focus:outline-none hover:bg-opacity-90"
           >
-            <ChevronUp size={20} />
+            Back
           </button>
-          <div className="text-lg font-bold text-center mt-2 mb-2">
-            Bids for this Ticket:
+
+          <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold">
+            Tender Bids
           </div>
+        </div>
+        {tenders && currentTenders.length > 0 ? (
           <>
-            <div className="grid grid-cols-6 gap-4 items-center px-2 py-1 font-bold text-center border-b border-gray-200">
+            <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
               <div className="col-span-1">Status</div>
               <div className="col-span-1">Tender ID</div>
               <div className="col-span-1">Service Provider</div>
@@ -79,25 +80,13 @@ export default function MuniTenders({
             </div>
             <div className="min-w-full">
               {currentTenders.map((tender) => (
-                <div
-                  key={tender.ticket_id}
-                  className="grid grid-cols-6 gap-4 items-center px-2 py-1 text-center border-b border-gray-100"
-                >
-                  <div className="col-span-1">{tender.status || "N/A"}</div>
-                  <div className="col-span-1">{tender.ticket_id || "N/A"}</div>
-                  <div className="col-span-1">{tender.service_provider || "N/A"}</div>
-                  <div className="col-span-1">{tender.issue_date || "N/A"}</div>
-                  <div className="col-span-1">{tender.price || "N/A"}</div>
-                  <div className="col-span-1">{tender.estimated_duration || "N/A"}</div>
-                </div>
+                <Tender key={tender.ticket_id} tender={tender} onClose={onBack} />
               ))}
             </div>
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between mt-4 text-white">
               <button
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className={`px-48 py-2 ${
-                  currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-                }`}
+                onClick={handlePrevPage}
+                className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
                 disabled={currentPage === 1}
               >
                 Previous
@@ -106,90 +95,19 @@ export default function MuniTenders({
                 Page {currentPage} of {totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className={`px-48 py-2 ${
-                  currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
-                }`}
+                onClick={handleNextPage}
+                className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
                 disabled={currentPage === totalPages}
               >
                 Next
               </button>
             </div>
           </>
-        </div>
-      </div>
-
-      {/* Mobile View */}
-      <div className="block sm:hidden bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-4 mr-4 mb-4 relative z-0">
-        <div className="relative">
-          <button
-            onClick={onBack}
-            className="absolute top-2 left-2 text-sm font-bold text-gray-700 hover:scale-110 transition-transform duration-200"
-          >
-            <ChevronUp size={20} />
-          </button>
-          <div className="text-lg font-bold text-center mt-2 mb-4">
-            Bids for this Ticket:
+        ) : (
+          <div className="text-white text-center py-16">
+            This ticket has no bids yet.
           </div>
-
-          {/* Mobile-friendly layout */}
-          {currentTenders.map((tender) => (
-            <div
-              key={tender.ticket_id}
-              className="mb-4 px-4 py-2 bg-gray-100 rounded-b-lg shadow-sm"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">Status:</span>
-                <span className="text-sm">{tender.status || "N/A"}</span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">Tender ID:</span>
-                <span className="text-sm">{tender.ticket_id || "N/A"}</span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">Service Provider:</span>
-                <span className="text-sm">{tender.service_provider || "N/A"}</span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">Issue Date:</span>
-                <span className="text-sm">{tender.issue_date || "N/A"}</span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">Price:</span>
-                <span className="text-sm">{tender.price || "N/A"}</span>
-              </div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-bold text-sm">Duration:</span>
-                <span className="text-sm">{tender.estimated_duration || "N/A"}</span>
-              </div>
-            </div>
-          ))}
-
-          {/* Pagination for mobile */}
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={() => setCurrentPage(currentPage - 1)}
-              className={`px-4 py-2 ${
-                currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-              }`}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage(currentPage + 1)}
-              className={`px-4 py-2 ${
-                currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""
-              }`}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
