@@ -4,7 +4,6 @@ import { ThreeDots } from "react-loader-spinner";
 import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTableCompany/MuniTenders";
-import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { getTicketTenders, getContract } from "@/services/tender.service";
 import { AcceptTicket, CloseTicket } from "@/services/tickets.service";

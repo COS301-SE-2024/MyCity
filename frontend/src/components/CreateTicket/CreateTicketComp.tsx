@@ -28,12 +28,18 @@ import CustomMarker from "../../../public/customMarker.svg";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import CameraPrompt from "@/components/Camera/CameraPrompt";
+import { useMapbox } from "@/hooks/useMapbox";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
-  useMapboxProp: () => MapboxContextProps;
+
 }
 
-const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
+const CreateTicketComp: React.FC<Props> = ({ className }) => {
   const [dataURL, setDataURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<File[]>([]);
   const [file, setFile] = useState<File>();
@@ -65,12 +71,11 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
   const {
     selectedAddress,
-    map,
-    initialiseMap,
-    dropPin,
-    panMapTo,
-    panToCurrentLocation,
-  } = useMapboxProp();
+    dropMarker,
+    liftMarker,
+    flyTo,
+    flyToCurrentLocation,
+  } = useMapbox();
   const { getUserProfile } = useProfile();
   const formRef = useRef<HTMLFormElement>(null);
   const formRefmobile = useRef<HTMLFormElement>(null);
@@ -80,7 +85,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
   const [selectedFault, setSelectedFault] = useState<string | null>(null);
   const [faultDescription, setFaultDescription] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [isPinDropped, setIsPinDropped] = useState(false);
+  const [isMarkerDropped, setIsMarkerDropped] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false); // For mobile map modal
@@ -283,23 +288,23 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 
   const handleSuggestionPick = useCallback(
     (value: string, item: PKResult, index: number) => {
-      setIsPinDropped(true);
-      dropPin(true, item);
-      panMapTo(item.lng, item.lat);
+      setIsMarkerDropped(true);
+      dropMarker(item);
+      flyTo(item.lng, item.lat);
     },
-    [dropPin, panMapTo]
+    [dropMarker, flyTo]
   );
 
   const onPinClick = () => {
-    setIsPinDropped(!isPinDropped);
-    dropPin(!isPinDropped);
-  };
-
-  useEffect(() => {
-    if (mapContainer.current) {
-      initialiseMap(mapContainer);
+    if (isMarkerDropped) {
+      setIsMarkerDropped(false);
+      liftMarker();
     }
-  }, [initialiseMap]);
+    else {
+      setIsMarkerDropped(true);
+      dropMarker();
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -505,11 +510,11 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
         {/* Graphical Section */}
         <div className="w-1/2 relative bg-gray-200">
           {/* Map Section */}
-          <div>
+          <div className="relative w-full h-full">
             <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
               <Button
                 className="min-w-fit h-fit p-2 bg-white"
-                onClick={panToCurrentLocation}
+                onClick={flyToCurrentLocation}
               >
                 <Locate size={21} />
               </Button>
@@ -517,12 +522,12 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                 className="min-w-fit h-fit p-2 bg-white"
                 onClick={onPinClick}
               >
-                {!isPinDropped ? <Pin size={21} /> : <PinOff size={21} />}
+                {!isMarkerDropped ? <Pin size={21} /> : <PinOff size={21} />}
               </Button>
             </div>
 
-            {!isPinDropped && (
-              <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
+            {!isMarkerDropped && (
+              <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-90%] z-40">
                 <CustomMarker fill="#BE0505" />
               </div>
             )}
@@ -542,10 +547,11 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
               )}
             </div>
 
-            <div className="w-full h-full relative" ref={mapContainer}></div>
+            <MapboxMap />
           </div>
         </div>
       </div>
+
 
       {/* Mobile View */}
 <div className="block sm:hidden flex flex-col justify-center items-center h-full w-full px-2 rounded-3xl overflow-hidden">
@@ -804,18 +810,18 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
                   administrative: "",
                 };
 
-                panMapTo(longitude, latitude);
-                dropPin(true, location as PKResult); // Cast to PKResult to satisfy TypeScript
-              },
-              (error) => {
-                console.error("Error fetching location:", error);
-                toast.error("Could not get current location.");
-              }
-            );
-          }}
-        >
-          <FiMapPin size={24} className="text-black" />
-        </div>
+                      flyTo(longitude, latitude);
+                      dropMarker(location as PKResult); // Cast to PKResult to satisfy TypeScript
+                    },
+                    (error) => {
+                      console.error("Error fetching location:", error);
+                      toast.error("Could not get current location.");
+                    }
+                  );
+                }}
+              >
+                <FiMapPin size={24} className="text-black" />
+              </div>
 
         {/* Info Box */}
         <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-white bg-opacity-90 border rounded-lg shadow-lg text-black text-center max-w-sm">
@@ -825,13 +831,13 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
           </p>
         </div>
 
-        {/* Map Container */}
-        <div className="w-full h-full relative z-40" ref={mapContainer}></div>
+              {/* Map Container */}
+              {/* <div className="w-full h-full relative z-40" ref={mapContainer}></div> */}
+              <MapboxMap />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  )}
-</div>
-
     </div>
   );
 };
