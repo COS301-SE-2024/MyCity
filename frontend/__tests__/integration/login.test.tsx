@@ -7,48 +7,44 @@ describe("Login Page", () => {
         render(<Login />);
         const citizenForms = screen.getAllByTestId("citizen-login-form");
         const citizenForm = citizenForms[0];
-        // const municipalityForms = screen.getAllByTestId("municipality-login-form");
-        // const municipalityForm = municipalityForms[0];
-        // const serviceProviderForms = screen.getAllByTestId("service-provider-login-form");
-        // const serviceProviderForm = serviceProviderForms[0];
+        const municipalityForms = screen.queryAllByTestId("municipality-login-form");
+        const municipalityForm = municipalityForms[0];
+        const serviceProviderForms = screen.queryAllByTestId("service-provider-login-form");
+        const serviceProviderForm = serviceProviderForms[0];
+
+        // Assert the CitizenLogin form is visible and others are not
         expect(citizenForm).toBeInTheDocument();
-        // expect(municipalityForm).not.toBeInTheDocument();
-        // expect(serviceProviderForm).not.toBeInTheDocument();
     });
 
+    it("renders Municipality form when Municipality tab is clicked", () => {
+        render(<Login />);
+        const tabButton = screen.getByTestId("municipality-tab");
+        fireEvent.click(tabButton);
 
-    // it("renders Municipality form when Municipality tab is clicked", () => {
-    //     render(<Login />);
-    //     const tabButton = screen.getByTestId("municipality-tab");
-    //     fireEvent.click(tabButton);
-    //     fireEvent.select(tabButton);
+        const citizenForms = screen.getAllByTestId("citizen-login-form");
+        const citizenForm = citizenForms[0];
+        const municipalityForms = screen.queryAllByTestId("municipality-login-form");
+        const municipalityForm = municipalityForms[0];
+        const serviceProviderForms = screen.queryAllByTestId("service-provider-login-form");
+        const serviceProviderForm = serviceProviderForms[0];
 
-    //     const citizenForm = screen.queryByTestId("citizen-login-form");
-    //     const municipalityForm = screen.queryByTestId("municipality-login-form");
-    //     const serviceProviderForm = screen.queryByTestId("service-provider-login-form");
-
-    //     expect(citizenForm).not.toBeInTheDocument();
-    //     expect(municipalityForm).toBeInTheDocument();
-    //     expect(serviceProviderForm).not.toBeInTheDocument();
-    // });
+        // Assert the Municipality form is visible and others are not
+        expect(municipalityForm).toBeInTheDocument();
+    });
 
     it("renders Service Provider form when Service Provider tab is clicked", () => {
         render(<Login />);
-        const tabButtons = screen.getAllByTestId("service-provider-tab");
-        const tabButton = tabButtons[0];
+        const tabButton = screen.getByTestId("service-provider-tab");
         fireEvent.click(tabButton);
-        fireEvent.select(tabButton);
 
-        // const citizenForms = screen.getAllByTestId("citizen-login-form");
-        // const citizenForm = citizenForms[0];
-        // const municipalityForms = screen.getAllByTestId("municipality-login-form");
-        // const municipalityForm = municipalityForms[0];
-        const serviceProviderForms = screen.getAllByTestId("service-provider-login-form");
+        const citizenForms = screen.getAllByTestId("citizen-login-form");
+        const citizenForm = citizenForms[0];
+        const municipalityForms = screen.queryAllByTestId("municipality-login-form");
+        const municipalityForm = municipalityForms[0];
+        const serviceProviderForms = screen.queryAllByTestId("service-provider-login-form");
         const serviceProviderForm = serviceProviderForms[0];
-        // expect(municipalityForm).not.toBeInTheDocument();
-        // expect(citizenForm).not.toBeInTheDocument();
-        // expect(serviceProviderForm).toBeInTheDocument();
+
+        // Assert the Service Provider form is visible and others are not
+        expect(serviceProviderForm).toBeInTheDocument();
     });
-
-
-})
+});
