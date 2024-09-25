@@ -6,36 +6,35 @@ import { Rings } from "react-loader-spinner"; // Importing the Rings loader
 
 export default function FaultMapView() {
   const faultMapContainer = useRef<HTMLDivElement>(null);
-  const { initialiseFaultMap } = useMapbox();
   const { getUserProfile } = useProfile();
   const [faultCount, setFaultCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadFaultMap = async () => {
-      setLoading(true);
-      const userProfile = await getUserProfile();
-      const sessionToken = userProfile.current?.session_token;
+    // const loadFaultMap = async () => {
+    //   setLoading(true);
+    //   const userProfile = await getUserProfile();
+    //   const sessionToken = userProfile.current?.session_token;
 
-      const faultGeodata = await getTicketsGeoData(sessionToken);
+    //   const faultGeodata = await getTicketsGeoData(sessionToken);
 
-      if (faultMapContainer.current) {
-        await initialiseFaultMap(
-          faultMapContainer,
-          faultGeodata,
-          userProfile.current?.municipality
-        );
-      }
+    //   if (faultMapContainer.current) {
+    //     await initialiseFaultMap(
+    //       faultMapContainer,
+    //       faultGeodata,
+    //       userProfile.current?.municipality
+    //     );
+    //   }
 
-      if (Array.isArray(faultGeodata)) {
-        setFaultCount(faultGeodata.length);
-      } else {
-        setFaultCount(0); // If no faults or an error occurs
-      }
-      setLoading(false);
-    };
+    //   if (Array.isArray(faultGeodata)) {
+    //     setFaultCount(faultGeodata.length);
+    //   } else {
+    //     setFaultCount(0); // If no faults or an error occurs
+    //   }
+    //   setLoading(false);
+    // };
 
-    loadFaultMap();
+    // loadFaultMap();
   }, []);
   // }, [getUserProfile, initialiseFaultMap]);
 
@@ -87,7 +86,7 @@ export default function FaultMapView() {
       <div className="block sm:hidden">
         <div className="flex items-center justify-center h-full px-4">
           <div className="flex flex-col md:flex-row w-full max-w-7xl h-[55vh] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
-            
+
             {/* Map Section */}
             <div className="w-full md:w-5/6 flex-grow">
               <div
@@ -101,7 +100,7 @@ export default function FaultMapView() {
               <h2 className="text-lg font-bold text-center">Key</h2>
               <div className="flex items-center ">
                 <div className="w-4 h-4 rounded-full bg-red-700 mr-2"></div>
-                <span className="text-sm">Urgent</span> 
+                <span className="text-sm">Urgent</span>
               </div>
               <div className="flex items-center ">
                 <div className="w-4 h-4 rounded-full bg-yellow-600 mr-2"></div>
@@ -109,7 +108,7 @@ export default function FaultMapView() {
               </div>
               <div className="flex items-center ">
                 <div className="w-4 h-4 rounded-full bg-green-700 mr-2"></div>
-                <span className="text-sm">Non-urgent</span> 
+                <span className="text-sm">Non-urgent</span>
               </div>
               <div className=" text-center">
                 <h2 className="text-lg font-bold">Faults Pinned</h2>
