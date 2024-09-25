@@ -174,9 +174,10 @@ def accept_tender(sender_data):
                 }
                 raise ClientError(error_response, "InvalideFields")
 
-        response_tender = tenders_table.scan(
-            FilterExpression=Attr("company_id").eq(sender_data["company_id"])
-            & Attr("ticket_id").eq(sender_data["ticket_id"])
+        response_tender = tenders_table.query(
+            IndexName="company_id-index",
+            KeyConditionExpression=Key("company_id").eq(sender_data["company_id"]),
+            FilterExpression=Attr("ticket_id").eq(sender_data["ticket_id"]),
         )
         tender_items = response_tender["Items"]
         if len(tender_items) <= 0:  # To see that company does exist
@@ -269,9 +270,10 @@ def reject_tender(sender_data):
                 }
                 raise ClientError(error_response, "InvalideFields")
 
-        response_tender = tenders_table.scan(
-            FilterExpression=Attr("company_id").eq(sender_data["company_id"])
-            & Attr("ticket_id").eq(sender_data["ticket_id"])
+        response_tender = tenders_table.query(
+            IndexName="company_id-index",
+            KeyConditionExpression=Key("company_id").eq(sender_data["company_id"]),
+            FilterExpression=Attr("ticket_id").eq(sender_data["ticket_id"]),
         )
         tender_items = response_tender["Items"]
         if len(tender_items) <= 0:  # To see that company does exist
