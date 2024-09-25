@@ -65,43 +65,88 @@ export default function ActiveTenders({ tenders = [] }: { tenders: TenderType[] 
   }
 
   return (
-    <div className="overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
-      <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
-        <div className='text-xl my-4 font-bold'>Select a Tender Contract to view its details.</div>
-        <div className="grid grid-cols-7 gap-4 items-center mb-2 px-6 py-1 font-bold text-center border-b border-gray-200">
-          <div className="col-span-1 flex justify-center">Status</div>
-          <div className="col-span-1 flex justify-center">Tender ID</div>
-          <div className="col-span-1 flex justify-center">Ticket ID</div>
-          <div className="col-span-1 flex justify-center">Municipality</div>
-          <div className="col-span-1 flex justify-center">Issue Date</div>
-          <div className="col-span-1 flex justify-center">Price</div>
-          <div className="col-span-1 flex justify-center">Estimated Duration</div>
-        </div>
-        <div className="min-w-full px-6">
-          {currentTenders.map((tender) => (
-            <Tender key={tender.ticket_id} tender={tender} />
-          ))}
-        </div>
-        <div className="flex justify-between mt-4 text-white">
-          <button
-            onClick={handlePrevPage}
-            className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
+    <>
+      {/* Desktop View */}
+      <div className="hidden sm:block overflow-x-auto text-white text-center bg-transparent rounded-lg shadow-md">
+        <div className="min-w-full text-white text-opacity-80 rounded-t-lg">
+          <div className='text-xl my-4 font-bold'>Select a Tender Contract to view its details.</div>
+          <div className="grid grid-cols-7 gap-4 items-center mb-2 px-6 py-1 font-bold text-center border-b border-gray-200">
+            <div className="col-span-1 flex justify-center">Status</div>
+            <div className="col-span-1 flex justify-center">Tender ID</div>
+            <div className="col-span-1 flex justify-center">Ticket ID</div>
+            <div className="col-span-1 flex justify-center">Municipality</div>
+            <div className="col-span-1 flex justify-center">Issue Date</div>
+            <div className="col-span-1 flex justify-center">Price</div>
+            <div className="col-span-1 flex justify-center">Estimated Duration</div>
+          </div>
+          <div className="min-w-full px-6">
+            {currentTenders.map((tender) => (
+              <Tender key={tender.ticket_id} tender={tender} />
+            ))}
+          </div>
+          <div className="flex justify-between mt-4 text-white">
+            <button
+              onClick={handlePrevPage}
+              className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={handleNextPage}
+              className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+  
+      {/* Mobile View */}
+      <div className="block sm:hidden">
+        <div className="text-xl font-bold text-white text-opacity-80 text-center mb-4">
+          Select a Tender Contract to view its details.
+        </div>
+  
+        {/* Tenders Listing and Pagination Container */}
+        <div className="min-w-full space-y-2 overflow-y-auto pb-32" style={{ maxHeight: "75vh" }}>
+          {currentTenders.length > 0 ? (
+            currentTenders.map((tender) => (
+              <Tender key={tender.ticket_id} tender={tender} />
+            ))
+          ) : (
+            <div className="mt-16 text-white text-opacity-80 text-center">
+              No Active Tenders to display.
+            </div>
+          )}
+  
+          {/* Pagination (comes directly after the last tender) */}
+          {currentTenders.length > 0 && (
+            <div className="flex justify-center text-center items-center mt-4 text-white space-x-4">
+              <button
+                onClick={handlePrevPage}
+                className={`px-4 py-2 text-md ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span className="text-md">Page {currentPage} of {totalPages}</span>
+              <button
+                onClick={handleNextPage}
+                className={`px-4 py-2 text-md ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   );
+  
 }

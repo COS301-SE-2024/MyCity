@@ -84,7 +84,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
         
         setDialog({ action, show: true });
         console.log("inside true")
-        
+        ///uhygiygh
     }
   };
 
@@ -122,6 +122,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
               toast.error("Couldnt Decline this tender")
           }
           handleDecline();
+      
         }
         console.log("inside reject")
         break;
