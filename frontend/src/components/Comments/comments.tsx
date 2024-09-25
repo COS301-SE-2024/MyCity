@@ -90,21 +90,22 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         <h2 className="text-xl text-black font-bold">Comments</h2>
       </div>
       <div className="flex-grow text-black overflow-auto mb-4">
-        {loading ? (
-          <p>Loading comments...</p>
-        ) : comments.length > 0 ? (
-          comments.map((comment, index) => (
-            <Comment
-              key={index}
-              userName={comment.userName}
-              userImage={comment.userImage}
-              time={new Date(comment.time)}
-              commentText={comment.comment}
-            />
-          ))
-        ) : (
-          <p>No comments to display.</p> // Display this message when there are no comments
-        )}
+      {loading ? (
+  <p>Loading comments...</p>
+) : comments.length > 0 ? (
+  comments.map((comment, index) => (
+    <Comment
+      key={index}
+      userName={comment.userName}
+      userImage={comment.userImage}
+      time={new Date(comment.time)}
+      commentText={comment.commentText} // Use commentText to ensure the actual comment is displayed
+    />
+  ))
+) : (
+  <p>No comments to display.</p>
+)}
+
       </div>
       <div className="flex items-center p-2 border-t">
         <div className="border-l-4 border-gray-200 h-full mr-4"></div> {/* Vertical separator */}
