@@ -29,8 +29,8 @@ interface TenderType {
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-green bg-green-400 rounded-full",
-  closed: "text-red bg-red-400 rounded-full",
+  completed: "text-green bg-green-300 rounded-full",
+  closed: "text-red bg-red-300 rounded-full",
 };
 
 const TenderMax : React.FC<TenderType> = ({
@@ -142,7 +142,10 @@ const TenderMax : React.FC<TenderType> = ({
                 <img src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
               </div> */}
               <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
-              <div className={`px-2 py-1 rounded-full text-sm border-2 mb-2 ${statusStyles[getStatus()]}`}>{tenderStatus}</div>
+              <div className={`px-2 py-1 rounded-full text-sm text-black border-2 mb-2 ${statusStyles[getStatus()]}`}>
+  {tenderStatus.charAt(0).toUpperCase() + tenderStatus.slice(1)}
+</div>
+
 
               <div className="text-gray-700 mb-2">
                 <strong>Ticket:</strong> {ticketnumber}

@@ -36,7 +36,7 @@ export default function MuniTenders({
   if (!tendersToDisplay || tendersToDisplay.length === 0) {
     return (
       <div
-        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 relative z-0"
+        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 mb-4 relative z-0"
         style={{
           boxShadow:
             "0px -10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
@@ -67,7 +67,7 @@ export default function MuniTenders({
     <div>
       {/* Desktop View */}
       <div
-        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 relative z-0 hidden sm:block"
+        className="overflow-x-auto bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-7 mr-7 mb-4 relative z-0 hidden sm:block"
         style={{
           boxShadow:
             "0px -10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
@@ -135,7 +135,7 @@ export default function MuniTenders({
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-4 mr-4 relative z-0">
+      <div className="block sm:hidden bg-white bg-opacity-80 text-black rounded-b-3xl mt-[-16px] ml-4 mr-4 mb-4 relative z-0">
         <div className="relative">
           <button
             onClick={onBack}

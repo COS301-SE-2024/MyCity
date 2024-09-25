@@ -1,30 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { FaMapMarkedAlt, FaInfoCircle } from "react-icons/fa";
+import { ThreeDots } from "react-loader-spinner";
+import RenderMap from '@/hooks/mapboxmap'; // Adjust this import to your actual Mapbox hook
 import { useProfile } from "@/hooks/useProfile";
 import { CreatTender } from '@/services/tender.service';
-import { FaInfoCircle } from 'react-icons/fa';
-import { ThreeDots } from "react-loader-spinner";
-import RenderMap from '@/hooks/mapboxmap';
 
-interface TicketProps {
-  ticket_id : string;
-  company_name :string;
+interface CreateBidProps {
+  ticket_id: string;
+  longitude: string;
+  latitude: string;
+  company_name: string;
   ticketnumber: string;
   faultType: string;
   description: string;
   address: string;
-  longitude : string;
-  latitude : string;
   municipalityImage: string;
   onBack: () => void;
 }
 
-const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company_name, ticketnumber, faultType,description,address,municipalityImage, onBack }) => {
+const CreateBid: React.FC<CreateBidProps> = ({
+  ticket_id, longitude, latitude, company_name, ticketnumber, faultType,
+  description, address, municipalityImage, onBack
+}) => {
   const userProfile = useProfile();
-  const [proposedPrice, setProposedPrice] = useState<string>('0.00');
-  const [jobDuration, setJobDuration] = useState<string>('');
+  const [proposedPrice, setProposedPrice] = useState('0.00');
+  const [jobDuration, setJobDuration] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [mapInitialized, setMapInitialized] = useState(false); // Track map initialization
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -34,8 +39,8 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
 
   const handleSubmit = async () => {
     setLoading(true); // Start loading
-    let price = Number(proposedPrice);
-    let duration = Number(jobDuration);
+    const price = Number(proposedPrice);
+    const duration = Number(jobDuration);
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const response_submit = await CreatTender(company_name, price, ticket_id, duration, user_session);
@@ -52,7 +57,22 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
     setShowDialog(true);
   };
 
-  RenderMap(Number(longitude),Number(latitude))
+  // Initialize map when map toggle is activated
+  useEffect(() => {
+    if (showMap && !mapInitialized) {
+      RenderMap(Number(longitude), Number(latitude));
+      setMapInitialized(true);
+    }
+  }, [showMap, mapInitialized, longitude, latitude]);
+
+  // Ensure the map is resized when toggling from small to large screens
+  useEffect(() => {
+    if (showMap && mapInitialized) {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize')); // Trigger a resize event for the map
+      }, 100); // Delay to allow rendering
+    }
+  }, [showMap, mapInitialized]);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9.]/g, '');
@@ -71,74 +91,103 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-lg p-4 max-w-4xl mx-auto flex flex-col lg:flex-row">
-        <div className="flex-1 p-4">
-          <img src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
-          <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticketnumber}</h2>
-          <p className="text-lg font-semibold mb-2 text-center">{faultType}</p>
-          <p className="text-md mb-4 text-center">{description}</p>
-          <div className="mb-4 text-center">
-            <p className="text-lg font-semibold">Fault Address</p>
-            <p>{address}</p>
+      <div className="bg-white rounded-lg shadow-lg p-4 max-w-4xl mx-auto flex flex-col lg:flex-row w-full">
+        {/* Form Section */}
+        {!showMap && (
+          <div className="flex-1 p-4">
+            {/* Map Toggle Button */}
+            <div className="flex justify-end mb-4">
+              <FaMapMarkedAlt
+                className="text-2xl cursor-pointer text-gray-500 hover:text-gray-700 transition-transform transform hover:scale-110"
+                onClick={() => setShowMap(true)}
+              />
+            </div>
+            {/* Municipality Image */}
+            <img src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
+            <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticketnumber}</h2>
+            <p className="text-lg font-semibold mb-2 text-center">{faultType}</p>
+            <p className="text-md mb-4 text-center">{description}</p>
+            <div className="mb-4 text-center">
+              <p className="text-lg font-semibold">Fault Address</p>
+              <p>{address}</p>
+            </div>
+            {/* Form */}
+            <form onSubmit={handleFormSubmit}>
+              {/* Proposed Price Input */}
+              <div className="mb-4">
+                <label className="block text-lg font-semibold mb-1" htmlFor="proposedPrice">Proposed Price</label>
+                <div className="relative">
+                  <span className="absolute left-0 top-0 bottom-0 flex items-center pl-2">R</span>
+                  <input
+                    type="text"
+                    id="proposedPrice"
+                    value={proposedPrice}
+                    onChange={handlePriceChange}
+                    className="w-full pl-6 pr-2 py-1 border rounded-3xl"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              {/* Job Duration Input */}
+              <div className="mb-4">
+                <label className="block text-lg font-semibold mb-1" htmlFor="jobDuration">Job Duration</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="jobDuration"
+                    value={jobDuration}
+                    onChange={handleDurationChange}
+                    className="w-full pl-2 pr-10 py-1 border rounded-3xl"
+                    placeholder="Days"
+                  />
+                  <span className="absolute right-0 top-0 bottom-0 flex items-center pr-2">days</span>
+                </div>
+              </div>
+              {/* File Upload */}
+              <div className="mb-4">
+                <p className="text-lg font-semibold mb-1">Other Relevant Information</p>
+                <div className="border-dashed border-2 border-gray-400 rounded-3xl p-4">
+                  <input
+                    type="file"
+                    onChange={handleFileUpload}
+                    className="w-full px-2 py-1 border rounded text-sm"
+                  />
+                </div>
+              </div>
+              {/* Submit and Back Buttons */}
+              <div className="mt-4 flex justify-center gap-8">
+                <button
+                  type="button"
+                  className="bg-gray-200 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-300"
+                  onClick={onBack}
+                >
+                  Back
+                </button>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
-          <form onSubmit={handleFormSubmit}>
-            <div className="mb-4">
-              <label className="block text-lg font-semibold mb-1" htmlFor="proposedPrice">Proposed Price</label>
-              <div className="relative">
-                <span className="absolute left-0 top-0 bottom-0 flex items-center pl-2">R</span>
-                <input
-                  type="text"
-                  id="proposedPrice"
-                  value={proposedPrice}
-                  onChange={handlePriceChange}
-                  className="w-full pl-6 pr-2 py-1 border rounded-3xl"
-                  placeholder="0.00"
-                />
-              </div>
+        )}
+
+        {/* Map Section */}
+        {showMap && (
+          <div className="w-full bg-gray-200 flex items-center justify-center p-4 relative">
+            <div className="absolute top-4 left-4 z-10">
+              <FaMapMarkedAlt
+                className="text-2xl cursor-pointer text-gray-500 hover:text-gray-700 transition-transform transform hover:scale-110"
+                onClick={() => setShowMap(false)}
+              />
             </div>
-            <div className="mb-4">
-              <label className="block text-lg font-semibold mb-1" htmlFor="jobDuration">Job Duration</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="jobDuration"
-                  value={jobDuration}
-                  onChange={handleDurationChange}
-                  className="w-full pl-2 pr-10 py-1 border rounded-3xl"
-                  placeholder="Days"
-                />
-                <span className="absolute right-0 top-0 bottom-0 flex items-center pr-2">days</span>
-              </div>
+            <div className="w-full h-96 text-gray-500" id="map">
+              {/* Map renders here */}
             </div>
-            <div className="mb-4">
-              <p className="text-lg font-semibold mb-1">Other Relevant Information</p>
-              <div className="border-dashed border-2 border-gray-400 rounded-3xl p-4">
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  className="w-full px-2 py-1 border rounded text-sm"
-                />
-              </div>
-            </div>
-            <div className="mt-4 flex justify-center gap-8">
-              <button
-                type="button"
-                className="bg-gray-200 text-gray-700 rounded-lg px-4 py-2 hover:bg-gray-300"
-                onClick={onBack}
-              >
-                Back
-              </button>
-              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Submit</button>
-            </div>
-          </form>
-        </div>
-        <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
-          <div className="w-full h-full text-gray-500" id="map">
-            <p className="text-center">Map Placeholder</p>
           </div>
-        </div>
+        )}
       </div>
 
+      {/* Confirmation Dialog */}
       {showDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-4 max-w-lg mx-auto">
@@ -160,10 +209,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
               <button
                 type="button"
                 className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-700"
-                onClick={() => {
-                  setShowDialog(false);
-                  handleSubmit(); // Call handleSubmit after confirmation
-                }}
+                onClick={handleSubmit}
               >
                 Submit
               </button>
@@ -172,6 +218,7 @@ const CreateBid: React.FC<TicketProps> = ({ ticket_id,longitude,latitude,company
         </div>
       )}
 
+      {/* Loading Spinner */}
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <ThreeDots height="40" width="80" radius="9" color="#ADD8E6" ariaLabel="three-dots-loading" visible={true} />
