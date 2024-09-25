@@ -40,11 +40,14 @@ export default function FaultStatesDoughnutChart({ data }: FaultStatesDoughnutCh
   // Normalize fault state keys by removing spaces
   const normalizeState = (state: string) => state.replace(/\s+/g, '');
 
-  // Map fault states to their respective colors from FaultStates
-  const backgroundColors = Object.keys(resolvedVsUnresolved).map((state) => {
+  // Create a function to safely get the state from FaultStates
+  const getState = (state: string) => {
     const normalizedState = normalizeState(state);
-    return FaultStates[normalizedState]?.color || FaultStates.Default.color;
-  });
+    return FaultStates[normalizedState as keyof typeof FaultStates] || FaultStates.Default;
+  };
+
+  // Map fault states to their respective colors from FaultStates
+  const backgroundColors = Object.keys(resolvedVsUnresolved).map((state) => getState(state).color);
 
   const donutChartData = {
     labels: Object.keys(resolvedVsUnresolved),
