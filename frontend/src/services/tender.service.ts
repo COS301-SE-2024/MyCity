@@ -177,9 +177,9 @@ export async function DidBid(comp_name: string,ticket : string, user_session: st
 }
 
 
-export async function TerminateContract(contract_id: string, user_session: string) {
+export async function TerminateContract(contract: string, user_session: string) {
     const data = {
-        contract_id: contract_id,
+        contract_id: contract,
     }
 
     const apiURL = "/api/tenders/terminate";
