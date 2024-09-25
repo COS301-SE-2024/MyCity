@@ -1,10 +1,9 @@
 // analytics.service.ts
-
-import { getAuthHeader } from "./auth.service"; // Assuming you have an auth service to get the session token
+const baseUrl = process.env.NEXT_PUBLIC_NODEAPI_URL; // Base URL for the API
 
 // Function to fetch tickets per municipality
 export const getTicketsPerMunicipality = async (municipalityId: string, userSession: string) => {
-  const url = `/tickets_per_municipality?municipality_id=${municipalityId}`;
+  const url = `${baseUrl}/analytics/tickets_per_municipality?municipality_id=${municipalityId}`;
 
   // Set up the headers, including the session token for authorization
   const headers = {
