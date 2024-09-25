@@ -132,18 +132,18 @@ export default function Signup() {
           ></div>
 
           {/* Content */}
-          <div className="mt-5 ">
+          <div className=" ">
             <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
               <span className="text-[2.5em] font-bold">
                 {currentFormHeader}
               </span>
-              <div className="overflow-auto h-[65vh] rounded-lg">
+              <div className="overflow-auto h-[74vh] rounded-lg">
                 <div className="flex justify-center">
                   <img
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Signup.gif"
                     alt="MyCity"
-                    width={256}
-                    height={256}
+                    width={128}
+                    height={128}
                   />
                 </div>
                 <Tabs
