@@ -50,12 +50,6 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
 
     const municipalityCoordinates = useRef<LngLatLike | null>(null);
 
-
-    // const setMap = (map: Map) => {
-    //     setMap(map);
-    // }
-
-
     const dropMarker = async(pkResult?: PKResult) => {
         if (map) {
             if (markerRef.current) {
@@ -65,7 +59,7 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
             if (!pkResult) {
                 //drop marker on center of map (current location)
                 const mapCenter = map.getCenter();
-                markerRef.current = new mapboxgl.Marker({ anchor: "bottom" })
+                markerRef.current = new mapboxgl.Marker()
                     .setLngLat(mapCenter)
                     .addTo(map);
 
@@ -85,7 +79,7 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
             else {
                 //drop marker at coordinates given in pkResult
                 if (pkResult.lng && pkResult.lat) {
-                    markerRef.current = new mapboxgl.Marker({ anchor: "bottom" })
+                    markerRef.current = new mapboxgl.Marker()
                         .setLngLat([pkResult.lng, pkResult.lat])
                         .addTo(map);
                 }
@@ -114,11 +108,14 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
             navigator.geolocation.getCurrentPosition(
                 (position: GeolocationPosition) => {
                     const { longitude, latitude } = position.coords;
+                    console.log(longitude, latitude);
                     if (map) {
                         map.flyTo({
                             center: [longitude, latitude],
-                            zoom: 14,
-                            essential: true, // animation is considered essential for accessibility
+                            zoom: 12,
+                            speed: 1.2, // make the flying animation slower
+                            curve: 1, // change the curvature of the flying animation
+                            essential: true // this animation is considered essential with respect to prefers-reduced-motion
                         });
                     }
                 },

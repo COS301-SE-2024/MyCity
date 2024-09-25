@@ -509,7 +509,7 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
         {/* Graphical Section */}
         <div className="w-1/2 relative bg-gray-200">
           {/* Map Section */}
-          <div className="relative">
+          <div className="relative w-full h-full">
             <div className="absolute flex flex-col gap-y-5 bottom-10 right-5 z-30">
               <Button
                 className="min-w-fit h-fit p-2 bg-white"
@@ -526,7 +526,7 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
             </div>
 
             {!isMarkerDropped && (
-              <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-40">
+              <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-90%] z-40">
                 <CustomMarker fill="#BE0505" />
               </div>
             )}
@@ -546,7 +546,6 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
               )}
             </div>
 
-            {/* <div className="w-full h-full relative" ref={mapContainer}></div> */}
             <MapboxMap />
           </div>
         </div>

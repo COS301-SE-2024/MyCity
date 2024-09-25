@@ -5,8 +5,12 @@ import TenderMax from "../Tenders/CompanyTenderMax";
 import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
-import MapComponent from "@/context/MapboxMap";
 import { getCompanyTenders } from "@/services/tender.service";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface TicketViewCompanyProps {
   show: boolean;
@@ -239,7 +243,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-                  <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+                  <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
                 </div>
               </div>
             </div>
