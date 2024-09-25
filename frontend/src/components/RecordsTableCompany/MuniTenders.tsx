@@ -71,10 +71,10 @@ export default function MuniTenders({
         </div>
         {currentTenders.length > 0 ? (
           <>
-            <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+            <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
               <div className="col-span-1">Status</div>
               <div className="col-span-1">Tender ID</div>
-              <div className="col-span-1">Ticket ID</div>
+            
               <div className="col-span-1">Service Provider</div>
               <div className="col-span-1">Issue Date</div>
               <div className="col-span-1">Price</div>
