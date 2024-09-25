@@ -35,7 +35,7 @@ interface StatusMappingType {
 const statusMapping: StatusMappingType = {
   'In Progress': 'Tender Contract',
   'Assigning Contract': 'Tender Contract',
-  Opened: 'View Tenders',
+  'Opened': 'View Tenders',
 };
 
 const statusStyles = {
