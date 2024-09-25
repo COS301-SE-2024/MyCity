@@ -606,8 +606,9 @@ def getTicketTender(ticket_id):
             }
             raise ClientError(error_response, "InvalideFields")
 
-        response_tender = tenders_table.scan(
-            FilterExpression=Attr("ticket_id").eq(ticket_id),
+        response_tender = tenders_table.query(
+            IndexName="ticket_id-index",
+            KeyConditionExpression=Key("ticket_id").eq(ticket_id),
         )
         if len(response_tender["Items"]) <= 0:
             error_response = {

@@ -647,7 +647,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
 <div>
   <span className="font-semibold text-sm">Fault Severity</span>
   <div className="flex h-[2.5rem] justify-center space-x-2">
-    <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
+    {/* <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
       <Button
         variant="bordered"
         className={`flex-1 h-full ${
@@ -696,7 +696,7 @@ const CreateTicketComp: React.FC<Props> = ({ className, useMapboxProp }) => {
           />
         </div>
       </Button>
-    </ButtonGroup>
+    </ButtonGroup> */}
   </div>
 </div>
 
