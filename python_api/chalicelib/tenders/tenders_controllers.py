@@ -637,8 +637,9 @@ def getContracts(tender_id):
             }
             raise ClientError(error_response, "InvalidFields")
 
-        reponse_contracts = contract_table.scan(
-            FilterExpression=Attr("tender_id").eq(tender_id)
+        reponse_contracts = contract_table.query(
+            IndexName="tender_id-index",
+            KeyConditionExpression=Key("tender_id").eq(tender_id),
         )
 
         if len(reponse_contracts["Items"]) <= 0:
@@ -694,8 +695,9 @@ def getCompanyContracts(tender_id, company_name):
             raise ClientError(error_response, "InvalidFields")
 
         pid = getCompanIDFromName(company_name)
-        reponse_contracts = contract_table.scan(
-            FilterExpression=Attr("tender_id").eq(tender_id)
+        reponse_contracts = contract_table.query(
+            IndexName="tender_id-index",
+            KeyConditionExpression=Key("tender_id").eq(tender_id),
         )
 
         if len(reponse_contracts["Items"]) <= 0:
