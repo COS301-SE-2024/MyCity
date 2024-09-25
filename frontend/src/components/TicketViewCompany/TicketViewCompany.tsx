@@ -198,7 +198,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 </div>
                 <div className="flex justify-around mb-2 w-full">
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-md">Address</h3>
+                    <h3 className="font-bold text-md text-black">Address</h3>
                     {addressParts.map((part, index) => (
                       <p key={index} className="text-gray-700 text-sm">
                         {part.trim()}
@@ -206,7 +206,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                     ))}
                   </div>
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-sm">Created By</h3>
+                    <h3 className="font-bold text-sm text-black">Created By</h3>
                     <img src={user_picture} alt="Created By" className="rounded-full mb-1 w-12 h-12 object-cover" />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>

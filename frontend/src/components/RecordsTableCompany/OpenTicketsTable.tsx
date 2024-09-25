@@ -78,14 +78,14 @@ export default function OpenTicketsTable({ records }: { records: RecordType[] })
           <div className='text-xl font-bold my-4'>
             Select a Ticket to create a Tender Bid for it.
           </div>
-          <div className="grid grid-cols-7 gap-4 items-center mb-2 px-4 py-1 font-bold text-center border-b border-gray-200">
+          <div className="grid grid-cols-6 gap-4 items-center mb-2 px-4 py-1 font-bold text-center border-b border-gray-200">
             <div className="col-span-1">Urgency</div>
             <div className="col-span-1">Ticket Number</div>
             <div className="col-span-1">Fault Type</div>
             <div className="col-span-1">Status</div>
             <div className="col-span-1">Created By</div>
             <div className="col-span-1">Address</div>
-            <div className="col-span-1">Municipality</div>
+            
           </div>
         </div>
         <div className="min-w-full">
