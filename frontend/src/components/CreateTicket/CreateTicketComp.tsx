@@ -705,6 +705,7 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
 
       
 
+
       {/* Submit Button */}
       <Button
         type="submit"
@@ -718,7 +719,9 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
       >
         Submit
       </Button>
+
     </form>
+
   </div>
 
   {/* Map Modal */}

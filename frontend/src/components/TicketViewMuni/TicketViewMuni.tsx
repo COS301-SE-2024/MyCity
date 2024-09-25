@@ -228,6 +228,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_session = String(user_data.current?.session_token);
 
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
+    console.log(ticket_id)
     console.log(rspgettenders); // Add this line to inspect the data
 
     setIsLoading(false);
