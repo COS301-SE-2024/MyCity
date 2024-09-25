@@ -3,6 +3,7 @@ import Home from "@/app/page";
 import { useMediaQuery } from "react-responsive";
 import Router from "next/router";
 import mockRouter from "next-router-mock";
+import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
 // Mock useMediaQuery to control desktop and mobile views
 jest.mock("react-responsive", () => ({
@@ -42,7 +43,6 @@ describe("Home Page", () => {
     expect(loginButton).toBeInTheDocument();
   });
 
-
   /* Test 2
   Desktop navigation to signup page
   */
@@ -63,7 +63,6 @@ describe("Home Page", () => {
     // Check if the router path has changed
     expect(Router.asPath).toBe("/auth/signup");
   });
-
 
   /* Test 3
   Desktop navigation to the login page
@@ -89,7 +88,6 @@ describe("Home Page", () => {
   /* Test 4
   Checking that the mobile view renders upon opening the PWA
   */
-
   it("renders the mobile view correctly", () => {
     // Mock to simulate mobile view
     (useMediaQuery as jest.Mock).mockReturnValue(true);
@@ -110,7 +108,6 @@ describe("Home Page", () => {
     expect(signUpButton).toBeInTheDocument();
     expect(loginButton).toBeInTheDocument();
   });
-
 
   /* Test 5
   Navigation to the signup page once mobile button is clicked.
@@ -133,7 +130,6 @@ describe("Home Page", () => {
     expect(Router.asPath).toBe("/auth/signup");
   });
 
-
   /* Test 6
   Navigation to the login page on mobile once button is clicked
   */
@@ -154,4 +150,58 @@ describe("Home Page", () => {
     // Test if user is redirected to the Login page
     expect(Router.asPath).toBe("/auth/login");
   });
+
+  // Navbar Tests
+
+  /* Test 7
+  Navigation to the Welcome page from the Navbar
+  */
+  it("navigates to the Welcome page when Welcome link is clicked", () => {
+    render(<NavbarGuest />);
+
+    const welcomeLink = screen.getByText(/Welcome/i);
+    fireEvent.click(welcomeLink);
+
+    // Simulate router push to welcome page
+    mockRouter.push("/");
+
+    // Test if user is redirected to the Welcome page
+    expect(Router.asPath).toBe("/");
+  });
+
+  /* Test 8
+  Navigation to the About page from the Navbar
+  */
+  it("navigates to the About page when What is MyCity link is clicked", () => {
+    render(<NavbarGuest />);
+
+    const aboutLinks = screen.getAllByText("What is MyCity");
+    const aboutLink = aboutLinks[0];
+    fireEvent.click(aboutLink);
+
+    // Simulate router push to about page
+    mockRouter.push("/about");
+
+    // Test if user is redirected to the About page
+    expect(Router.asPath).toBe("/about");
+  });
+
+  /* Test 9
+  Navigation to the Guide page from the Navbar
+  */
+  it("navigates to the Guide page when Guide link is clicked", () => {
+    render(<NavbarGuest />);
+
+    const guideLinks = screen.getAllByText("How it works");
+    const guideLink = guideLinks[0];
+    fireEvent.click(guideLink);
+
+    // Simulate router push to guide page
+    mockRouter.push("/guide");
+
+    // Test if user is redirected to the Guide page
+    expect(Router.asPath).toBe("/guide");
+  });
+
+
 });
