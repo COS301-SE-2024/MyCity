@@ -703,62 +703,7 @@ const CreateTicketComp: React.FC<Props> = ({ className }) => {
         </div>
       </div>
 
-      {/* Fault Severity */}
-      <div>
-        <span className="font-semibold text-sm">Fault Severity</span>
-        <div className="flex h-[2.5rem] justify-center space-x-2">
-          <ButtonGroup aria-label="Basic example" className="flex h-full w-full">
-            <Button
-              variant="bordered"
-              className={`flex-1 h-full ${
-                selectedFault === "Minor" ? "border-blue-500 border-2" : ""
-              }`}
-              onClick={() => setSelectedFault("Minor")}
-            >
-              <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-                <img
-                  width="20"
-                  height="auto"
-                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_minor.webp"
-                  alt="Minor"
-                />
-              </div>
-            </Button>
-            <Button
-              variant="bordered"
-              className={`flex-1 h-full ${
-                selectedFault === "Major" ? "border-blue-500 border-2" : ""
-              }`}
-              onClick={() => setSelectedFault("Major")}
-            >
-              <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-                <img
-                  width="20"
-                  height="auto"
-                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_major.webp"
-                  alt="Major"
-                />
-              </div>
-            </Button>
-            <Button
-              variant="bordered"
-              className={`flex-1 h-full ${
-                selectedFault === "Critical" ? "border-blue-500 border-2" : ""
-              }`}
-              onClick={() => setSelectedFault("Critical")}
-            >
-              <div className="flex flex-col px-1 font-sm rounded-2xl justify-center items-center h-full">
-                <img
-                  width="20"
-                  height="auto"
-                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/fault_icon_critical.webp"
-                  alt="Critical"
-                />
-              </div>
-            </Button>
-          </ButtonGroup>
-        </div>
-      </div>
+      
 
       {/* Submit Button */}
       <Button
