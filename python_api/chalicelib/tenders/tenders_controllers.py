@@ -429,6 +429,7 @@ def terminate_contract(sender_data):
         )
         if len(resp_tender["Items"]) > 0:
             tender = resp_tender["Items"][0]
+            print(tender)
             updateExpTender = "set #status=:r"
             expattrNameTender = {"#status": "status"}
             expattrValueTender = {":r": "rejected"}
