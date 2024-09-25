@@ -2,171 +2,129 @@
 
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
-// import { Bar, Pie } from "react-chartjs-2";
-// import {
-//   Chart as ChartJS,
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-//   ArcElement,
-//   Tooltip,
-//   Legend,
-// } from "chart.js";
-// import {
-//   FaSpinner,
-// } from "react-icons/fa";
-// import {
-//   Autocomplete,
-//   AutocompleteItem,
-// } from "@nextui-org/react";
+import MunicipalitySelector from "@/components/Statistics/citizen/MunicipalitySelector";
+import FaultCategoryPieChart from "@/components/Statistics/citizen/FaultCategoryPieChart";
+import ReportsOverTimeBarChart from "@/components/Statistics/citizen/ReportsOverTimeBarChart";
+import FaultStatesDoughnutChart from "@/components/Statistics/citizen/FaultStatesDoughnutChart";
+import TopAssetsProgress from "@/components/Statistics/citizen/TopAssetsProgress";
+import { getTicketsPerMunicipality } from "@/services/analytics.service";
+import { useProfile } from "@/hooks/useProfile";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement, // <-- Add this to handle Pie and Doughnut charts
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   BarElement,
-//   ArcElement,
-//   Tooltip,
-//   Legend
-// );
+// Register the required components for Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement, // <-- Register ArcElement for Pie and Doughnut charts
+  Tooltip,
+  Legend
+);
 
-// import { getMunicipalityList } from "@/services/municipalities.service";
-// import { BasicMunicipality } from "@/types/custom.types";
+export default function StatisticsPage() {
+  const userProfile = useProfile();
+  const [selectedMunicipality, setSelectedMunicipality] =
+    useState<string>("Blouberg");
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default function About() {
-  // const [municipalities, setMunicipalities] = useState<BasicMunicipality[]>([]);
-  // const [selectedMunicipality, setSelectedMunicipality] = useState<string>("");
-  // const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user_data = await userProfile.getUserProfile();
+        const userSession = user_data.current?.session_token;
 
-  // useEffect(() => {
-  //   const fetchMunicipalities = async () => {
-  //     try {
-  //       const data = await getMunicipalityList();
-  //       setMunicipalities(data);
-  //     } catch (error: any) {
-  //       console.error("Error fetching municipalities:", error);
-  //     } finally {
-  //       setLoading(false); // Set loading to false after fetching is complete
-  //     }
-  //   };
+        if (userSession && selectedMunicipality) {
+          const result = await getTicketsPerMunicipality(
+            selectedMunicipality,
+            userSession
+          );
+          setData(result[0]); // Assuming result is an array and we need the first element
+        } else {
+          throw new Error("User is not authenticated");
+        }
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchMunicipalities();
-  // }, []);
+    fetchData();
+  }, [selectedMunicipality, userProfile]);
 
-  // const barData = {
-  //   labels: ["January", "February", "March", "April", "May"],
-  //   datasets: [
-  //     {
-  //       label: "Sales",
-  //       data: [12, 19, 3, 5, 2],
-  //       backgroundColor: "rgba(75, 192, 192, 0.6)",
-  //     },
-  //   ],
-  // };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // // Data for the pie chart
-  // const pieData = {
-  //   labels: [
-  //     "Open",
-  //     "Taking Tenders",
-  //     "Assigning Contracts",
-  //     "In Progress",
-  //     "Completed",
-  //   ],
-  //   datasets: [
-  //     {
-  //       label: "Votes",
-  //       data: [12, 19, 3, 5, 2],
-  //       backgroundColor: [
-  //         "rgb(191, 219, 254)",
-  //         "rgb(167, 243, 208)",
-  //         "rgb(254, 240, 138)",
-  //         "rgb(254, 202, 202)",
-  //         "rgb(233, 213, 255)",
-  //       ],
-  //     },
-  //   ],
-  // };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
-  // const pieOptions = {
-  //   plugins: {
-  //     legend: {
-  //       position: "right", // Move legend to the right side
-  //       labels: {
-  //         boxWidth: 20,
-  //         padding: 20,
-  //       },
-  //     },
-  //   },
-  // };
-
-  // function formatMunicipalityID(mun: string): string {
-  //   if (typeof mun !== "string") {
-  //     return ""; // Or some other default value
-  //   }
-  //   return mun.replace(/ /g, "_");
-  // }
-
+  // Safely check if `data` exists before rendering the charts
   return (
     <div className="h-screen w-screen">
-      {/* Desktop View */}
-      <div className="hidden sm:block h-full w-full">
-        {/* Navbar */}
-        <Navbar showLogin={true} />
-        {/* Background Image */}
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundImage:
-              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed",
-            zIndex: -1,
-          }}
-        ></div>
-        <main className="h-full">
+      <Navbar />
 
-        </main>
-      </div>
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage:
+            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          zIndex: -1,
+        }}
+      ></div>
 
-      {/* Mobile View */}
-      <div className="block sm:hidden">
-        <Navbar />
-        {/* Mobile content */}
-        <MobileView />
-      </div>
-    </div>
-  );
-}
+      <main className="flex flex-col justify-center items-center">
+        <div className="flex justify-between w-[80%] mb-4">
+          <div className="w-[50%]">
+            <h1 className="text-4xl font-bold text-white text-opacity-80 w-full">
+              Statistics Dashboard
+            </h1>
+          </div>
+          <div className="w-[50%]">
+            <MunicipalitySelector
+              selectedMunicipality={selectedMunicipality}
+              setSelectedMunicipality={setSelectedMunicipality}
+            />
+          </div>
+        </div>
 
-// Reusable Chart Container
-function ChartContainer({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="w-full h-full flex border flex-col justify-center items-center">
-      <div>
-        <h3>{title}</h3>
-      </div>
-      <div className="w-[95%] h-[90%] overflow-hidden items-center border">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// Mobile View
-function MobileView() {
-  return (
-    <div className="h-screen flex items-center justify-center text-center bg-gray-800 text-white">
-      <div>
-        <h1 className="text-4xl">Mobile View Coming Soon</h1>
-        <p className="text-xl mt-4">
-          Please use the desktop version for the full experience.
-        </p>
-      </div>
+        <div className="w-[80%] h-[80vh] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+            {/* Render the components only if the `data` and its properties exist */}
+            {data?.by_asset && <FaultCategoryPieChart data={data.by_asset} />}
+            {data?.by_date && <ReportsOverTimeBarChart data={data.by_date} />}
+            <div className="w-full flex gap-2">
+              {data?.by_state && (
+                <FaultStatesDoughnutChart data={data.by_state} />
+              )}
+              <TopAssetsProgress data={data} />
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
