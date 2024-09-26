@@ -1,12 +1,23 @@
 import { Request, Response } from "express";
 import * as ticketsService from "../services/tickets.service";
+import { cacheResponse } from "../config/elasticache.config";
 
 
-// -----------------------------
-// MISSING FUNCTION FOR ENDPOINT -> tickets/create
-// create ticket controller goes here
-// -----------------------------
+export const createTicket = async (req: Request, res: Response) => {
+    const formData = req.body;
+    const file = req.file;
 
+    if (!file || !formData["username"]) {
+        return res.status(400).json({ Error: "File or username missing" });
+    }
+
+    try {
+        const response = await ticketsService.createTicket(formData, file);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
 
 export const addWatchlist = async (req: Request, res: Response) => {
     try {
@@ -75,6 +86,10 @@ export const getInArea = async (req: Request, res: Response) => {
     try {
         const municipality = req.query["municipality"] as string;
         const response = await ticketsService.getInMyMunicipality(municipality);
+
+        // if (response && response.length > 0) {
+        //     cacheResponse(req, 3600, response); //cache response for 1 hour
+        // }
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -95,6 +110,9 @@ export const getMyWatchlist = async (req: Request, res: Response) => {
     try {
         const username = req.query["username"] as string;
         const response = await ticketsService.getWatchlist(username);
+        // if (response && response.length > 0) {
+        //     cacheResponse(req, 3600, response); //cache response for 1 hour
+        // }
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -113,8 +131,11 @@ export const interactTicket = async (req: Request, res: Response) => {
 
 export const getMostUpvoted = async (req: Request, res: Response) => {
     try {
-        const result = await ticketsService.getMostUpvoted();
-        return res.status(200).json(result);
+        const response = await ticketsService.getMostUpvoted();
+        if (response && response.length > 0) {
+            cacheResponse(req, 3600, response); //cache response for 1 hour
+        }
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }

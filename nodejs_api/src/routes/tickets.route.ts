@@ -1,11 +1,16 @@
 import express, { Router } from "express";
+import multer from "multer";
 
 import * as ticketsController from "../controllers/tickets.controller";
+import { cacheMiddleware } from "../config/elasticache.config";
 
 const router: Router = express.Router();
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
-// router.post("/create", ticketsController.createTicket);
+// create a ticket
+router.post("/create", upload.single("file"), ticketsController.createTicket);
 
 // add a ticket to watchlist
 router.post("/addwatchlist", ticketsController.addWatchlist);
@@ -31,7 +36,7 @@ router.get("/getwatchlist", ticketsController.getMyWatchlist);
 router.post("/interact", ticketsController.interactTicket);
 
 // get most upvoted tickets
-router.get("/getUpvotes", ticketsController.getMostUpvoted);
+router.get("/getUpvotes", cacheMiddleware, ticketsController.getMostUpvoted);
 
 router.get("/getcompanytickets", ticketsController.getCompanyTickets);
 
@@ -41,7 +46,7 @@ router.post("/add-comment-with-image", ticketsController.addCommentWithImage);
 
 router.post("/add-comment-without-image", ticketsController.addCommentWithoutImage);
 
-router.get("comments", ticketsController.getTicketComments);
+router.get("/comments", ticketsController.getTicketComments);
 
 // get geodata of all tickets
 router.get("/geodata/all", ticketsController.getGeoData);
