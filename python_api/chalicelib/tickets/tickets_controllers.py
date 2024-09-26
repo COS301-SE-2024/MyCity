@@ -9,6 +9,7 @@ import uuid
 from dotenv import load_dotenv
 import os
 from chalicelib.multipart_handler import upload_file, parse_data
+from websocket import create_connection
 
 from math import radians, cos, sin, asin, sqrt, atan2
 from datetime import datetime
@@ -32,6 +33,8 @@ companies_table = dynamodb.Table("private_companies")
 cognito_cient = boto3.client("cognito-idp")
 load_dotenv()
 user_poolid = os.getenv("USER_POOL_ID")
+websocket_url = os.getenv("WEBSOCKET_API_URL")
+
 # users_response = cognito_cient.list_users(
 #     UserPoolId=user_poolid
 # )
@@ -205,12 +208,20 @@ def create_ticket(request):
         }
         watchlist_table.put_item(Item=watchlist_item)
 
+        ws = create_connection(websocket_url)
+        print(municipality_id)
+        message = json.dumps({'action': 'createticket', 'body': municipality_id})
+        ws.send(message)
+        
+
         # after accepting
         accresponse = {
             "message": "Ticket created successfully",
             "ticket_id": ticket_id,
             "watchlist_id": watchlist_id,
+            "response" : ws.recv()
         }
+        ws.close()
         return format_response(float(200), accresponse)
 
     except ClientError as e:

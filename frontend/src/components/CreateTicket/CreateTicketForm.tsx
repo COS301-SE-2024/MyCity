@@ -74,7 +74,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
     formData.append("longitude", String(longitude));
     formData.append("address", fullAddress);
     formData.append("username", user_data.current?.email || "");
-    formData.append("state", "OPEN");
+    formData.append("state", "Opened");
   
     try {
       const sessiont = user_data.current?.session_token || "";
