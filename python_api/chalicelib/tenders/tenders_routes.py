@@ -151,8 +151,12 @@ def getcompanycontracts():
     response = getCompanyContracts(tender_id, company_name)
     return response
 
+
 @tenders_blueprint.route(
-    "/getcompanycontractbyticket", authorizer=cognito_authorizer, methods=["GET"], cors=True
+    "/getcompanycontractbyticket",
+    authorizer=cognito_authorizer,
+    methods=["GET"],
+    cors=True,
 )
 def getcompanycontractbyticket():
     request = tenders_blueprint.current_request
