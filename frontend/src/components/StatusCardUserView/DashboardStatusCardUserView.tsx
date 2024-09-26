@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
-import mapboxgl, {Map, Marker } from 'mapbox-gl';
+import mapboxgl, { Map, Marker } from 'mapbox-gl';
+import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -20,8 +21,8 @@ interface FaultCardUserViewProps {
   createdBy: string;
   status: string;
   municipalityImage: string;
-  longitude : string;
-  latitude : string;
+  longitude: string;
+  latitude: string;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
 
@@ -51,45 +52,45 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 }) => {
 
 
-  const getUrgency = (votes : number) =>{
+  const getUrgency = (votes: number) => {
     if (votes < 10) {
       return "low";
-  } else if (votes >= 10 && votes < 20) {
+    } else if (votes >= 10 && votes < 20) {
       return "medium";
-  } else if (votes >= 20 && votes <= 40) {
+    } else if (votes >= 20 && votes <= 40) {
       return "high";
-  } else {
+    } else {
       return "low"; // Default case
+    }
   }
-}
 
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
     return data
       ? JSON.parse(data)
       : {
-          arrowCount: arrowCount * 1000,
-          commentCount,
-          viewCount: viewCount * 1000,
-          arrowColor: "black",
-          commentColor: "black",
-          eyeColor: "black",
-        };
+        arrowCount: arrowCount * 1000,
+        commentCount,
+        viewCount: viewCount * 1000,
+        arrowColor: "black",
+        commentColor: "black",
+        eyeColor: "black",
+      };
   };
 
-  useEffect(()=>{
-    const map =  new mapboxgl.Map({
-        container: "mapcontainer", // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
-        zoom: 15 // starting zoom
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: "mapcontainer", // container ID
+      style: 'mapbox://styles/mapbox/streets-v12', // style URL
+      center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
+      zoom: 15 // starting zoom
     });
 
     new mapboxgl.Marker()
       .setLngLat([Number(longitude), Number(latitude)])
       .addTo(map);
   })
-  
+
 
   const initialData = getLocalStorageData();
 
@@ -198,7 +199,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {image && (
               <div className="mb-2 flex justify-center">
-                <img src={image} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
+                <img src={`${S3_BUCKET_BASE_URL}${image}`} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
               </div>
             )}
 

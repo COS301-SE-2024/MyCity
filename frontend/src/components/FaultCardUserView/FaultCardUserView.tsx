@@ -15,6 +15,7 @@ import { Eye, Key } from "lucide-react";
 import { MessageCirclePlus } from "lucide-react";
 import { ArrowBigUp } from "lucide-react";
 import dynamic from "next/dynamic";
+import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -420,7 +421,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                   {image && !imageError ? (
                     <div className="flex justify-center">
                       <img
-                        src={image}
+                        src={`${S3_BUCKET_BASE_URL}${image}`}
                         alt="Fault"
                         className="rounded-lg object-cover"
                         onError={() => setImageError(true)} // Set error state if image fails to load
@@ -513,7 +514,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 {image && !imageError ? (
                   <div className="flex justify-center">
                     <img
-                      src={image}
+                      src={`${S3_BUCKET_BASE_URL}${image}`}
                       alt="Fault"
                       className="rounded-lg object-cover"
                       onError={() => setImageError(true)} // Set error state if image fails to load
@@ -576,7 +577,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
     <div className="relative w-full flex justify-center mt-2">
       {!imageError ? (
         <img
-          src={image || undefined}
+          src={`${S3_BUCKET_BASE_URL}${image}` || undefined}
           alt="Fault"
           className="rounded-lg object-cover w-full h-40"
           onError={() => setImageError(true)}

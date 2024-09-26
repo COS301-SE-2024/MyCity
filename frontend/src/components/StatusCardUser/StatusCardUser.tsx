@@ -2,6 +2,7 @@ import React from "react";
 import { FaArrowUp, FaEye, FaCommentAlt } from "react-icons/fa";
 import { User, ArrowBigUp } from "lucide-react";
 import { Default } from "node_modules/react-toastify/dist/utils";
+import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
 
 interface CardData {
   title: string;
@@ -115,7 +116,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
           <div className="flex justify-between items-start w-full">
             <div className="flex flex-col">
               <div
-                // className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
+              // className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
               >
                 {state}
               </div>
@@ -134,7 +135,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
           </div>
           <div className="flex items-center justify-center w-full mt-4">
             <img
-              src={image}
+              src={`${S3_BUCKET_BASE_URL}${image}`}
               alt="Fault image"
               width={200}
               className="rounded-md"

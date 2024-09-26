@@ -9,6 +9,7 @@ import {
 import { ThreeDots } from "react-loader-spinner";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import { AlertCircle } from "lucide-react";
+import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
 
 interface Incident {
   ticket_id: string;
@@ -207,7 +208,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
                   {/* Fault Image */}
                   <div className="flex w-[7%] h-full items-center justify-start ">
                     <div className=" h-[80%] rounded-lg overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                      <img src={incident.imageURL} alt="" />
+                      <img src={`${S3_BUCKET_BASE_URL}${incident.imageURL}`} alt="" />
                     </div>
                   </div>
 

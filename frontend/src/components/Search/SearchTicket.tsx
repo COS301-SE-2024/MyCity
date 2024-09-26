@@ -3,6 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
+import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
 
 interface SearchTicketProps {
   tickets: Ticket[];
@@ -49,7 +50,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
     }
     return null; // Return null if municipalities is not an array
   };
-  
+
 
   function formatStatecolor(state: string | undefined): string {
     if (typeof state !== "string") {
@@ -91,7 +92,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
   }
 
   const [imageError, setImageError] = useState(false);
-  
+
   function calculateDistance(
     lat1: string,
     lon1: string,
@@ -102,7 +103,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
 
     const removeSingleQuote = (str: any) => String(str).replace(/'/g, "");
 
-    
+
     lat1 = removeSingleQuote(lat1);
     lon1 = removeSingleQuote(lon1);
     lat2 = removeSingleQuote(lat2);
@@ -123,9 +124,9 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1Rad) *
-        Math.cos(lat2Rad) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(lat2Rad) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -146,11 +147,11 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
             let image = ticket.imageURL;
             let distance = municipality
               ? calculateDistance(
-                  ticket.latitude,
-                  ticket.longitude,
-                  municipality.latitude ?? "",
-                  municipality.longitude ?? ""
-                )
+                ticket.latitude,
+                ticket.longitude,
+                municipality.latitude ?? "",
+                municipality.longitude ?? ""
+              )
               : "N/A"; // Fallback if municipality data is unavailable
 
             return (
@@ -167,7 +168,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                 <div className="w-[10%] overflow-hidden flex items-center justify-center ">
                   {image && !imageError ? (
                     <img
-                      src={image}
+                      src={`${S3_BUCKET_BASE_URL}${image}`}
                       alt="Ticket"
                       className="w-[70%] h-full object-cover overflow-hidden rounded-md"
                       onError={() => setImageError(true)}
