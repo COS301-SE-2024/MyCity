@@ -2,7 +2,6 @@ import { UserRole } from '@/types/custom.types';
 import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
 import { SignUpInput, SignUpOutput, UpdatePasswordInput, autoSignIn, fetchAuthSession, signIn, signInWithRedirect, signOut, signUp, updatePassword } from 'aws-amplify/auth';
 
-
 export async function handleSignIn(form: FormData, userRole: UserRole) {
     await setUserPathSuffix(userRole);
     let username = String(form.get("email"));
@@ -10,10 +9,6 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
         username: username.toLowerCase(),
         password: String(form.get("password")),
     });
-
-    console.log("username: " + String(form.get("email")) + " password : " + String(form.get("password")))
-    console.log("did it log in: " + String(isSignedIn))
-
 
     return { isSignedIn };
 }
@@ -23,7 +18,6 @@ export async function handleGoogleSignIn() {
         provider: "Google"
     });
 }
-
 
 export async function handleSignOut() {
     removeUserPathSuffix();
@@ -46,14 +40,14 @@ export async function handleUpdatePassword(form: FormData) {
     }
 }
 
-
 export async function handleSignUp(form: FormData, userRole: UserRole) {
+    await setUserPathSuffix(userRole);
     const signupOptions: SignUpInput = {
-        username: String(form.get("email")),
+        username: String(form.get("email")).toLowerCase(),
         password: String(form.get("password")),
         options: {
             userAttributes: {
-                email: String(form.get("email")),
+                email: String(form.get("email")).toLowerCase(),
                 given_name: String(form.get("firstname")),
                 family_name: String(form.get("surname")),
                 "custom:user_role": userRole,
@@ -62,7 +56,6 @@ export async function handleSignUp(form: FormData, userRole: UserRole) {
             autoSignIn: true,
         },
     };
-
 
     if (userRole == UserRole.MUNICIPALITY) {
         signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("municode"));
@@ -78,8 +71,6 @@ export async function handleSignUp(form: FormData, userRole: UserRole) {
     return handleSignUpStep(nextStep, userRole);
 }
 
-
-
 const handleSignUpStep = async (step: SignUpOutput["nextStep"], userRole: UserRole) => {
     console.log(String("Signup step:" + step.signUpStep))
     switch (step.signUpStep) {
@@ -94,7 +85,6 @@ const handleSignUpStep = async (step: SignUpOutput["nextStep"], userRole: UserRo
     const isSignedIn = false;
     return { isSignedIn };
 };
-
 
 export const authenticateClient = async () => {
     try {

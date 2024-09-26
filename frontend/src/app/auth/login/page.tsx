@@ -127,8 +127,8 @@ export default function Login() {
                   <img
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
                     alt="MyCity"
-                    width={256}
-                    height={256}
+                    width={128}
+                    height={128}
                   />
                 </div>
                 <Tabs

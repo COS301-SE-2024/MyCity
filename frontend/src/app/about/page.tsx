@@ -157,48 +157,49 @@ export default function About() {
               </div>
 
               <a href={"https://placekit.io/"}>
-              <div
-                className={`flex m-4 dark:bg-gray-700 dark:text-white bg-gray-100 p-4 justify-center rounded-3xl items-center w-full`}
-              >
-                <div className="w-full sm:w-1/4 text-center">
-                  <a href={"https://placekit.io/"}>
-                    <img
-                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_placekit.webp"
-                      alt="Vision"
-                      className="w-full h-auto object-cover rounded-lg mx-auto"
-                    />
-                  </a>
+                <div
+                  className={`flex m-4 dark:bg-gray-700 dark:text-white bg-gray-100 p-4 justify-center rounded-3xl items-center w-full`}
+                >
+                  <div className="w-full sm:w-1/4 text-center">
+                    <a href={"https://placekit.io/"}>
+                      <img
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_placekit.webp"
+                        alt="Vision"
+                        className="w-full h-auto object-cover rounded-lg mx-auto"
+                      />
+                    </a>
+                  </div>
+                  <div className="w-full sm:w-3/4 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left overflow-y-auto h-full">
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white text-opacity-80 mb-4">
+                      Placekit.io
+                    </h2>
+                    <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
+                      We are incredibly thankful to PlaceKit for their generous
+                      sponsorship and unwavering support for the MyCity project.
+                      Initially, we were limited by the constraints of a free
+                      account with 10,000 requests per month. However,
+                      recognizing the potential and the significance of MyCity,
+                      PlaceKit generously upgraded us to a plan with 1 million
+                      requests per month at no cost. Their willingness to
+                      support student initiatives has made a profound difference
+                      in the development of our platform, allowing us to fully
+                      focus on creating a solution that benefits both the
+                      community and local governments.
+                    </p>
+                    <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
+                      In addition to the technical support, PlaceKit has gone
+                      above and beyond by sponsoring custom shirts for our team
+                      to wear on project day. This thoughtful gesture ensures
+                      that MyCity stands out and helps us present our project
+                      with a unified, professional look. Their kindness and
+                      commitment to empowering student-led projects like ours
+                      have been invaluable, and we are deeply appreciative of
+                      their contribution. Thanks to PlaceKit, we are ready to
+                      make an impact and showcase MyCity with confidence on
+                      project day.
+                    </p>
+                  </div>
                 </div>
-                <div className="w-full sm:w-3/4 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left overflow-y-auto h-full">
-                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white text-opacity-80 mb-4">
-                    Placekit.io
-                  </h2>
-                  <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
-                    We are incredibly thankful to PlaceKit for their generous
-                    sponsorship and unwavering support for the MyCity project.
-                    Initially, we were limited by the constraints of a free
-                    account with 10,000 requests per month. However, recognizing
-                    the potential and the significance of MyCity, PlaceKit
-                    generously upgraded us to a plan with 1 million requests per
-                    month at no cost. Their willingness to support student
-                    initiatives has made a profound difference in the
-                    development of our platform, allowing us to fully focus on
-                    creating a solution that benefits both the community and
-                    local governments.
-                  </p>
-                  <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
-                    In addition to the technical support, PlaceKit has gone
-                    above and beyond by sponsoring custom shirts for our team to
-                    wear on project day. This thoughtful gesture ensures that
-                    MyCity stands out and helps us present our project with a
-                    unified, professional look. Their kindness and commitment to
-                    empowering student-led projects like ours have been
-                    invaluable, and we are deeply appreciative of their
-                    contribution. Thanks to PlaceKit, we are ready to make an
-                    impact and showcase MyCity with confidence on project day.
-                  </p>
-                </div>
-              </div>
               </a>
             </div>
             {/* In Association With */}
@@ -224,11 +225,230 @@ export default function About() {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
-        <Navbar />
-        {/* Mobile content here */}
-        <MobileView />
+<div className="block sm:hidden">
+  <Navbar showLogin={true} />
+
+  {/* Background Image */}
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundImage:
+        'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundAttachment: "fixed",
+      zIndex: -11,
+    }}
+  ></div>
+
+  <main className="relative z-[-10] p-4 mt-0 mb-7">
+    <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
+      <img
+        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
+        alt="MyCity"
+        width={180}
+        height={180}
+      />
+    </div>
+    
+    {/* Page Title */}
+    <h1 className="text-3xl font-bold text-white mb-6 text-center">
+      About Us
+    </h1>
+
+    {/* What is MyCity Section */}
+    <section className="mb-10">
+      <h2 className="text-2xl font-bold text-white text-center mb-4">
+        What is MyCity?
+      </h2>
+      <img
+        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/about_1.webp"
+        alt="MyCity Vision"
+        className="w-full h-auto rounded-lg mb-4"
+      />
+      <p className="text-white text-sm mb-4">
+        MyCity is a Progressive Web Application (PWA) that seeks to redefine the relationship between citizens, municipalities, and service providers by creating a centralized platform for reporting and tracking municipal faults.
+      </p>
+      <p className="text-white text-sm mb-4">
+        The platform simplifies the process of logging issues like broken streetlights or potholes, providing real-time tracking of reports. It helps municipalities to streamline the process by eliminating duplicate reports and making data-driven decisions.
+      </p>
+    </section>
+
+    {/* Meet The Team Section */}
+    <section className="mb-10">
+      <h2 className="text-2xl font-bold text-white text-center mb-4">
+        Meet The Team
+      </h2>
+      <div className="grid grid-cols-1 gap-6">
+        {/* Dominique */}
+        <div className="flex flex-col items-center text-center">
+          <img
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Dominique_Da_Silva.webp"
+            alt="Dominique Da Silva"
+            className="w-32 h-32 rounded-full mb-2"
+          />
+          <h3 className="text-lg font-bold text-white">Dominique Da Silva</h3>
+          <p className="text-white text-sm mb-2">Team Leader | Documentation</p>
+          <div className="flex gap-4">
+            <a href="https://github.com/Dominique-Da-Silva">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                alt="GitHub"
+                className="w-6"
+              />
+            </a>
+            <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                alt="LinkedIn"
+                className="w-6"
+              />
+            </a>
+          </div>
+        </div>
+
+        {/* Kyle */}
+        <div className="flex flex-col items-center text-center">
+          <img
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Kyle_Marshall.webp"
+            alt="Kyle Marshall"
+            className="w-32 h-32 rounded-full mb-2"
+          />
+          <h3 className="text-lg font-bold text-white">Kyle Marshall</h3>
+          <p className="text-white text-sm mb-2">UI Engineer | Documentation</p>
+          <div className="flex gap-4">
+            <a href="https://github.com/KyleMarshall23">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                alt="GitHub"
+                className="w-6"
+              />
+            </a>
+            <a href="https://www.linkedin.com/in/kyle-marshall23/">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                alt="LinkedIn"
+                className="w-6"
+              />
+            </a>
+          </div>
+        </div>
+
+        {/* Tino */}
+        <div className="flex flex-col items-center text-center">
+          <img
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Tino_Gwanyanya.webp"
+            alt="Tino Gwanyanya"
+            className="w-32 h-32 rounded-full mb-2"
+          />
+          <h3 className="text-lg font-bold text-white">Tino Gwanyanya</h3>
+          <p className="text-white text-sm mb-2">
+            Backend Engineer | Integration Engineer
+          </p>
+          <div className="flex gap-4">
+            <a href="https://github.com/Tinogwanz">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                alt="GitHub"
+                className="w-6"
+              />
+            </a>
+            <a href="https://www.linkedin.com/in/anold-tinotenda-gwanyanya/">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                alt="LinkedIn"
+                className="w-6"
+              />
+            </a>
+          </div>
+        </div>
+
+        {/* Matthew */}
+        <div className="flex flex-col items-center text-center">
+          <img
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Matthew_Els.webp"
+            alt="Matthew Els"
+            className="w-32 h-32 rounded-full mb-2"
+          />
+          <h3 className="text-lg font-bold text-white">Matthew Els</h3>
+          <p className="text-white text-sm mb-2">DevOps Engineer | Front-End Engineer | Data Engineer</p>
+          <div className="flex gap-4">
+            <a href="https://github.com/MatthewEls">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                alt="GitHub"
+                className="w-6"
+              />
+            </a>
+            <a href="https://www.linkedin.com/in/matthewels/">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                alt="LinkedIn"
+                className="w-6"
+              />
+            </a>
+          </div>
+        </div>
+
+        {/* Andinda */}
+        <div className="flex flex-col items-center text-center">
+          <img
+            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Andinda_Bakainaga.webp"
+            alt="Andinda Bakainaga"
+            className="w-32 h-32 rounded-full mb-2"
+          />
+          <h3 className="text-lg font-bold text-white">Andinda Bakainaga</h3>
+          <p className="text-white text-sm mb-2">Backend Engineer | Documentation</p>
+          <div className="flex gap-4">
+            <a href="https://github.com/Dindosss">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                alt="GitHub"
+                className="w-6"
+              />
+            </a>
+            <a href="https://www.linkedin.com/in/andinda-bakainaga-b8b011216/">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                alt="LinkedIn"
+                className="w-6"
+              />
+            </a>
+          </div>
+        </div>
+        {/* In Association With Section */}
+<section className="mb-10">
+  <h2 className="text-2xl font-bold text-white text-center mb-4">
+    In Association With
+  </h2>
+  <div className="flex justify-center gap-6">
+    <a href="https://www.epiuselabs.com/">
+      <img
+        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_epi-use.webp"
+        alt="Epi-Use"
+        className="w-24 h-auto"
+      />
+    </a>
+    <a href="https://www.groupelephant.com/">
+      <img
+        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_group-elephant.webp"
+        alt="Group Elephant"
+        className="w-24 h-auto"
+      />
+    </a>
+  </div>
+</section>
+
       </div>
+    </section>
+  </main>
+</div>
+
     </div>
   );
 }
@@ -330,54 +550,6 @@ function AssociationLogo({ link, imgSrc }: AssociationLogoProps) {
       <a href={link}>
         <img src={imgSrc} alt="Association Logo" className="w-full h-auto" />
       </a>
-    </div>
-  );
-}
-
-// Mobile View Component
-function MobileView() {
-  return (
-    <div
-      style={{
-        position: "relative",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      {/* Background Image */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage:
-            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      ></div>
-
-      {/* Mobile Content */}
-      <div className="h-[5vh] flex items-center justify-center"></div>
-      <div className="container mx-auto relative z-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl text-white font-bold mb-4 ml-4">
-          <span className="text-blue-200">MyCity</span> <br />
-          Under Construction
-        </h1>
-        <div className="text-white font-bold flex justify-center">
-          <img
-            src="https://i.imgur.com/eGeTTuo.png"
-            alt="Under Construction"
-            className="w-full h-auto"
-          />
-        </div>
-        <p className="text-lg text-gray-200 mb-4 ml-4">
-          Our Mobile site is currently under construction. Please use our
-          Desktop site while we work on it.
-        </p>
-      </div>
     </div>
   );
 }

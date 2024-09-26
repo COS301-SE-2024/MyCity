@@ -2,11 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MapComponent from "@/context/MapboxMap";
+import { CompleteContract,TerminateContract } from "@/services/tender.service";
+import { useProfile } from "@/hooks/useProfile";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
+  contract_id : string;
   tender_id: string;
   status: string;
   companyname: string;
@@ -46,41 +53,55 @@ const TenderMax = ({
   onClose,
 }: {
   tender: TenderType;
-  onClose: () => void;
+  onClose: (data: number) => void;
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({
     action: "",
     show: false,
   });
   const modalRef = useRef<HTMLDivElement>(null);
+  const userProfile = useProfile();
+  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+  
 
-  const tenderStatus =
-    tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+  // useEffect(() => {
+  //   function handleClickOutside(event: MouseEvent) {
+  //     if (
+  //       modalRef.current &&
+  //       !modalRef.current.contains(event.target as Node)
+  //     ) {
+  //       onClose();
+  //     }
+  //   }
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        onClose();
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [onClose]);
 
   const handleAction = (action: string) => {
+    console.log("Trying to understand")
     setDialog({ action, show: true });
   };
 
-  const confirmAction = () => {
+  const Closeapp = () => {
+    onClose(0);
+  }
+
+  const confirmAction = async () => {
+    console.log("Trying to understand")
     toast.success(`${dialog.action} action confirmed.`);
+    console.log("In this one")
+    if(dialog.action == "Mark as Complete")
+    {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      console.log(response_contract)
+    }
     setDialog({ action: "", show: false });
-    onClose(); // Handle the action here, e.g., terminate or mark complete.
+    onClose(0); // Handle the action here, e.g., terminate or mark complete.
   };
 
   const getDialogText = (action: string) => {
@@ -94,13 +115,24 @@ const TenderMax = ({
     }
   };
 
-  const handleConfirmClick = () => {
+  const handleConfirmClick = async () => {
     // Here you handle the action and only then call onClose with the appropriate data
-    confirmAction(); // This will display a toast and close the dialog
+    console.log("Trying to understand")
+    // confirmAction(); // This will display a toast and close the dialog
     if (dialog.action === "Mark as Complete") {
-      onClose(); // Example: Mark as complete would close the ticket
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      console.log(response_contract)
+      toast.success(`${dialog.action} action confirmed.`);
+      onClose(-2); // Example: Mark as complete would close the ticket
     } else if (dialog.action === "Terminate Contract") {
-      onClose(); // Example: Terminate contract would also close the ticket
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const response_contract = await TerminateContract(tender.contract_id,user_session)
+      console.log(response_contract)
+      toast.success(`${dialog.action} action confirmed.`);
+      onClose(0); // Example: Terminate contract would also close the ticket
     }
   };
 
@@ -115,7 +147,7 @@ const TenderMax = ({
         >
           <button
             className="absolute top-2 right-2 text-gray-700"
-            onClick={onClose}
+            onClick={Closeapp}
           >
             <FaTimes size={24} />
           </button>
@@ -172,7 +204,7 @@ const TenderMax = ({
               <div className="mt-2 flex justify-center gap-2">
                 <button
                   className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300"
-                  onClick={onClose}
+                  onClick={Closeapp}
                 >
                   Back
                 </button>
@@ -198,13 +230,7 @@ const TenderMax = ({
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500">
-                <MapComponent
-                  longitude={tender.longitude}
-                  latitude={tender.latitude}
-                  zoom={14}
-                  containerId="map"
-                  style="mapbox://styles/mapbox/streets-v12"
-                />
+                <MapboxMap centerLng={tender.longitude} centerLat={tender.latitude} dropMarker={true} zoom={14} />
               </div>
             </div>
           </div>
