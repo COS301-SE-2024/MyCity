@@ -210,16 +210,15 @@ def create_ticket(request):
 
         ws = create_connection(websocket_url)
         print(municipality_id)
-        message = json.dumps({'action': 'createticket', 'body': municipality_id})
+        message = json.dumps({"action": "createticket", "body": municipality_id})
         ws.send(message)
-        
 
         # after accepting
         accresponse = {
             "message": "Ticket created successfully",
             "ticket_id": ticket_id,
             "watchlist_id": watchlist_id,
-            "response" : ws.recv()
+            "response": ws.recv(),
         }
         ws.close()
         return format_response(float(200), accresponse)
