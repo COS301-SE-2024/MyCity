@@ -6,7 +6,6 @@ import {
   FaExclamationTriangle,
   FaTimes,
 } from "react-icons/fa";
-import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
 import { MapPin, Image as ImageIcon } from "lucide-react"; // Added ImageIcon from lucide-react
@@ -15,6 +14,11 @@ import { useProfile } from "@/hooks/useProfile";
 import { Eye, Key } from "lucide-react";
 import { MessageCirclePlus } from "lucide-react";
 import { ArrowBigUp } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface cardDataWatchlist {
   title: string;
@@ -135,12 +139,17 @@ const urgencyMapping = {
   },
 };
 
-const formatNumber = (num: number) => {
+const formatNumber = (num: number | undefined) => {
+  if (typeof num !== "number" || isNaN(num)) {
+    return "0"; // Return a default value like "0" if num is undefined or invalid
+  }
+
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + "M";
   } else if (num >= 1000) {
     return (num / 1000).toFixed(1) + "k";
   }
+
   return num.toString();
 };
 
@@ -191,6 +200,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [isInitialRender, setIsInitialRender] = useState(true);
   const userProfile = useProfile();
   const [isImageExpanded, setIsImageExpanded] = useState(false);
+  const [isMapLeft, setIsMapLeft] = useState(true);
 
   useEffect(() => {
     const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -218,8 +228,6 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const toggleComments = () => {
     setShowComments((prev) => !prev);
-
-    
 
     const toggleImageSize = () => {
       setIsImageExpanded((prev) => !prev);
@@ -281,10 +289,9 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       const user_data = await userProfile.getUserProfile();
       const username = String(user_data.current?.email);
       const userSession = String(user_data.current?.session_token);
-      const rspaddwatch = await addWatchlist(ticketId,username,userSession);
+      const rspaddwatch = await addWatchlist(ticketId, username, userSession);
       refreshwatchlist();
-      if(rspaddwatch == true)
-      {
+      if (rspaddwatch == true) {
         setEyeColor("blue");
         const data = {
           arrowCount,
@@ -292,7 +299,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           viewCount: currentViewCount,
           arrowColor,
           commentColor,
-          eyeColor : "blue",
+          eyeColor: "blue",
         };
         localStorage.setItem(`ticket-${ticketNumber}`, JSON.stringify(data));
       }
@@ -312,10 +319,14 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
   const addressParts = address.split(",");
 
-  
-
   const toggleImageSize = () => {
     setIsImageExpanded((prev) => !prev);
+  };
+
+  // New state for swapping map and image
+
+  const toggleLayout = () => {
+    setIsMapLeft((prev) => !prev); // Toggle the layout
   };
 
   return (
@@ -324,7 +335,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       onClick={onClose} // Close modal when clicking outside
     >
       <div
-        className="bg-white rounded-lg shadow-lg w-full sm:w-2/3 sm:h-2/3 p-4 relative flex flex-col border border-red-300 justify-center"
+        className="dark:bg-gray-700 dark:text-white bg-white rounded-lg shadow-lg w-[85%] h-[66%] p-4 relative flex flex-col justify-center"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button
@@ -333,93 +344,114 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
         >
           <FaTimes size={24} />
         </button>
-
+  
         {/* Desktop View */}
         <div className="hidden sm:flex w-full h-full gap-4">
           {/* Left Section */}
-          <div className="relative w-1/3 lg:w-1/3 pr-1 flex flex-col items-center">
+          <div className="relative w-[33%] pr-1 flex flex-col items-center">
             {/* Title */}
             <div className="flex w-full justify-start items-center">
-              <div className="font-bold text-3xl pb-1">{title}</div>
+              <div className="font-bold lg:text-2xl md:text-xl sm:text-lg pb-1">
+                {title}
+              </div>
             </div>
-
+  
             {/* Ticket Number */}
-            <div className="flex w-full justify-start items-center pb-2">
-              <div className="text-xl font-bold text-gray-400 ">
+            <div className="flex w-full justify-start items-center lg:pb-2 md:pb-1">
+              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-400">
                 {ticketNumber}
               </div>
             </div>
-
+  
             {/* Description */}
-            <div className="mb-2 w-full">
-              <h3 className="font-bold text-black text-lg">Description</h3>
-              <div className="h-[5vh]">
+            <div className="lg:mb-2 md:mb-1 w-full">
+              <h3 className="font-bold text-black lg:text-lg md:text-md sm:text-sm">
+                Description
+              </h3>
+              <div className="h-[5%]">
                 <p className="text-gray-700">{description}</p>
               </div>
             </div>
-
+  
             {/* Status */}
             <div
-              className={`${color} bg-opacity-75 text-black font-bold text-lg text-center rounded-lg px-3 py-1 mt-1 w-full`}
+              className={`${color} bg-opacity-75 text-black font-bold lg:text-lg md:text-md sm:text-sm text-center rounded-lg px-3 py-1 mt-1 w-full`}
             >
               {state}
             </div>
-
+  
             {/* Date Opened */}
             <div className="flex justify-between mt-2 w-full">
-              <div className="text-lg font-bold text-gray-500">
+              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-500">
                 Date Opened:
               </div>
-              <div className="text-lg font-bold text-gray-500">
+              <div className="lg:text-md md:text-sm sm:text-xs font-bold text-gray-500">
                 2 August 2024
               </div>
             </div>
-
+  
             {/* ETC */}
-            <div className="flex justify-between mb-2 w-full">
-              <div className="text-lg font-bold text-gray-500">
-                Estimated Time Left:
+            <div className="flex justify-between lg:mb-2 md:mb-1 w-full">
+              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-500">
+                ETC:
               </div>
-              <div className="text-lg font-bold text-gray-500">18 hours</div>
+              <div className="lg:text-md md:text-sm sm:text-xs font-bold text-gray-500">
+                18 hours
+              </div>
             </div>
-
+  
             {/* Address */}
             <div className="flex w-full">
-              <div className="flex justify-between mt-2 mb-2 w-full">
-                <div className="text-sm font-bold text-gray-500">{address}</div>
+              <div className="flex justify-between lg:mb-2 md:mb-1 w-full">
+                <div className="lg:text-sm md:text-xs font-bold text-gray-500">
+                  {address}
+                </div>
               </div>
             </div>
-
-            {/* Map */}
-            <div
-              className="w-full h-full flex items-center justify-center text-gray-500"
-              id="map"
-            >
-              <MapComponent
-                longitude={Number(longitude)}
-                latitude={Number(latitude)}
-                zoom={14}
-                containerId="map"
-                style="mapbox://styles/mapbox/streets-v12"
-              />
+  
+            {/* Map or Image */}
+            <div className="w-full h-full border flex items-center justify-center">
+              {isMapLeft ? (
+                <div className="flex justify-center" id="map">
+                  <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
+                </div>
+              ) : (
+                <>
+                  {image && !imageError ? (
+                    <div className="flex justify-center">
+                      <img
+                        src={image}
+                        alt="Fault"
+                        className="rounded-lg object-cover"
+                        onError={() => setImageError(true)} // Set error state if image fails to load
+                      />
+                    </div>
+                  ) : (
+                    <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                      <ImageIcon size={48} color="#6B7280" />
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-
-            <div className="w-full flex pt-2">
+  
+            {/* Google Maps and Actions */}
+            <div className="w-full flex pt-2 border">
               {/* Google Maps */}
               <Button
-                className="w-1/2 bg-opacity-45 text-black font-bold text-md text-center rounded-lg py-1"
+                className="w-[50%] bg-opacity-45 text-black font-bold lg:text-md md:text-sm text-center rounded-lg lg:mx-2 md:mx-1"
                 onClick={showDirections}
               >
                 {"Google Maps"}
                 <img
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
-                  className="h-6"
+                  className="h-[50%] border"
                   alt="Google"
                 />
               </Button>
-
+  
               {/* Actions */}
-              <div className="mb-4 flex justify-between w-1/2 px-4">
+              <div className="lg:mb-4 md:mb-2 flex justify-between w-[50%] lg:mx-2 md:mx-1">
                 {/* Upvotes */}
                 <div className="flex flex-col items-center justify-center">
                   <FaArrowUp
@@ -431,7 +463,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     {formatNumber(currentArrowCount)}
                   </span>
                 </div>
-
+  
                 {/* Comments */}
                 <div
                   className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105 justify-center"
@@ -445,7 +477,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     {formatNumber(currentCommentCount)}
                   </span>
                 </div>
-
+  
                 {/* Watchlist */}
                 <div className="flex flex-col items-center justify-center">
                   <FaEye
@@ -459,7 +491,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 </div>
               </div>
             </div>
-
+  
             {/* Fault's Municipality */}
             <div className="flex w-full items-center justify-start">
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
@@ -473,24 +505,42 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               <div className="ml-2">{municipality_id}</div>
             </div>
           </div>
-
+  
           {/* Right Section */}
-          <div className="relative w-2/3 mt-5 mb-2 flex justify-center overflow-hidden">
-            {image && !imageError ? (
-              <div className="flex justify-center">
-                <img
-                  src={image}
-                  alt="Fault"
-                  className="rounded-lg object-cover"
-                  onError={() => setImageError(true)} // Set error state if image fails to load
-                />
-              </div>
+          <div className="relative w-2/3 mt-5 mb-2 flex flex-col justify-center overflow-hidden">
+            {isMapLeft ? (
+              <>
+                {image && !imageError ? (
+                  <div className="flex justify-center">
+                    <img
+                      src={image}
+                      alt="Fault"
+                      className="rounded-lg object-cover"
+                      onError={() => setImageError(true)} // Set error state if image fails to load
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
+                    <ImageIcon size={48} color="#6B7280" />
+                  </div>
+                )}
+              </>
             ) : (
-              <div className="mb-2 flex justify-center items-center w-48 h-36 rounded-lg bg-gray-200 border border-gray-300">
-                <ImageIcon size={48} color="#6B7280" />
+              <div className="relative w-full h-full bg-blue-400">
+                <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
               </div>
             )}
-
+  
+            {/* Toggle Button to Swap Map and Image */}
+            <div className="flex justify-center mt-2">
+              <Button
+                onClick={toggleLayout}
+                className="text-black bg-gray-300 px-4 py-2 rounded-lg"
+              >
+                {"Swap Map and Images"}
+              </Button>
+            </div>
+  
             {/* Comments Section with Slide Animation */}
             <div
               className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
@@ -498,129 +548,115 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
-              <Comments
-                onBack={toggleComments}
-                isCitizen={false}
-                ticketId={ticketId}
-              />
+              <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId} />
             </div>
           </div>
         </div>
+  
+        <div className="block sm:hidden">
+  <div className="flex flex-col w-full gap-3 text-black relative">
+    {/* Title and Ticket Number */}
+    <div className="text-center">
+      <div className="font-bold text-xl">{title}</div>
+      <div className="text-gray-400 text-lg">{ticketNumber}</div>
+    </div>
 
-        {/* Mobile View */}
-        <div className="sm:hidden flex flex-col w-full gap-3 text-black">
-          {/* Title and Ticket Number */}
-          <div className="text-center">
-            <div className="font-bold text-xl">{title}</div>
-            <div className="text-gray-400 text-lg">{ticketNumber}</div>
-          </div>
+    {/* Status */}
+    <div className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-1 w-full`}>
+      {text}
+    </div>
 
-          {/* Status */}
-          <div
-            className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-1 w-full`}
-          >
-            {text}
-          </div>
+    {/* Description */}
+    <div className="text-gray-700 text-sm text-center px-4">{description}</div>
 
-          {/* Description */}
-          <div className="text-gray-700 text-sm text-center px-4">
-            {description}
-          </div>
+    {/* Address */}
+    <div className="text-gray-500 text-sm text-center">{address}</div>
 
-          {/* Address */}
-          <div className="text-gray-500 text-sm text-center">{address}</div>
-
-          {/* Image */}
-          <div className="relative w-full flex justify-center mt-2">
-            <img
-              src={image || undefined} // Ensure src is either a string or undefined
-              alt="Fault"
-              className="rounded-lg object-cover w-full h-40"
-              onError={() => setImageError(true)}
-            />
-            {imageError && (
-              <div className="flex justify-center items-center w-full h-40 bg-gray-200">
-                <ImageIcon size={32} color="#6B7280" />
-              </div>
-            )}
-          </div>
-
-          {/* Map */}
-
-          {/* Google Maps Button */}
-          <Button
-            className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1"
-            onClick={showDirections}
-          >
-            Google Maps
-          </Button>
-
-          {/* Actions */}
-          <div className="flex justify-around w-full mt-2">
-            <div className="flex flex-col items-center">
-              <FaArrowUp
-                className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
-                style={{ color: arrowColor }}
-                onClick={handleArrowClick}
-              />
-              <span className="text-gray-700">
-                {formatNumber(currentArrowCount)}
-              </span>
-            </div>
-            <div
-              className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
-              onClick={toggleComments}
-            >
-              <FaComment
-                className="text-gray-600"
-                style={{ color: commentColor }}
-              />
-              <span className="text-gray-700">
-                {formatNumber(currentCommentCount)}
-              </span>
-            </div>
-            <div className="flex flex-col items-center">
-              <FaEye
-                className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
-                style={{ color: eyeColor }}
-                onClick={handleEyeClick}
-              />
-              <span className="text-gray-700">
-                {formatNumber(currentViewCount)}
-              </span>
-            </div>
-          </div>
-
-          {/* Fault's Municipality */}
-          <div className="flex w-full items-center justify-center mt-2">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-              <img
-                src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                  municipality_id
-                )}.png`}
-                alt=""
-              />
-            </div>
-            <div className="ml-2">{municipality_id}</div>
-          </div>
-
-          {/* Comments Section with Slide Animation */}
-          <div
-            className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
-              showComments ? "translate-x-0" : "translate-x-full"
-            }`}
-            style={{ pointerEvents: showComments ? "auto" : "none" }}
-          >
-            <Comments
-              onBack={toggleComments}
-              isCitizen={false}
-              ticketId={ticketId}
-            />
-          </div>
+    {/* Image */}
+    <div className="relative w-full flex justify-center mt-2">
+      {!imageError ? (
+        <img
+          src={image || undefined}
+          alt="Fault"
+          className="rounded-lg object-cover w-full h-40"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div className="flex justify-center items-center w-full h-40 bg-gray-200">
+          <ImageIcon size={32} color="#6B7280" />
         </div>
+      )}
+    </div>
+
+    {/* Google Maps Button */}
+    <Button
+      className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1 border"
+      onClick={showDirections}
+    >
+      Google Maps
+    </Button>
+
+    {/* Actions */}
+    <div className="flex justify-around w-full mt-2">
+      {/* Upvote */}
+      <div className="flex flex-col items-center">
+        <FaArrowUp
+          className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+          style={{ color: arrowColor }}
+          onClick={handleArrowClick}
+        />
+        <span className="text-gray-700">{formatNumber(currentArrowCount)}</span>
+      </div>
+
+      {/* Comments */}
+      <div
+        className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+        onClick={toggleComments}
+      >
+        <FaComment className="text-gray-600" style={{ color: commentColor }} />
+        <span className="text-gray-700">{formatNumber(currentCommentCount)}</span>
+      </div>
+
+      {/* Watchlist */}
+      <div className="flex flex-col items-center">
+        <FaEye
+          className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+          style={{ color: eyeColor }}
+          onClick={handleEyeClick}
+        />
+        <span className="text-gray-700">{formatNumber(currentViewCount)}</span>
       </div>
     </div>
+
+    {/* Fault's Municipality */}
+    <div className="flex w-full items-center justify-center mt-2">
+      <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+        <img
+          src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+            municipality_id
+          )}.png`}
+          alt=""
+        />
+      </div>
+      <div className="ml-2">{municipality_id}</div>
+    </div>
+
+    {/* Comments Section (only visible when showComments is true) */}
+    {showComments && (
+      <div className="absolute top-0 left-0 w-full h-full bg-white z-20">
+        <Comments onBack={toggleComments} isCitizen={false} ticketId={ticketId} />
+      </div>
+    )}
+  </div>
+</div>
+
+
+        </div>
+      </div>
+   
   );
+  
 };
 
 export default FaultCardUserView;
+

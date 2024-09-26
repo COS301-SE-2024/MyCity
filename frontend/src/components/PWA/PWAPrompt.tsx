@@ -15,7 +15,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
       <div className="hidden sm:block">
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
           <div
-            className="bg-white w-1/3 border rounded-lg p-4 relative"
+            className="dark:bg-gray-700 dark:text-white bg-white w-1/3 rounded-lg p-4 relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button

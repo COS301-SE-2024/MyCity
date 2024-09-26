@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, PlusCircle, Bell, Search } from "lucide-react";
+import { Home, PlusCircle, Bell, Search, ChartNoAxesCombined  } from "lucide-react";
 import {
   Avatar,
   Dropdown,
@@ -77,12 +77,22 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
             </div>
           </Link>
 
+
           <div className="flex-initial text-[0.95rem] flex me-5 space-x-5 items-center">
             <Link href="/dashboard/citizen" passHref>
               <div className={getNavItemClass("/dashboard/citizen")}>
                 <div className="flex flex-col gap-1 items-center">
                   <Home size={25} />
                   <span>Dashboard</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/statistics/citizen" passHref>
+              <div className={getNavItemClass("/statistics/citizen")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <ChartNoAxesCombined  size={25} />
+                  <span>Statistics</span>
                 </div>
               </div>
             </Link>
@@ -156,6 +166,16 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
                 </DropdownItem>
 
                 <DropdownItem
+                  key="guide"
+                  href="/guide"
+                  role="link"
+                  className="h-9 hover:bg-grey-500"
+                  textValue="How it works"
+                >
+                  <span className="text-sm">How it works</span>
+                </DropdownItem>
+
+                <DropdownItem
                   key="logout"
                   onClick={onLogout}
                   role="button"
@@ -172,51 +192,50 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
       {/* Mobile View */}
 
       <div className="block sm:hidden">
-  {/* Bottom Bar */}
-  <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center z-50">
-    <nav className="z-51 fixed w-full p-0 flex items-center justify-between">
-      <div className="flex w-full text-[0.95rem] items-center justify-between px-6">
-        <Link href="/dashboard/citizen" passHref>
-          <div className={getNavItemClass("/dashboard/citizen")}>
-            <div className="flex flex-col gap-1 items-center">
-              <Home size={50} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/create-ticket/citizen" passHref>
-          <div className={getNavItemClass("/create-ticket/citizen")}>
-            <div className="flex flex-col gap-1 items-center">
-              <PlusCircle size={50} />
-            </div>
-          </div>
-        </Link>
-
-        <Link href="/notifications/citizen" passHref>
-          <div className={getNavItemClass("/notifications/citizen")}>
-            <div className="relative flex flex-col gap-1 items-center">
-              <Bell size={50} />
-              {unreadNotifications > 0 && (
-                <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
-                  {unreadNotifications}
+        {/* Bottom Bar */}
+        <div className="bottom-0 w-full h-20 bg-black bg-opacity-70 fixed flex items-center justify-center z-50">
+          <nav className="z-51 fixed w-full p-0 flex items-center justify-between">
+            <div className="flex w-full text-[0.95rem] items-center justify-between px-6">
+              <Link href="/dashboard/citizen" passHref>
+                <div className={getNavItemClass("/dashboard/citizen")}>
+                  <div className="flex flex-col gap-1 items-center">
+                    <Home size={50} />
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
-        </Link>
+              </Link>
 
-        <Link href="/search/citizen" passHref>
-          <div className={getNavItemClass("/search/citizen")}>
-            <div className="flex flex-col gap-1 items-center">
-              <Search size={50} />
+              <Link href="/create-ticket/citizen" passHref>
+                <div className={getNavItemClass("/create-ticket/citizen")}>
+                  <div className="flex flex-col gap-1 items-center">
+                    <PlusCircle size={50} />
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/notifications/citizen" passHref>
+                <div className={getNavItemClass("/notifications/citizen")}>
+                  <div className="relative flex flex-col gap-1 items-center">
+                    <Bell size={50} />
+                    {unreadNotifications > 0 && (
+                      <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
+                        {unreadNotifications}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/search/citizen" passHref>
+                <div className={getNavItemClass("/search/citizen")}>
+                  <div className="flex flex-col gap-1 items-center">
+                    <Search size={50} />
+                  </div>
+                </div>
+              </Link>
             </div>
-          </div>
-        </Link>
+          </nav>
+        </div>
       </div>
-    </nav>
-  </div>
-</div>
-
     </div>
   );
 }

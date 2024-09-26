@@ -8,6 +8,7 @@ import ChangeMuniPass from "@/components/Settings/municipality/ChangeMuniPass";
 import Municode from "@/components/Settings/municipality/municode";
 import { User, HelpCircle, XCircle } from "lucide-react";
 import { Mail, BellOff, Moon, Text } from "lucide-react";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | "Municode" | null;
 
@@ -257,7 +258,7 @@ export default function Settings() {
         return (
           <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Municode</h2>
-            {renderSubPageContent()}
+            <Municode />
           </div>
         );
 
@@ -462,68 +463,105 @@ export default function Settings() {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
-        <div
-          style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
-          }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
+<div className="block sm:hidden">
+  <NavbarMunicipality unreadNotifications={unreadNotifications} />
+  <NavbarMobile />
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundImage:
+        'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      zIndex: -1,
+    }}
+  ></div>
 
-          {/* Background image */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
-            }}
-          ></div>
+  <main className="relative z-10 p-4">
+    <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
+      Settings
+    </h1>
 
-          {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
-            </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
-          </div>
+    {/* Profile and Tabs */}
+    <div className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
+      <div className="flex items-center mb-4">
+        <User className="w-12 h-12 rounded-full mr-4" />
+        <div>
+          <p className="text-lg font-semibold">Municipality Name</p>
         </div>
       </div>
+
+      {/* Tabs */}
+      <nav className="space-y-2">
+        <button
+          className={`w-full text-left py-2 px-4 rounded-t ${
+            activeTab === "MunicipalityInformation" ? "bg-gray-200" : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("MunicipalityInformation")}
+        >
+          Municipality Information
+        </button>
+        <button
+          className={`w-full text-left py-2 px-4 ${
+            activeTab === "Notifications" ? "bg-gray-200" : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("Notifications")}
+        >
+          Notifications
+        </button>
+        <button
+          className={`w-full text-left py-2 px-4 ${
+            activeTab === "Municode" ? "bg-gray-200" : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("Municode")}
+        >
+          Municode
+        </button>
+        <button
+          className={`w-full text-left py-2 px-4 rounded-b ${
+            activeTab === "Accessibility" ? "bg-gray-200" : "hover:bg-gray-100"
+          }`}
+          onClick={() => setActiveTab("Accessibility")}
+        >
+          Accessibility
+        </button>
+      </nav>
+    </div>
+
+    {/* Tab Content with Extra Padding at the Bottom for Scroll */}
+    <div
+      className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-b-lg shadow-md p-4 mt-0"
+      style={{
+        paddingBottom: "80px", // Add extra padding at the bottom
+        transition: "max-height 0.5s ease-out",
+        overflow: "hidden",
+        animation: "slide-down 0.5s ease-out forwards",
+      }}
+    >
+      {renderTabContent()}
+    </div>
+  </main>
+
+  {/* Style for the slide-down animation */}
+  <style jsx>{`
+    @keyframes slide-down {
+      0% {
+        max-height: 0;
+        opacity: 0;
+      }
+      100% {
+        max-height: 100vh;
+        opacity: 1;
+      }
+    }
+  `}</style>
+</div>
+
     </div>
   );
 }

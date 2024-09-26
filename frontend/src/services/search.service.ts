@@ -1,35 +1,5 @@
 import { invalidateCache } from "@/utils/apiUtils";
 
-/*export async function searchIssue(sessionToken: string | undefined, param:string, revalidate?: boolean) {
-     if (revalidate) {
-        invalidateCache("search-issues"); // Invalidate the cache
-    }
-
-    try {
-        const response = await fetch(`/api/search/issues?q=${encodeURIComponent(param)}`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${sessionToken}`,
-                },
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Error fetching: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        const data = result.data as any[];
-
-        return data;
-
-    } catch (error) {
-        throw error;
-    }
-}*/
-
 export async function searchIssue(sessionToken: string | undefined, param: string, userMunicipality: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-issues"); // Invalidate the cache
@@ -53,17 +23,17 @@ export async function searchIssue(sessionToken: string | undefined, param: strin
         }
 
         const result = await response.json();
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        console.log(error.message);
+        const data: any[] = [];
+        return data;
     }
 }
 
-
-
-export async function searchServiceProvider(sessionToken: string | undefined, param:string, revalidate?: boolean) {
+export async function searchServiceProvider(sessionToken: string | undefined, param: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-service-provider"); //invalidate the cache
     }
@@ -84,17 +54,17 @@ export async function searchServiceProvider(sessionToken: string | undefined, pa
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        console.log(error.message);
+        const data: any[] = [];
+        return data;
     }
 }
 
-
-export async function searchMunicipality(sessionToken: string | undefined, param:string, revalidate?: boolean) {
+export async function searchMunicipality(sessionToken: string | undefined, param: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-municipality"); //invalidate the cache
     }
@@ -115,17 +85,17 @@ export async function searchMunicipality(sessionToken: string | undefined, param
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        console.log(error.message);
+        const data: any[] = [];
+        return data;
     }
 }
 
-
-export async function searchMunicipalityTickets(sessionToken: string | undefined, municipalityId:string, revalidate?: boolean) {
+export async function searchMunicipalityTickets(sessionToken: string | undefined, municipalityId: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("search-municipality-tickets"); //invalidate the cache
     }
@@ -146,11 +116,12 @@ export async function searchMunicipalityTickets(sessionToken: string | undefined
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         return data;
-
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        console.log(error.message);
+        const data: any[] = [];
+        return data;
     }
 }

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import ToggleTheme from '@/components/Theme/ToggleTheme';
 
 export default function Promt_Popup() {
   const [userResponded, setUserResponded] = useState(false);
@@ -17,7 +18,7 @@ export default function Promt_Popup() {
           // onClick={closePopup}
         >
           <div
-            className="bg-white w-1/3 border rounded-lg p-4 relative"
+            className="dark:bg-gray-700 dark:text-white bg-gray-100 w-1/3 rounded-lg p-4 relative"
             onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the popup
           >
             <button

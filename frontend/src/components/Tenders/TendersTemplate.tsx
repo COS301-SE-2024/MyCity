@@ -9,6 +9,8 @@ import { useProfile } from "@/hooks/useProfile";
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
+mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
+
 interface TenderType {
     tender_id: string;
     tendernumber : string;
@@ -84,7 +86,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
         
         setDialog({ action, show: true });
         console.log("inside true")
-        
+        ///uhygiygh
     }
   };
 
@@ -122,6 +124,7 @@ const TenderContainer = ({ tender, onClose }: { tender: TenderType; onClose: (da
               toast.error("Couldnt Decline this tender")
           }
           handleDecline();
+      
         }
         console.log("inside reject")
         break;

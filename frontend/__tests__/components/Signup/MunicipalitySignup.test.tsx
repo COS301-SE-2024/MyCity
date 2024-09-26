@@ -3,14 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 describe("Municipality Signup", () => {
 
-    /*it("renders an email input", () => {
-        render(<MunicipalitySignup />);
-        const emailInput = screen.getByLabelText("Email");
-
-        expect(emailInput).toBeInTheDocument();
-        expect(emailInput).toHaveAttribute("type", "email");
-    });*/
-
+    /* Test 1: Renders email input correctly */
     it("renders an email input", () => {
         render(<MunicipalitySignup />);
         // Use getByPlaceholderText if the placeholder is unique
@@ -30,23 +23,23 @@ describe("Municipality Signup", () => {
     // });
 
 
-    // it("renders a submit button", () => {
-    //     render(<MunicipalitySignup />);
-    //     const submitButton = screen.getByRole("button", {name:/submit/i});
+    /* Test : Submit button displays and works*/
+    it("renders a submit button", () => {
+        render(<MunicipalitySignup />);
+        const submitButtons = screen.getAllByText("Submit");
+        const submitButton = submitButtons[0];
 
-    //     expect(submitButton).toBeInTheDocument();
-    //     expect(submitButton).toHaveTextContent("Submit");
-    // });
+        expect(submitButton).toBeInTheDocument();
+    });
 
+    test("handler function is called after clicking submit button", () => {
+        render(<MunicipalitySignup />);
+        const mockFunction = jest.fn();
+        const loginForm = screen.getByTestId("municipality-signup-form");
+        loginForm.addEventListener("submit", mockFunction);
 
-    // test("handler function is called after clicking submit button", () => {
-    //     render(<MunicipalitySignup />);
-    //     const mockFunction = jest.fn();
-    //     const loginForm = screen.getByTestId("municipality-signup-form");
-    //     loginForm.addEventListener("submit", mockFunction);
-
-    //     fireEvent.submit(loginForm)
-    //     expect(mockFunction).toHaveBeenCalledTimes(1);
-    // });
+        fireEvent.submit(loginForm)
+        expect(mockFunction).toHaveBeenCalledTimes(1);
+    });
 
 })

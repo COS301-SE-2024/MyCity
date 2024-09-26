@@ -50,7 +50,7 @@ function HowItWorksItem({
 }: HowItWorksItemProps) {
   return (
     <div
-      className={`flex p-4 my-4 bg-gray-700  text-white rounded-3xl items-center ${
+      className={`flex p-4 my-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${
         reverse ? "sm:flex-row-reverse" : "sm:flex-row"
       } flex-col sm:h-[33vh] md:h-[50vh] lg:h-[55vh] w-3/4 overflow-hidden gap-4`}
     >
@@ -58,19 +58,21 @@ function HowItWorksItem({
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
         <img src={image1} alt="How It Works" className="w-2/5 mb-4" />
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title1}
         </h1>
 
         {/* Scrollable paragraph container */}
         <div className="w-full max-h-60 overflow-y-scroll">
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph1a}
           </p>
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph2a}
           </p>
-          <p className="text-lg text-white text-opacity-80">{paragraph3a}</p>
+          <p className="text-lg dark:text-white text-opacity-80">
+            {paragraph3a}
+          </p>
         </div>
       </div>
 
@@ -78,18 +80,20 @@ function HowItWorksItem({
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
         <img src={image2} alt="How It Works" className="w-2/5 mb-4" />
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title2}
         </h1>
         {/* Scrollable paragraph container */}
         <div className="w-full max-h-60 overflow-y-scroll">
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph1b}
           </p>
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph2b}
           </p>
-          <p className="text-lg text-white text-opacity-80">{paragraph3b}</p>
+          <p className="text-lg dark:text-white text-opacity-80">
+            {paragraph3b}
+          </p>
         </div>
       </div>
 
@@ -97,31 +101,36 @@ function HowItWorksItem({
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
         <img src={image3} alt="How It Works" className="w-2/5 mb-4" />
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white text-opacity-80 text-center mt-10 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title3}
         </h1>
         {/* Scrollable paragraph container */}
         <div className="w-full max-h-60 overflow-y-scroll">
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph1c}
           </p>
-          <p className="mb-4 text-lg text-white text-opacity-80">
+          <p className="mb-4 text-lg dark:text-white text-opacity-80">
             {paragraph2c}
           </p>
-          <p className="text-lg text-white text-opacity-80">{paragraph3c}</p>
+          <p className="text-lg dark:text-white text-opacity-80">
+            {paragraph3c}
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-function StepItem({ stepNumber, title, description, reverse, image }: StepItemProps) {
+function StepItem({
+  stepNumber,
+  title,
+  description,
+  reverse,
+  image,
+}: StepItemProps) {
   return (
-    
-
-
-      <div
-      className={`flex m-4 bg-gray-700 p-4 text-white rounded-3xl items-center ${
+    <div
+      className={`flex m-4 dark:bg-gray-700 dark:text-white bg-gray-100 p-4  rounded-3xl items-center ${
         reverse ? "sm:flex-row-reverse" : "sm:flex-row"
       } flex-col [33vh] w-3/4`}
     >
@@ -133,17 +142,14 @@ function StepItem({ stepNumber, title, description, reverse, image }: StepItemPr
         />
       </div>
       <div className="w-full sm:w-3/4 mt-4 sm:mt-0 sm:ml-4 text-center sm:text-left overflow-y-auto h-full">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white text-opacity-80 mb-4">
-        Step {stepNumber}: {title}
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-white text-opacity-80 mb-4">
+          Step {stepNumber}: {title}
         </h2>
         <p className="mb-4 text-sm sm:text-base md:text-md lg:text-lg">
           {description}
         </p>
-
       </div>
     </div>
-
-
   );
 }
 
@@ -153,7 +159,7 @@ export default function Guide() {
       {/* Desktop View */}
       <div className="hidden sm:block">
         {/* Navbar - Make sure it's fixed and above all other content */}
-        <Navbar showLogin={true}/>
+        <Navbar showLogin={true} />
         {/* Background Image */}
         <div
           style={{
@@ -237,7 +243,7 @@ export default function Guide() {
                 stepNumber="2"
                 title="Report an Issue"
                 description="Use the MyCity platform to report any municipal issues you encounter, such as potholes, streetlight outages, or water leaks. Include details and images to help authorities understand the problem."
-                              reverse={true}
+                reverse={true}
                 image="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_2.webp"
               />
 
@@ -272,57 +278,236 @@ export default function Guide() {
       {/* Mobile View */}
       <div className="block sm:hidden">
         <Navbar />
-        {/* Mobile content here */}
-        <MobileView />
+        {/* Mobile View */}
+        <div className="block sm:hidden">
+          <Navbar showLogin={true} />
+
+          {/* Background Image */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundImage:
+                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundAttachment: "fixed",
+              zIndex: -11,
+            }}
+          ></div>
+
+          <main className="relative z-[-10] p-4 mt-0 pb-16">
+            {/* Page Title */}
+            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
+                alt="MyCity"
+                width={180}
+                height={180}
+              />
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-6 text-center">
+              How it Works
+            </h1>
+
+            {/* Who Can Use MyCity Section */}
+            <section className="mb-10">
+              <h2 className="text-2xl font-bold text-white text-center mb-4">
+                Who Can Use MyCity?
+              </h2>
+              <div className="flex flex-col items-center text-center">
+                {/* Citizens */}
+                <div className="mb-6">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_1.webp"
+                    alt="Citizens"
+                    className="w-1/2 mx-auto mb-2 rounded-lg"
+                  />
+                  <h3 className="text-lg font-bold text-white">Citizens</h3>
+                  <p className="text-white text-sm">
+                    Citizens can report issues like potholes or streetlight
+                    outages.
+                  </p>
+                </div>
+
+                {/* Municipalities */}
+                <div className="mb-6">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_2.webp"
+                    alt="Municipalities"
+                    className="w-1/2 mx-auto mb-2 rounded-lg"
+                  />
+                  <h3 className="text-lg font-bold text-white">
+                    Municipalities
+                  </h3>
+                  <p className="text-white text-sm">
+                    Municipalities can manage and respond to reported
+                    infrastructure issues.
+                  </p>
+                </div>
+
+                {/* Service Providers */}
+                <div className="mb-6">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_3.webp"
+                    alt="Service Providers"
+                    className="w-1/2 mx-auto mb-2 rounded-lg"
+                  />
+                  <h3 className="text-lg font-bold text-white">
+                    Service Providers
+                  </h3>
+                  <p className="text-white text-sm">
+                    Service providers receive notifications and updates on
+                    required repairs.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* What Platforms Section */}
+            <section className="mb-10">
+              <h2 className="text-2xl font-bold text-white text-center mb-4">
+                What Platforms Are We Available On?
+              </h2>
+              <div className="flex flex-col items-center text-center">
+                {/* Mobile PWA */}
+                <div className="mb-6">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_4.webp"
+                    alt="Mobile PWA"
+                    className="w-1/2 mx-auto mb-2 rounded-lg"
+                  />
+                  <h3 className="text-lg font-bold text-white">Mobile PWA</h3>
+                  <p className="text-white text-sm">
+                    MyCity is available on Android and iOS as a Progressive Web
+                    App.
+                  </p>
+                </div>
+
+                {/* Web Browsers */}
+                <div className="mb-6">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_5.webp"
+                    alt="Web Browsers"
+                    className="w-1/2 mx-auto mb-2 rounded-lg"
+                  />
+                  <h3 className="text-lg font-bold text-white">Web Browsers</h3>
+                  <p className="text-white text-sm">
+                    Access MyCity through any modern web browser on both desktop
+                    and mobile.
+                  </p>
+                </div>
+
+                {/* Windows PWA */}
+                <div className="mb-6">
+                  <img
+                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_6.webp"
+                    alt="Windows PWA"
+                    className="w-1/2 mx-auto mb-2 rounded-lg"
+                  />
+                  <h3 className="text-lg font-bold text-white">Windows PWA</h3>
+                  <p className="text-white text-sm">
+                    Install MyCity as a PWA on Windows desktops for offline
+                    access and notifications.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Next Steps Section */}
+            <section className="mb-10">
+              <h2 className="text-2xl font-bold text-white text-center mb-4">
+                Your Next Steps
+              </h2>
+
+              {/* Step 1 */}
+              <div className="mb-6">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_1.webp"
+                  alt="Step 1"
+                  className="w-1/2 mx-auto mb-2 rounded-lg"
+                />
+                <h3 className="text-lg font-bold text-white text-center">
+                  Step 1: Create an Account
+                </h3>
+                <p className="text-white text-sm text-center">
+                  Sign up to report issues and track progress with your MyCity
+                  account.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div className="mb-6">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_2.webp"
+                  alt="Step 2"
+                  className="w-1/2 mx-auto mb-2 rounded-lg"
+                />
+                <h3 className="text-lg font-bold text-white text-center">
+                  Step 2: Report an Issue
+                </h3>
+                <p className="text-white text-sm text-center">
+                  Report municipal issues such as potholes, streetlight outages,
+                  or water leaks.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="mb-6">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_3.webp"
+                  alt="Step 3"
+                  className="w-1/2 mx-auto mb-2 rounded-lg"
+                />
+                <h3 className="text-lg font-bold text-white text-center">
+                  Step 3: Track Progress
+                </h3>
+                <p className="text-white text-sm text-center">
+                  Track your issue in real-time and stay updated with
+                  notifications.
+                </p>
+              </div>
+
+              {/* Step 4 */}
+              <div className="mb-6">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_4.webp"
+                  alt="Step 4"
+                  className="w-1/2 mx-auto mb-2 rounded-lg"
+                />
+                <h3 className="text-lg font-bold text-white text-center">
+                  Step 4: View Statistics
+                </h3>
+                <p className="text-white text-sm text-center">
+                  Explore detailed statistics on reported issues in your area.
+                </p>
+              </div>
+
+              {/* Step 5 */}
+              <div className="mb-6">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_5.webp"
+                  alt="Step 5"
+                  className="w-1/2 mx-auto mb-2 rounded-lg"
+                />
+                <h3 className="text-lg font-bold text-white text-center">
+                  Step 5: Celebrate
+                </h3>
+                <p className="text-white text-sm text-center">
+                  Celebrate successful resolutions and share positive
+                  experiences.
+                </p>
+              </div>
+            </section>
+          </main>
+        </div>
       </div>
     </div>
   );
 }
 
 // Mobile View Component
-function MobileView() {
-  return (
-    <div
-      style={{
-        position: "relative",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      {/* Background Image */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundImage:
-            'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      ></div>
-
-      {/* Mobile Content */}
-      <div className="h-[5vh] flex items-center justify-center"></div>
-      <div className="container mx-auto relative z-10">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl text-white font-bold mb-4 ml-4">
-          <span className="text-blue-200">MyCity</span> <br />
-          Under Construction
-        </h1>
-        <div className="text-white font-bold flex justify-center">
-          <img
-            src="https://i.imgur.com/eGeTTuo.png"
-            alt="Under Construction"
-            className="w-full h-auto"
-          />
-        </div>
-        <p className="text-lg text-gray-200 mb-4 ml-4">
-          Our Mobile site is currently under construction. Please use our
-          Desktop site while we work on it.
-        </p>
-      </div>
-    </div>
-  );
-}

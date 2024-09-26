@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { FaExclamationTriangle, FaCircle } from "react-icons/fa";
+import { FaExclamationTriangle } from "react-icons/fa";
 import TicketViewMuni from "../TicketViewMuni/TicketViewMuni"; // Adjust the import path as necessary
 
 interface AlertProps {
-  alerts: { message: string; ticketId: string; isNew: boolean; ticketNumber: string }[]; // Array of alerts with ticketId, ticketNumber, and isNew
+  alerts: { message: string; ticketId: string; isNew: boolean; ticketNumber: string }[];
 }
 
 const Alert: React.FC<AlertProps> = ({ alerts }) => {
@@ -19,7 +19,8 @@ const Alert: React.FC<AlertProps> = ({ alerts }) => {
 
   return (
     <>
-      <div className="flex flex-col items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4  hover:bg-opacity-80 transition-colors">
+      {/* Desktop View */}
+      <div className="hidden sm:flex flex-col items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 hover:bg-opacity-80 transition-colors">
         {alerts.map((alert, index) => (
           <div
             key={index}
@@ -34,6 +35,20 @@ const Alert: React.FC<AlertProps> = ({ alerts }) => {
               <div className="text-sm inline-block font-bold">
                 Ticket #{alert.ticketNumber}: {alert.message}
               </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile View */}
+      <div className="block sm:hidden flex flex-col text-black bg-white bg-opacity-70 rounded-2xl p-3 mb-2 mx-2 cursor-pointer hover:bg-opacity-80 transition-colors">
+        {alerts.map((alert, index) => (
+          <div key={index} className="flex flex-col items-center w-full" onClick={() => handleAlertClick(alert.ticketId)}>
+            <div className="text-sm text-center font-bold mb-2">
+              Ticket #{alert.ticketNumber}: {alert.message}
+            </div>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-yellow-100 border border-yellow-300">
+              <FaExclamationTriangle size={32} color="#FFA500" />
             </div>
           </div>
         ))}

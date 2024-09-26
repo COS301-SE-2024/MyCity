@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
+import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
 import { ChevronDown } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
@@ -13,6 +14,7 @@ import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from
 
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
+  const [muniprofile,setMuniprofile] = useState<string | null>(null);
   const [cityLoading, setCityLoading] = useState(true);
   const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
@@ -32,6 +34,8 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
+    const profile_pic = String(user_data.current?.picture)
+    setMuniprofile(profile_pic)
     setCity(String(user_data.current?.municipality));
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
@@ -47,7 +51,9 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
+    const profile_pic = String(user_data.current?.picture)
     setCity(String(user_data.current?.municipality));
+    setMuniprofile(profile_pic)
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
@@ -65,8 +71,13 @@ export default function Dashboard() {
 
   return (
     <div>
-      {/* Help Menu Button */}
-      <div className="fixed bottom-4 left-4 z-20">
+      
+     
+  
+      {/* Desktop View */}
+      <div className="hidden sm:block">
+        <div>
+        <div className="fixed bottom-4 left-4 z-20">
         <HelpCircle
           data-testid="open-help-menu"
           className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
@@ -74,7 +85,7 @@ export default function Dashboard() {
           onClick={toggleHelpMenu}
         />
       </div>
-
+  
       {isHelpOpen && (
         <div
           data-testid="help"
@@ -102,10 +113,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-
-      {/* Desktop View */}
-      <div className="hidden sm:block">
-        <div>
           <div
             style={{
               position: "fixed",
@@ -131,7 +138,13 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-                <ImageIcon size={20} className="text-gray-500" />
+              <img
+                src={String(muniprofile)}
+                alt="Description of image"
+                width={20}
+                height={20}
+                className="w-full h-full object-cover"
+              />
               </div>
               {cityLoading ? (
                 <ThreeDots
@@ -140,8 +153,6 @@ export default function Dashboard() {
                   radius="9"
                   color="#ADD8E6"
                   ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
                   visible={true}
                 />
               ) : (
@@ -153,7 +164,7 @@ export default function Dashboard() {
                 <button
                   className="flex items-center text-white text-opacity-80 hover:bg-gray-600 px-4 py-2 rounded transform transition-transform duration-200 hover:scale-105"
                   onClick={toggleDropdown}
-                  style={{ backgroundColor: "rgba(255, 255, 255, 0)" }} // Transparent background
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
                 >
                   <span>Issues ordered by:</span>
                   <ChevronDown className="ml-2" size={16} />
@@ -199,8 +210,6 @@ export default function Dashboard() {
                     radius="9"
                     color="#ADD8E6"
                     ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
                     visible={true}
                   />
                 </div>
@@ -211,77 +220,109 @@ export default function Dashboard() {
           </main>
         </div>
       </div>
-
-
-
-
-
-
-      
-
+  
       {/* Mobile View */}
       <div className="block sm:hidden">
+        <NavbarMunicipality unreadNotifications={unreadNotifications} />
+        <NavbarMobile />
+  
+        {/* Background Image */}
         <div
           style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: -1,
           }}
-        >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={100}
-              height={100}
-              className="w-100 h-100"
-            />
-          </div>
-
-          {/* Background image */}
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
-            }}
-          ></div>
-
-          {/* Content */}
-          <div className="h-[5vh] flex items-center justify-center"></div>
-          <div className="container mx-auto relative z-10">
-            {" "}
-            {/* Ensure content is above the background */}
-            <h1 className="text-4xl text-white font-bold mb-4 ml-4">
-              <span className="text-blue-200">MyCity</span> <br />
-              Under Construction
-            </h1>
-            <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
-                src="https://i.imgur.com/eGeTTuo.png"
-                alt="Under-Construction"
-                width={300}
-                height={300}
-              />
+        ></div>
+  
+        <main className="relative z-10 p-4 pb-16">
+          <h1 className="text-3xl font-bold text-white text-opacity-80 text-center mb-4">
+            Dashboard
+          </h1>
+  
+          {/* City Information */}
+          <div className="flex flex-col items-center justify-center text-white text-opacity-80 mb-6">
+            <div className="w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden mb-4">
+              <ImageIcon size={20} className="text-gray-500" />
             </div>
-            <p className="text-lg text-gray-200 mb-4 ml-4">
-              Our Mobile site is currently under construction.
-              <br />
-              Please use our Desktop site while we
-              <br />
-              work on it.
-            </p>
+            {cityLoading ? (
+              <ThreeDots
+                height="40"
+                width="80"
+                radius="9"
+                color="#ADD8E6"
+                ariaLabel="three-dots-loading"
+                visible={true}
+              />
+            ) : (
+              <span className="text-xl font-bold">{city}</span>
+            )}
           </div>
-        </div>
+  
+          {/* Dropdown and Report Fault Button */}
+          <div className="flex items-center justify-between mt-6">
+            <div className="relative inline-block text-left">
+              <button
+                className="flex items-center text-white text-opacity-80 hover:bg-gray-600 px-4 py-2 rounded transform transition-transform duration-200 hover:scale-105"
+                onClick={toggleDropdown}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
+              >
+                <span>Issues ordered by:</span>
+                <ChevronDown className="ml-2" size={16} />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    {[
+                      "Urgency",
+                      "Ticket Number",
+                      "Fault Type",
+                      "Status",
+                      "Created By",
+                      "Address",
+                    ].map((field) => (
+                      <a
+                        key={field}
+                        href="#"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {field}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+  
+          {/* Records Table */}
+          <div className="mt-8 mb-4">
+            {tableLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <ThreeDots
+                  height="40"
+                  width="80"
+                  radius="9"
+                  color="#ADD8E6"
+                  ariaLabel="three-dots-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <RecordsTable records={dashMuniResults} refresh={fetchData} />
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );
+  
 }

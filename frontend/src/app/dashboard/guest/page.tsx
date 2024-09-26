@@ -569,17 +569,13 @@ interface CitizenDashboardProps {
 export default function CitizenDashboard({
   searchParams,
 }: CitizenDashboardProps) {
-  const userProfile = {
-    getUserProfile: () => ({ email: "guest@example.com", name: "Guest User" }),
-  };
+
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-
-  const [userEmail, setUserEmail] = useState("");
 
   const [deeplinkTicket, setDeeplinkTicket] = useState<
     DashboardTicket | undefined
@@ -793,12 +789,12 @@ export default function CitizenDashboard({
             }}
           >
             {/* Navbar Top*/}
-            <NavbarMobile />
+            
 
             {/* Dashboard Content */}
             <div className="h-[85vh]">
               <div className="flex justify-center">
-                <h1 className="text-4xl font-bold text-white text-opacity-80">
+                <h1 className="text-4xl font-bold text-white text-opacity-80 mt-2">
                   Dashboard
                 </h1>
               </div>
@@ -852,10 +848,12 @@ export default function CitizenDashboard({
                             </div>
                           ) : dashWatchResults.length > 0 ? (
                             <div className="h-full">
+                              <div className="flex justify-center items-center">
                               <DashboardFaultCardContainer
                                 cardData={dashWatchResults}
                                 refreshwatch={refreshwatchlist}
                               />
+                              </div>
                             </div>
                           ) : (
                             <p className="text-center text-white text-opacity-60 text-sm">
@@ -886,10 +884,12 @@ export default function CitizenDashboard({
                             />
                           </div>
                         ) : dashMostUpvoteResults.length > 0 ? (
+                          <div className="flex justify-center items-center">
                           <DashboardFaultCardContainer
                             cardData={dashMostUpvoteResults}
                             refreshwatch={refreshwatchlist}
                           />
+                          </div>
                         ) : (
                           <p className="text-center text-white text-opacity-60 text-sm">
                             There are no faults to display.
@@ -916,10 +916,12 @@ export default function CitizenDashboard({
                             />
                           </div>
                         ) : dashMuniResults.length > 0 ? (
+                          <div className="flex justify-center items-center">
                           <DashboardFaultCardContainer
                             cardData={dashMuniResults}
                             refreshwatch={refreshwatchlist}
                           />
+                          </div>
                         ) : (
                           <p className="text-center text-sm text-opacity-60 text-white">
                             There are no faults to display.

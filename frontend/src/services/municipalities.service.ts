@@ -1,4 +1,4 @@
-import { BasicMunicipality } from "@/types/custom.types";
+import { BasicMunicipality, MunicipalityCoordinates } from "@/types/custom.types";
 import { invalidateCache } from "@/utils/apiUtils";
 
 export async function getMunicipalityList(revalidate?: boolean) {
@@ -21,7 +21,41 @@ export async function getMunicipalityList(revalidate?: boolean) {
 
         const result = await response.json();
 
-        const data = result.data as BasicMunicipality[];
+        const data = result as BasicMunicipality[];
+
+        return data;
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function getMunicipalityCoordinates(sessionToken: string | undefined, municipality: string | undefined, revalidate?: boolean) {
+    if (!sessionToken || !municipality) {
+        return null;
+    }
+    
+    if (revalidate) {
+        invalidateCache("municipality-coordinates"); //invalidate the cache
+    }
+
+    try {
+        const response = await fetch(`/api/municipality/coordinates?municipality=${encodeURIComponent(municipality)}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionToken}`,
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error fetching municipality coordinates: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+
+        const data = result as MunicipalityCoordinates;
 
         return data;
 

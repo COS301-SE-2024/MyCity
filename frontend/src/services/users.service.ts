@@ -26,9 +26,7 @@ export async function uploadProfilePicture(sessionToken: string | undefined, for
 
         const result = await response.json();
         const { picture_url } = result as UploadProfilePictureResponse;
-
         return picture_url;
-
     } catch (error) {
         throw error;
     }

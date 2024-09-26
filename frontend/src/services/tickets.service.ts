@@ -7,10 +7,8 @@ interface UserAttributes {
     family_name?: string; // SURNAME
     picture?: string; // Profile picture URL
 }
-//const userPoolID = process.env.USER_POOL_ID;
 
 export async function getMostUpvote(user_session: string, revalidate?: boolean) {
-
     if (revalidate) {
         invalidateCache("tickets-getUpvotes"); //invalidate the cache
     }
@@ -32,7 +30,7 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -44,7 +42,6 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
 }
 
 export async function getOpenCompanyTickets(user_session: string, revalidate?: boolean) {
-
     if (revalidate) {
         invalidateCache("tickets-getopencompanytickets"); //invalidate the cache
     }
@@ -65,7 +62,7 @@ export async function getOpenCompanyTickets(user_session: string, revalidate?: b
 
         const result = await response.json();
 
-        const data = result.data as any[];
+        const data = result as any[];
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -76,12 +73,10 @@ export async function getOpenCompanyTickets(user_session: string, revalidate?: b
     }
 }
 
-
 export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("tickets-getcompanytickets"); //invalidate the cache
     }
-
 
     try {
         const apiUrl = "/api/tickets/getcompanytickets";
@@ -101,11 +96,11 @@ export async function getCompanyTickets(companyname: string, user_session: strin
 
         const result = await response.json();
 
-        if (!Array.isArray(result.data)) {
+        if (!Array.isArray(result)) {
             return [];
         }
 
-        const data = result.data as any[];
+        const data = result as any[];
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -116,13 +111,10 @@ export async function getCompanyTickets(companyname: string, user_session: strin
     }
 }
 
-
-
 export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
         invalidateCache("tickets-getwatchlist"); //invalidate the cache
     }
-
 
     try {
         const apiUrl = "/api/tickets/getwatchlist";
@@ -142,11 +134,11 @@ export async function getWatchlistTickets(username: string, user_session: string
 
         const result = await response.json();
 
-        if (!Array.isArray(result.data)) {
+        if (!Array.isArray(result)) {
             return [];
         }
 
-        const data = result.data as any[];
+        const data = result as any[];
         formatAddress(data)
         ChangeState(data)
         return data;
@@ -156,9 +148,6 @@ export async function getWatchlistTickets(username: string, user_session: string
         throw error;
     }
 }
-
-
-
 
 export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
     if (revalidate) {
@@ -181,12 +170,12 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 
         const result = await response.json();
 
-        if (!Array.isArray(result.data)) {
+        if (!Array.isArray(result)) {
             const result: DashboardTicket[] = [];
             return result;
         }
 
-        const unprocessedData = result.data as any[];
+        const unprocessedData = result as any[];
 
         formatAddress(unprocessedData);
         ChangeState(unprocessedData);
@@ -202,7 +191,6 @@ export async function getTicket(ticketId: string, user_session: string, revalida
 }
 
 export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-
     if (!municipality) {
         throw new Error("Missing municipality");
     }
@@ -231,11 +219,11 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 
         const result = await response.json();
 
-        if (!Array.isArray(result.data)) {
+        if (!Array.isArray(result)) {
             return [];
         }
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         formatAddress(data)
         ChangeState(data)
@@ -248,7 +236,6 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
 }
 
 export async function getOpenTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
-
     if (!municipality) {
         throw new Error("Missing municipality");
     }
@@ -274,14 +261,13 @@ export async function getOpenTicketsInMunicipality(municipality: string | undefi
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
-
         const result = await response.json();
 
-        if (!Array.isArray(result.data)) {
+        if (!Array.isArray(result)) {
             return [];
         }
 
-        const data = result.data as any[];
+        const data = result as any[];
 
         formatAddress(data)
         ChangeState(data)
@@ -312,18 +298,18 @@ export async function AcceptTicket(ticket: string, user_session: string) {
         return false;
     }
 
-    const result = await response.json()
-    if (result.data.Status == "Success") {
-        return true
+    const result = await response.json();
+    if (result.Status == "Success") {
+        return true;
     }
-    else false
-
-
+    else {
+        return false;
+    }
 }
 
-export async function InteractTicket(ticket: string, interact_type : string, user_session: string) {
+export async function InteractTicket(ticket: string, interact_type: string, user_session: string) {
     const data = {
-        type : interact_type,
+        type: interact_type,
         ticket_id: ticket,
     }
 
@@ -341,13 +327,13 @@ export async function InteractTicket(ticket: string, interact_type : string, use
         return false;
     }
 
-    const result = await response.json()
-    if (result.data.Status == "SUCCESFUL") {
-        return result.data.vote
+    const result = await response.json();
+    if (result.Status == "SUCCESFUL") {
+        return result.vote;
     }
-    else return -1
-
-
+    else {
+        return -1;
+    }
 }
 
 export async function CloseTicket(ticket: string, user_session: string) {
@@ -369,13 +355,13 @@ export async function CloseTicket(ticket: string, user_session: string) {
         return false;
     }
 
-    const result = await response.json()
-    if (result.data.Status == "Success") {
-        return true
+    const result = await response.json();
+    if (result.Status == "Success") {
+        return true;
     }
-    else false
-
-
+    else {
+        return false;
+    }
 }
 
 export async function getFaultTypes(revalidate?: boolean) {
@@ -401,7 +387,7 @@ export async function getFaultTypes(revalidate?: boolean) {
 
         const result = await response.json();
 
-        const data = result.data as FaultType[];
+        const data = result as FaultType[];
 
         return data;
 
@@ -410,43 +396,34 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 }
 
-export async function CreatTicket(sessiont: string, assett: string, descrip: string, lat: string, longi: string, fullAddress: string, usern: string): Promise<boolean> {
-    const data = {
-        asset: assett,
-        description: descrip,
-        latitude: lat,
-        longitude: longi,
-        address: fullAddress,
-        username: usern,
-        state: "Opened"
-    }
-    const apiURL = "/api/tickets/create";
+export async function CreatTicket(sessiont: string, formData: FormData): Promise<boolean> {
+    console.log(sessiont);
+    const apiURL = "https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
             "Authorization": `Bearer ${sessiont}`,
         },
-        body: JSON.stringify(data),
+        body: formData,
     });
 
     if (!response.ok) {
         return false;
     }
     const result = await response.json();
-    if(result.data.Status)
-    {
+    if (result.Status) {
         return false;
     }
-    else return true;
+    else {
+        return true;
+    }
 }
 
-
-export async function addWatchlist(ticket : string, usern : string, sessiont : string) : Promise<boolean> {
+export async function addWatchlist(ticket: string, usern: string, sessiont: string): Promise<boolean> {
     const lowerusern = usern.toLowerCase();
     const data = {
-        username : lowerusern,
-        ticket_id : ticket,
+        username: lowerusern,
+        ticket_id: ticket,
     }
     const apiURL = "/api/tickets/addwatchlist";
     const response = await fetch(apiURL, {
@@ -461,7 +438,9 @@ export async function addWatchlist(ticket : string, usern : string, sessiont : s
     if (!response.ok) {
         return false;
     }
-    else return true;
+    else {
+        return true;
+    }
 }
 
 function CreateTicketNumber(municipality: string): string {
@@ -488,7 +467,6 @@ function ChangeState(tickets: any[]) {
         else if (item['state'] == "OPEN") {
             item['state'] == "Opened"
         }
-
     });
 }
 
@@ -515,8 +493,6 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
             },
             body: JSON.stringify(data)
         });
-
-        //console.log("API response:", response);
 
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
@@ -548,15 +524,12 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
             body: JSON.stringify(data)
         });
 
-        //console.log("API response:", response);
-
         if (!response.ok) {
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
         const result = await response.json();
         return result;
-
     } catch (error) {
         console.error("Error: " + error);
         throw error;
@@ -581,7 +554,6 @@ export async function getTicketComments(ticket_id: string, user_session: string)
 
         const result = await response.json();
         return result;
-
     } catch (error) {
         console.error("Error:", error);
         throw error;
@@ -612,7 +584,7 @@ export const getUserFirstLastName = async (username: string, userPoolID: string)
                 userAttributes.given_name = attribute.Value;
             } else if (attribute.Name === "family_name") {
                 userAttributes.family_name = attribute.Value;
-            } else if (attribute.Name === "picture") { // Assuming 'picture' is the attribute name
+            } else if (attribute.Name === "picture") {
                 userAttributes.picture = attribute.Value;
             }
         });
@@ -630,7 +602,6 @@ function formatAddress(data: any[]) {
         item['address'] = address.split(',').slice(0, 2).join(',');
     });
 }
-
 
 export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
     if (revalidate) {
@@ -654,7 +625,7 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
 
         const result = await response.json();
 
-        const rawData = result.data as UnprocessedFaultGeoData[];
+        const rawData = result as UnprocessedFaultGeoData[];
         const data: FaultGeoData[] = [];
 
         for (const fault of rawData) {
@@ -680,5 +651,4 @@ export async function getTicketsGeoData(sessionToken: string | undefined, revali
         console.error(error);
         throw error;
     }
-
 }

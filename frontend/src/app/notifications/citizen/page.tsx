@@ -157,27 +157,31 @@ export default function Notifications() {
         : "commented on";
 
       return (
-        <TicketNoti
-          key={index}
-          ticketNumber={item.ticketnumber}
-          image={item.imageURL || null}
-          action={action}
-          isNew={item.isNew || false}
-          title={item.title}
-          address={item.address}
-          description={item.description}
-          createdBy={item.createdby}
-          arrowCount={item.upvotes}
-          commentCount={item.commentcount}
-          viewCount={item.viewcount}
-          latitude={item.latitude}
-          longitude={item.longitude}
-          urgency={item.urgency}
-          ticket_id={item.ticket_id}
-          state={item.state}
-          municipality_id={item.municipality_id}
-          refreshwatch={refreshwatchlist}
-        />
+        <div
+          className="flex w-full h-[10%] my-2 justify-center"
+          key={item.ticket_id}
+        >
+          <TicketNoti
+            ticketNumber={item.ticketnumber}
+            image={item.imageURL || null}
+            action={action}
+            isNew={item.isNew || false}
+            title={item.title}
+            address={item.address}
+            description={item.description}
+            createdBy={item.createdby}
+            arrowCount={item.upvotes}
+            commentCount={item.commentcount}
+            viewCount={item.viewcount}
+            latitude={item.latitude}
+            longitude={item.longitude}
+            urgency={item.urgency}
+            ticket_id={item.ticket_id}
+            state={item.state}
+            municipality_id={item.municipality_id}
+            refreshwatch={refreshwatchlist}
+          />
+        </div>
       );
     });
 
@@ -212,8 +216,8 @@ export default function Notifications() {
           />
 
           {/* Content */}
-          <div className="fixed inset-0 overflow-y-auto">
-            <main>
+          <div className="fixed w-full h-full inset-0">
+            <main className="flex w-full h-full">
               <div className="relative pt-8">
                 <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
                   Notifications
@@ -234,8 +238,12 @@ export default function Notifications() {
                   />
                 </div>
               ) : (
-                <div className="pt-20 px-6 rounded-3xl">
-                  {visibleNotifications}
+                <div className="flex w-full h-full justify-center items-center overflow-hidden">
+                  <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center">
+                    <div className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto">
+                      {visibleNotifications}
+                    </div>
+                  </div>
                 </div>
               )}
 

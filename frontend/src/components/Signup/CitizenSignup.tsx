@@ -331,6 +331,7 @@ export default function CitizenSignup() {
                   }}
                   type={showPassword ? "text" : "password"}
                   name="password"
+                  data-testid="password-input"
                   autoComplete="new-password"
                   placeholder="Password"
                   required
@@ -363,6 +364,7 @@ export default function CitizenSignup() {
                   }}
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
+                  data-testid="confirm-password-input"
                   autoComplete="new-password"
                   placeholder="Password"
                   required
@@ -416,6 +418,7 @@ export default function CitizenSignup() {
             {/* Submit Button */}
             <Button
               name="submit"
+              data-testid="signup-submit-btn"
               className={`w-28 h-11 rounded-full m-auto font-semibold ${
                 isFormValid
                   ? "bg-blue-500 text-white"
@@ -471,6 +474,7 @@ export default function CitizenSignup() {
                 }}
                 type="text"
                 name="firstname"
+                data-testid="firstname-input"
                 autoComplete="new-firstname"
                 placeholder="Jane"
                 required
@@ -491,6 +495,7 @@ export default function CitizenSignup() {
                 }}
                 type="text"
                 name="surname"
+                data-testid="surname-input"
                 autoComplete="new-surname"
                 placeholder="Doe"
                 required

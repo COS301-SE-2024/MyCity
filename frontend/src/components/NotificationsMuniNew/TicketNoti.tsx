@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { FaCircle, FaRegCircle, FaUserCircle } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import TicketViewMuni from "../TicketViewMuni/TicketViewMuni"; // Adjust the import path as necessary
 
 interface TicketNotificationProps {
   ticketNumber: string;
   image: string | null;
   action: string;
-  isNew: boolean; // Determines if the notification is new or viewed
+  isNew: boolean;
 }
 
 const TicketNotification: React.FC<TicketNotificationProps> = ({
@@ -19,43 +19,23 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
   const [ticketData, setTicketData] = useState<any>(null);
 
   useEffect(() => {
-    // Mock data - Replace this with an actual backend call when available
-    const fetchTicketData = async () => {
-      const mockData = {
-        title: "Aliens",
-        address: "1234 Mock Street, Happy City",
-        description: "Help me.",
-        status: "Opened",
-        municipalityImage: "",
-        user_picture: "",
-        createdBy: "Kyle Marshall",
-        longitude: "30.0",
-        latitude: "-25.0",
-        upvotes: 15,
-        ticket_id: "12345",
-        imageURL: "",
-        urgency: "high",
-      };
-      setTicketData(mockData);
+    const mockData = {
+      title: "Aliens",
+      address: "1234 Mock Street, Happy City",
+      description: "Help me.",
+      status: "Opened",
+      municipalityImage: "",
+      user_picture: "",
+      createdBy: "Kyle Marshall",
+      longitude: "30.0",
+      latitude: "-25.0",
+      upvotes: 15,
+      ticket_id: "12345",
+      imageURL: "",
+      urgency: "high",
     };
-
-    fetchTicketData();
+    setTicketData(mockData);
   }, [ticketNumber]);
-
-  const getActionText = () => {
-    switch (action) {
-      case "upvoted":
-        return "upvoted";
-      case "commented on":
-        return "commented on";
-      case "watchlisted":
-        return "watchlisted";
-      case "updated status to:":
-        return "updated";
-      default:
-        return "";
-    }
-  };
 
   const handleNotificationClick = () => {
     setShowTicketView(true);
@@ -69,12 +49,13 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
 
   return (
     <>
+      {/* Desktop View */}
       <div
-        className="flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="hidden sm:flex items-center text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleNotificationClick}
       >
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
-        <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
           {image ? (
             <img src={image} alt="Ticket" className="w-full h-full object-cover" />
           ) : (
@@ -83,36 +64,49 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         </div>
         <div className="flex-1 text-center overflow-hidden whitespace-nowrap">
           <div className="text-sm inline-block">
-            <span className="font-bold">Ticket #{ticketNumber}</span> was{" "}
-            <span className="font-bold">{getActionText()}</span>.
+            <span className="font-bold">Ticket #{ticketNumber}</span> was {action}.
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile View */}
+      <div className="block sm:hidden flex flex-col text-black bg-white bg-opacity-70 rounded-2xl p-3 mb-2 mx-2 cursor-pointer hover:bg-opacity-80 transition-colors">
+        <div className="flex flex-col items-center w-full" onClick={handleNotificationClick}>
+          <div className="text-sm text-center font-bold mb-2">
+            Ticket #{ticketNumber} was {action}.
+          </div>
+          <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300">
+            {image ? (
+              <img src={image} alt="Ticket" className="w-full h-full object-cover" />
+            ) : (
+              <FaUserCircle size={32} color="#6B7280" />
+            )}
           </div>
         </div>
       </div>
 
       {showTicketView && ticketData && (
-        <>
-          <TicketViewMuni
-            show={true}
-            onClose={handleTicketViewClose}
-            title="Road Repair"
-            address="123 Main Street, Springfield, USA"
-            arrowCount={10}
-            commentCount={3}
-            viewCount={15}
-            ticketNumber={ticketNumber}
-            ticket_id={ticketData.ticket_id}
-            description="Repair the main road."
-            user_picture=""
-            createdBy="John Doe"
-            status="Active"
-            imageURL=""
-            municipalityImage="https://via.placeholder.com/50"
-            upvotes={10} // this is being conflated with arrowCount
-            latitude="37.7749" //mock data!! all of these
-            longitude="-1.4194"
-            urgency="high"
-          />
-        </>
+        <TicketViewMuni
+          show={true}
+          onClose={handleTicketViewClose}
+          title="Road Repair"
+          address="123 Main Street, Springfield, USA"
+          arrowCount={10}
+          commentCount={3}
+          viewCount={15}
+          ticketNumber={ticketNumber}
+          ticket_id={ticketData.ticket_id}
+          description="Repair the main road."
+          user_picture=""
+          createdBy="John Doe"
+          status="Active"
+          imageURL=""
+          municipalityImage="https://via.placeholder.com/50"
+          upvotes={10}
+          latitude="37.7749"
+          longitude="-1.4194"
+          urgency="high"
+        />
       )}
     </>
   );

@@ -33,7 +33,7 @@ export default function Login() {
           ></div>
 
           <main className="flex justify-center mb-8">
-            <div className="flex bg-white items-center justify-center rounded-lg border-t-0 border shadow-lg shadow-blue-800/15 w-1/2 h-fit py-12 mt-12">
+            <div className="flex dark:bg-gray-700 dark:text-white bg-gray-100 items-center justify-center rounded-lg shadow-lg shadow-blue-800/15 w-1/2 h-fit py-12 mt-12">
               <div>
                 <img
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/login_icon.webp"
@@ -127,8 +127,8 @@ export default function Login() {
                   <img
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
                     alt="MyCity"
-                    width={256}
-                    height={256}
+                    width={128}
+                    height={128}
                   />
                 </div>
                 <Tabs

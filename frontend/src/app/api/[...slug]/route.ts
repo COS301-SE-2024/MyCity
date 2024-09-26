@@ -45,10 +45,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     cache: "force-cache"
   });
 
-  const data = await res.json();
-
-  return Response.json({ data });
-
+  return res;
 }
 
 
@@ -75,7 +72,5 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     body: JSON.stringify(requestBody)
   });
 
-  const data = await res.json();
-
-  return Response.json({ data });
+  return res;
 }
