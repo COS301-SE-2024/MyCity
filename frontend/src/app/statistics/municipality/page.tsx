@@ -73,12 +73,16 @@ export default function MunicipalityStatisticsPage() {
           console.log(selectedMunicipality + " - Inhouse");
           // Fetch contracts per service provider
           const contractsData = await getContractsPerServiceProvider(
-            selectedMunicipality + " - Inhouse",
+            `${selectedMunicipality} - Inhouse`,
             userSession
           );
+          
+          
+          
+          
 
           console.log(contractsData);
-          
+
           const inhouse = contractsData.reduce(
             (acc: number, contract: any) => acc + (contract.contracts || 0),
             0
