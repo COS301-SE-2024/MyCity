@@ -215,6 +215,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       setTicketstatus("Closed");
       onClose(-2);
     }
+    else if (data == - 1){
+      setTicketstatus("Taking Tenders");
+      onClose(-1);
+    }
     setShowTenderMax(false);
   };
 
