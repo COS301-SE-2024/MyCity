@@ -560,7 +560,6 @@ def interact_ticket(ticket_data):
                 raise ClientError(error_response, "InvalideFields")
         interact_type = str(ticket_data["type"])
         response = tickets_table.query(
-            ProjectionExpression="upvotes,viewcount",
             KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"]),
         )
         items = response["Items"]
@@ -569,7 +568,10 @@ def interact_ticket(ticket_data):
                 for item in items:
                     votes = Decimal(str(item["upvotes"])) + 1
                     tickets_table.update_item(
-                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        Key={
+                            "ticket_id": ticket_data["ticket_id"],
+                            "dateOpened": item["dateOpened"],
+                        },
                         UpdateExpression="SET upvotes = :votes",
                         ExpressionAttributeValues={":votes": votes},
                     )
@@ -578,7 +580,10 @@ def interact_ticket(ticket_data):
                 for item in items:
                     views = Decimal(str(item["viewcount"])) + 1
                     tickets_table.update_item(
-                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        Key={
+                            "ticket_id": ticket_data["ticket_id"],
+                            "dateOpened": item["dateOpened"],
+                        },
                         UpdateExpression="SET viewcount = :views",
                         ExpressionAttributeValues={":views": views},
                     )
@@ -587,7 +592,10 @@ def interact_ticket(ticket_data):
                 for item in items:
                     votes = Decimal(str(item["upvotes"])) - 1
                     tickets_table.update_item(
-                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        Key={
+                            "ticket_id": ticket_data["ticket_id"],
+                            "dateOpened": item["dateOpened"],
+                        },
                         UpdateExpression="SET upvotes = :votes",
                         ExpressionAttributeValues={":votes": votes},
                     )
@@ -660,14 +668,24 @@ def ClosedTicket(ticket_data):
         updateExp = "set #state=:r"
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Closed"}
-        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        response_t = tickets_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"])
+        )
+        ticket_change = response_t["Items"][0]
+        response = updateTicketTable(
+            ticket_id, ticket_change["dateOpened"], updateExp, expattrName, expattrValue
+        )
         dateExpr = "set #dateClosed=:r"
         CloseexpattrName = {"#dateClosed": "dateClosed"}
         current_datetime = datetime.now()
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         CloseexpattrValue = {":r": formatted_datetime}
         response_closed = updateTicketTable(
-            ticket_id, dateExpr, CloseexpattrName, CloseexpattrValue
+            ticket_id,
+            ticket_change["dateOpened"],
+            dateExpr,
+            CloseexpattrName,
+            CloseexpattrValue,
         )
         if response["ResponseMetadata"]:
             return {
@@ -712,10 +730,16 @@ def AcceptTicket(ticket_data):
             raise ClientError(error_response, "TicketDoesntExist")
 
         ticket_id = ticket_data["ticket_id"]
+        response_t = tickets_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"])
+        )
+        ticket_change = response_t["Items"][0]
         updateExp = "set #state=:r"
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Taking Tenders"}
-        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        response = updateTicketTable(
+            ticket_id, ticket_change["dateOpened"], updateExp, expattrName, expattrValue
+        )
         if response["ResponseMetadata"]:
             return {
                 "Status": "Success",
@@ -1127,12 +1151,13 @@ def get_geodata_all():
 
 def updateTicketTable(
     ticket_id,
+    sort_key,
     update_expression,
     expression_attribute_names,
     expression_attribute_values,
 ):
     response = tickets_table.update_item(
-        Key={"ticket_id": ticket_id},
+        Key={"ticket_id": ticket_id, "dateOpened": sort_key},
         UpdateExpression=update_expression,
         ExpressionAttributeNames=expression_attribute_names,
         ExpressionAttributeValues=expression_attribute_values,
