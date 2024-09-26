@@ -1,4 +1,3 @@
-
 import { Request, Response } from "express";
 import * as tendersService from "../services/tenders.service";
 
@@ -63,7 +62,6 @@ export const getCompanyTenders = async (req: Request, res: Response) => {
     }
 }
 
-
 export const getMunicipalityTenders = async (req: Request, res: Response) => {
     try {
         const municipality = req.query["municipality"] as string;
@@ -73,7 +71,6 @@ export const getMunicipalityTenders = async (req: Request, res: Response) => {
         return res.status(500).json({ Error: error.message });
     }
 };
-
 
 export const getTicketTender = async (req: Request, res: Response) => {
     try {
@@ -88,7 +85,7 @@ export const getTicketTender = async (req: Request, res: Response) => {
 export const getContracts = async (req: Request, res: Response) => {
     try {
         const tenderId = req.query["tender"] as string;
-        const response = await tendersService.getTicketTender(tenderId);
+        const response = await tendersService.getContracts(tenderId);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });

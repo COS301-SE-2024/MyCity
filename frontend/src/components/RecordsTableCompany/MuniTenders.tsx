@@ -7,40 +7,39 @@ interface TenderType {
   tendernumber: string;
   company_id: string;
   companyname: string;
-  serviceProvider: string; // Add serviceProvider here
+  serviceProvider: string;
   datetimesubmitted: string;
-  ticketnumber : string;
+  ticketnumber: string;
   ticket_id: string;
   status: Status;
   quote: number;
-  longitude : string;
-  latitude : string;
+  longitude: string;
+  latitude: string;
   estimatedTimeHours: number;
   upload: File | null;
   hasReportedCompletion: boolean; // New prop
 }
 
 interface TenderTypeProps {
-  tenders: TenderType[];
+  tenders: TenderType[] | null; // Allow tenders to be null
 }
 
 export default function MuniTenders({
-  tenders,
+  tenders = null, // Default to null if tenders are not provided
   onBack,
 }: {
-  tenders: TenderType[];
-  onBack: () => void;
+  tenders: TenderType[] | null; // Allow tenders to be null
+  onBack: (data:number) => void;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
 
   const indexOfLastTender = currentPage * tendersPerPage;
   const indexOfFirstTender = indexOfLastTender - tendersPerPage;
-  const currentTenders = tenders.slice(
-    indexOfFirstTender,
-    indexOfLastTender
-  );
-  const totalPages = Math.ceil(tenders.length / tendersPerPage);
+  
+  // Check if tenders is null before using slice
+  const currentTenders = tenders ? tenders.slice(indexOfFirstTender, indexOfLastTender) : [];
+  const totalPages = tenders ? Math.ceil(tenders.length / tendersPerPage) : 1;
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -54,12 +53,16 @@ export default function MuniTenders({
     }
   };
 
+  const goBack = () =>{
+    onBack(0);
+  }
+
   return (
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
         <div className="flex justify-between items-center mb-2 px-2 py-1 font-bold text-center relative">
           <button
-            onClick={onBack}
+            onClick={goBack}
             className="bg-white bg-opacity-70 text-black ml-2 px-3 py-1 rounded-xl focus:outline-none hover:bg-opacity-90"
           >
             Back
@@ -69,12 +72,11 @@ export default function MuniTenders({
             Tender Bids
           </div>
         </div>
-        {currentTenders.length > 0 ? (
+        {tenders && currentTenders.length > 0 ? (
           <>
-            <div className="grid grid-cols-7 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
+            <div className="grid grid-cols-6 gap-4 items-center mb-2 px-2 py-1 font-bold text-center border-b border-gray-200">
               <div className="col-span-1">Status</div>
               <div className="col-span-1">Tender ID</div>
-              <div className="col-span-1">Ticket ID</div>
               <div className="col-span-1">Service Provider</div>
               <div className="col-span-1">Issue Date</div>
               <div className="col-span-1">Price</div>
@@ -82,15 +84,13 @@ export default function MuniTenders({
             </div>
             <div className="min-w-full">
               {currentTenders.map((tender) => (
-                <Tender key={tender.ticket_id} tender={tender} onClose={onBack}/>
+                <Tender key={tender.ticket_id} tender={tender} onClose={onBack} />
               ))}
             </div>
             <div className="flex justify-between mt-4 text-white">
               <button
                 onClick={handlePrevPage}
-                className={`px-48 py-2 ${
-                  currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-                }`}
+                className={`px-48 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""}`}
                 disabled={currentPage === 1}
               >
                 Previous
@@ -100,11 +100,7 @@ export default function MuniTenders({
               </span>
               <button
                 onClick={handleNextPage}
-                className={`px-48 py-2 ${
-                  currentPage === totalPages
-                    ? "cursor-not-allowed opacity-50"
-                    : ""
-                }`}
+                className={`px-48 py-2 ${currentPage === totalPages ? "cursor-not-allowed opacity-50" : ""}`}
                 disabled={currentPage === totalPages}
               >
                 Next

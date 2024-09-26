@@ -1,7 +1,7 @@
-import { Request } from "express";
+import { uploadFile } from "../config/s3bucket.config";
 
-
-export async function uploadProfilePicture(request: Request) {
-    // const response = await uploadFile(request, "profile_pictures");
-    //     return { pictureUrl: response };
-}
+export const uploadProfilePicture = async (username: string, file: Express.Multer.File) => {
+    //use amazon s3 to upload the file
+    const pictureUrl = await uploadFile("profile_pictures", username, file);
+    return { picture_url: pictureUrl };
+};

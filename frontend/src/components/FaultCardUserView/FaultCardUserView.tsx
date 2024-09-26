@@ -6,7 +6,6 @@ import {
   FaExclamationTriangle,
   FaTimes,
 } from "react-icons/fa";
-import MapComponent from "@/context/MapboxMap"; // Adjust the import path as necessary
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
 import { MapPin, Image as ImageIcon } from "lucide-react"; // Added ImageIcon from lucide-react
@@ -15,6 +14,11 @@ import { useProfile } from "@/hooks/useProfile";
 import { Eye, Key } from "lucide-react";
 import { MessageCirclePlus } from "lucide-react";
 import { ArrowBigUp } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface cardDataWatchlist {
   title: string;
@@ -409,13 +413,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div className="w-full h-full border flex items-center justify-center">
               {isMapLeft ? (
                 <div className="flex justify-center" id="map">
-                  <MapComponent
-                    longitude={Number(longitude)}
-                    latitude={Number(latitude)}
-                    zoom={14}
-                    containerId="map"
-                    style="mapbox://styles/mapbox/streets-v12"
-                  />
+                  <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
                 </div>
               ) : (
                 <>
@@ -528,17 +526,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 )}
               </>
             ) : (
-              <div
-                className="w-full h-full flex items-center justify-center text-gray-500"
-                id="map"
-              >
-                <MapComponent
-                  longitude={Number(longitude)}
-                  latitude={Number(latitude)}
-                  zoom={14}
-                  containerId="map"
-                  style="mapbox://styles/mapbox/streets-v12"
-                />
+              <div className="relative w-full h-full bg-blue-400">
+                <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
               </div>
             )}
   

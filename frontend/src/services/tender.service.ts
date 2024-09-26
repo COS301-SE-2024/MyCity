@@ -177,9 +177,9 @@ export async function DidBid(comp_name: string,ticket : string, user_session: st
 }
 
 
-export async function TerminateContract(contract_id: string, user_session: string) {
+export async function TerminateContract(contract: string, user_session: string) {
     const data = {
-        contract_id: contract_id,
+        contract_id: contract,
     }
 
     const apiURL = "/api/tenders/terminate";
@@ -299,6 +299,33 @@ export async function getMunicipalityTenders(municipality: string, user_session:
 export async function getContract(tender_id: string, user_session: string) {
     const apiURL = "/api/tenders/getcontracts";
     const urlWithParams = `${apiURL}?tender=${encodeURIComponent(tender_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json();
+
+    if (result.Status) {
+        return null;
+    }
+    else {
+        console.log(result);
+        AssignContractNumbers(result);
+        return result;
+    }
+}
+
+export async function getMuniContract(ticket_id: string, user_session: string) {
+    const apiURL = "/api/tenders/getmunicontract";
+    const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
     const response = await fetch(urlWithParams, {
         method: "GET",
         headers: {

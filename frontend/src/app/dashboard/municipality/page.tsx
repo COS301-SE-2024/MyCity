@@ -14,6 +14,7 @@ import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from
 
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
+  const [muniprofile,setMuniprofile] = useState<string | null>(null);
   const [cityLoading, setCityLoading] = useState(true);
   const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
@@ -33,6 +34,8 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
+    const profile_pic = String(user_data.current?.picture)
+    setMuniprofile(profile_pic)
     setCity(String(user_data.current?.municipality));
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
@@ -48,7 +51,9 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
+    const profile_pic = String(user_data.current?.picture)
     setCity(String(user_data.current?.municipality));
+    setMuniprofile(profile_pic)
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
@@ -133,7 +138,13 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-                <ImageIcon size={20} className="text-gray-500" />
+              <img
+                src={String(muniprofile)}
+                alt="Description of image"
+                width={20}
+                height={20}
+                className="w-full h-full object-cover"
+              />
               </div>
               {cityLoading ? (
                 <ThreeDots

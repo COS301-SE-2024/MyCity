@@ -97,8 +97,15 @@ export default function Record({ record, refresh }: { record: RecordType, refres
     }
   }
 
-  const truncateAddress = (address: string) => {
-    return address.split(',')[0];
+  const truncateAddress = (address: string, maxLength: number) => {
+    if (address.length <= maxLength) return address;
+    
+    // Truncate the string at the nearest word boundary within maxLength
+    const truncated = address.slice(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(" ");
+    
+    // If a space was found, truncate at the last space, otherwise truncate at maxLength
+    return lastSpace > 0 ? truncated.slice(0, lastSpace) + "..." : truncated + "...";
   };
 
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
@@ -129,19 +136,13 @@ export default function Record({ record, refresh }: { record: RecordType, refres
         </div>
         <div className="col-span-1 flex justify-center">{record.createdby}</div>
         <div
-          className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap"
-          ref={addressRef}
-        >
-          <div
-            style={{
-              display: "inline-block",
-              animation: isOverflowing ? "scroll 10s linear infinite" : "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {truncateAddress(record.address)}
-          </div>
-        </div>
+        className="col-span-1 flex justify-center truncate overflow-hidden whitespace-nowrap"
+        ref={addressRef}
+      >
+        {isOverflowing
+          ? truncateAddress(record.address, 30)  // Truncate if the address is too long
+          : record.address}  {/* Display full address if it fits */}
+      </div>
       </div>
 
       {/* Mobile View */}
@@ -169,7 +170,7 @@ export default function Record({ record, refresh }: { record: RecordType, refres
         </div>
         <div className="mt-2">
           <span className="text-gray-500">Address: </span>
-          <span>{truncateAddress(record.address)}</span>
+          <span>{truncateAddress(record.address, 30)}</span>
         </div>
       </div>
 
@@ -178,7 +179,7 @@ export default function Record({ record, refresh }: { record: RecordType, refres
           show={showTicketView}
           onClose={handleClose}
           title={record.asset_id}
-          address={truncateAddress(record.address)}
+          address={record.address}
           arrowCount={record.upvotes}
           commentCount={record.commentcount}
           viewCount={record.viewcount}
