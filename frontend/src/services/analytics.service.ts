@@ -31,12 +31,15 @@ export const getTicketsPerMunicipality = async (municipalityId: string, userSess
 
 // Function to fetch contracts per service provider
 export const getContractsPerServiceProvider = async (serviceProviderId: string, userSession: string) => {
-  const url = `${baseUrl}/analytics/contracts_per_service_provider?service_provider_id=${serviceProviderId}`;
+  // Encode the serviceProviderId to handle spaces and special characters
+  const encodedServiceProviderId = encodeURIComponent(serviceProviderId);
+
+  const url = `${baseUrl}/analytics/contracts_per_service_provider?service_provider=${encodedServiceProviderId}`;
 
   // Set up the headers, including the session token for authorization
   const headers = {
     "Authorization": `Bearer ${userSession}`,
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 
   // Perform the API request
@@ -48,7 +51,7 @@ export const getContractsPerServiceProvider = async (serviceProviderId: string, 
       throw new Error(`Failed to fetch data: ${response.statusText}`);
     }
 
-    // Parse and return the response data
+    // Parse the response data
     return await response.json();
   } catch (error) {
     // Handle and propagate the error
