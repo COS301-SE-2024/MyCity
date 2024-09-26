@@ -15,7 +15,7 @@ interface MapboxMapProps {
   zoom?: number;
 }
 
-const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat = -25.75442, dropMarker = false, addNavigationControl = false, faultMarkers = [], zoom = 10 }) => {
+const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat = -25.75442, dropMarker = false, addNavigationControl = false, faultMarkers = [], zoom = 12 }) => {
   const { setMap } = useMapbox(); // access setMap from context
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // reference to the map container
   const mapInstanceRef = useRef<Map | null>(null);
