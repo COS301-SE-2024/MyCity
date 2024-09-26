@@ -494,7 +494,7 @@ def getMunicipalityTenders(municipality):
 
         start_time = time.perf_counter()
         response_tickets = ticket_table.query(
-            IndexName="municipality_id-index",
+            IndexName="municipality_id-dateOpened-index",
             KeyConditionExpression=Key("municipality_id").eq(municipality),
         )
         query_time = time.perf_counter()  # Time after querying
