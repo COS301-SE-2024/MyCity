@@ -7,6 +7,10 @@ interface TopAssetsProgressProps {
 }
 
 export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
+  // Pagination settings
+  const itemsPerPage = 3;
+  const [currentPage, setCurrentPage] = useState(1); // Always initialize hooks
+
   // Safeguard: Check if necessary data properties are available
   if (
     !data ||
@@ -36,9 +40,6 @@ export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
       return diffA - diffB; // Sort from best to worst (smallest difference to largest)
     });
 
-  // Pagination settings
-  const itemsPerPage = 3;
-  const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(sortedAssets.length / itemsPerPage);
 
   const handleNextPage = () => {
