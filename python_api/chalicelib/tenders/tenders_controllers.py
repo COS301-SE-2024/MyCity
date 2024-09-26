@@ -799,7 +799,7 @@ def getCompanyContracts(tender_id, company_name):
             error_response = {
                 "Error": {
                     "Code": "CompanyDidntBid",
-                    "Message": "Company never bid on tender",
+                    "Message": "Company never had a contract",
                 }
             }
             raise ClientError(error_response, "TenderDoesntExist")
@@ -815,6 +815,7 @@ def getCompanyContracts(tender_id, company_name):
             companies = response_name["Items"][0]
             comp_name = companies["name"]
             contracts_items["companyname"] = comp_name
+            
         return contracts_items
 
     except ClientError as e:
