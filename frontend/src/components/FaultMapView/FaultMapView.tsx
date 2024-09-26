@@ -1,6 +1,7 @@
 import { useProfile } from "@/hooks/useProfile";
+import { getMunicipalityCoordinates } from "@/services/municipalities.service";
 import { getTicketsGeoData } from "@/services/tickets.service";
-import { FaultGeoData } from "@/types/custom.types";
+import { FaultGeoData, MunicipalityCoordinates } from "@/types/custom.types";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Rings } from "react-loader-spinner"; // Importing the Rings loader
@@ -14,17 +15,23 @@ export default function FaultMapView() {
   const [faultCount, setFaultCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [faultGeoData, setFaultGeoData] = useState<FaultGeoData[]>([]);
+  const [municipalityCoordinates, setMunicipalityCoordinates] = useState<MunicipalityCoordinates | null>(null);
 
   useEffect(() => {
     const getFaultData = async () => {
       setLoading(true);
       const userProfile = await getUserProfile();
       const sessionToken = userProfile.current?.session_token;
+      const municipality = userProfile.current?.municipality;
 
-      const faultGeodata = await getTicketsGeoData(sessionToken);
+      const [faultGeodata, municipalityCoordinates] = await Promise.all([
+        getTicketsGeoData(sessionToken),
+        getMunicipalityCoordinates(sessionToken, municipality)
+      ]);
 
 
       if (Array.isArray(faultGeodata)) {
+        setMunicipalityCoordinates(municipalityCoordinates);
         setFaultCount(faultGeodata.length);
         setFaultGeoData(faultGeodata);
       } else {
@@ -73,7 +80,7 @@ export default function FaultMapView() {
             {/* Map Section */}
             <div className="w-full md:w-5/6 flex-grow rounded-lg bg-gray-200">
               {faultGeoData.length > 0 && (
-                <MapboxMap faultMarkers={faultGeoData} zoom={14} />
+                <MapboxMap centerLng={Number(municipalityCoordinates?.longitude)} centerLat={Number(municipalityCoordinates?.latitude)} faultMarkers={faultGeoData} zoom={14} />
               )}
             </div>
           </div>

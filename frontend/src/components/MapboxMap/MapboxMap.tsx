@@ -36,17 +36,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
         maxBounds: boundsSA
       });
 
-      // setMap(initializedMap); // save the map instance in context
       initializedMap.on("load", () => {
         mapInstanceRef.current = initializedMap;
         setMap(mapInstanceRef.current); // save the map instance in context only after it"s fully loaded
-
-        if (faultMarkers) {
-          addFaultMarkers(initializedMap, faultMarkers);
-        }
       });
 
-      if (!faultMarkers) {
+      if (faultMarkers) {
+        addFaultMarkers(initializedMap, faultMarkers);
+      }
+      else {
         if (dropMarker) {
           new mapboxgl.Marker()
             .setLngLat([centerLng, centerLat])
@@ -77,7 +75,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
       return;
     }
 
-    // Create features from faultGeoData
+    // create features from faultGeoData
     const features = faultGeoData.map((fault) => ({
       type: "Feature" as const,
       geometry: {
@@ -91,7 +89,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
     }));
 
 
-    // Add a geojson source for the markers
+    // add a geojson source for the markers
     if (!initializedMap.getSource("markers")) {
       initializedMap.addSource("markers", {
         type: "geojson",
@@ -99,20 +97,20 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
           type: "FeatureCollection",
           features: features,
         },
-        cluster: true, // Enable clustering
-        clusterMaxZoom: 18, // Max zoom level where clusters will still occur
-        clusterRadius: 50, // Radius of each cluster when clustering points
+        cluster: true, // enable clustering
+        clusterMaxZoom: 18, // max zoom level where clusters will still occur
+        clusterRadius: 50, // radius of each cluster when clustering points
       });
     } else {
-      // Update the data if the source already exists
+      // update the data if the source already exists
       const source = initializedMap.getSource("markers") as mapboxgl.GeoJSONSource;
       source.setData({
         type: "FeatureCollection",
-        features: features,
+        features: features
       });
     }
 
-    // Add the clustered circles layer
+    // add the clustered circles layer
     if (!initializedMap.getLayer("clusters")) {
       initializedMap.addLayer({
         id: "clusters",
@@ -127,7 +125,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
             25,
             "#f1f075",
             50,
-            "#f28cb1",
+            "#f28cb1"
           ],
           "circle-radius": [
             "step",
@@ -136,13 +134,13 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
             25,
             30,
             50,
-            40,
+            40
           ],
         },
       });
     }
 
-    // Add the cluster count layer
+    // add the cluster count layer
     if (!initializedMap.getLayer("cluster-count")) {
       initializedMap.addLayer({
         id: "cluster-count",
@@ -152,12 +150,12 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
         layout: {
           "text-field": "{point_count_abbreviated}",
           "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-          "text-size": 12,
-        },
+          "text-size": 12
+        }
       });
     }
 
-    // Add the unclustered points layer
+    // add the unclustered points layer
     if (!initializedMap.getLayer("unclustered-point")) {
       initializedMap.addLayer({
         id: "unclustered-point",
@@ -168,15 +166,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
           "circle-color": ["get", "color"],
           "circle-radius": 8,
           "circle-stroke-width": 1,
-          "circle-stroke-color": "#fff",
-        },
+          "circle-stroke-color": "#fff"
+        }
       });
     }
 
-    // Add click event listener to zoom into clusters
+    // add click event listener to zoom into clusters
     initializedMap.on("click", "clusters", (e) => {
       const features = initializedMap.queryRenderedFeatures(e.point, {
-        layers: ["clusters"],
+        layers: ["clusters"]
       });
       const clusterId = features[0].properties!.cluster_id;
 
@@ -187,24 +185,24 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
 
           initializedMap.easeTo({
             center: (features[0].geometry as any).coordinates,
-            zoom: zoom!,
+            zoom: zoom!
           });
         }
       );
     });
 
-    // Add popup on unclustered point click
+    // add popup on unclustered point click
     initializedMap.on("click", "unclustered-point", (e) => {
       const coordinates = (e.features![0].geometry as any).coordinates.slice();
       const { title } = e.features![0].properties!;
 
-      new mapboxgl.Popup({className: "p-5 bg-red-200"})
+      new mapboxgl.Popup({ closeButton: false })
         .setLngLat(coordinates)
         .setHTML(`<h3>${title}</h3>`)
         .addTo(initializedMap);
     });
 
-    // Change the cursor to a pointer when over clusters or unclustered points
+    // change the cursor to a pointer when over clusters or unclustered points
     initializedMap.on("mouseenter", "clusters", () => {
       initializedMap.getCanvas().style.cursor = "pointer";
     });
@@ -218,7 +216,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
       initializedMap.getCanvas().style.cursor = "";
     });
   };
-
 
 
   useEffect(() => {
