@@ -22,5 +22,7 @@ uninstall.txt
 # WSL Zone Identifier files
 *.Identifier
 
-python_api/websocket/tests/test_http.py
-python_api/websocket/tests/test_http.py
+# websocket_client auto-generated files
+websocket/tests/test_http.py
+websocket/tests/test_http.py
+websocket_client-1.8.0.dist-info
