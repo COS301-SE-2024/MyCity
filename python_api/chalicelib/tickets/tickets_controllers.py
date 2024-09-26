@@ -317,7 +317,7 @@ def getMyTickets(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="username-index",
+            IndexName="username-dateOpened-index",
             KeyConditionExpression=Key("username").eq(tickets_data),
         )
         items = response["Items"]
@@ -360,7 +360,7 @@ def get_in_my_municipality(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="municipality_id-index",
+            IndexName="municipality_id-dateOpened-index",
             KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
@@ -410,7 +410,7 @@ def get_open_tickets_in_municipality(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="municipality_id-index",
+            IndexName="municipality_id-dateOpened-index",
             KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
@@ -809,7 +809,7 @@ def get_Open_Company_Tickets():
         collective = []
 
         response = tickets_table.query(
-            IndexName="municipality_id-index",
+            IndexName="municipality_id-dateOpened-index",
             KeyConditionExpression=Key("municipality_id").eq("Umdoni"),
             FilterExpression=Attr("upvotes").exists()
             & Attr("state").eq("Taking Tenders"),
