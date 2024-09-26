@@ -5,7 +5,7 @@ import TenderMax from "../Tenders/CompanyTenderMax";
 import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
-import { DidBid, getCompanyTenders } from "@/services/tender.service";
+import { DidBid, getCompanyTenders,getCompanyContract } from "@/services/tender.service";
 import dynamic from "next/dynamic";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
@@ -59,13 +59,13 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   urgency,
 }) => {
   const userProfile = useProfile();
-  const modalRef = useRef<HTMLDivElement>(null); // Create a ref for the modal
+  const modalRef = useRef<HTMLDivElement>(null);
   const [showTenderMax, setShowTenderMax] = useState(false);
   const [company, setCompany] = useState(String);
   const [showBid, setShowBid] = useState(false);
   const [hasBidded, setHasBidded] = useState(false);
   const [tender, setTender] = useState<any>(null);
-  const [reRender, setReRender] = useState(Boolean);
+  const [reRender, setReRender] = useState(false);
   const [mapKey, setMapKey] = useState(0);
   const [imageError, setImageError] = useState(false);
 
@@ -76,7 +76,6 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
       const user_session = String(user_data.current?.session_token);
       setCompany(user_company);
       const rsptenders = await DidBid(user_company, ticket_id, user_session);
-      console.log(rsptenders)
       if (rsptenders == null) {
         setHasBidded(false);
       } else {
@@ -95,7 +94,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        onClose(); // Close the modal when clicking outside
+        onClose();
       }
     }
 
@@ -120,9 +119,10 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
   const addressParts = address.split(",");
 
-  const handleTenderContractClick = () => {
+  const handleTenderContractClick = async () => {
+    const rspcontract = await getCompanyContract(company,)
     setReRender(false);
-    setShowTenderMax(true);
+    setShowTenderMax(true); // Trigger TenderMax to render
   };
 
   const handleBidClick = async () => {
@@ -244,6 +244,33 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showTenderMax && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="w-full h-full overflow-auto">
+            <TenderMax
+              contract_id={tender.contract_id}
+              status={tender.status}
+              companyname={tender.companyname}
+              contractdatetime={tender.contractdatetime}
+              finalCost={tender.finalCost}
+              finalDuration={tender.finalDuration}
+              ticketnumber={ticketNumber}
+              longitude={longitude}
+              latitude={latitude}
+              completedatetime={tender.completedatetime}
+              contractnumber={tender.contractnumber}
+              municipality={tender.municipality}
+              upload={tender.upload}
+              hasReportedCompletion={tender.hasReportedCompletion}
+              onClose={() => {
+                setShowTenderMax(false);
+                setReRender(true); // Re-render the main view when closing TenderMax
+              }}
+            />
           </div>
         </div>
       )}
