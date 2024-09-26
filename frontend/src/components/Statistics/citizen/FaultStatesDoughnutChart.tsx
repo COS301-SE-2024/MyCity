@@ -61,9 +61,9 @@ export default function FaultStatesDoughnutChart({ data }: FaultStatesDoughnutCh
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-lg h-[40vh]">
-      <h3 className="text-black text-2xl mb-4">Fault States</h3>
-      <div className="h-[90%]">
+    <div className="bg-white rounded-lg p-4 shadow-lg h-[38vh]">
+      <h2 className="text-2xl font-bold mb-4 text-center">Fault States</h2>
+      <div className="h-[80%]">
         <Doughnut data={donutChartData} options={{ maintainAspectRatio: false }} />
       </div>
     </div>
