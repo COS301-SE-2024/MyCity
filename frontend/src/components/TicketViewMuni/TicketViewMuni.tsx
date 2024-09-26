@@ -5,7 +5,7 @@ import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTableCompany/MuniTenders";
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
-import { getTicketTenders, getContract } from "@/services/tender.service";
+import { getTicketTenders, getContract,getMuniContract } from "@/services/tender.service";
 import { AcceptTicket, CloseTicket } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import Modal from "react-modal";
@@ -172,29 +172,12 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspgettenders = await getTicketTenders(
-        ticket_id,
-        user_session,
-        true
-      );
-      setTenders(rspgettenders);
-
-      if (!rspgettenders) return;
-
-      let tender_contract = "";
-      rspgettenders.forEach((item: { status: string; tender_id: string }) => {
-        if (item.status === "accepted" || item.status === "approved") {
-          tender_contract = item.tender_id;
-        }
-      });
-
-      if (!tender_contract) {
+      const response_contract = await getMuniContract(ticket_id,user_session);
+      
+      if (response_contract == null) {
         setShowTenderMax(false);
       } else {
-        const response_contract = await getContract(
-          tender_contract,
-          user_session
-        );
+       
         if (response_contract) {
           setContract(response_contract);
           setShowTenderMax(true);
@@ -214,6 +197,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     if (data == -2) {
       setTicketstatus("Closed");
       onClose(-2);
+    }
+    else if (data == - 1){
+      setTicketstatus("Taking Tenders");
+      onClose(-1);
     }
     setShowTenderMax(false);
   };
@@ -248,6 +235,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       setTicketstatus("In Progress");
       onClose(1);
     }
+    else onClose(0);
+
   };
 
   return (
@@ -257,7 +246,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         <div className="mt-4">
           <MuniTenders
             tenders={tenders}
-            onBack={() => setShowMuniTenders(false)}
+            onBack={handleBack}
           />
         </div>
       )}

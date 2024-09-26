@@ -1,42 +1,47 @@
-import { useMapbox } from "@/hooks/useMapbox";
 import { useProfile } from "@/hooks/useProfile";
+import { getMunicipalityCoordinates } from "@/services/municipalities.service";
 import { getTicketsGeoData } from "@/services/tickets.service";
+import { FaultGeoData, MunicipalityCoordinates } from "@/types/custom.types";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Rings } from "react-loader-spinner"; // Importing the Rings loader
 
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
+
 export default function FaultMapView() {
-  const faultMapContainer = useRef<HTMLDivElement>(null);
   const { getUserProfile } = useProfile();
   const [faultCount, setFaultCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [faultGeoData, setFaultGeoData] = useState<FaultGeoData[]>([]);
+  const [municipalityCoordinates, setMunicipalityCoordinates] = useState<MunicipalityCoordinates | null>(null);
 
   useEffect(() => {
-    // const loadFaultMap = async () => {
-    //   setLoading(true);
-    //   const userProfile = await getUserProfile();
-    //   const sessionToken = userProfile.current?.session_token;
+    const getFaultData = async () => {
+      setLoading(true);
+      const userProfile = await getUserProfile();
+      const sessionToken = userProfile.current?.session_token;
+      const municipality = userProfile.current?.municipality;
 
-    //   const faultGeodata = await getTicketsGeoData(sessionToken);
+      const [faultGeodata, municipalityCoordinates] = await Promise.all([
+        getTicketsGeoData(sessionToken),
+        getMunicipalityCoordinates(sessionToken, municipality)
+      ]);
 
-    //   if (faultMapContainer.current) {
-    //     await initialiseFaultMap(
-    //       faultMapContainer,
-    //       faultGeodata,
-    //       userProfile.current?.municipality
-    //     );
-    //   }
 
-    //   if (Array.isArray(faultGeodata)) {
-    //     setFaultCount(faultGeodata.length);
-    //   } else {
-    //     setFaultCount(0); // If no faults or an error occurs
-    //   }
-    //   setLoading(false);
-    // };
+      if (Array.isArray(faultGeodata)) {
+        setMunicipalityCoordinates(municipalityCoordinates);
+        setFaultCount(faultGeodata.length);
+        setFaultGeoData(faultGeodata);
+      } else {
+        setFaultCount(0); // If no faults or an error occurs
+      }
+      setLoading(false);
+    };
 
-    // loadFaultMap();
+    getFaultData();
   }, []);
-  // }, [getUserProfile, initialiseFaultMap]);
 
   return (
     <div>
@@ -72,11 +77,10 @@ export default function FaultMapView() {
             </div>
 
             {/* Map Section */}
-            <div className="w-full md:w-5/6 flex-grow">
-              <div
-                className="relative w-full h-full rounded-lg bg-gray-200"
-                ref={faultMapContainer}
-              ></div>
+            <div className="w-full md:w-5/6 flex-grow rounded-lg bg-gray-200">
+              {faultGeoData.length > 0 && (
+                <MapboxMap centerLng={Number(municipalityCoordinates?.longitude)} centerLat={Number(municipalityCoordinates?.latitude)} faultMarkers={faultGeoData} zoom={14} />
+              )}
             </div>
           </div>
         </div>
@@ -88,11 +92,8 @@ export default function FaultMapView() {
           <div className="flex flex-col md:flex-row w-full max-w-7xl h-[55vh] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
 
             {/* Map Section */}
-            <div className="w-full md:w-5/6 flex-grow">
-              <div
-                className="relative w-full h-full rounded-lg bg-gray-200"
-                ref={faultMapContainer}
-              ></div>
+            <div className="w-full md:w-5/6 flex-grow rounded-lg bg-gray-200">
+              <MapboxMap faultMarkers={faultGeoData} zoom={14} />
             </div>
 
             {/* Key Section */}
