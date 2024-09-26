@@ -194,24 +194,29 @@ def accept_tender(sender_data):
         expattrName = {"#status": "status"}
         expattrValue = {":r": "accepted"}
         response = updateTenderTable(tender_id, updateExp, expattrName, expattrValue)
-        response_tickets = tenders_table.scan(
-            FilterExpression=Attr("ticket_id").eq(ticket_id),
+        response_tickets = tenders_table.query(
+            IndexName="ticket_id-index",
+            KeyConditionExpression=Key("ticket_id").eq(ticket_id),
         )
         response_items = response_tickets["Items"]
-        if len(response_items) > 0:
-            for data in response_items:
-                if data["tender_id"] != tender_id:
-                    RejectexpattrValue = {":r": "rejected"}
-                    response_reject = updateTenderTable(
-                        data["tender_id"], updateExp, expattrName, RejectexpattrValue
-                    )
+        # if len(response_items) > 0:
+        #     for data in response_items:
+        #         if data["tender_id"] != tender_id:
+        #             RejectexpattrValue = {":r": "rejected"}
+        #             response_reject = updateTenderTable(
+        #                 data["tender_id"], updateExp, expattrName, RejectexpattrValue
+        #             )
 
         # editing ticket as well to In Progress
+        response_t = ticket_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_id)
+        )
+        ticket_change = response_t["Items"][0]
         ticket_updateExp = "set #state=:r"
         ticket_expattrName = {"#state": "state"}
         ticket_expattrValue = {":r": "In Progress"}
         response = ticket_table.update_item(
-            Key={"ticket_id": ticket_id},
+            Key={"ticket_id": ticket_id, "dateOpened": ticket_change["dateOpened"]},
             UpdateExpression=ticket_updateExp,
             ExpressionAttributeNames=ticket_expattrName,
             ExpressionAttributeValues=ticket_expattrValue,
