@@ -132,7 +132,7 @@ const TenderMax = ({
       const response_contract = await TerminateContract(tender.contract_id,user_session)
       console.log(response_contract)
       toast.success(`${dialog.action} action confirmed.`);
-      onClose(0); // Example: Terminate contract would also close the ticket
+      onClose(-1); // Example: Terminate contract would also close the ticket
     }
   };
 
