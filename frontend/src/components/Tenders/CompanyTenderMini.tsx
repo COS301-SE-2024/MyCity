@@ -26,10 +26,11 @@ interface TenderType {
 
 const statusStyles = {
   'under_review': 'border-blue-500 text-blue-500 bg-white',
-  'accepted': 'bg-green-200 text-green',
-  'approved': 'bg-green-200 text-green',
-  'rejected': 'bg-red-200 text-red',
-  'submitted': 'bg-gray-200 text-gray',
+  'accepted': 'bg-green-200 text-green-500',
+  'approved': 'bg-green-200 text-green-500',
+  'rejected': 'bg-red-200 text-red-500',
+  'submitted': 'bg-gray-200 text-gray-500',
+  'done' : 'bg-purple-200 text-purple'
 };
 
 export default function Tender({ tender }: { tender: TenderType }) {
@@ -57,6 +58,8 @@ export default function Tender({ tender }: { tender: TenderType }) {
         return "rejected";
       case "submitted":
         return "submitted";
+      case "done":
+        return "done";
       default:
         return "submitted";
     }

@@ -32,8 +32,8 @@ interface TenderType {
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-green bg-green-300 rounded-full",
-  closed: "text-red bg-red-300 rounded-full",
+  completed: "text-green-500 bg-green-300 rounded-full",
+  closed: "text-red-500 bg-red-300 rounded-full",
 };
 
 const TenderMax : React.FC<TenderType> = ({
