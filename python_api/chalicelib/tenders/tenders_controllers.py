@@ -630,6 +630,82 @@ def getTicketTender(ticket_id):
         return {"Status": "FAILED", "Error": error_message}
 
 
+# get contract checks through tenders
+def getMuniContract(ticket_id):
+    try:
+        if ticket_id == None or ticket_id == "":
+            error_response = {
+                "Error": {
+                    "Code": "IncorrectFields",
+                    "Message": f"Missing required query: tender",
+                }
+            }
+            raise ClientError(error_response, "InvalidFields")
+
+        resp_tender = tenders_table.query(
+            IndexName="ticket_id-index",
+            KeyConditionExpression=Key("ticket_id").eq(ticket_id),
+            FilterExpression=Attr("status").eq("approved")
+            | Attr("status").eq("accepted"),
+        )
+
+        if len(resp_tender["Items"]) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "TendersDontExists",
+                    "Message": f"Theres no tenders for this ticket",
+                }
+            }
+            raise ClientError(error_response, "InvalidFields")
+
+        tender = resp_tender["Items"][0]
+
+        reponse_contracts = contract_table.query(
+            IndexName="tender_id-index",
+            KeyConditionExpression=Key("tender_id").eq(tender["tender_id"]),
+        )
+
+        if len(reponse_contracts["Items"]) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "ContractDoesntExist",
+                    "Message": "Contract Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "ContractDoesntExist")
+
+        contracts_items = reponse_contracts["Items"][0]
+        response_tender = tenders_table.query(
+            KeyConditionExpression=Key("tender_id").eq(tender["tender_id"])
+        )
+
+        if len(response_tender["Items"]) <= 0:
+            error_response = {
+                "Error": {
+                    "Code": "TenderDoesntExist",
+                    "Message": "Tender Does not Exist",
+                }
+            }
+            raise ClientError(error_response, "TenderDoesntExist")
+
+        tender_itm = response_tender["Items"][0]
+        response_name = companies_table.query(
+            KeyConditionExpression=Key("pid").eq(tender_itm["company_id"])
+        )
+
+        if len(response_name["Items"]) <= 0:
+            contracts_items["companyname"] = "Xero Industries"
+        else:
+            companies = response_name["Items"][0]
+            comp_name = companies["name"]
+            contracts_items["companyname"] = comp_name
+        return contracts_items
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
 def getContracts(tender_id):
     try:
         if tender_id == None or tender_id == "":
