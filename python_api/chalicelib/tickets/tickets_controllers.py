@@ -218,7 +218,6 @@ def create_ticket(request):
             "message": "Ticket created successfully",
             "ticket_id": ticket_id,
             "watchlist_id": watchlist_id,
-    
         }
         ws.close()
         return format_response(float(200), accresponse)
