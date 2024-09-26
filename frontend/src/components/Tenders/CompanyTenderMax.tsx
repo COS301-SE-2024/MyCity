@@ -157,7 +157,7 @@ const TenderMax : React.FC<TenderType> = ({
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{finalCost.toFixed(2)}
+                <strong>Proposed Price:</strong> R{finalCost}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Estimated Duration:</strong> {finalDuration} days
@@ -182,7 +182,7 @@ const TenderMax : React.FC<TenderType> = ({
                 <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
                   Back
                 </button>
-                {tenderStatus === "in progress" ? (
+                {tenderStatus === "in progress" && (
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract
@@ -191,15 +191,7 @@ const TenderMax : React.FC<TenderType> = ({
                       Report Completion
                     </button>
                   </>
-                ) : (
-                  <>
-                    <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600" onClick={() => handleAction("Decline")}>
-                      Decline
-                    </button>
-                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600" onClick={() => handleAction("Accept")}>
-                      Accept
-                    </button>
-                  </>
+                
                 )}
               </div>
             </div>
