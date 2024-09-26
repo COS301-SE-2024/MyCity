@@ -35,7 +35,7 @@ interface StatusMappingType {
 const statusMapping: StatusMappingType = {
   'In Progress': 'Tender Contract',
   'Assigning Contract': 'Tender Contract',
-  Opened: 'View Tenders',
+  'Opened': 'View Tenders',
 };
 
 const statusStyles = {
@@ -94,6 +94,14 @@ export default function Record({ record }: { record: RecordType }) {
     }
   };
 
+  const truncateText = (text : any, maxLength : any) => {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + '...';
+    }
+    return text;
+  };
+  
+
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 
   useEffect(() => {
@@ -105,25 +113,35 @@ export default function Record({ record }: { record: RecordType }) {
   return (
     <>
       {/* Desktop View */}
-      <div className="hidden sm:block text-black">
-        <div
-          className="grid grid-cols-6 gap-4 text-black items-center mb-2 px-4 py-2 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
-          onClick={handleClick}
-        >
-          <div className="col-span-1 flex justify-center">{urgency.icon}</div>
-          <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
-          <div className="col-span-1 flex justify-center">{record.asset_id}</div>
-          <div className="col-span-1 flex justify-center">
-            <span className={`px-2 py-1 rounded ${statusStyles[getStatus(record.state)]}`}>
-              {record.state}
-            </span>
-          </div>
-          <div className="col-span-1 flex justify-center">{record.createdby}</div>
-          <div className="col-span-1 flex justify-center truncate overflow-hidden">
-            {record.address}
-          </div>
-        </div>
-      </div>
+      <div className="hidden sm:block text-black"> 
+  <div
+    className="grid grid-cols-6 gap-4 text-black items-center mb-2 px-4 py-2 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-opacity-80 transition-colors"
+    onClick={handleClick}
+  >
+    <div className="col-span-1 flex justify-center">{urgency.icon}</div>
+    <div className="col-span-1 flex justify-center font-bold">{record.ticketnumber}</div>
+    
+    {/* Asset ID - Make sure it's centered and truncated if too long */}
+    <div className="col-span-1 flex justify-center truncate">
+      {truncateText(record.asset_id, 17)} {/* Adjust max length */}
+    </div>
+
+    <div className="col-span-1 flex justify-center">
+      <span className={`px-2 py-1 rounded ${statusStyles[getStatus(record.state)]}`}>
+        {record.state} {/* Adjust max length if needed */}
+      </span>
+    </div>
+    
+    <div className="col-span-1 flex justify-center">{record.createdby}</div>
+
+    {/* Address - Ensure truncation happens from the right side */}
+    <div className="col-span-1 flex justify-center text-left truncate">
+      {truncateText(record.address, 20)} {/* Adjust max length */}
+    </div>
+  </div>
+</div>
+
+
 
       {/* Mobile View */}
       <div className="block sm:hidden">

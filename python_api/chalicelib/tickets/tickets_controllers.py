@@ -808,11 +808,11 @@ def get_Open_Company_Tickets():
     try:
         collective = []
 
-        response = tickets_table.scan(
+        response = tickets_table.query(
+            IndexName="municipality_id-index",
+            KeyConditionExpression=Key("municipality_id").eq("Umdoni"),
             FilterExpression=Attr("upvotes").exists()
-            & Attr("state").eq("Taking Tenders")
-            & Attr("municipality_id").ne("City of Johannesburg Metropolitan")
-            & Attr("municipality_id").ne("City of Cape Town Metropolitan")
+            & Attr("state").eq("Taking Tenders"),
         )
         items = response["Items"]
         sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)

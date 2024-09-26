@@ -42,7 +42,6 @@ export default function FaultMapView() {
 
     getFaultData();
   }, []);
-  // }, [getUserProfile, initialiseFaultMap]);
 
   return (
     <div>
