@@ -45,7 +45,7 @@ export const getUserProfile = async (ticketData: any[]) => {
 
             const responseMunicipality = await dynamoDBDocumentClient.send(
                 new GetCommand({
-                    TableName: "municipalities",
+                    TableName: MUNICIPALITIES_TABLE,
                     Key: {
                         "municipality_id": ticket.municipality_id
                     }

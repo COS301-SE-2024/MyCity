@@ -9,3 +9,16 @@ export const getAllMunicipalitiesList = async (req: Request, res: Response) => {
         return res.status(500).json({ Error: error.message });
     }
 };
+
+export const getMunicipalityCoordinates = async (req: Request, res: Response) => {
+    try {
+        const municipality = req.query["municipality"] as string;
+        if (!municipality) {
+            return res.status(400).json({ error: "Municipality Not Found" });
+        }
+        const response = await municipalitiesService.getMunicipalityCoordinates(municipality);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
