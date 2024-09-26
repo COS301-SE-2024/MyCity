@@ -731,7 +731,8 @@ def getMuniContract(ticket_id):
             IndexName="ticket_id-index",
             KeyConditionExpression=Key("ticket_id").eq(ticket_id),
             FilterExpression=Attr("status").eq("approved")
-            | Attr("status").eq("accepted"),
+            | Attr("status").eq("accepted")
+            | Attr("status").eq("completed"),
         )
 
         if len(resp_tender["Items"]) <= 0:
