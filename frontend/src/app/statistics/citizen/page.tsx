@@ -41,6 +41,7 @@ export default function StatisticsPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [defaultMunicipalitySet, setDefaultMunicipalitySet] = useState(false); // New flag for setting default municipality once
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,18 +50,19 @@ export default function StatisticsPage() {
         const userSession = user_data.current?.session_token;
         const userMunicipality = user_data.current?.municipality; // Fetch user's municipality
 
-        if (userMunicipality) {
+        // Set the default municipality only if it hasn't been set yet
+        if (userMunicipality && !defaultMunicipalitySet) {
           setSelectedMunicipality(userMunicipality); // Set the default municipality to the user's
+          setDefaultMunicipalitySet(true); // Mark default municipality as set
         }
 
+        // Fetch data only if we have a selected municipality
         if (userSession && selectedMunicipality) {
           const result = await getTicketsPerMunicipality(
             selectedMunicipality,
             userSession
           );
           setData(result[0]); // Assuming result is an array and we need the first element
-        } else {
-          throw new Error("User is not authenticated");
         }
       } catch (error: any) {
         setError(error.message);
@@ -70,12 +72,12 @@ export default function StatisticsPage() {
     };
 
     fetchData();
-  }, [selectedMunicipality, userProfile]); // Ensure selectedMunicipality is updated after fetching profile
+  }, [selectedMunicipality, userProfile]); // Fetch data only when selectedMunicipality or userProfile changes
 
   if (loading) {
     return (
       <div>
-        <div className="h-screen w-screen">
+        <div className="h-screen w-screen overflow-hidden">
           <Navbar />
           <div
             style={{
@@ -101,7 +103,7 @@ export default function StatisticsPage() {
 
   // Safely check if `data` exists before rendering the charts
   return (
-    <div className="h-screen w-screen">
+    <div className="h-screen w-screen overflow-hidden">
       <Navbar />
 
       <div

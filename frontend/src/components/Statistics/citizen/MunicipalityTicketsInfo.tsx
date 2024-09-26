@@ -33,7 +33,7 @@ const MunicipalityTicketsInfo: React.FC<MunicipalityTicketsInfoProps> = ({
       />
 
       {/* Municipality Name */}
-      <h2 className="text-3xl font-bold mb-2">{municipalityName}</h2>
+      <h2 className="text-3xl font-bold mb-2 text-center">{municipalityName}</h2>
 
       {/* Total Tickets */}
       <p className="text-xl font-semibold">Total Tickets: {totalTickets}</p>
