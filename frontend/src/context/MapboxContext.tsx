@@ -129,7 +129,6 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
         }
     };
 
-
     const initialiseFaultMap = async (faultMapContainerRef: React.RefObject<HTMLDivElement>, faultGeodata: FaultGeoData[], municipality?: string) => {
         if (faultMap.current) {
             // faultMap.current.resize();
