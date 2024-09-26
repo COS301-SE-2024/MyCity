@@ -2,7 +2,9 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import CreateTicket from "@/app/create-ticket/municipality/page";
 import '@testing-library/jest-dom';
 
-// Mock components used in CreateTicket
+/*
+Mocked components
+*/
 jest.mock("../../../src/components/CreateTicket/CreateTicketComp", () => () => (
   <div data-testid="create-ticket-comp">Create Ticket Component</div>
 ));
@@ -18,6 +20,10 @@ describe("CreateTicket Municipality Component", () => {
     jest.clearAllMocks();
   });
 
+
+    /*
+  Desktop view testing that the page loads
+  */
   test("renders the CreateTicket component correctly on desktop view", () => {
     // Render the component in desktop view
     render(<CreateTicket />);
@@ -40,6 +46,10 @@ describe("CreateTicket Municipality Component", () => {
     expect(helpButton).toBeInTheDocument();
   });
 
+
+    /*
+  Mobile view testing that the page loads
+  */
   test("renders the CreateTicket component correctly on mobile view", () => {
     // Mock the window size for mobile view
     global.innerWidth = 375; // iPhone screen size
@@ -62,6 +72,10 @@ describe("CreateTicket Municipality Component", () => {
     expect(heading).toHaveClass("text-center");
   });
 
+
+    /*
+  Help button visibility
+  */
   test("opens and closes the help menu when the help button is clicked", () => {
     render(<CreateTicket />);
 
@@ -83,6 +97,10 @@ describe("CreateTicket Municipality Component", () => {
     expect(screen.queryByTestId("help")).not.toBeInTheDocument();
   });
 
+
+    /*
+  Notifications
+  */
   test("displays unread notifications in the NavbarMunicipality", () => {
     render(<CreateTicket />);
 
@@ -91,6 +109,10 @@ describe("CreateTicket Municipality Component", () => {
     expect(navbarMunicipality).toHaveTextContent(/Unread: [1-9][0-9]*/);
   });
 
+
+    /*
+  Background loads
+  */
   test("renders the background image", () => {
     render(<CreateTicket />);
     
