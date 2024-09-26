@@ -30,7 +30,7 @@ export default function MunicipalitySelector({
 
   return (
     <div className="flex items-center w-full">
-      <label className="text-white text-xl w-[40%] mr-4">
+      <label className="text-white text-xl w-[40%] mr-4 text-right">
         Select Municipality:
       </label>
       <select
