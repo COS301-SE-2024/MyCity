@@ -1,6 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
-from chalice import BadRequestError, Response
+from chalice import Response
 import json
 
 dynamodb = boto3.resource("dynamodb")
@@ -33,6 +33,20 @@ def get_all_municipalities():
         ]
 
         return format_response(200, municipalities_list)
+
+    except ClientError as e:
+        error_message = e.response["Error"]["Message"]
+        return {"Status": "FAILED", "Error": error_message}
+
+
+def get_municipality_coordinates(municipality):
+    try:
+        response = municipalities_table.get_item(
+            Key={"municipality_id": municipality},
+            ProjectionExpression="latitude, longitude",
+        )
+        coordinates = response.get("Item", None)
+        return coordinates
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
