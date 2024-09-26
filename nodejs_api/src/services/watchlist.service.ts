@@ -1,7 +1,6 @@
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { dynamoDBDocumentClient, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
-import { capitaliseUserEmail } from "../utils/tickets.utils";
 
 export const searchWatchlist = async (searchTerm: string) => {
     searchTerm = validateSearchTerm(searchTerm);
@@ -10,7 +9,7 @@ export const searchWatchlist = async (searchTerm: string) => {
             TableName: WATCHLIST_TABLE,
             FilterExpression: "contains(user_id, :searchTerm)",
             ExpressionAttributeValues: {
-                ":searchTerm": capitaliseUserEmail(searchTerm)
+                ":searchTerm": searchTerm
             }
         }));
         const items = response.Items || [];

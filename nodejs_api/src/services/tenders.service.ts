@@ -408,7 +408,7 @@ export const getMunicipalityTenders = async (municipality: string) => {
 
     const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TICKETS_TABLE,
-        IndexName: "municipality_id-index",
+        IndexName: "municipality_id-dateOpened-index",
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
             ":municipality_id": municipality

@@ -1,7 +1,7 @@
 import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
-import { capitaliseUserEmail, doesTicketExist, generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
+import { doesTicketExist, generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 
 interface Ticket {
@@ -241,10 +241,10 @@ export const getMyTickets = async (username: string | null) => {
 
     const queryCommand = new QueryCommand({
         TableName: TICKETS_TABLE,
-        IndexName: "username-index",
+        IndexName: "username-dateOpened-index",
         KeyConditionExpression: "username = :username",
         ExpressionAttributeValues: {
-            ":username": capitaliseUserEmail(username)
+            ":username": username
         },
     });
 
@@ -277,7 +277,7 @@ export const getInMyMunicipality = async (municipality: string | null) => {
 
     const queryCommand = new QueryCommand({
         TableName: TICKETS_TABLE,
-        IndexName: "municipality_id-index",
+        IndexName: "municipality_id-dateOpened-index",
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
             ":municipality_id": municipality
@@ -316,7 +316,7 @@ export const getOpenTicketsInMunicipality = async (municipality: string | null) 
     const response = await dynamoDBDocumentClient.send(
         new QueryCommand({
             TableName: TICKETS_TABLE,
-            IndexName: "municipality_id-index",
+            IndexName: "municipality_id-dateOpened-index",
             KeyConditionExpression: "municipality_id = :municipality_id",
             FilterExpression: "#state = :state",
             ExpressionAttributeNames: {
@@ -356,7 +356,7 @@ export const getWatchlist = async (userId: string) => {
         TableName: WATCHLIST_TABLE,
         KeyConditionExpression: "user_id = :user_id",
         ExpressionAttributeValues: {
-            ":user_id": capitaliseUserEmail(userId)
+            ":user_id": userId
         }
     }));
 
