@@ -8,7 +8,11 @@ import FaultStatesDoughnutChart from "@/components/Statistics/municipality/Fault
 import TopAssetsProgress from "@/components/Statistics/municipality/TopAssetsProgress";
 import MunicipalityRank from "@/components/Statistics/municipality/MunicipalityRank";
 import MunicipalityTicketsInfo from "@/components/Statistics/municipality/MunicipalityTicketsInfo";
-import { getTicketsPerMunicipality } from "@/services/analytics.service";
+import InhouseVsExternalPieChart from "@/components/Statistics/municipality/InhouseVsExternalPieChart";
+import {
+  getTicketsPerMunicipality,
+  getContractsPerServiceProvider,
+} from "@/services/analytics.service";
 import { useProfile } from "@/hooks/useProfile";
 import {
   Chart as ChartJS,
@@ -34,13 +38,16 @@ ChartJS.register(
   Legend
 );
 
-export default function municipalityStatisticsPage() {
+export default function MunicipalityStatisticsPage() {
   const userProfile = useProfile();
   const [selectedMunicipality, setSelectedMunicipality] = useState<string>(""); // Start with empty state
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [defaultMunicipalitySet, setDefaultMunicipalitySet] = useState(false); // New flag for setting default municipality once
+  const [currentPage, setCurrentPage] = useState<number>(1); // State for pagination
+  const [inhouseContracts, setInhouseContracts] = useState<number>(0);
+  const [totalContracts, setTotalContracts] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,9 +69,24 @@ export default function municipalityStatisticsPage() {
             userSession
           );
           setData(result[0]); // Assuming result is an array and we need the first element
+
+          console.log(selectedMunicipality + " - Inhouse");
+          // Fetch contracts per service provider
+          const contractsData = await getContractsPerServiceProvider(
+            selectedMunicipality + " - Inhouse",
+            userSession
+          );
+
+          console.log(contractsData);
+          
+          const inhouse = contractsData.reduce(
+            (acc: number, contract: any) => acc + (contract.contracts || 0),
+            0
+          );
+
+          setInhouseContracts(inhouse);
+          setTotalContracts(result[0]?.tickets || 0); // Assuming total contracts equals total tickets
         }
-
-
       } catch (error: any) {
         setError(error.message);
       } finally {
@@ -97,10 +119,20 @@ export default function municipalityStatisticsPage() {
             }}
           ></div>
         </div>
-        ;
       </div>
     );
   }
+
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  // Calculate external contracts
+  const externalContracts = totalContracts - inhouseContracts;
 
   // Safely check if `data` exists before rendering the charts
   return (
@@ -131,39 +163,109 @@ export default function municipalityStatisticsPage() {
               Statistics Dashboard
             </h1>
           </div>
+          <div className="flex w-[50%] justify-center mt-4">
+            {currentPage > 1 && (
+              <button
+                className="px-4 py-2 bg-gray-500 text-white rounded-full"
+                onClick={handlePrevPage}
+              >
+                Previous Page
+              </button>
+            )}
+            {currentPage < 2 && (
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-full"
+                onClick={handleNextPage}
+              >
+                Next Page
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="w-[80%] h-[80vh] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-            <div className="flex gap-4">
-              {data && (
-                <>
-                  <MunicipalityTicketsInfo
-                    municipalityName={data.municipality_id}
-                    totalTickets={data.tickets}
-                    citizens={data.citizens}
+            {currentPage === 1 && (
+              <>
+                <div className="flex gap-4">
+                  {data && (
+                    <>
+                      <MunicipalityTicketsInfo
+                        municipalityName={data.municipality_id}
+                        totalTickets={data.tickets}
+                        citizens={data.citizens}
+                      />
+                      <MunicipalityRank
+                        rank={data.rank}
+                        stateRank={data.state_rank}
+                        costRank={data.cost_rank}
+                        timeRank={data.time_rank}
+                      />
+                    </>
+                  )}
+                </div>
+
+                <div className="flex gap-4">
+                  <InhouseVsExternalPieChart
+                    inhouse={inhouseContracts}
+                    external={externalContracts}
                   />
-                  <MunicipalityRank
-                    rank={data.rank}
-                    stateRank={data.state_rank}
-                    costRank={data.cost_rank}
-                    timeRank={data.time_rank}
-                  />
-                </>
-              )}
-            </div>
-            {data?.by_date && <ReportsOverTimeBarChart data={data.by_date} />}
-            {data?.by_asset && <FaultCategoryPieChart data={data.by_asset} />}
-            <div className="w-full flex gap-4">
-              <div className="w-1/2">
-                {data?.by_state && (
-                  <FaultStatesDoughnutChart data={data.by_state} />
+                </div>
+
+                {data?.by_asset && (
+                  <FaultCategoryPieChart data={data.by_asset} />
                 )}
-              </div>
-              <div className="w-1/2">
-                <TopAssetsProgress data={data} />
-              </div>
-            </div>
+                <div className="w-full flex gap-4">
+                  <div className="w-1/2">
+                    {data?.by_state && (
+                      <FaultStatesDoughnutChart data={data.by_state} />
+                    )}
+                  </div>
+                  <div className="w-1/2">
+                    <TopAssetsProgress data={data} />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {currentPage === 2 && (
+              <>
+                {/* Simulate page 2 with the same data */}
+                <div className="flex gap-4">
+                  {data && (
+                    <>
+                      <MunicipalityTicketsInfo
+                        municipalityName={data.municipality_id}
+                        totalTickets={data.tickets}
+                        citizens={data.citizens}
+                      />
+                      <MunicipalityRank
+                        rank={data.rank}
+                        stateRank={data.state_rank}
+                        costRank={data.cost_rank}
+                        timeRank={data.time_rank}
+                      />
+                    </>
+                  )}
+                </div>
+                {data?.by_date && (
+                  <ReportsOverTimeBarChart data={data.by_date} />
+                )}
+                {data?.by_asset && (
+                  <FaultCategoryPieChart data={data.by_asset} />
+                )}
+                <div className="w-full flex gap-4">
+                  <div className="w-1/2">
+                    {data?.by_state && (
+                      <FaultStatesDoughnutChart data={data.by_state} />
+                    )}
+                  </div>
+                  <div className="w-1/2">
+                    <TopAssetsProgress data={data} />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>
