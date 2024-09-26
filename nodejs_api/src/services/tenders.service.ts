@@ -1,5 +1,5 @@
-import { PutItemCommand, QueryCommand, ScanCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
-import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { ClientError } from "../types/error.types";
 import { generateId, getCompanyIDFromName } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
@@ -48,13 +48,15 @@ export const createTender = async (senderData: TenderData) => {
     }
 
     const companyId = companyPid;
-    const responseCheck = await dynamoDBClient.send(new ScanCommand({
+    const responseCheck = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
+        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":company_id": { S: companyId },
-            ":ticket_id": { S: senderData.ticket_id },
-        },
+            ":company_id": companyId,
+            ":ticket_id": senderData.ticket_id
+        }
     }));
 
     if (responseCheck.Items && responseCheck.Items.length > 0) {
@@ -74,18 +76,18 @@ export const createTender = async (senderData: TenderData) => {
     const tenderId = generateId();
 
     const tenderItem = {
-        tender_id: { S: tenderId },
-        company_id: { S: companyId },
-        datetimefinalised: { S: "<empty>" },
-        datetimereviewed: { S: "<empty>" },
-        datetimesubmitted: { S: submittedTime },
-        estimatedTimeHours: { N: estimatedTime.toString() },
-        quote: { N: quote.toString() },
-        status: { S: "submitted" },
-        ticket_id: { S: senderData.ticket_id },
+        tender_id: tenderId,
+        company_id: companyId,
+        datetimefinalised: "<empty>",
+        datetimereviewed: "<empty>",
+        datetimesubmitted: submittedTime,
+        estimatedTimeHours: estimatedTime.toString(),
+        quote: quote.toString(),
+        status: "submitted",
+        ticket_id: senderData.ticket_id
     };
 
-    await dynamoDBClient.send(new PutItemCommand({
+    await dynamoDBDocumentClient.send(new PutCommand({
         TableName: TENDERS_TABLE,
         Item: tenderItem,
     }));
@@ -96,7 +98,6 @@ export const createTender = async (senderData: TenderData) => {
         tender_id: tenderId,
     };
 };
-
 
 export const inReview = async (senderData: InReviewData) => {
     const requiredFields = ["company_name", "ticket_id"];
@@ -125,12 +126,14 @@ export const inReview = async (senderData: InReviewData) => {
     }
 
     const companyId = companyPid;
-    const responseTender = await dynamoDBClient.send(new ScanCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
+        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":company_id": { S: companyId },
-            ":ticket_id": { S: senderData.ticket_id },
+            ":company_id": companyId,
+            ":ticket_id": senderData.ticket_id
         },
     }));
 
@@ -145,14 +148,14 @@ export const inReview = async (senderData: InReviewData) => {
         throw new ClientError(errorResponse, "TenderDoesntExist");
     }
 
-    const tenderId = tenderItems[0].tender_id.S!;
+    const tenderId = tenderItems[0].tender_id;
     const currentTime = new Date();
     const reviewedTime = currentTime.toISOString();
     const updateExp = "set #status = :r, datetimereviewed = :p";
     const expattrName = { "#status": "status" };
     const expattrValue = {
-        ":r": { S: "under review" },
-        ":p": { S: reviewedTime },
+        ":r": "under review",
+        ":p": reviewedTime,
     };
 
     const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
@@ -170,7 +173,6 @@ export const inReview = async (senderData: InReviewData) => {
     }
 };
 
-
 export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     const requiredFields = ["company_id", "ticket_id"];
 
@@ -186,12 +188,14 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         }
     }
 
-    const responseTender = await dynamoDBClient.send(new ScanCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
+        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":company_id": { S: senderData.company_id },
-            ":ticket_id": { S: senderData.ticket_id },
+            ":company_id": senderData.company_id,
+            ":ticket_id": senderData.ticket_id
         },
     }));
 
@@ -206,28 +210,30 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         throw new ClientError(errorResponse, "TenderDoesntExist");
     }
 
-    const tenderId = tenderItems[0].tender_id.S!;
-    const ticketId = tenderItems[0].ticket_id.S!;
+    const tenderId = tenderItems[0].tender_id;
+    const ticketId = tenderItems[0].ticket_id;
     const updateExp = "set #status = :r";
     const expattrName = { "#status": "status" };
-    const expattrValue = { ":r": { S: "accepted" } };
+    const expattrValue = { ":r": "accepted" };
 
     const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
 
-    const responseTickets = await dynamoDBClient.send(new ScanCommand({
+    const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
+        IndexName: "ticket_id-index",
+        KeyConditionExpression: "ticket_id = :ticket_id",
         FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":ticket_id": { S: ticketId },
-        },
+            ":ticket_id": ticketId
+        }
     }));
 
     const responseItems = responseTickets.Items;
     if (responseItems && responseItems.length > 0) {
         for (const data of responseItems) {
-            if (data.tender_id.S !== tenderId) {
-                const rejectExpattrValue = { ":r": { S: "rejected" } };
-                const responseReject = await updateTenderTable(data.tender_id.S!, updateExp, expattrName, rejectExpattrValue);
+            if (data.tender_id !== tenderId) {
+                const rejectExpattrValue = { ":r": "rejected" };
+                const responseReject = await updateTenderTable(data.tender_id, updateExp, expattrName, rejectExpattrValue);
             }
         }
     }
@@ -235,10 +241,10 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     // Editing ticket as well to In Progress
     const ticketUpdateExp = "set #state = :r";
     const ticketExpattrName = { "#state": "state" };
-    const ticketExpattrValue = { ":r": { S: "In Progress" } };
-    await dynamoDBClient.send(new UpdateItemCommand({
+    const ticketExpattrValue = { ":r": "In Progress" };
+    await dynamoDBDocumentClient.send(new UpdateCommand({
         TableName: TICKETS_TABLE,
-        Key: { ticket_id: { S: ticketId } },
+        Key: { ticket_id: ticketId },
         UpdateExpression: ticketUpdateExp,
         ExpressionAttributeNames: ticketExpattrName,
         ExpressionAttributeValues: ticketExpattrValue,
@@ -247,21 +253,21 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     // Creating contract once tender is accepted
     const currentTime = new Date();
     const submittedTime = currentTime.toISOString();
-    const quote = Number(tenderItems[0].quote.N);
+    const quote = Number(tenderItems[0].quote);
     const contractId = generateId();
     const contractItem = {
-        contract_id: { S: contractId },
-        completedatetime: { S: "<empty>" },
-        contractdatetime: { S: submittedTime },
-        finalCost: { N: quote.toString() },
-        finalDuration: { S: "" },
-        paymentdatetime: { S: submittedTime },
-        startdatetime: { S: submittedTime },
-        status: { S: "in progress" },
-        tender_id: { S: tenderId },
+        contract_id: contractId,
+        completedatetime: "<empty>",
+        contractdatetime: submittedTime,
+        finalCost: quote.toString(),
+        finalDuration: "",
+        paymentdatetime: submittedTime,
+        startdatetime: submittedTime,
+        status: "in progress",
+        tender_id: tenderId
     };
 
-    await dynamoDBClient.send(new PutItemCommand({
+    await dynamoDBDocumentClient.send(new PutCommand({
         TableName: CONTRACT_TABLE,
         Item: contractItem,
     }));
@@ -272,9 +278,6 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         Contract_id: contractId,
     };
 };
-
-
-
 
 export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
     const requiredFields = ["company_id", "ticket_id"];
@@ -291,12 +294,14 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
         }
     }
 
-    const responseTender = await dynamoDBClient.send(new ScanCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "company_id = :company_id AND ticket_id = :ticket_id",
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
+        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":company_id": { S: senderData.company_id },
-            ":ticket_id": { S: senderData.ticket_id },
+            ":company_id": senderData.company_id,
+            ":ticket_id": senderData.ticket_id
         },
     }));
 
@@ -311,10 +316,10 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
         throw new ClientError(errorResponse, "TenderDoesntExist");
     }
 
-    const tenderId = tenderItems[0].tender_id.S!;
+    const tenderId = tenderItems[0].tender_id;
     const updateExp = "set #status = :r";
     const expattrName = { "#status": "status" };
-    const expattrValue = { ":r": { S: "rejected" } };
+    const expattrValue = { ":r": "rejected" };
 
     const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
 
@@ -334,8 +339,6 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
     }
 };
 
-
-
 export const completeContract = async (senderData: { contract_id: string }) => {
     const requiredFields = ["contract_id"];
 
@@ -351,11 +354,11 @@ export const completeContract = async (senderData: { contract_id: string }) => {
         }
     }
 
-    const responseContract = await dynamoDBClient.send(new ScanCommand({
+    const responseContract = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: CONTRACT_TABLE,
-        FilterExpression: "contract_id = :contract_id",
+        KeyConditionExpression: "contract_id = :contract_id",
         ExpressionAttributeValues: {
-            ":contract_id": { S: senderData.contract_id },
+            ":contract_id": senderData.contract_id
         },
     }));
 
@@ -372,7 +375,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
 
     const updateExp = "set #status = :r";
     const expattrName = { "#status": "status" };
-    const expattrValue = { ":r": { S: "completed" } };
+    const expattrValue = { ":r": "completed" };
 
     const response = await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
 
@@ -392,8 +395,6 @@ export const completeContract = async (senderData: { contract_id: string }) => {
     }
 };
 
-
-
 export const getMunicipalityTenders = async (municipality: string) => {
     if (!municipality) {
         const errorResponse = {
@@ -405,12 +406,12 @@ export const getMunicipalityTenders = async (municipality: string) => {
         throw new ClientError(errorResponse, "InvalidFields");
     }
 
-    const responseTickets = await dynamoDBClient.send(new QueryCommand({
+    const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TICKETS_TABLE,
-        IndexName: "municipality_id-index",
+        IndexName: "municipality_id-dateOpened-index",
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
-            ":municipality_id": { S: municipality },
+            ":municipality_id": municipality
         },
     }));
 
@@ -428,18 +429,19 @@ export const getMunicipalityTenders = async (municipality: string) => {
     const tickets = responseTickets.Items;
 
     for (const item of tickets) {
-        const responseTender = await dynamoDBClient.send(new ScanCommand({
+        const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
             TableName: TENDERS_TABLE,
-            FilterExpression: "ticket_id = :ticket_id",
+            IndexName: "ticket_id-index",
+            KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
-                ":ticket_id": { S: item.ticket_id.S || "" },
-            },
+                ":ticket_id": item.ticket_id || ""
+            }
         }));
 
         if (responseTender.Items && responseTender.Items.length > 0) {
-            assignMuni(responseTender.Items);
-            assignLongLat(responseTender.Items);
-            assignCompanyName(responseTender.Items);
+            await assignMuni(responseTender.Items);
+            await assignLongLat(responseTender.Items);
+            await assignCompanyName(responseTender.Items);
             collective.push(...responseTender.Items);
         }
     }
@@ -469,18 +471,19 @@ export const getCompanyTenders = async (company_name: string) => {
         throw new ClientError(errorResponse, "CompanyDoesntExist");
     }
 
-    const responseTenders = await dynamoDBClient.send(new ScanCommand({
+    const responseTenders = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "company_id = :company_id",
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
         ExpressionAttributeValues: {
-            ":company_id": { S: companyId },
+            ":company_id": companyId
         },
     }));
 
     const items = responseTenders.Items || [];
-    assignCompanyName(items);
-    assignLongLat(items);
-    assignMuni(items);
+    await assignCompanyName(items);
+    await assignLongLat(items);
+    await assignMuni(items);
 
     return items;
 };
@@ -496,11 +499,12 @@ export const getTicketTender = async (ticket_id: string) => {
         throw new ClientError(errorResponse, "InvalidFields");
     }
 
-    const responseTender = await dynamoDBClient.send(new ScanCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "ticket_id = :ticket_id",
+        IndexName: "ticket_id-index",
+        KeyConditionExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":ticket_id": { S: ticket_id },
+            ":ticket_id": ticket_id
         },
     }));
 
@@ -515,9 +519,9 @@ export const getTicketTender = async (ticket_id: string) => {
         throw new ClientError(errorResponse, "TenderDoesntExist");
     }
 
-    assignCompanyName(items);
-    assignLongLat(items);
-    assignMuni(items);
+    await assignCompanyName(items);
+    await assignLongLat(items);
+    await assignMuni(items);
 
     return items;
 };
@@ -533,11 +537,12 @@ export const getContracts = async (tender_id: string) => {
         throw new ClientError(errorResponse, "InvalidFields");
     }
 
-    const responseContracts = await dynamoDBClient.send(new ScanCommand({
+    const responseContracts = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: CONTRACT_TABLE,
-        FilterExpression: "tender_id = :tender_id",
+        IndexName: "tender_id-index",
+        KeyConditionExpression: "tender_id = :tender_id",
         ExpressionAttributeValues: {
-            ":tender_id": { S: tender_id },
+            ":tender_id": tender_id
         },
     }));
 
@@ -552,11 +557,11 @@ export const getContracts = async (tender_id: string) => {
         throw new ClientError(errorResponse, "ContractDoesntExist");
     }
 
-    const responseTender = await dynamoDBClient.send(new QueryCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
         KeyConditionExpression: "tender_id = :tender_id",
         ExpressionAttributeValues: {
-            ":tender_id": { S: tender_id },
+            ":tender_id": tender_id
         },
     }));
 
@@ -572,20 +577,20 @@ export const getContracts = async (tender_id: string) => {
     }
 
     const tenderItem = tenderItems[0];
-    const responseName = await dynamoDBClient.send(new QueryCommand({
+    const responseName = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: COMPANIES_TABLE,
         KeyConditionExpression: "pid = :pid",
         ExpressionAttributeValues: {
-            ":pid": { S: tenderItem.company_id.S! },
+            ":pid": tenderItem.company_id
         },
     }));
 
     const companyItems = responseName.Items || [];
     if (companyItems.length === 0) {
-        contractItems[0].companyname = { S: "Xero Industries" };
+        contractItems[0].companyname = "Xero Industries";
     } else {
         const company = companyItems[0];
-        contractItems[0].companyname = { S: company.name.S || "Unknown Company" };
+        contractItems[0].companyname = company.name || "Unknown Company";
     }
 
     return contractItems[0];
@@ -615,11 +620,12 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
         throw new ClientError(errorResponse, "CompanyDoesntExist");
     }
 
-    const responseContracts = await dynamoDBClient.send(new ScanCommand({
+    const responseContracts = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: CONTRACT_TABLE,
-        FilterExpression: "tender_id = :tender_id",
+        IndexName: "tender_id-index",
+        KeyConditionExpression: "tender_id = :tender_id",
         ExpressionAttributeValues: {
-            ":tender_id": { S: tender_id },
+            ":tender_id": tender_id
         },
     }));
 
@@ -634,13 +640,13 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
         throw new ClientError(errorResponse, "ContractDoesntExist");
     }
 
-    const responseTender = await dynamoDBClient.send(new QueryCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
         KeyConditionExpression: "tender_id = :tender_id",
         FilterExpression: "company_id = :company_id",
         ExpressionAttributeValues: {
-            ":tender_id": { S: tender_id },
-            ":company_id": { S: companyId },
+            ":tender_id": tender_id,
+            ":company_id": companyId
         },
     }));
 
@@ -656,20 +662,20 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
     }
 
     const tenderItem = tenderItems[0];
-    const responseName = await dynamoDBClient.send(new QueryCommand({
+    const responseName = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: COMPANIES_TABLE,
         KeyConditionExpression: "pid = :pid",
         ExpressionAttributeValues: {
-            ":pid": { S: tenderItem.company_id.S! },
+            ":pid": tenderItem.company_id
         },
     }));
 
     const companyItems = responseName.Items || [];
     if (companyItems.length === 0) {
-        contractItems[0].companyname = { S: "Xero Industries" };
+        contractItems[0].companyname = "Xero Industries";
     } else {
         const company = companyItems[0];
-        contractItems[0].companyname = { S: company.name.S || "Unknown Company" };
+        contractItems[0].companyname = company.name || "Unknown Company";
     }
 
     return contractItems[0];

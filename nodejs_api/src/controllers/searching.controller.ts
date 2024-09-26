@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import * as searchingService from "../services/searching.service";
 import { BadRequestError } from "../types/error.types";
 
-
 export const searchTickets = async (req: Request, res: Response) => {
     try {
         const queryParams = req.query;
