@@ -63,18 +63,20 @@ export const assignCompanyName = async (data: any[]) => {
 
 export const assignLongLat = async (data: any[]) => {
     for (const item of data) {
-        const response = await dynamoDBDocumentClient.send(new GetCommand({
+        const response = await dynamoDBDocumentClient.send(new QueryCommand({
             TableName: TICKETS_TABLE,
-            Key: {
-                "ticket_id": item.ticket_id
-            }
+            KeyConditionExpression: "ticket_id = :ticket_id",
+            ExpressionAttributeValues: {
+                ":ticket_id": item.ticket_id
+            },
+            ProjectionExpression: "longitude, latitude, ticketnumber"
         }));
 
-        if (!response.Item) {
+        if (!response.Items || response.Items.length <= 0) {
             item.longitude = "26.5623685320641";
             item.latitude = "-32.90383";
         } else {
-            const ticket = response.Item;
+            const ticket = response.Items[0];
             item.longitude = ticket.longitude;
             item.latitude = ticket.latitude;
             item.ticketnumber = ticket.ticketnumber;

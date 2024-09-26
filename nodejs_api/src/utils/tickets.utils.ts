@@ -71,25 +71,6 @@ export const getUserProfile = async (ticketData: any[]) => {
     }
 };
 
-export const doesTicketExist = async (ticket_id: string) => {
-    try {
-        const checking_ticket = await dynamoDBDocumentClient.send(
-            new GetCommand({
-                TableName: TICKETS_TABLE,
-                Key: {
-                    "ticket_id": ticket_id
-                }
-            })
-        );
-
-        return checking_ticket.Item ? true : false;
-
-    } catch (error: any) {
-        console.error("An error occurred:", error);
-        return false;
-    }
-};
-
 export const convertDecimalToFloat = (obj: any) => {
     if (obj instanceof Number) {
         return parseFloat(obj.toString());
@@ -106,13 +87,14 @@ export const validateTicketId = (ticketId: string): string => {
     return ticketId;
 };
 
-export const updateTicketTable = async (ticket_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
+export const updateTicketTable = async (ticket_id: string, ticketDateOpened: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
         const response = await dynamoDBDocumentClient.send(
             new UpdateCommand({
                 TableName: TICKETS_TABLE,
                 Key: {
-                    ticket_id: ticket_id
+                    ticket_id: ticket_id,
+                    dateOpened: ticketDateOpened
                 },
                 UpdateExpression: update_expression,
                 ExpressionAttributeNames: expression_attribute_names,
@@ -270,6 +252,28 @@ export const capitaliseUserEmail = (email: string): string => {
     const result = capitalisedNamePart + "@" + domainpart;
     return result;
 };
+
+export const getTicketDateOpened = async (ticketId: string) => {
+    // get dateOpened attribute from tickets table
+    const queryResult = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: TICKETS_TABLE,
+        KeyConditionExpression: "ticket_id = :ticket_id",
+        ExpressionAttributeValues: {
+            ":ticket_id": ticketId
+        },
+        ProjectionExpression: "dateOpened"
+    }));
+
+    const queryResultItems = queryResult.Items;
+
+    if (!queryResultItems || queryResultItems.length === 0) {
+        return null;
+    }
+
+    const dateOpened = queryResultItems[0].dateOpened as string;
+    return dateOpened;
+};
+
 
 // export const formatResponse = (statusCode: number, body: any) => {
 //     return new Response(

@@ -1,7 +1,7 @@
 import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
-import { doesTicketExist, generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
+import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 
 interface Ticket {
@@ -183,7 +183,9 @@ export const addWatchlist = async (ticketData: TicketData) => {
         throw new ClientError(errorResponse, "AlreadyExists");
     }
 
-    if (!(await doesTicketExist(ticketData.ticket_id))) {
+    const ticketExists = await getTicketDateOpened(ticketData.ticket_id);
+
+    if (!ticketExists) {
         const errorResponse = {
             Error: {
                 Code: "TicketDoesntExists",
@@ -472,7 +474,8 @@ export const interactTicket = async (ticketData: any) => {
                         new UpdateCommand({
                             TableName: TICKETS_TABLE,
                             Key: {
-                                ticket_id: item.ticket_id
+                                ticket_id: item.ticket_id,
+                                dateOpened: item.dateOpened
                             },
                             UpdateExpression: "SET upvotes = :votes",
                             ExpressionAttributeValues: {
@@ -489,7 +492,8 @@ export const interactTicket = async (ticketData: any) => {
                         new UpdateCommand({
                             TableName: TICKETS_TABLE,
                             Key: {
-                                ticket_id: item.ticket_id
+                                ticket_id: item.ticket_id,
+                                dateOpened: item.dateOpened
                             },
                             UpdateExpression: "SET viewcount = :views",
                             ExpressionAttributeValues: {
@@ -506,7 +510,8 @@ export const interactTicket = async (ticketData: any) => {
                         new UpdateCommand({
                             TableName: TICKETS_TABLE,
                             Key: {
-                                ticket_id: item.ticket_id
+                                ticket_id: item.ticket_id,
+                                dateOpened: item.dateOpened
                             },
                             UpdateExpression: "SET upvotes = :votes",
                             ExpressionAttributeValues: {
@@ -616,7 +621,9 @@ export const closeTicket = async (ticketData: any) => {
         }
     }
 
-    if (!(await doesTicketExist(ticketData.ticket_id))) {
+    const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
+
+    if (!ticketDateOpened) {
         const errorResponse = {
             Error: {
                 Code: "TicketDoesntExist",
@@ -626,13 +633,14 @@ export const closeTicket = async (ticketData: any) => {
         throw new ClientError(errorResponse, "TicketDoesntExist");
     }
 
-    const ticketId = ticketData.ticket_id;
+    const ticketId = ticketData["ticket_id"];
     const updateExpression = "set #state = :r";
     const expressionAttributeNames = { "#state": "state" };
     const expressionAttributeValues = { ":r": "Closed" };
 
     const response = await updateTicketTable(
         ticketId,
+        ticketDateOpened,
         updateExpression,
         expressionAttributeNames,
         expressionAttributeValues
@@ -646,6 +654,7 @@ export const closeTicket = async (ticketData: any) => {
 
     const responseClosed = await updateTicketTable(
         ticketId,
+        ticketDateOpened,
         dateExpression,
         closeExpressionAttributeNames,
         closeExpressionAttributeValues
@@ -682,7 +691,9 @@ export const acceptTicket = async (ticketData: any) => {
         }
     }
 
-    if (!(await doesTicketExist(ticketData.ticket_id))) {
+    const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
+
+    if (!ticketDateOpened) {
         const errorResponse = {
             Error: {
                 Code: "TicketDoesntExist",
@@ -692,13 +703,14 @@ export const acceptTicket = async (ticketData: any) => {
         throw new ClientError(errorResponse, "TicketDoesntExist");
     }
 
-    const ticketId = ticketData.ticket_id;
+    const ticketId = ticketData["ticket_id"];
     const updateExpression = "set #state = :r";
     const expressionAttributeNames = { "#state": "state" };
     const expressionAttributeValues = { ":r": "Taking Tenders" };
 
     const response = await updateTicketTable(
         ticketId,
+        ticketDateOpened,
         updateExpression,
         expressionAttributeNames,
         expressionAttributeValues

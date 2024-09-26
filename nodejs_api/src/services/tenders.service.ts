@@ -1,7 +1,7 @@
 import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { ClientError } from "../types/error.types";
-import { generateId, getCompanyIDFromName } from "../utils/tickets.utils";
+import { generateId, getCompanyIDFromName, getTicketDateOpened } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 
 interface TenderData {
@@ -238,13 +238,18 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         }
     }
 
+    const ticketDateOpened = await getTicketDateOpened(ticketId);
+
     // Editing ticket as well to In Progress
     const ticketUpdateExp = "set #state = :r";
     const ticketExpattrName = { "#state": "state" };
     const ticketExpattrValue = { ":r": "In Progress" };
     await dynamoDBDocumentClient.send(new UpdateCommand({
         TableName: TICKETS_TABLE,
-        Key: { ticket_id: ticketId },
+        Key: {
+            ticket_id: ticketId,
+            dateOpened: ticketDateOpened
+        },
         UpdateExpression: ticketUpdateExp,
         ExpressionAttributeNames: ticketExpattrName,
         ExpressionAttributeValues: ticketExpattrValue,
