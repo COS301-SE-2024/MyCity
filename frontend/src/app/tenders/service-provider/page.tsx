@@ -242,11 +242,11 @@ export default function MuniTenders() {
                 Tenders
               </h1>
             </div>
-            <div className="bg-transparent rounded-lg">
+            <div className="bg-transparent rounded-lg ">
               <Tabs
                 aria-label="Tender options"
                 defaultSelectedKey={0}
-                className="w-full"
+                className="w-full items-center justify-center"
                 classNames={{
                   tab: "min-w-24 min-h-8 text-black",
                   tabContent:

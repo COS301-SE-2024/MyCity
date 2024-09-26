@@ -80,7 +80,7 @@ export default function CreateTicket() {
         {/* Desktop View */}
         <div className="hidden sm:block">
           <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-5">
-            Report an Issue
+            Report a Fault
           </h1>
           <main className="flex flex-col items-center justify-start py-5">
             <div className="relative"></div>

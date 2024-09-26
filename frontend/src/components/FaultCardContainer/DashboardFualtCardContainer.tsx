@@ -129,7 +129,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
           <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
+              className={`px-4 py-2 w-[25%]  text-white  ${
                 startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={startIndex === 0}
@@ -137,13 +137,13 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               Previous
             </button>
 
-            <span className="text-gray-700">
+            <span className="text-white text-opacity-80">
               Page {startIndex / itemsPerPage + 1} of {totalPages}
             </span>
 
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
+              className={`px-4 py-2 w-[25%]  text-white  ${
                 startIndex + itemsPerPage >= cardData.length
                   ? "opacity-50 cursor-not-allowed"
                   : ""
