@@ -208,7 +208,7 @@ const TenderMax = ({
                 >
                   Back
                 </button>
-                {(tender.status === "in progress" ||
+                {(
                   tender.status === "completed") && (
                   <>
                     <button

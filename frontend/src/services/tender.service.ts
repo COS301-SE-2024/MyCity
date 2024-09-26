@@ -381,6 +381,37 @@ export async function getCompanyContract(company_name: string, tender_id: string
     }
 }
 
+export async function getCompanyTicketContract(company_name: string, ticket_id: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tenders-getcompanycontractbyticket")
+    }
+
+    const apiURL = "/api/tenders/getcompanycontractbyticket";
+    const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}&ticket=${encodeURIComponent(ticket_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json();
+
+    if (result.Status) {
+        return null;
+    }
+    else {
+        console.log(result);
+        AssignContractNumbers(result);
+        return result;
+    }
+}
+
 function CreateTenderNumber(company_name: string): string {
     let ticketnumber = company_name[0].toUpperCase();
     for (let index = 0; index < 2; index++) {
