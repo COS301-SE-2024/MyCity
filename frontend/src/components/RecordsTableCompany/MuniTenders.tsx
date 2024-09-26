@@ -29,7 +29,7 @@ export default function MuniTenders({
   onBack,
 }: {
   tenders: TenderType[] | null; // Allow tenders to be null
-  onBack: () => void;
+  onBack: (data:number) => void;
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const tendersPerPage = 10;
@@ -53,12 +53,16 @@ export default function MuniTenders({
     }
   };
 
+  const goBack = () =>{
+    onBack(0);
+  }
+
   return (
     <div className="overflow-x-auto bg-transparent rounded-lg shadow-md">
       <div className="min-w-full text-white text-opacity-80 rounded-t-lg text-black relative">
         <div className="flex justify-between items-center mb-2 px-2 py-1 font-bold text-center relative">
           <button
-            onClick={onBack}
+            onClick={goBack}
             className="bg-white bg-opacity-70 text-black ml-2 px-3 py-1 rounded-xl focus:outline-none hover:bg-opacity-90"
           >
             Back
