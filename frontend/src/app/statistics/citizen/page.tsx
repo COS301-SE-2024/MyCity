@@ -35,7 +35,7 @@ ChartJS.register(
   Legend
 );
 
-export default function StatisticsPage() {
+export default function CitizenStatisticsPage() {
   const userProfile = useProfile();
   const [selectedMunicipality, setSelectedMunicipality] = useState<string>(""); // Start with empty state
   const [data, setData] = useState<any>(null);
