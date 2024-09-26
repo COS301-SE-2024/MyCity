@@ -335,7 +335,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       onClick={onClose} // Close modal when clicking outside
     >
       <div
-        className="dark:bg-gray-700 dark:text-white bg-white rounded-lg shadow-lg w-[85%] h-[66%] p-4 relative flex flex-col justify-center"
+        className="dark:bg-gray-700 dark:text-white bg-white rounded-lg shadow-lg w-[85%] h-[70%] p-4 relative flex flex-col justify-center"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <button

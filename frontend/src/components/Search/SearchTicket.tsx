@@ -45,11 +45,12 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
   const findMunicipality = (municipalityId: string) => {
     // Ensure municipalities is an array before calling .find()
     if (Array.isArray(municipalities)) {
-      return municipalities.find((muni) => muni.municipality_id === municipalityId);
+      return municipalities.find(
+        (muni) => muni.municipality_id === municipalityId
+      );
     }
     return null; // Return null if municipalities is not an array
   };
-  
 
   function formatStatecolor(state: string | undefined): string {
     if (typeof state !== "string") {
@@ -91,7 +92,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
   }
 
   const [imageError, setImageError] = useState(false);
-  
+
   function calculateDistance(
     lat1: string,
     lon1: string,
@@ -102,7 +103,6 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
 
     const removeSingleQuote = (str: any) => String(str).replace(/'/g, "");
 
-    
     lat1 = removeSingleQuote(lat1);
     lon1 = removeSingleQuote(lon1);
     lat2 = removeSingleQuote(lat2);
@@ -185,23 +185,21 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                 </div>
 
                 {/* Date Opened */}
-                <div className="flex w-[10%] flex-col items-center justify-center  font-bold">
+                <div className="flex w-[10%] flex-col items-center justify-center font-bold">
                   <span className="text-xs text-black">Date Opened</span>
                   <span className="text-black">
                     {new Date(ticket.dateOpened).toLocaleDateString()}
                   </span>
                 </div>
 
-                {/*  Municipality Logo */}
-                <div className="flex w-[20%] items-center justify-center  gap-2">
+                {/* Municipality Logo */}
+                <div className="flex w-[20%] items-center justify-center gap-2">
                   <div key={ticket.municipality_id}>
                     {municipality ? (
-                      <>
-                        <ImageWithLoader
-                          src={municipality.municipalityLogo || ""}
-                          alt={"Municipality Logo"}
-                        />
-                      </>
+                      <ImageWithLoader
+                        src={municipality.municipalityLogo || ""}
+                        alt={"Municipality Logo"}
+                      />
                     ) : (
                       <p>Municipality data not available</p>
                     )}
@@ -215,7 +213,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                 </div>
 
                 {/* State */}
-                <div className="flex w-[15%] items-center justify-center  py-2">
+                <div className="flex w-[15%] items-center justify-center py-2">
                   <div
                     className={`${color} bg-opacity-75 text-black font-bold sm:text-xs md:text-sm lg:text-md text-center flex items-center justify-center rounded-lg h-full w-full`}
                   >
@@ -224,7 +222,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                 </div>
 
                 {/* Distance */}
-                <div className="flex flex-col font-bold w-[15%] items-center justify-center  ">
+                <div className="flex flex-col font-bold w-[15%] items-center justify-center">
                   <span className="text-xs text-black">Distance</span>
                   <span className="text-black">{distance}</span>
                 </div>
@@ -235,70 +233,105 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
       </div>
 
       {/* Mobile View */}
-      <div className="block lg:hidden">
-        <div className="space-y-1 px-4 rounded-3xl">
-          {tickets.map((ticket: Ticket, index: number) => {
-            const municipality = findMunicipality(ticket.municipality_id);
-            let color = formatStatecolor(ticket.state);
-            let title = formatStatetitle(ticket.state);
+<div className="block lg:hidden">
+  <div className="space-y-4 px-4">
+    {tickets.map((ticket: Ticket, index: number) => {
+      // Calculate variables
+      const municipality = findMunicipality(ticket.municipality_id);
+      const color = formatStatecolor(ticket.state);
+      const title = formatStatetitle(ticket.state);
+      const image = ticket.imageURL;
+      const distance =
+        ticket.latitude && ticket.longitude && municipality?.latitude && municipality?.longitude
+          ? calculateDistance(
+              ticket.latitude,
+              ticket.longitude,
+              municipality.latitude,
+              municipality.longitude
+            )
+          : "N/A";
 
-            return (
-              <div
-                key={index}
-                className="flex flex-col bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4 space-y-4"
-              >
-                {/* First Field - Ticket */}
-                <div className="text-center font-bold">
-                  <span className="text-sm text-black-500">Ticket</span>
-                </div>
+      return (
+        <div
+          key={index}
+          className="relative bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4"
+        >
+          {/* Top Section - Asset ID & Urgency */}
+          <div className="flex items-center justify-center mb-2 relative">
+            {/* Urgency Indicator - Aligned to Asset ID */}
+            <div className="absolute left-0">
+              <AlertTriangle size={20} color="red" />
+            </div>
+            {/* Asset Type - Centered */}
+            <span className="text-black font-bold text-lg">{ticket.asset_id}</span>
+          </div>
 
-                {/* Second Field - Urgent */}
-                <div className="flex items-center justify-center">
-                  <AlertTriangle size={30} color="red" />
-                </div>
-
-                {/* Third Field - Asset Type */}
-                <div className="flex flex-col">
-                  <span className="text-xs text-black">Asset Type</span>
-                  <span className="text-black">{ticket.asset_id}</span>
-                </div>
-
-                {/* Fourth Field - Date Opened */}
-                <div className="flex flex-col">
-                  <span className="text-xs text-black">Date Opened</span>
-                  <span className="text-black">
-                    {new Date(ticket.dateOpened).toLocaleDateString()}
-                  </span>
-                </div>
-
-                {/* Fifth Field - Municipality */}
-                <div className="flex flex-col items-center border">
-                  {municipality?.municipalityLogo ? (
-                    <img
-                      src={municipality.municipalityLogo}
-                      alt={`${municipality.name} logo`}
-                      className="w-12 h-12 object-cover rounded-full"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-black rounded-full">
-                      No Logo
-                    </div>
-                  )}
-                  <span className="text-black">
-                    {municipality?.name || "Unknown"}
-                  </span>
-                </div>
-
-                {/* Sixth Field - State */}
-                <div className="flex flex-col">
-                  <span className="text-xs text-black">State</span>
-                  <span className="text-black">{ticket.state}</span>
-                </div>
+          {/* Fault Image - Centered Below Asset Type */}
+          <div className="flex justify-center mb-4">
+            {image && !imageError ? (
+              <img
+                src={image}
+                className="w-full max-w-[300px] h-40 object-cover rounded-md"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="w-full max-w-[300px] h-40 bg-gray-200 flex items-center justify-center rounded-md">
+                <ImageIcon size={40} color="#6B7280" />
               </div>
-            );
-          })}
+            )}
+          </div>
+
+          {/* Municipality Info - Logo and Name on One Line */}
+          <div className="flex items-center justify-center mb-4">
+            {/* Municipality Logo */}
+            {municipality?.municipalityLogo ? (
+              <img
+                src={municipality.municipalityLogo}
+                className="w-10 h-10 object-cover rounded-full mr-2"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-black rounded-full mr-2">
+                <ImageIcon size={24} color="#6B7280" />
+              </div>
+            )}
+            {/* Municipality Name */}
+            <span className="text-black font-bold text-center">
+              {municipality?.name || "Unknown"}
+            </span>
+          </div>
+
+          {/* Details Section - Aligned Columns */}
+          <div className="flex justify-around mt-4">
+            {/* Column 1: Date Opened */}
+            <div className="flex flex-col items-center space-y-1">
+              <span className="block text-xs text-gray-600">Date Opened</span>
+              <span className="text-black font-bold">
+                {new Date(ticket.dateOpened).toLocaleDateString()}
+              </span>
+            </div>
+
+            {/* Column 2: State (Center) */}
+            <div className="flex flex-col items-center space-y-1">
+              <span className="block text-xs text-gray-600">State</span>
+              <div
+                className={`${color} text-black font-bold text-center py-1 px-3 rounded-full`}
+              >
+                {title}
+              </div>
+            </div>
+
+            {/* Column 3: Distance */}
+            <div className="flex flex-col items-center space-y-1">
+              <span className="block text-xs text-gray-600">Distance</span>
+              <span className="text-black font-bold">{distance}</span>
+            </div>
+          </div>
         </div>
-      </div>
+      );
+    })}
+  </div>
+</div>
+
     </div>
   );
 };
