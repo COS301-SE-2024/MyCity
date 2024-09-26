@@ -246,6 +246,7 @@ export const getMyTickets = async (username: string | null) => {
         ExpressionAttributeValues: {
             ":username": username
         },
+        ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
     });
 
     const response = await dynamoDBDocumentClient.send(queryCommand);
@@ -281,7 +282,8 @@ export const getInMyMunicipality = async (municipality: string | null) => {
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
             ":municipality_id": municipality
-        }
+        },
+        ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
     });
 
     const response = await dynamoDBDocumentClient.send(queryCommand);
@@ -326,6 +328,7 @@ export const getOpenTicketsInMunicipality = async (municipality: string | null) 
                 ":municipality_id": municipality,
                 ":state": "Opened"
             },
+            ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
         })
     );
     const items = response.Items;
@@ -369,7 +372,8 @@ export const getWatchlist = async (userId: string) => {
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": item.ticket_id
-                }
+                },
+                ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
             });
             const respItem = await dynamoDBDocumentClient.send(queryCommand);
             const ticketsItems = respItem.Items;
@@ -405,6 +409,7 @@ export const viewTicketData = async (ticketId: string) => {
                 ExpressionAttributeValues: {
                     ":ticket_id": ticketId
                 },
+                ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
             })
         );
         const items = response.Items || [];
@@ -454,6 +459,7 @@ export const interactTicket = async (ticketData: any) => {
                 ExpressionAttributeValues: {
                     ":ticket_id": ticketData.ticket_id
                 },
+                ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
             })
         );
         const items = response.Items || [];
@@ -747,6 +753,7 @@ export const getCompanyTickets = async (companyname: string | null) => {
                 ExpressionAttributeValues: {
                     ":ticket_id": item["ticket_id"]
                 },
+                ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
             }));
 
             const companyTickets = responseCompanyTickets.Items;

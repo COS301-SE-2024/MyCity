@@ -413,6 +413,7 @@ export const getMunicipalityTenders = async (municipality: string) => {
         ExpressionAttributeValues: {
             ":municipality_id": municipality
         },
+        ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
     }));
 
     if (!responseTickets.Items || responseTickets.Items.length === 0) {

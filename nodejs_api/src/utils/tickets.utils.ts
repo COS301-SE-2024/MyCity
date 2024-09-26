@@ -74,16 +74,15 @@ export const getUserProfile = async (ticketData: any[]) => {
 export const doesTicketExist = async (ticket_id: string) => {
     try {
         const checking_ticket = await dynamoDBDocumentClient.send(
-            new QueryCommand({
+            new GetCommand({
                 TableName: TICKETS_TABLE,
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": ticket_id
+                Key: {
+                    "ticket_id": ticket_id
                 }
             })
         );
 
-        return checking_ticket.Items && checking_ticket.Items.length > 0;
+        return checking_ticket.Item ? true : false;
 
     } catch (error: any) {
         console.error("An error occurred:", error);

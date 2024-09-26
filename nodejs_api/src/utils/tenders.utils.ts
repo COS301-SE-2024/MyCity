@@ -1,4 +1,4 @@
-import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 
@@ -63,22 +63,21 @@ export const assignCompanyName = async (data: any[]) => {
 
 export const assignLongLat = async (data: any[]) => {
     for (const item of data) {
-        const response = await dynamoDBDocumentClient.send(new QueryCommand({
+        const response = await dynamoDBDocumentClient.send(new GetCommand({
             TableName: TICKETS_TABLE,
-            KeyConditionExpression: "ticket_id = :ticket_id",
-            ExpressionAttributeValues: {
-                ":ticket_id": item.ticket_id
+            Key: {
+                "ticket_id": item.ticket_id
             }
         }));
 
-        if (!response.Items || response.Items.length <= 0) {
+        if (!response.Item) {
             item.longitude = "26.5623685320641";
             item.latitude = "-32.90383";
         } else {
-            const tickets = response.Items[0];
-            item.longitude = tickets.longitude;
-            item.latitude = tickets.latitude;
-            item.ticketnumber = tickets.ticketnumber;
+            const ticket = response.Item;
+            item.longitude = ticket.longitude;
+            item.latitude = ticket.latitude;
+            item.ticketnumber = ticket.ticketnumber;
         }
     }
 };
@@ -98,19 +97,18 @@ export const assignMuni = async (data: any[]) => {
             item.ticketnumber = "MAA2-4052-8NAS";
         } else {
             const tenders = responseTender.Items[0];
-            const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
+            const responseTickets = await dynamoDBDocumentClient.send(new GetCommand({
                 TableName: TICKETS_TABLE,
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": tenders.ticket_id || ""
+                Key: {
+                    "ticket_id" : tenders.ticket_id || ""
                 }
             }));
 
-            if (!responseTickets.Items || responseTickets.Items.length <= 0) {
+            if (!responseTickets.Item) {
                 item.municipality = "Stellenbosch Local";
                 item.ticketnumber = "MAA2-4052-8NAS";
             } else {
-                const ticketDetails = responseTickets.Items[0];
+                const ticketDetails = responseTickets.Item;
                 item.municipality = ticketDetails.municipality_id;
                 item.ticketnumber = ticketDetails.ticketnumber;
             }
