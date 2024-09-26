@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,13 +27,14 @@ interface TenderType {
   municipality : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
-  onClose : ()=> void;
+  onClose : (data: number)=> void;
 }
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
   completed: "text-green-500 bg-green-300 rounded-full",
   closed: "text-red-500 bg-red-300 rounded-full",
+  done : "text-purple-500 bg-purple-300 rounded-full"
 };
 
 const TenderMax : React.FC<TenderType> = ({
@@ -55,12 +56,21 @@ const TenderMax : React.FC<TenderType> = ({
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
   const userProfile = useProfile();
+  const [contractstatus, setContractstatus] = useState<string>("");
   // Map "Fix in progress" to "Active" for the tender's status
-  const tenderStatus = status;
+  
+  useEffect(() => {
+    setContractstatus(status)
+    console.log(status)
+  }, [status]);
 
   const handleAction = (action: string) => {
     setDialog({ action, show: true });
   };
+
+  const handleClose = () => {
+    onClose(0);
+  }
 
   const confirmAction = async () => {
     switch (dialog.action) {
@@ -71,8 +81,9 @@ const TenderMax : React.FC<TenderType> = ({
           const rspcompleted = await CompleteContract(contract_id,user_session)
           if(rspcompleted == true)
           {
+            setContractstatus("completed")
             toast.success(`${dialog.action} action confirmed.`);
-            onClose();
+            onClose(-1);
           }
           else {
             toast.error(`${dialog.action} couldnt go through`)
@@ -83,16 +94,19 @@ const TenderMax : React.FC<TenderType> = ({
       case "Terminate Contract" :
         {
           toast.success(`${dialog.action} action confirmed.`);
-          onClose();
+          onClose(0);
         }
     
       default:
-        onClose();
+        onClose(0);
         break;
     }
     setDialog({ action: "", show: false });
-    onClose()
+    onClose(0)
   };
+
+  // console.log(latitude)
+  // console.log(longitude)
 
   const getDialogText = (action: string) => {
     switch (action) {
@@ -119,6 +133,8 @@ const TenderMax : React.FC<TenderType> = ({
       case "closed":
         return "closed"
         break;
+      case "done":
+        return "done"
       default:
         return "in_progress"
         break;
@@ -135,7 +151,7 @@ const TenderMax : React.FC<TenderType> = ({
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
         <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
-          <button className="absolute top-2 right-2 text-gray-700" onClick={onClose}>
+          <button className="absolute top-2 right-2 text-gray-700" onClick={handleClose}>
             <FaTimes size={24} />
           </button>
           <div className="flex flex-col lg:flex-row w-full overflow-auto">
@@ -146,7 +162,7 @@ const TenderMax : React.FC<TenderType> = ({
               </div> */}
               <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
               <div className={`px-2 py-1 rounded-full text-sm text-black border-2 mb-2 ${statusStyles[getStatus()]}`}>
-  {tenderStatus.charAt(0).toUpperCase() + tenderStatus.slice(1)}
+  {status.charAt(0).toUpperCase() + status.slice(1)}
 </div>
 
 
@@ -179,10 +195,10 @@ const TenderMax : React.FC<TenderType> = ({
               </div>
 
               <div className="mt-2 flex justify-center gap-2">
-                <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
+                <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={handleClose}>
                   Back
                 </button>
-                {tenderStatus === "in progress" && (
+                {contractstatus === "in progress" && (
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract

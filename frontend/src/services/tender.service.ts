@@ -324,7 +324,12 @@ export async function getMunicipalityTenders(municipality: string, user_session:
     }
 }
 
-export async function getContract(tender_id: string, user_session: string) {
+export async function getContract(tender_id: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tenders-getcontracts"); //invalidate the cache
+    }
+
+    
     const apiURL = "/api/tenders/getcontracts";
     const urlWithParams = `${apiURL}?tender=${encodeURIComponent(tender_id)}`;
     const response = await fetch(urlWithParams, {
@@ -351,7 +356,13 @@ export async function getContract(tender_id: string, user_session: string) {
     }
 }
 
-export async function getMuniContract(ticket_id: string, user_session: string) {
+export async function getMuniContract(ticket_id: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tenders-getmunicontract"); //invalidate the cache
+    }
+
+
+
     const apiURL = "/api/tenders/getmunicontract";
     const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
     const response = await fetch(urlWithParams, {

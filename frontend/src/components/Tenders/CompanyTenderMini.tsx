@@ -30,13 +30,15 @@ const statusStyles = {
   'approved': 'bg-green-200 text-green-500',
   'rejected': 'bg-red-200 text-red-500',
   'submitted': 'bg-gray-200 text-gray-500',
-  'done' : 'bg-purple-200 text-purple'
+  'completed' : 'bg-purple-200 text-purple-500'
 };
 
 export default function Tender({ tender }: { tender: TenderType }) {
   const [showDetails, setShowDetails] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [contract, setContract] = useState<any>();
+  const [tenderstatus, setTenderstatus] = useState<string>("");
+  const [displaystatus, setDisplaystatus] = useState<string>("");
   const userProfile = useProfile();
   const textRef = useRef<HTMLSpanElement>(null);
 
@@ -45,6 +47,12 @@ export default function Tender({ tender }: { tender: TenderType }) {
   if (estimatedDays === 0) {
     estimatedDays = 1;
   }
+
+  useEffect(() => {
+    const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+    setTenderstatus(tender.status);
+    setDisplaystatus(tenderStatus)
+  }, [tender.status]);
 
   const getStatusKey = (status: string) => {
     switch (status.toLowerCase()) {
@@ -58,21 +66,21 @@ export default function Tender({ tender }: { tender: TenderType }) {
         return "rejected";
       case "submitted":
         return "submitted";
-      case "done":
-        return "done";
+      case "completed":
+        return "completed";
       default:
         return "submitted";
     }
   };
 
-  const statusClass = statusStyles[getStatusKey(tender.status)];
+  const statusClass = statusStyles[getStatusKey(tenderstatus)];
 
   const handleTenderClick = async () => {
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const company_name = String(user_data.current?.company_name);
-      const rspcontracts = await getCompanyContract(company_name, tender.tender_id, user_session);
+      const rspcontracts = await getCompanyContract(company_name, tender.tender_id, user_session,true);
       if (rspcontracts == null) {
         setShowDetails(false);
       } else {
@@ -84,7 +92,16 @@ export default function Tender({ tender }: { tender: TenderType }) {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (data : number) => {
+    if(data == -1)
+    {
+      setTenderstatus("completed");
+      const completed = "completed";
+      const tenderStatus = completed.charAt(0).toUpperCase() + completed.slice(1);
+      console.log(tenderStatus)
+      setDisplaystatus(tenderStatus)
+      
+    }
     setShowDetails(false);
   };
 
@@ -94,7 +111,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
     }
   }, []);
 
-  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
+
 
   return (
     <>
@@ -108,7 +125,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
             className={`py-1 rounded-3xl text-center font-bold ${statusClass}`}
             style={{ minWidth: "150px" }}
           >
-            {tenderStatus}
+            {displaystatus}
           </span>
         </div>
         <div className="col-span-1 flex justify-center font-bold">{tender.tendernumber}</div>
@@ -130,7 +147,7 @@ export default function Tender({ tender }: { tender: TenderType }) {
             <div className="text-sm text-gray-500">Submitted: {formattedDate}</div>
           </div>
           <span className={`px-2 py-1 rounded-full border ${statusClass}`}>
-            {tenderStatus}
+            {displaystatus}
           </span>
         </div>
         <div className="p-4 flex justify-between">
