@@ -150,7 +150,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingClosedTenders ? (
                     <div className="flex justify-center items-center">
                       <ThreeDots
@@ -167,7 +167,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders tickets={dashMuniResults} />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </main>
@@ -263,7 +263,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingClosedTenders ? (
                     <div className="flex justify-center items-center mt-4">
                       <ThreeDots
@@ -278,7 +278,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders tickets={dashMuniResults} />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </div>
