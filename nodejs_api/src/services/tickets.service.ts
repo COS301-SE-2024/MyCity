@@ -309,18 +309,9 @@ export const getWatchlist = async (userId: string) => {
 
             if (ticketsItems && ticketsItems.length > 0) {
                 await updateCommentCounts(ticketsItems);
-            } else {
-                const errorResponse = {
-                    Error: {
-                        Code: "Inconsistency",
-                        Message: "Inconsistency in ticket_id",
-                    }
-                };
-                throw new Error(JSON.stringify(errorResponse));
+                await getUserProfile(ticketsItems);
+                collective.push(...ticketsItems);
             }
-
-            await getUserProfile(ticketsItems);
-            collective.push(...ticketsItems);
         }
         return collective;
     } else {
@@ -692,7 +683,7 @@ export const getOpenCompanyTickets = async (): Promise<any> => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 16 // limit result set to the top 16 items
     }));
 
     const topItems = response.Items || [];
