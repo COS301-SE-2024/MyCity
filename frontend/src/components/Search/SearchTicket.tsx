@@ -3,6 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 interface SearchTicketProps {
   tickets: Ticket[];
@@ -114,9 +115,9 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1Rad) *
-        Math.cos(lat2Rad) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(lat2Rad) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const totalDistance = R * c;
@@ -172,7 +173,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   <div className="w-[10%] overflow-hidden flex items-center justify-center ">
                     {image && !imageError ? (
                       <img
-                        src={image}
+                        src={getImageBucketUrl(image)}
                         alt="Ticket"
                         className="w-[70%] h-full object-cover overflow-hidden rounded-md"
                         onError={() => setImageError(true)}

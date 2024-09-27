@@ -5,6 +5,7 @@ import { AlertCircle } from 'lucide-react';
 import mapboxgl, {Map, Marker } from 'mapbox-gl';
 import { InteractTicket,addWatchlist } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -229,7 +230,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {image && (
               <div className="mb-2 flex justify-center">
-                <img src={image} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
+                <img src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
               </div>
             )}
 

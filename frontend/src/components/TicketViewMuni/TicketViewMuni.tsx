@@ -15,6 +15,7 @@ import { useProfile } from "@/hooks/useProfile";
 import Modal from "react-modal";
 import { Image as ImageIcon } from "lucide-react";
 import { User as UserIcon } from "lucide-react";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -257,9 +258,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {/* Mobile-first layout with centered content */}
       {!showMuniTenders && (
         <div
-          className={`fixed inset-0 flex justify-center items-center ${
-            !showTenderMax ? "bg-black bg-opacity-50" : ""
-          } z-50`}
+          className={`fixed inset-0 flex justify-center items-center ${!showTenderMax ? "bg-black bg-opacity-50" : ""
+            } z-50`}
         >
           {!showTenderMax && !showMuniTenders && (
             <div
@@ -309,7 +309,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       {/* Conditionally render image only when successfully loaded */}
                       {!imageError && (
                         <img
-                          src={imageURL}
+                          src={getImageBucketUrl(imageURL)}
                           alt="Fault"
                           className={`rounded-lg w-full h-full object-cover ${
                             loadingImage ? "hidden" : "block"
@@ -410,13 +410,13 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   </button>
                   {(ticketstatus === "In Progress" ||
                     ticketstatus === "Assigning Contract") && (
-                    <button
-                      className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
-                      onClick={handleTenderContractClick}
-                    >
-                      Tender Contract
-                    </button>
-                  )}
+                      <button
+                        className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
+                        onClick={handleTenderContractClick}
+                      >
+                        Tender Contract
+                      </button>
+                    )}
                   {ticketstatus === "Taking Tenders" && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white transition duration-300"
@@ -447,9 +447,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               {/* Comments Section with Right-to-Left Slide Animation */}
               {showComments && (
                 <div
-                  className={`absolute top-0 left-0 w-full h-full bg-white z-20 rounded-3xl transform transition-transform duration-500 ease-in-out ${
-                    showComments ? "translate-x-0" : "translate-x-full"
-                  }`}
+                  className={`absolute top-0 left-0 w-full h-full bg-white z-20 rounded-3xl transform transition-transform duration-500 ease-in-out ${showComments ? "translate-x-0" : "translate-x-full"
+                    }`}
                 >
                   <Comments
                     ticketId={ticket_id}

@@ -7,6 +7,7 @@ import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
 import { DidBid, getCompanyTenders,getCompanyTicketContract } from "@/services/tender.service";
 import dynamic from "next/dynamic";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -200,7 +201,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 <div className="mb-2 flex justify-center">
                   {!imageError ? (
                     <img
-                      src={imageURL}
+                      src={getImageBucketUrl(imageURL)}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
                       onError={(e) => {
