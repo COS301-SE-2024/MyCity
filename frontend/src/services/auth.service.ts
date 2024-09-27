@@ -14,12 +14,7 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
         return { isSignedIn };
     }
     catch (error: any) {
-        if (userRole == UserRole.CITIZEN) {
-            throw new Error("Incorrect email or password. Please try again");
-        }
-        else {
-            throw new Error("Incorrect credentials. Please try again");
-        }
+        throw error;
     }
 }
 
