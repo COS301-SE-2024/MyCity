@@ -5,12 +5,17 @@ import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTableCompany/MuniTenders";
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
-import { getTicketTenders, getContract } from "@/services/tender.service";
+import {
+  getTicketTenders,
+  getContract,
+  getMuniContract,
+} from "@/services/tender.service";
 import { AcceptTicket, CloseTicket } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import Modal from "react-modal";
 import { Image as ImageIcon } from "lucide-react";
 import { User as UserIcon } from "lucide-react";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -76,6 +81,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [tenders, setTenders] = useState<any>(null);
   const [contract, setContract] = useState<any>();
   const [ticketstatus, setTicketstatus] = useState<string>("");
+  const [loadingImage, setLoadingImage] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -172,29 +179,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const rspgettenders = await getTicketTenders(
+      const response_contract = await getMuniContract(
         ticket_id,
         user_session,
         true
       );
-      setTenders(rspgettenders);
 
-      if (!rspgettenders) return;
-
-      let tender_contract = "";
-      rspgettenders.forEach((item: { status: string; tender_id: string }) => {
-        if (item.status === "accepted" || item.status === "approved") {
-          tender_contract = item.tender_id;
-        }
-      });
-
-      if (!tender_contract) {
+      if (response_contract == null) {
         setShowTenderMax(false);
       } else {
-        const response_contract = await getContract(
-          tender_contract,
-          user_session
-        );
         if (response_contract) {
           setContract(response_contract);
           setShowTenderMax(true);
@@ -214,6 +207,9 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     if (data == -2) {
       setTicketstatus("Closed");
       onClose(-2);
+    } else if (data == -1) {
+      setTicketstatus("Taking Tenders");
+      onClose(-1);
     }
     setShowTenderMax(false);
   };
@@ -228,7 +224,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_session = String(user_data.current?.session_token);
 
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
-    console.log(ticket_id)
+    console.log(ticket_id);
     console.log(rspgettenders); // Add this line to inspect the data
 
     setIsLoading(false);
@@ -237,7 +233,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       setTenders(null); // No tenders available
     } else {
       setTenders(rspgettenders); // Ensure tenders data is set
-       // Show the MuniTenders component
+      // Show the MuniTenders component
     }
     setShowMuniTenders(true);
   };
@@ -247,7 +243,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     if (data === 1) {
       setTicketstatus("In Progress");
       onClose(1);
-    }
+    } else onClose(0);
   };
 
   return (
@@ -255,22 +251,22 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {/* Render MuniTenders if it is visible */}
       {showMuniTenders && (
         <div className="mt-4">
-          <MuniTenders
-            tenders={tenders}
-            onBack={() => setShowMuniTenders(false)}
-          />
+          <MuniTenders tenders={tenders} onBack={handleBack} />
         </div>
       )}
 
       {/* Mobile-first layout with centered content */}
       {!showMuniTenders && (
         <div
-          className={`fixed inset-0 flex justify-center items-center ${
-            !showTenderMax ? "bg-black bg-opacity-50" : ""
-          } z-50`}
+          className={`fixed inset-0 flex justify-center items-center ${!showTenderMax ? "bg-black bg-opacity-50" : ""
+            } z-50`}
         >
           {!showTenderMax && !showMuniTenders && (
-            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col">
+            <div
+            className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col"
+            style={{ maxHeight: '75vh', height: 'auto', overflowY: 'auto' }}
+          >
+          
               <button
                 className="absolute top-2 right-2 text-gray-700 z-20"
                 onClick={handleCloseClick}
@@ -293,31 +289,51 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
                 {/* Image and Description */}
                 <div className="text-center">
-                  <div className="relative">
-                    <img
-                      src={imageURL}
-                      alt="Fault"
-                      className="rounded-lg w-full h-[300px] object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = ""; // Empty the src to hide broken image icon
-                        e.currentTarget.style.display = "none"; // Hide the image tag if it fails to load
-                        document
-                          .getElementById("image-placeholder")
-                          ?.classList.remove("hidden"); // Show the placeholder div
-                      }}
-                      style={{ display: imageURL ? "block" : "none" }} // Conditionally render image if URL exists
-                    />
-                    <div
-                      id="image-placeholder"
-                      className={`${
-                        imageURL ? "hidden" : "flex"
-                      } justify-center items-center w-full h-[300px] rounded-lg bg-gray-200 border border-gray-300`}
-                    >
-                      <div className="flex justify-center items-center w-full h-full">
-                        <ImageIcon size={48} className="text-gray-500" />
-                      </div>
+                  <div className="relative w-full h-[300px]">
+                    {/* Wrapper div to enforce size of loader */}
+                    <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+                      {/* Show loading spinner only if the image is loading */}
+                      {loadingImage && !imageError && (
+                        <div className="flex justify-center items-center w-full h-full rounded-lg bg-gray-200 border border-gray-300">
+                          <ThreeDots
+                            height="80"
+                            width="80"
+                            radius="9"
+                            color="#ADD8E6"
+                            ariaLabel="three-dots-loading"
+                            visible={true}
+                          />
+                        </div>
+                      )}
+
+                      {/* Conditionally render image only when successfully loaded */}
+                      {!imageError && (
+                        <img
+                          src={getImageBucketUrl(imageURL)}
+                          alt="Fault"
+                          className={`rounded-lg w-full h-full object-cover ${
+                            loadingImage ? "hidden" : "block"
+                          }`}
+                          onLoad={() => setLoadingImage(false)} // Set loadingImage to false when image loads
+                          onError={() => {
+                            setImageError(true); // Set imageError to true if loading fails
+                            setLoadingImage(false); // Stop showing loader on error
+                          }}
+                        />
+                      )}
+
+                      {/* Render the placeholder if image fails to load */}
+                      {imageError && (
+                        <div
+                          id="image-placeholder"
+                          className="flex justify-center items-center w-full h-full rounded-lg bg-gray-200 border border-gray-300"
+                        >
+                          <ImageIcon size={48} className="text-gray-500" />
+                        </div>
+                      )}
                     </div>
                   </div>
+
                   <p className="text-gray-700 text-sm mt-2 mb-4">
                     {description}
                   </p>
@@ -394,13 +410,13 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                   </button>
                   {(ticketstatus === "In Progress" ||
                     ticketstatus === "Assigning Contract") && (
-                    <button
-                      className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
-                      onClick={handleTenderContractClick}
-                    >
-                      Tender Contract
-                    </button>
-                  )}
+                      <button
+                        className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white"
+                        onClick={handleTenderContractClick}
+                      >
+                        Tender Contract
+                      </button>
+                    )}
                   {ticketstatus === "Taking Tenders" && (
                     <button
                       className="border border-blue-500 text-blue-500 rounded-lg px-2 py-1 hover:bg-blue-500 hover:text-white transition duration-300"
@@ -431,9 +447,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
               {/* Comments Section with Right-to-Left Slide Animation */}
               {showComments && (
                 <div
-                  className={`absolute top-0 left-0 w-full h-full bg-white z-20 rounded-3xl transform transition-transform duration-500 ease-in-out ${
-                    showComments ? "translate-x-0" : "translate-x-full"
-                  }`}
+                  className={`absolute top-0 left-0 w-full h-full bg-white z-20 rounded-3xl transform transition-transform duration-500 ease-in-out ${showComments ? "translate-x-0" : "translate-x-full"
+                    }`}
                 >
                   <Comments
                     ticketId={ticket_id}

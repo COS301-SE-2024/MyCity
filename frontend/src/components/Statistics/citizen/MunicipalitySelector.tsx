@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { getMunicipalityList } from '@/services/municipalities.service';
+import React, { useEffect, useState } from "react";
+import { getMunicipalityList } from "@/services/municipalities.service";
 
 interface MunicipalitySelectorProps {
   selectedMunicipality: string;
@@ -17,7 +17,12 @@ export default function MunicipalitySelector({
   useEffect(() => {
     const fetchMunicipalityList = async () => {
       const list = await getMunicipalityList();
-      setMunicipalities(list);
+      // Sort the list by municipality_id (or municipality_name if available)
+      const sortedList = list.sort((a, b) => 
+        a.municipality_id.localeCompare(b.municipality_id)
+      );
+      console.log(sortedList); // Log the sorted list
+      setMunicipalities(sortedList);
     };
 
     fetchMunicipalityList();
@@ -25,15 +30,17 @@ export default function MunicipalitySelector({
 
   return (
     <div className="flex items-center w-full">
-      <label className="text-white text-xl w-[40%] mr-4">Select Municipality:</label>
+      <label className="text-white text-xl w-[40%] mr-4 text-right">
+        Select Municipality:
+      </label>
       <select
         value={selectedMunicipality}
         onChange={(e) => setSelectedMunicipality(e.target.value)}
-        className="p-2 w-[60%] rounded-md bg-white text-black"
+        className="p-2 w-[60%] rounded-md bg-white bg-opacity-90 text-black"
       >
-        {municipalities.map((mun) => (
-          <option key={mun.municipality_id} value={mun.municipality_id}>
-            {mun.municipality_name}
+        {municipalities.map((mun, index) => (
+          <option key={index} value={mun.municipality_id}>
+            {mun.municipality_id}
           </option>
         ))}
       </select>

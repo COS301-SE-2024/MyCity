@@ -1,5 +1,5 @@
 import CitizenLogin from "@/components/Login/CitizenLogin";
-import { fireEvent, render, screen, waitFor} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as AuthService from "../../../src/services/auth.service";
 import { useRouter } from "next/router";
 
@@ -55,7 +55,7 @@ describe("CitizenLogin", () => {
         expect(submitButton).toBeInTheDocument();
     });
 
-     /* Test 5: Calls handleSignIn on form submission */
+    /* Test 5: Calls handleSignIn on form submission */
     test("handler function is called after clicking submit button", () => {
         render(<CitizenLogin />);
         const mockFunction = jest.fn();
@@ -137,7 +137,7 @@ describe("CitizenLogin", () => {
         // Mock the push method from useRouter
         const mockPush = jest.fn();
         // Define the mock return value for useRouter
-         // Define the mock return value for useRouter
+        // Define the mock return value for useRouter
         (useRouter as jest.Mock).mockReturnValue({
             push: mockPush, // Mock the push method
         });
@@ -146,10 +146,10 @@ describe("CitizenLogin", () => {
         (AuthService.handleSignIn as jest.Mock).mockResolvedValue({
             isSignedIn: true,
         });
-    
+
         // Render the CitizenLogin component
         render(<CitizenLogin />);
-    
+
         const emailInput = screen.getAllByPlaceholderText("example@mail.com")[0];
         const passwordInput = screen.getAllByPlaceholderText("Password")[0];
         const form = screen.getAllByTestId("citizen-login-form")[0];
@@ -176,14 +176,14 @@ describe("CitizenLogin", () => {
     it("handles Google sign-in correctly", async () => {
         const mockHandleGoogleSignIn = AuthService.handleGoogleSignIn;
         render(<CitizenLogin />);
-    
+
         // Find the Google sign-in button
         const googleSignInButtons = screen.getAllByTestId("google-login-btn");
         const googleSignInButton = googleSignInButtons[0];
-    
+
         // Simulate click on Google sign-in button
         fireEvent.click(googleSignInButton);
-        
+
         // Expect handleGoogleSignIn to be called
         expect(mockHandleGoogleSignIn).toHaveBeenCalledTimes(1);
     });
@@ -204,12 +204,12 @@ describe("CitizenLogin", () => {
         fireEvent.submit(form);
 
         await waitFor(() => {
-            const outputs = screen.getAllByText("An error occurred during login. Please try again.")
+            const outputs = screen.getAllByText("Login failed")
             const out = outputs[0];
             expect(out).toBeInTheDocument();
             //expect(screen.getByText("An error occurred during login. Please try again.")).toBeInTheDocument();
         });
-        
+
     });;
 
     /* Test 12: Disables submit button when form is invalid */

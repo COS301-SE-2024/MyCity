@@ -150,7 +150,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingClosedTenders ? (
                     <div className="flex justify-center items-center">
                       <ThreeDots
@@ -167,7 +167,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders tickets={dashMuniResults} />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </main>
@@ -217,7 +217,7 @@ export default function MuniTenders() {
               <Tabs
                 aria-label="Tender options"
                 defaultSelectedKey={0}
-                className="w-full"
+                className="w-full items-center justify-center"
                 classNames={{
                   tab: "min-w-24 min-h-8 text-black",
                   tabContent:
@@ -263,7 +263,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingClosedTenders ? (
                     <div className="flex justify-center items-center mt-4">
                       <ThreeDots
@@ -278,7 +278,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders tickets={dashMuniResults} />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </div>

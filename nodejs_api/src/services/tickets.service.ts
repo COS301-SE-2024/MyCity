@@ -1,9 +1,8 @@
-import { PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { ScanCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
-import { ASSETS_TABLE, dynamoDBClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
-import { doesTicketExist, formatResponse, generateId, getCompanyIDFromName, getUserProfile, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
-
+import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
+import { doesTicketExist, generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
+import { uploadFile } from "../config/s3bucket.config";
 
 interface Ticket {
     dateClosed: string;
@@ -34,6 +33,121 @@ interface TicketData {
 }
 
 
+export const createTicket = async (formData: any, file: Express.Multer.File) => {
+    try {
+        // Validate required fields
+        const requiredFields = [
+            "address",
+            "asset",
+            "description",
+            "latitude",
+            "longitude",
+            "state",
+            "username",
+        ];
+
+        for (const field of requiredFields) {
+            const reqField = formData[field];
+            if (!reqField) {
+                const errorResponse = {
+                    Error: {
+                        Code: "IncorrectFields",
+                        Message: `Missing required field: ${field}`,
+                    },
+                };
+                throw new ClientError(errorResponse, "InvalidFields");
+            }
+        }
+
+        const username = formData["username"] as string;
+        const imageLink = await uploadFile("ticket_images", username, file);
+
+        // Ensure asset exists
+        const assetId = String(formData.asset);
+        const assetResponse = await dynamoDBDocumentClient.send(new GetCommand({
+            TableName: ASSETS_TABLE,
+            Key: { asset_id: assetId },
+        }));
+
+        if (!assetResponse.Item) {
+            const errorResponse = {
+                Error: {
+                    Code: "ResourceNotFoundException",
+                    Message: `Asset with ID ${assetId} does not exist`,
+                },
+            };
+            throw new ClientError(errorResponse, "NoItems");
+        }
+
+        // Generate ticket ID
+        const ticketId = generateId();
+
+        const latitude = parseFloat(formData.latitude);
+        const longitude = parseFloat(formData.longitude);
+
+        // Get the address
+        const address = formData.address;
+
+        const municipalityId = await getMunicipality(latitude, longitude);
+
+        const currentDatetime = new Date();
+        const formattedDatetime = currentDatetime.toISOString();
+
+        const ticketNumber = generateTicketNumber(municipalityId);
+
+        // Create the ticket item
+        const ticketItem = {
+            ticket_id: ticketId,
+            asset_id: assetId,
+            address: address,
+            dateClosed: "<empty>",
+            dateOpened: formattedDatetime,
+            description: formData.description,
+            imageURL: imageLink,
+            latitude: latitude,
+            longitude: longitude,
+            municipality_id: municipalityId,
+            username: formData.username,
+            state: formData.state, // do not hard code, want to extend in future
+            upvotes: 0,
+            viewcount: 0,
+            ticketnumber: ticketNumber,
+        };
+
+        // Put the ticket item into the tickets table
+        await dynamoDBDocumentClient.send(new PutCommand({
+            TableName: TICKETS_TABLE,
+            Item: ticketItem,
+        }));
+
+        // Put ticket on their watchlist
+        const watchlistId = generateId();
+
+        const watchlistItem = {
+            watchlist_id: watchlistId,
+            ticket_id: ticketId,
+            user_id: formData.username,
+        };
+
+        await dynamoDBDocumentClient.send(new PutCommand({
+            TableName: WATCHLIST_TABLE,
+            Item: watchlistItem,
+        }));
+
+        // After accepting
+        const accResponse = {
+            message: "Ticket created successfully",
+            ticket_id: ticketId,
+            watchlist_id: watchlistId,
+        };
+
+        return accResponse;
+
+    } catch (error: any) {
+        throw error;
+    }
+};
+
 export const addWatchlist = async (ticketData: TicketData) => {
     const requiredFields = ["username", "ticket_id"];
     for (const field of requiredFields) {
@@ -48,16 +162,17 @@ export const addWatchlist = async (ticketData: TicketData) => {
         }
     }
 
-    const userExistCommand = new ScanCommand({
+    const userExistCommand = new QueryCommand({
         TableName: WATCHLIST_TABLE,
-        FilterExpression: "user_id = :username AND ticket_id = :ticket_id",
+        KeyConditionExpression: "user_id = :username",
+        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
-            ":username": { S: ticketData.username },
-            ":ticket_id": { S: ticketData.ticket_id },
+            ":username": ticketData.username,
+            ":ticket_id": ticketData.ticket_id
         },
     });
 
-    const userExist = await dynamoDBClient.send(userExistCommand);
+    const userExist = await dynamoDBDocumentClient.send(userExistCommand);
     if (userExist.Items && userExist.Items.length > 0) {
         const errorResponse = {
             Error: {
@@ -81,17 +196,17 @@ export const addWatchlist = async (ticketData: TicketData) => {
     const watchlistId = generateId();
 
     const watchlistItem = {
-        watchlist_id: { S: watchlistId },
-        ticket_id: { S: ticketData.ticket_id },
-        user_id: { S: ticketData.username },
+        watchlist_id: watchlistId,
+        ticket_id: ticketData.ticket_id,
+        user_id: ticketData.username
     };
 
-    const putItemCommand = new PutItemCommand({
+    const putItemCommand = new PutCommand({
         TableName: WATCHLIST_TABLE,
         Item: watchlistItem,
     });
 
-    await dynamoDBClient.send(putItemCommand);
+    await dynamoDBDocumentClient.send(putItemCommand);
 
     return {
         Status: "Success",
@@ -100,7 +215,7 @@ export const addWatchlist = async (ticketData: TicketData) => {
 };
 
 export const getFaultTypes = async () => {
-    const response = await dynamoDBClient.send(new ScanCommand({ TableName: ASSETS_TABLE }));
+    const response = await dynamoDBDocumentClient.send(new ScanCommand({ TableName: ASSETS_TABLE }));
     const assets = response.Items || [];
 
     const faultTypes = assets.map((asset: any) => ({
@@ -109,13 +224,12 @@ export const getFaultTypes = async () => {
         multiplier: asset.multiplier || 1,
     }));
 
-    // return formatResponse(200, faultTypes);
     return faultTypes;
 };
 
 
-export const getMyTickets = async (tickets_data: string | null) => {
-    if (!tickets_data) {
+export const getMyTickets = async (username: string | null) => {
+    if (!username) {
         const errorResponse = {
             Error: {
                 Code: "IncorrectFields",
@@ -127,15 +241,15 @@ export const getMyTickets = async (tickets_data: string | null) => {
 
     const queryCommand = new QueryCommand({
         TableName: TICKETS_TABLE,
-        IndexName: "username-index",
+        IndexName: "username-dateOpened-index",
         KeyConditionExpression: "username = :username",
         ExpressionAttributeValues: {
-            ":username": { S: tickets_data },
+            ":username": username
         },
     });
 
-    const response = await dynamoDBClient.send(queryCommand);
-    const items = response.Items;
+    const response = await dynamoDBDocumentClient.send(queryCommand);
+    const items = response.Items || [];
 
     if (items && items.length > 0) {
         return items;
@@ -163,32 +277,18 @@ export const getInMyMunicipality = async (municipality: string | null) => {
 
     const queryCommand = new QueryCommand({
         TableName: TICKETS_TABLE,
-        IndexName: "municipality_id-index",
+        IndexName: "municipality_id-dateOpened-index",
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
             ":municipality_id": municipality
         }
     });
 
-    const response = await dynamoDBClient.send(queryCommand);
-    const items = response.Items;
+    const response = await dynamoDBDocumentClient.send(queryCommand);
+    const items = response.Items || [];
 
     if (items && items.length > 0) {
-        for (const item of items) {
-            const updateCommand = new QueryCommand({
-                TableName: TICKET_UPDATE_TABLE,
-                IndexName: "ticket_id-index",
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": item.ticket_id
-                },
-                Select: "COUNT"
-            });
-
-            const queryResponse = await dynamoDBClient.send(updateCommand);
-            item.commentcount = queryResponse.Count || 0;
-        }
-
+        await updateCommentCounts(items);
         await getUserProfile(items);
         return items;
     } else {
@@ -202,8 +302,8 @@ export const getInMyMunicipality = async (municipality: string | null) => {
     }
 };
 
-export const getOpenTicketsInMunicipality = async (ticketsData: string | null) => {
-    if (!ticketsData) {
+export const getOpenTicketsInMunicipality = async (municipality: string | null) => {
+    if (!municipality) {
         const errorResponse = {
             Error: {
                 Code: "IncorrectFields",
@@ -213,58 +313,37 @@ export const getOpenTicketsInMunicipality = async (ticketsData: string | null) =
         throw new ClientError(errorResponse, "InvalidFields");
     }
 
-    const response = await dynamoDBClient.send(
+    const response = await dynamoDBDocumentClient.send(
         new QueryCommand({
             TableName: TICKETS_TABLE,
-            IndexName: "municipality_id-index",
+            IndexName: "municipality_id-dateOpened-index",
             KeyConditionExpression: "municipality_id = :municipality_id",
+            FilterExpression: "#state = :state",
+            ExpressionAttributeNames: {
+                "#state": "state"
+            },
             ExpressionAttributeValues: {
-                ":municipality_id": ticketsData,
+                ":municipality_id": municipality,
+                ":state": "Opened"
             },
         })
     );
     const items = response.Items;
 
     if (items && items.length > 0) {
-        for (const item of items) {
-            const responseItem = await dynamoDBClient.send(
-                new QueryCommand({
-                    TableName: TICKET_UPDATE_TABLE,
-                    IndexName: "ticket_id-index",
-                    KeyConditionExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": item.ticket_id,
-                    },
-                })
-            );
-            item.commentcount = responseItem.Count || 0;
-        }
-
+        await updateCommentCounts(items);
         await getUserProfile(items);
-        const filteredItems = items.filter((item) => item.state === "Opened");
-
-        if (filteredItems.length <= 0) {
-            const errorResponse = {
-                Error: {
-                    Code: "NoTickets",
-                    Message: "Doesn't have open tickets in municipality",
-                },
-            };
-            throw new ClientError(errorResponse, "NoTicket");
-        }
-
-        return filteredItems;
+        return items;
     } else {
         const errorResponse = {
             Error: {
                 Code: "NoTickets",
-                Message: "Doesn't have ticket in municipality",
+                Message: "Doesn't have open tickets in municipality",
             },
         };
         throw new ClientError(errorResponse, "NoTicket");
     }
 };
-
 
 export const getWatchlist = async (userId: string) => {
     const collective: any[] = [];
@@ -273,47 +352,30 @@ export const getWatchlist = async (userId: string) => {
         throw new Error("IncorrectFields: Missing required query: username");
     }
 
-    const scanParams = {
+    const response = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: WATCHLIST_TABLE,
-        FilterExpression: "user_id = :user_id",
+        KeyConditionExpression: "user_id = :user_id",
         ExpressionAttributeValues: {
-            ":user_id": userId.toLowerCase()
+            ":user_id": userId
         }
-    };
+    }));
 
-    const scanCommand = new ScanCommand(scanParams);
-    const response = await dynamoDBClient.send(scanCommand);
     const items = response.Items;
 
     if (items && items.length > 0) {
         for (const item of items) {
-            const queryParams = {
+            const queryCommand = new QueryCommand({
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": item.ticket_id
                 }
-            };
-
-            const queryCommand = new QueryCommand(queryParams);
-            const respItem = await dynamoDBClient.send(queryCommand);
+            });
+            const respItem = await dynamoDBDocumentClient.send(queryCommand);
             const ticketsItems = respItem.Items;
 
             if (ticketsItems && ticketsItems.length > 0) {
-                for (const tckItem of ticketsItems) {
-                    const updateCommand = new QueryCommand({
-                        TableName: TICKET_UPDATE_TABLE,
-                        IndexName: "ticket_id-index",
-                        KeyConditionExpression: "ticket_id = :ticket_id",
-                        ExpressionAttributeValues: {
-                            ":ticket_id": tckItem.ticket_id
-                        },
-                        Select: "COUNT"
-                    });
-
-                    const queryResponse = await dynamoDBClient.send(updateCommand);
-                    tckItem.commentcount = queryResponse.Count || 0;
-                }
+                await updateCommentCounts(ticketsItems);
             } else {
                 const errorResponse = {
                     Error: {
@@ -336,31 +398,19 @@ export const getWatchlist = async (userId: string) => {
 export const viewTicketData = async (ticketId: string) => {
     try {
         ticketId = validateTicketId(ticketId);
-        const response = await dynamoDBClient.send(
+        const response = await dynamoDBDocumentClient.send(
             new QueryCommand({
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
-                    ":ticket_id": ticketId,
+                    ":ticket_id": ticketId
                 },
             })
         );
         const items = response.Items || [];
 
         if (items.length > 0) {
-            for (const item of items) {
-                const responseItem = await dynamoDBClient.send(
-                    new QueryCommand({
-                        TableName: TICKET_UPDATE_TABLE,
-                        IndexName: "ticket_id-index",
-                        KeyConditionExpression: "ticket_id = :ticket_id",
-                        ExpressionAttributeValues: {
-                            ":ticket_id": item.ticket_id,
-                        },
-                    })
-                );
-                item.commentcount = responseItem.Count || 0;
-            }
+            await updateCommentCounts(items);
             await getUserProfile(items);
             return items;
         } else {
@@ -380,9 +430,6 @@ export const viewTicketData = async (ticketId: string) => {
     }
 };
 
-
-
-
 export const interactTicket = async (ticketData: any) => {
     try {
         const requiredFields = ["type", "ticket_id"];
@@ -399,13 +446,13 @@ export const interactTicket = async (ticketData: any) => {
         }
 
         const interactType = String(ticketData.type).toUpperCase();
-        const response = await dynamoDBClient.send(
+        const response = await dynamoDBDocumentClient.send(
             new QueryCommand({
                 TableName: TICKETS_TABLE,
                 ProjectionExpression: "upvotes, viewcount",
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
-                    ":ticket_id": ticketData.ticket_id,
+                    ":ticket_id": ticketData.ticket_id
                 },
             })
         );
@@ -415,16 +462,16 @@ export const interactTicket = async (ticketData: any) => {
             if (interactType === "UPVOTE") {
                 for (const item of items) {
                     const votes = Number(item.upvotes) + 1;
-                    await dynamoDBClient.send(
+                    await dynamoDBDocumentClient.send(
                         new UpdateCommand({
                             TableName: TICKETS_TABLE,
                             Key: {
-                                ticket_id: item.ticket_id,
+                                ticket_id: item.ticket_id
                             },
                             UpdateExpression: "SET upvotes = :votes",
                             ExpressionAttributeValues: {
-                                ":votes": votes,
-                            },
+                                ":votes": votes
+                            }
                         })
                     );
                     return { Status: "SUCCESSFUL", vote: votes };
@@ -432,16 +479,16 @@ export const interactTicket = async (ticketData: any) => {
             } else if (interactType === "VIEWED") {
                 for (const item of items) {
                     const views = Number(item.viewcount) + 1;
-                    await dynamoDBClient.send(
+                    await dynamoDBDocumentClient.send(
                         new UpdateCommand({
                             TableName: TICKETS_TABLE,
                             Key: {
-                                ticket_id: item.ticket_id,
+                                ticket_id: item.ticket_id
                             },
                             UpdateExpression: "SET viewcount = :views",
                             ExpressionAttributeValues: {
-                                ":views": views,
-                            },
+                                ":views": views
+                            }
                         })
                     );
                     return { Status: "SUCCESSFUL", views: views };
@@ -449,16 +496,16 @@ export const interactTicket = async (ticketData: any) => {
             } else if (interactType === "UNVOTE") {
                 for (const item of items) {
                     const votes = Number(item.upvotes) - 1;
-                    await dynamoDBClient.send(
+                    await dynamoDBDocumentClient.send(
                         new UpdateCommand({
                             TableName: TICKETS_TABLE,
                             Key: {
-                                ticket_id: item.ticket_id,
+                                ticket_id: item.ticket_id
                             },
                             UpdateExpression: "SET upvotes = :votes",
                             ExpressionAttributeValues: {
-                                ":votes": votes,
-                            },
+                                ":votes": votes
+                            }
                         })
                     );
                     return { Status: "SUCCESSFUL", vote: votes };
@@ -478,81 +525,66 @@ export const interactTicket = async (ticketData: any) => {
     }
 };
 
-
-
 export const getMostUpvoted = async () => {
     try {
-        // const upvotesQueryCommand = new QueryCommand({
-        //     TableName: TICKETS_TABLE,
-        //     IndexName: "upvotes-index",
-        //     KeyConditionExpression: "upvotes <> :minUpvotes",
-        //     ExpressionAttributeValues: {
-        //         ":minUpvotes": 0
-        //     },
-        //     ScanIndexForward: false, // Descending order
-        //     Limit: 15
-        // });
-
-        // const response = await dynamoDBClient.send(upvotesQueryCommand);
-        // const topItems: Ticket[] = response.Items as Ticket[];
-
-
-        // Scan tickets_table to get items with "upvotes" attribute
-        const scanCommand = new ScanCommand({
+        const params1: QueryCommandInput = {
             TableName: TICKETS_TABLE,
-            FilterExpression: "attribute_exists(upvotes)"
-        });
-        const response = await dynamoDBClient.send(scanCommand);
-        const items: Ticket[] = response.Items as Ticket[];
+            IndexName: "state-upvotes-index",
+            KeyConditionExpression: "#state = :state",
+            ExpressionAttributeNames: {
+                "#state": "state"
+            },
+            ExpressionAttributeValues: {
+                ":state": "Opened"
+            },
+            ScanIndexForward: false, // sort in descending order
+            Limit: 6 // limit result set to the top 6 items
+        };
 
-        // Sort items by "upvotes" in descending order and get the top 15
-        const sortedItems = items.sort((a, b) => b.upvotes - a.upvotes);
-        const topItems = sortedItems.slice(0, 15);
+        const params2: QueryCommandInput = {
+            TableName: TICKETS_TABLE,
+            IndexName: "state-upvotes-index",
+            KeyConditionExpression: "#state = :state",
+            ExpressionAttributeNames: {
+                "#state": "state"
+            },
+            ExpressionAttributeValues: {
+                ":state": "In Progress"
+            },
+            ScanIndexForward: false, // sort in descending order
+            Limit: 5 // limit result set to the top 5 items
+        };
+
+        const params3: QueryCommandInput = {
+            TableName: TICKETS_TABLE,
+            IndexName: "state-upvotes-index",
+            KeyConditionExpression: "#state = :state",
+            ExpressionAttributeNames: {
+                "#state": "state"
+            },
+            ExpressionAttributeValues: {
+                ":state": "Taking Tenders"
+            },
+            ScanIndexForward: false, // sort in descending order
+            Limit: 5 // limit result set to the top 5 items
+        };
+
+        const [result1, result2, result3] = await Promise.all([
+            dynamoDBDocumentClient.send(new QueryCommand(params1)),
+            dynamoDBDocumentClient.send(new QueryCommand(params2)),
+            dynamoDBDocumentClient.send(new QueryCommand(params3)),
+        ]);
+
+        const items1: Ticket[] = result1.Items as Ticket[];
+        const items2: Ticket[] = result2.Items as Ticket[];
+        const items3: Ticket[] = result3.Items as Ticket[];
+
+        // combine the top items from each state to get a total of 16 items
+        const topItems: Ticket[] = [...items1, ...items2, ...items3];
 
         if (topItems.length > 0) {
-            for (const item of topItems) {
-                // Query ticketupdate_table to get the count of comments for each ticket
-                const queryCommand = new QueryCommand({
-                    TableName: TICKET_UPDATE_TABLE,
-                    IndexName: "ticket_id-index",
-                    KeyConditionExpression: "ticket_id = :ticket_id",
-                    ExpressionAttributeValues: {
-                        ":ticket_id": item.ticket_id
-                    },
-                    Select: "COUNT"
-                });
-                const queryResponse = await dynamoDBClient.send(queryCommand);
-                item.commentcount = queryResponse.Count || 0;
-            }
-
-            // // Prepare to batch query for comment counts
-            // const ticketIds = topItems.map(item => item.ticket_id);
-            // const batchGetCommand = new BatchGetItemCommand({
-            //     RequestItems: {
-            //         TICKET_UPDATE_TABLE: {
-            //             Keys: ticketIds.map(ticket_id => ({
-            //                 ticket_id: { S: ticket_id }
-            //             })),
-            //             ProjectionExpression: "ticket_id" // Get only necessary attributes
-            //         }
-            //     }
-            // });
-            // const batchResponse = await dynamoDBClient.send(batchGetCommand);
-            // const commentCounts = new Map<string, number>();
-
-            // // Aggregate comment counts
-            // batchResponse.Responses?.TICKET_UPDATE_TABLE.forEach(item => {
-            //     const ticket_id = item.ticket_id.S;
-            //     if (ticket_id) {
-            //         commentCounts.set(ticket_id, (commentCounts.get(ticket_id) || 0) + 1);
-            //     }
-            // });
-
-            // // Attach comment counts to top items
-            // topItems.forEach(item => {
-            //     item.commentcount = commentCounts.get(item.ticket_id) || 0;
-            // });
-
+            // get the count of comments for each ticket
+            await updateCommentCounts(topItems);
             await getUserProfile(topItems);
             return topItems;
         } else {
@@ -682,8 +714,7 @@ export const acceptTicket = async (ticketData: any) => {
     }
 };
 
-
-export const getCompanyTickets = async (companyname: string | null): Promise<any> => {
+export const getCompanyTickets = async (companyname: string | null) => {
     if (!companyname) {
         const errorResponse = {
             Error: {
@@ -697,11 +728,12 @@ export const getCompanyTickets = async (companyname: string | null): Promise<any
     const collective: any[] = [];
     const company_id = await getCompanyIDFromName(companyname);
 
-    const responseTender = await dynamoDBClient.send(new ScanCommand({
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
-        FilterExpression: "company_id = :company_id",
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
         ExpressionAttributeValues: {
-            ":company_id": { S: company_id },
+            ":company_id": company_id
         },
     }));
 
@@ -709,11 +741,11 @@ export const getCompanyTickets = async (companyname: string | null): Promise<any
 
     if (tenderItems && tenderItems.length > 0) {
         for (const item of tenderItems) {
-            const responseCompanyTickets = await dynamoDBClient.send(new QueryCommand({
+            const responseCompanyTickets = await dynamoDBDocumentClient.send(new QueryCommand({
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
-                    ":ticket_id": { S: item["ticket_id"].S },
+                    ":ticket_id": item["ticket_id"]
                 },
             }));
 
@@ -726,28 +758,24 @@ export const getCompanyTickets = async (companyname: string | null): Promise<any
         }
     }
 
-    const response = await dynamoDBClient.send(new ScanCommand({
+    const response = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TICKETS_TABLE,
-        FilterExpression: "attribute_exists(upvotes)",
+        IndexName: "state-upvotes-index",
+        KeyConditionExpression: "#state = :state",
+        ExpressionAttributeNames: {
+            "#state": "state"
+        },
+        ExpressionAttributeValues: {
+            ":state": "Taking Tenders"
+        },
+        ScanIndexForward: false, // sort in descending order
+        Limit: 6 // limit result set to the top 6 items
     }));
 
-    const items = response.Items!;
-    const sortedItems = items.sort((a, b) => b["upvotes"].N - a["upvotes"].N);
-    const filteredItems = sortedItems.filter(item => item["state"].S === "Taking Tenders");
-    const topItems = filteredItems.slice(0, 6);
+    const topItems = response.Items || [];
 
     if (topItems.length > 0) {
-        for (const item of topItems) {
-            const responseItem = await dynamoDBClient.send(new ScanCommand({
-                TableName: TICKET_UPDATE_TABLE,
-                FilterExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": { S: item["ticket_id"].S },
-                },
-            }));
-
-            item.commentcount = responseItem.Count || 0;
-        }
+        await updateCommentCounts(topItems);
         await getUserProfile(topItems);
         collective.push(...topItems);
         return collective;
@@ -766,29 +794,24 @@ export const getCompanyTickets = async (companyname: string | null): Promise<any
 export const getOpenCompanyTickets = async (): Promise<any> => {
     const collective: any[] = [];
 
-    const response = await dynamoDBClient.send(new ScanCommand({
+    const response = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TICKETS_TABLE,
-        FilterExpression: "attribute_exists(upvotes)",
+        IndexName: "state-upvotes-index",
+        KeyConditionExpression: "#state = :state",
+        ExpressionAttributeNames: {
+            "#state": "state"
+        },
+        ExpressionAttributeValues: {
+            ":state": "Taking Tenders"
+        },
+        ScanIndexForward: false, // sort in descending order
+        Limit: 6 // limit result set to the top 6 items
     }));
 
-    const items = response.Items || [];
-    const sortedItems = items.sort((a, b) => b["upvotes"].N - a["upvotes"].N);
-    const filteredItems = sortedItems.filter(item => item["state"].S === "Taking Tenders");
-    const topItems = filteredItems.slice(0, 6);
+    const topItems = response.Items || [];
 
     if (topItems.length > 0) {
-        for (const item of topItems) {
-            const responseItem = await dynamoDBClient.send(new QueryCommand({
-                TableName: TICKET_UPDATE_TABLE,
-                IndexName: "ticket_id-index",
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": { S: item["ticket_id"].S },
-                },
-            }));
-
-            item["commentcount"] = responseItem.Count || 0;
-        }
+        await updateCommentCounts(topItems);
         await getUserProfile(topItems);
         return topItems;
     } else {
@@ -801,7 +824,6 @@ export const getOpenCompanyTickets = async (): Promise<any> => {
         throw new ClientError(errorResponse, "NonExistence");
     }
 };
-
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
     // Validate required fields
@@ -827,29 +849,28 @@ export const addTicketCommentWithImage = async (comment: string, ticket_id: stri
 
     // Prepare comment item
     const commentItem = {
-        ticketupdate_id: { S: ticketupdate_id },
-        comment: { S: comment },
-        date: { S: formattedDatetime },
-        imageURL: { S: image_url },
-        ticket_id: { S: ticket_id },
-        user_id: { S: user_id },
+        ticketupdate_id: ticketupdate_id,
+        comment: comment,
+        date: formattedDatetime,
+        imageURL: image_url,
+        ticket_id: ticket_id,
+        user_id: user_id
     };
 
     // Insert comment into ticket_updates table
-    const putItemCommand = new PutItemCommand({
+    const putItemCommand = new PutCommand({
         TableName: TICKET_UPDATE_TABLE,
         Item: commentItem,
     });
 
-    await dynamoDBClient.send(putItemCommand);
+    await dynamoDBDocumentClient.send(putItemCommand);
 
     const response = {
         message: "Comment added successfully",
         ticketupdate_id: ticketupdate_id,
     };
-    return formatResponse(200, response);
+    return response;
 };
-
 
 export const addTicketCommentWithoutImage = async (comment: string, ticket_id: string, user_id: string) => {
     // Validate required fields
@@ -875,41 +896,44 @@ export const addTicketCommentWithoutImage = async (comment: string, ticket_id: s
 
     // Prepare comment item
     const commentItem = {
-        ticketupdate_id: { S: ticketupdate_id },
-        comment: { S: comment },
-        date: { S: formattedDatetime },
-        imageURL: { S: "<empty>" },  // Set to <empty> if no image is provided
-        ticket_id: { S: ticket_id },
-        user_id: { S: user_id },
+        ticketupdate_id: ticketupdate_id,
+        comment: comment,
+        date: formattedDatetime,
+        imageURL: "<empty>",  // Set to <empty> if no image is provided
+        ticket_id: ticket_id,
+        user_id: user_id
     };
 
     // Insert comment into ticket_updates table
-    const putItemCommand = new PutItemCommand({
+    const putItemCommand = new PutCommand({
         TableName: TICKET_UPDATE_TABLE,
         Item: commentItem,
     });
 
-    await dynamoDBClient.send(putItemCommand);
+    await dynamoDBDocumentClient.send(putItemCommand);
 
     const response = {
         message: "Comment added successfully",
         ticketupdate_id: ticketupdate_id,
     };
-    return formatResponse(200, response);
-};
 
+    return response;
+};
 
 export const getTicketComments = async (currTicketId: string) => {
     currTicketId = validateTicketId(currTicketId);
     try {
-        const response = await dynamoDBClient.send(new ScanCommand({
+        const response = await dynamoDBDocumentClient.send(new QueryCommand({
             TableName: TICKET_UPDATE_TABLE,
+            IndexName: "ticket_id-index",
+            KeyConditionExpression: "ticket_id = :ticket_id",
+            ExpressionAttributeValues: {
+                ":ticket_id": currTicketId
+            }
         }));
+
         const items = response.Items || [];
-        const filteredItems = items.filter(item =>
-            currTicketId.toLowerCase() === item.ticket_id.S.toLowerCase()
-        );
-        return filteredItems;
+        return items;
     } catch (e: any) {
         if (e instanceof ClientError) {
             throw new BadRequestError(`Failed to search for the ticket comments: ${e.response.Error.Message}`);
@@ -918,17 +942,16 @@ export const getTicketComments = async (currTicketId: string) => {
     }
 };
 
-
 export const getGeodataAll = async () => {
     try {
-        const response = await dynamoDBClient.send(new ScanCommand({
+        const response = await dynamoDBDocumentClient.send(new ScanCommand({
             TableName: TICKETS_TABLE,
             ProjectionExpression: "asset_id, latitude, longitude, upvotes"
         }));
         const faultData = response.Items || [];
 
         for (const fault of faultData) {
-            const upvotes = fault.upvotes.N;
+            const upvotes = fault.upvotes || 0;
 
             if (upvotes < 10) {
                 fault.urgency = "non-urgent";
@@ -951,4 +974,3 @@ export const getGeodataAll = async () => {
         throw new BadRequestError(`Failed to retrieve all tickets: ${e.message}`);
     }
 };
-

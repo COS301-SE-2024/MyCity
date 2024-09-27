@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { CompleteContract,TerminateContract } from "@/services/tender.service";
+import { DoneContract,TerminateContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 import dynamic from "next/dynamic";
 
@@ -44,8 +44,8 @@ function getStatus(status: string) {
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-green bg-green-200 rounded-full",
-  closed: "text-red bg-red-200 rounded-full",
+  completed: "text-green bg-green-200 border-green-500 rounded-full",
+  closed: "text-red bg-red-200 border-red-500 rounded-full",
 };
 
 const TenderMax = ({
@@ -97,7 +97,7 @@ const TenderMax = ({
     {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      const response_contract = await DoneContract(tender.contract_id,user_session)
       console.log(response_contract)
     }
     setDialog({ action: "", show: false });
@@ -122,7 +122,7 @@ const TenderMax = ({
     if (dialog.action === "Mark as Complete") {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      const response_contract = await DoneContract(tender.contract_id,user_session)
       console.log(response_contract)
       toast.success(`${dialog.action} action confirmed.`);
       onClose(-2); // Example: Mark as complete would close the ticket
@@ -132,7 +132,7 @@ const TenderMax = ({
       const response_contract = await TerminateContract(tender.contract_id,user_session)
       console.log(response_contract)
       toast.success(`${dialog.action} action confirmed.`);
-      onClose(0); // Example: Terminate contract would also close the ticket
+      onClose(-1); // Example: Terminate contract would also close the ticket
     }
   };
 
@@ -208,7 +208,7 @@ const TenderMax = ({
                 >
                   Back
                 </button>
-                {(tender.status === "in progress" ||
+                {(
                   tender.status === "completed") && (
                   <>
                     <button

@@ -6,11 +6,14 @@ from chalicelib.tenders.tenders_controllers import (
     getCompanyTenders,
     getTicketTender,
     getContracts,
+    getCompanyFromTicketContracts,
+    getMuniContract,
     reject_tender,
     getCompanyContracts,
     complete_contract,
     getMunicipalityTenders,
     terminate_contract,
+    done_contract,
     DidMakeTender,
 )
 
@@ -80,6 +83,16 @@ def terminate_the_contract():
 
 
 @tenders_blueprint.route(
+    "/done", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
+def done_with_the_contract():
+    request = tenders_blueprint.current_request
+    sender_data = request.json_body
+    response = done_contract(sender_data)
+    return response
+
+
+@tenders_blueprint.route(
     "/didbid", authorizer=cognito_authorizer, methods=["POST"], cors=True
 )
 def Check_if_bid():
@@ -130,6 +143,16 @@ def getcontract():
 
 
 @tenders_blueprint.route(
+    "/getmunicontract", authorizer=cognito_authorizer, methods=["GET"], cors=True
+)
+def getmunicontract():
+    request = tenders_blueprint.current_request
+    ticket_id = request.query_params.get("ticket")
+    response = getMuniContract(ticket_id)
+    return response
+
+
+@tenders_blueprint.route(
     "/getcompanycontracts", authorizer=cognito_authorizer, methods=["GET"], cors=True
 )
 def getcompanycontracts():
@@ -137,4 +160,18 @@ def getcompanycontracts():
     tender_id = request.query_params.get("tender")
     company_name = request.query_params.get("company")
     response = getCompanyContracts(tender_id, company_name)
+    return response
+
+
+@tenders_blueprint.route(
+    "/getcompanycontractbyticket",
+    authorizer=cognito_authorizer,
+    methods=["GET"],
+    cors=True,
+)
+def getcompanycontractbyticket():
+    request = tenders_blueprint.current_request
+    ticket_id = request.query_params.get("ticket")
+    company_name = request.query_params.get("company")
+    response = getCompanyFromTicketContracts(ticket_id, company_name)
     return response

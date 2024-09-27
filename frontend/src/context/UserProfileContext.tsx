@@ -23,7 +23,7 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         if (userProfile.current) {
             return userProfile;
         }
-        const { signInDetails } = await getCurrentUser();
+
         const session = await fetchAuthSession();
         //otherwise get current user profile details
         const userDetails = await fetchUserAttributes();

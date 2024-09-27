@@ -139,10 +139,10 @@ describe("MunicipalityLogin", () => {
         fireEvent.submit(form);
 
         await waitFor(() => {
-            const outputs = screen.getAllByText("An error occurred during login. Please try again.")
+            const outputs = screen.getAllByText("Login failed")
             const out = outputs[0];
             expect(out).toBeInTheDocument();
-            //expect(screen.getByText("An error occurred during login. Please try again.")).toBeInTheDocument();
+            //expect(screen.getByText("Login failed. Please wait a few minutes and try again.")).toBeInTheDocument();
         });
         
     });;
