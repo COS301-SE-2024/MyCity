@@ -6,7 +6,10 @@ import FaultCategoryPieChart from "@/components/Statistics/municipality/FaultCat
 import ReportsOverTimeBarChart from "@/components/Statistics/municipality/ReportsOverTimeBarChart";
 import FaultStatesDoughnutChart from "@/components/Statistics/municipality/FaultStatesDoughnutChart";
 import TopAssetsProgress from "@/components/Statistics/municipality/TopAssetsProgress";
+import TopAssetsCost from "@/components/Statistics/municipality/TopAssetsCost";
 import MunicipalityRank from "@/components/Statistics/municipality/MunicipalityRank";
+import ServiceProvidersGrid from "@/components/Statistics/municipality/ServiceProvidersGrid";
+import AssetExpense from "@/components/Statistics/municipality/AssetExpense";
 import MunicipalityTicketsInfo from "@/components/Statistics/municipality/MunicipalityTicketsInfo";
 import InhouseVsExternalPieChart from "@/components/Statistics/municipality/InhouseVsExternalPieChart";
 import {
@@ -48,6 +51,7 @@ export default function MunicipalityStatisticsPage() {
   const [currentPage, setCurrentPage] = useState<number>(1); // State for pagination
   const [inhouseContracts, setInhouseContracts] = useState<number>(0);
   const [totalContracts, setTotalContracts] = useState<number>(0);
+  const [serviceProviders, setServiceProviders] = useState<string[]>([]); // State to store service providers
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,18 +74,26 @@ export default function MunicipalityStatisticsPage() {
           );
           setData(result[0]); // Assuming result is an array and we need the first element
 
-          console.log(selectedMunicipality + " - Inhouse");
+          // Parse service_providers if it's compressed JSON
+          const compressedServiceProviders = result[0]?.service_providers;
+          if (typeof compressedServiceProviders === "string") {
+            try {
+              const parsedServiceProviders = JSON.parse(
+                compressedServiceProviders
+              );
+              if (Array.isArray(parsedServiceProviders)) {
+                setServiceProviders(parsedServiceProviders); // Set parsed providers
+              }
+            } catch (error) {
+              console.error("Failed to parse service providers JSON:", error);
+            }
+          }
+
           // Fetch contracts per service provider
           const contractsData = await getContractsPerServiceProvider(
             `${selectedMunicipality} - Inhouse`,
             userSession
           );
-          
-          
-          
-          
-
-          console.log(contractsData);
 
           const inhouse = contractsData.reduce(
             (acc: number, contract: any) => acc + (contract.contracts || 0),
@@ -137,6 +149,7 @@ export default function MunicipalityStatisticsPage() {
 
   // Calculate external contracts
   const externalContracts = totalContracts - inhouseContracts;
+  const { by_asset, by_asset_by_avg_cost } = data || {};
 
   // Safely check if `data` exists before rendering the charts
   return (
@@ -191,40 +204,50 @@ export default function MunicipalityStatisticsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
             {currentPage === 1 && (
               <>
-                <div className="flex gap-4">
-                  {data && (
-                    <>
+                {data && (
+                  <div className="w-full flex gap-4">
+                    {/* ==== Municipality Tickets Info ==== */}
+                    <div className="flex w-1/2">
                       <MunicipalityTicketsInfo
                         municipalityName={data.municipality_id}
                         totalTickets={data.tickets}
                         citizens={data.citizens}
                       />
-                      <MunicipalityRank
-                        rank={data.rank}
-                        stateRank={data.state_rank}
-                        costRank={data.cost_rank}
-                        timeRank={data.time_rank}
-                      />
-                    </>
-                  )}
-                </div>
+                    </div>
 
-                <div className="flex gap-4">
-                  <InhouseVsExternalPieChart
-                    inhouse={inhouseContracts}
-                    external={externalContracts}
+                    {/* ==== In-house vs External Contracts ==== */}
+                    <div className="flex w-1/2">
+                      <InhouseVsExternalPieChart
+                        inhouse={inhouseContracts}
+                        external={externalContracts}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Pass service providers to ServiceProvidersGrid */}
+                {data?.service_providers && (
+                  <ServiceProvidersGrid
+                    serviceProviders={data.service_providers}
+                  />
+                )}
+
+                <div className="w-full flex gap-4">
+                  <AssetExpense
+                    data={{
+                      by_asset: by_asset || null,
+                      by_asset_by_avg_cost: by_asset_by_avg_cost || null,
+                    }}
                   />
                 </div>
 
-                {data?.by_asset && (
-                  <FaultCategoryPieChart data={data.by_asset} />
-                )}
                 <div className="w-full flex gap-4">
+                  {/* === Asset Resolution Time === */}
                   <div className="w-1/2">
-                    {data?.by_state && (
-                      <FaultStatesDoughnutChart data={data.by_state} />
-                    )}
+                    <TopAssetsCost data={data} />
                   </div>
+
+                  {/* === Top Assets Resolution Cost === */}
                   <div className="w-1/2">
                     <TopAssetsProgress data={data} />
                   </div>
@@ -234,24 +257,29 @@ export default function MunicipalityStatisticsPage() {
 
             {currentPage === 2 && (
               <>
-                {/* Simulate page 2 with the same data */}
-                <div className="flex gap-4">
-                  {data && (
-                    <>
+                {/* Page 2 content */}
+
+                {data && (
+                  <div className="flex gap-4 w-full">
+                    <div className="flex w-1/2">
+                      {" "}
                       <MunicipalityTicketsInfo
                         municipalityName={data.municipality_id}
                         totalTickets={data.tickets}
                         citizens={data.citizens}
                       />
+                    </div>
+                    <div className="flex w-1/2">
+                      {" "}
                       <MunicipalityRank
                         rank={data.rank}
                         stateRank={data.state_rank}
                         costRank={data.cost_rank}
                         timeRank={data.time_rank}
                       />
-                    </>
-                  )}
-                </div>
+                    </div>
+                  </div>
+                )}
                 {data?.by_date && (
                   <ReportsOverTimeBarChart data={data.by_date} />
                 )}

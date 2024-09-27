@@ -15,28 +15,28 @@ export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
   if (
     !data ||
     !data.by_asset ||
-    !data.by_asset_by_avg_time ||
-    !data.by_asset_by_etc_time
+    !data.by_asset_by_avg_cost ||
+    !data.by_asset_by_etc_cost
   ) {
     return <p>No data available for asset progress</p>;
   }
 
   // Parse the data strings into JSON objects
   const faultReports = JSON.parse(data.by_asset.replace(/'/g, '"'));
-  const avgTimes = JSON.parse(data.by_asset_by_avg_time.replace(/'/g, '"'));
-  const estimatedTimes = JSON.parse(
-    data.by_asset_by_etc_time.replace(/'/g, '"')
+  const avgCosts = JSON.parse(data.by_asset_by_avg_cost.replace(/'/g, '"'));
+  const estimatedCosts = JSON.parse(
+    data.by_asset_by_etc_cost.replace(/'/g, '"')
   );
 
-  // Create an array of assets sorted by the difference between avgTime and estimatedTime
+  // Create an array of assets sorted by the difference between avgCost and estimatedCost
   const sortedAssets = Object.entries(faultReports)
     .filter(
       ([asset]) =>
-        avgTimes[asset] !== undefined && estimatedTimes[asset] !== undefined
+        avgCosts[asset] !== undefined && estimatedCosts[asset] !== undefined
     )
     .sort(([assetA], [assetB]) => {
-      const diffA = avgTimes[assetA] - estimatedTimes[assetA];
-      const diffB = avgTimes[assetB] - estimatedTimes[assetB];
+      const diffA = avgCosts[assetA] - estimatedCosts[assetA];
+      const diffB = avgCosts[assetB] - estimatedCosts[assetB];
       return diffA - diffB; // Sort from best to worst (smallest difference to largest)
     });
 
@@ -63,52 +63,52 @@ export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
   return (
     <div className="bg-white bg-opacity-80 rounded-lg p-2 shadow-lg h-[38vh] w-full overflow-hidden">
       <h2 className="text-2xl font-bold mb-2 text-center">
-        Asset Resolution Times
+        Asset Resolution Costs
       </h2>
       <div className="space-y-2 h-[75%]">
         {paginatedAssets.map(([asset]) => {
-          const avgTime = avgTimes[asset];
-          const estimatedTime = estimatedTimes[asset];
-          const avgTimePercentage =
-            (avgTime / Math.max(avgTime, estimatedTime)) * 100;
-          const estimatedTimePercentage =
-            (estimatedTime / Math.max(avgTime, estimatedTime)) * 100;
-          const avgTimeBarColor =
-            avgTime < estimatedTime
-              ? "rgba(144, 238, 144, 0.6)" // Green if avgTime is less than estimatedTime
-              : avgTime === estimatedTime
-              ? "rgba(173, 216, 230, 0.6)" // Light blue if avgTime is equal to estimatedTime
-              : "rgba(255, 99, 132, 0.6)"; // Red if avgTime is greater than estimatedTime
+          const avgCost = avgCosts[asset];
+          const estimatedCost = estimatedCosts[asset];
+          const avgCostPercentage =
+            (avgCost / Math.max(avgCost, estimatedCost)) * 100;
+          const estimatedCostPercentage =
+            (estimatedCost / Math.max(avgCost, estimatedCost)) * 100;
+          const avgCostBarColor =
+            avgCost < estimatedCost
+              ? "rgba(144, 238, 144, 0.6)" // Green if avgCost is less than estimatedCost
+              : avgCost === estimatedCost
+              ? "rgba(173, 216, 230, 0.6)" // Light blue if avgCost is equal to estimatedCost
+              : "rgba(255, 99, 132, 0.6)"; // Red if avgCost is greater than estimatedCost
 
           return (
             <div key={asset} className="">
               <p className="text-black font-semibold">{asset}</p>
 
-              {/* Average Time Bar with Time Display */}
+              {/* Average Cost Bar with Cost Display */}
               <div className="w-full bg-gray-200 rounded-full h-6 mb-2 relative">
                 <div
                   className="h-6 rounded-full"
                   style={{
-                    width: `${avgTimePercentage}%`,
-                    backgroundColor: avgTimeBarColor,
+                    width: `${avgCostPercentage}%`,
+                    backgroundColor: avgCostBarColor,
                   }}
                 ></div>
                 <span className="absolute left-2 top-0 text-xs font-bold h-full flex items-center">
-                  Actual: {avgTime} hours
+                  Actual: R{avgCost}
                 </span>
               </div>
 
-              {/* Estimated Time Bar with Time Display */}
+              {/* Estimated Cost Bar with Cost Display */}
               <div className="w-full bg-gray-200 rounded-full h-6 relative">
                 <div
                   className="h-6 rounded-full"
                   style={{
-                    width: `${estimatedTimePercentage}%`,
+                    width: `${estimatedCostPercentage}%`,
                     backgroundColor: "rgba(173, 216, 230, 0.6)",
                   }}
                 ></div>
                 <span className="absolute left-2 top-0 text-xs font-bold h-full flex items-center">
-                  Estimated: {estimatedTime} hours
+                  Estimated: R{estimatedCost}
                 </span>
               </div>
             </div>
