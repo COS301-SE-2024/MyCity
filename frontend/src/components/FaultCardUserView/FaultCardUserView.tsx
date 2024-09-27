@@ -16,7 +16,7 @@ import { MessageCirclePlus } from "lucide-react";
 import { ArrowBigUp } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ThreeDots } from "react-loader-spinner";
-import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -431,7 +431,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                   )}
 
                   <img
-                    src={image?`${S3_BUCKET_BASE_URL}${image}`:undefined}
+                    src={getImageBucketUrl(image)}
                     alt="Fault"
                     className={`rounded-lg object-cover ${
                       loading ? "hidden" : "block"
@@ -580,7 +580,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div className="relative w-full flex justify-center mt-2 h-[30%]">
               {!imageError ? (
                 <img
-                  src={image?`${S3_BUCKET_BASE_URL}${image}`:undefined}
+                  src={getImageBucketUrl(image)}
                   alt="Fault"
                   className="rounded-lg object-cover w-full h-full"
                   onError={() => setImageError(true)}

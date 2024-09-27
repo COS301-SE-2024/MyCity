@@ -3,7 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
-import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 interface SearchTicketProps {
   tickets: Ticket[];
@@ -173,7 +173,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   <div className="w-[10%] overflow-hidden flex items-center justify-center ">
                     {image && !imageError ? (
                       <img
-                        src={image?`${S3_BUCKET_BASE_URL}${image}`:undefined}
+                        src={getImageBucketUrl(image)}
                         alt="Ticket"
                         className="w-[70%] h-full object-cover overflow-hidden rounded-md"
                         onError={() => setImageError(true)}

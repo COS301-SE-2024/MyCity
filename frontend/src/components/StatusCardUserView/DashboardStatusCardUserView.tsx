@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
 import mapboxgl, { Map, Marker } from 'mapbox-gl';
-import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -199,7 +199,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {image && (
               <div className="mb-2 flex justify-center">
-                <img src={`${S3_BUCKET_BASE_URL}${image}`} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
+                <img src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
               </div>
             )}
 

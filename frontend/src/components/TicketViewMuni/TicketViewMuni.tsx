@@ -15,7 +15,7 @@ import { useProfile } from "@/hooks/useProfile";
 import Modal from "react-modal";
 import { Image as ImageIcon } from "lucide-react";
 import { User as UserIcon } from "lucide-react";
-import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -309,7 +309,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       {/* Conditionally render image only when successfully loaded */}
                       {!imageError && (
                         <img
-                          src={imageURL?`${S3_BUCKET_BASE_URL}${imageURL}`: undefined}
+                          src={getImageBucketUrl(imageURL)}
                           alt="Fault"
                           className={`rounded-lg w-full h-full object-cover ${
                             loadingImage ? "hidden" : "block"

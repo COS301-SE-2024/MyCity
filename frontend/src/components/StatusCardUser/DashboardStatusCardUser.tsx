@@ -1,4 +1,4 @@
-import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 import React from "react";
 
 interface CardData {
@@ -40,7 +40,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
     >
       <div className="w-full bg-gray-200">
         {image ? (
-          <img src={`${S3_BUCKET_BASE_URL}${image}`} alt={title} className="w-full h-full object-cover" />
+          <img src={getImageBucketUrl(image)} alt={title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500">
             Image Placeholder

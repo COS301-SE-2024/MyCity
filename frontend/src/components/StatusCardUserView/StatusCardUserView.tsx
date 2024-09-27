@@ -1,4 +1,4 @@
-import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt } from "react-icons/fa";
 
@@ -145,7 +145,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
           {/* Image and Stats Section */}
           <div className="flex justify-center items-center mb-4">
             <div className="mb-4 text-center">
-              <img src={`${S3_BUCKET_BASE_URL}${image}`} alt="Fault" className="rounded-lg w-72 h-54" />
+              <img src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-72 h-54" />
             </div>
             <div className="flex flex-col items-center ml-4">
               <div className="flex flex-col items-center mb-4">
