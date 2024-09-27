@@ -132,17 +132,21 @@ const CreateTicketMobile: React.FC = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true); // Set loading to true when submission starts
+
     const user_data = await getUserProfile();
     const formcovert = formRef.current;
     const form_sending = new FormData();
 
     if (!formcovert || !(formcovert instanceof HTMLFormElement)) {
       console.error("Form is not recognized as HTMLFormElement");
+      setLoading(false); // Reset loading on error
       return;
     }
 
     if (!file) {
       toast.error("Please upload an image");
+      setLoading(false); // Reset loading on error
       return;
     }
 
@@ -156,6 +160,7 @@ const CreateTicketMobile: React.FC = () => {
 
     if (!selectedFault || !user_data.current) {
       toast.error("Fault type and login are required!");
+      setLoading(false); // Reset loading on error
       return;
     }
 
@@ -180,7 +185,7 @@ const CreateTicketMobile: React.FC = () => {
     } catch (error: any) {
       toast.error(`Error: ${error.message}`);
     } finally {
-      setLoading(false); // Always set loading to false after processing
+      setLoading(false); // Always reset loading state after processing
     }
   };
 
