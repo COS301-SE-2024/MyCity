@@ -1,7 +1,7 @@
 import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { ClientError } from "../types/error.types";
-import { generateId, getCompanyIDFromName, getTicketDateOpened } from "../utils/tickets.utils";
+import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 
 interface TenderData {
@@ -382,30 +382,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
     const expattrValue = { ":r": "completed" };
 
     try {
-        const response = await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
-
-        // editing ticket to closed
-        const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
-            TableName: TENDERS_TABLE,
-            Key: {
-                tender_id: contractItem.tender_id
-            }
-        }));
-
-        const tenderItem = responseTender.Item;
-        if (tenderItem) {
-            const updateExpT = "set #status = :r";
-            const expattrNameT = { "#status": "status" };
-            const expattrValueT = { ":r": "completed" };
-
-            await updateTenderTable(tenderItem.tender_id, updateExpT, expattrNameT, expattrValueT);
-        }
-
-        // editing ticket as well to In Progress
-        return {
-            Status: "Success",
-            Contract_id: senderData.contract_id,
-        };
+        await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
     }
     catch (error: any) {
         const errorResponse = {
@@ -415,6 +392,289 @@ export const completeContract = async (senderData: { contract_id: string }) => {
             },
         };
         throw new ClientError(errorResponse, "UpdateError");
+    }
+
+    // editing ticket to closed
+    const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+        TableName: TENDERS_TABLE,
+        Key: {
+            tender_id: contractItem.tender_id
+        }
+    }));
+
+    const tenderItem = responseTender.Item;
+    if (tenderItem) {
+        const updateExpT = "set #status = :r";
+        const expattrNameT = { "#status": "status" };
+        const expattrValueT = { ":r": "completed" };
+
+        try {
+            await updateTenderTable(tenderItem.tender_id, updateExpT, expattrNameT, expattrValueT);
+        }
+        catch (error: any) {
+            const errorResponse = {
+                Error: {
+                    Code: "UpdateError",
+                    Message: "Error occurred trying to update",
+                },
+            };
+            throw new ClientError(errorResponse, "UpdateError");
+        }
+    }
+
+    // editing ticket as well to In Progress
+    return {
+        Status: "Success",
+        Contract_id: senderData.contract_id,
+    };
+};
+
+export const terminateContract = async (senderData: { contract_id: string }) => {
+    const requiredFields = ["contract_id"];
+
+    for (const field of requiredFields) {
+        if (!(field in senderData)) {
+            const errorResponse = {
+                Error: {
+                    Code: "IncorrectFields",
+                    Message: `Missing required field: ${field}`,
+                },
+            };
+            throw new ClientError(errorResponse, "InvalidFields");
+        }
+    }
+
+    const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
+        TableName: CONTRACT_TABLE,
+        Key: {
+            contract_id: senderData.contract_id
+        }
+    }));
+
+    const contractItem = responseContract.Item;
+    if (!contractItem) {
+        const errorResponse = {
+            Error: {
+                Code: "ContractDoesntExist",
+                Message: "Contract Does not Exist",
+            },
+        };
+        throw new ClientError(errorResponse, "ContractDoesntExist");
+    }
+
+    const updateExp = "set #status = :r";
+    const expattrName = { "#status": "status" };
+    const expattrValue = { ":r": "closed" };
+
+    try {
+        await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
+    }
+    catch (error: any) {
+        const errorResponse = {
+            Error: {
+                Code: "UpdateError",
+                Message: "Error occurred trying to update",
+            },
+        };
+        throw new ClientError(errorResponse, "UpdateError");
+    }
+
+    const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+        TableName: TENDERS_TABLE,
+        Key: {
+            tender_id: contractItem.tender_id
+        }
+    }));
+
+    const tenderItem = responseTender.Item;
+    if (tenderItem) {
+        const updateExpTender = "set #status = :r";
+        const expattrNameTender = { "#status": "status" };
+        const expattrValueTender = { ":r": "rejected" };
+
+        try {
+            await updateTenderTable(tenderItem.tender_id, updateExpTender, expattrNameTender, expattrValueTender);
+        }
+        catch (error: any) {
+            const errorResponse = {
+                Error: {
+                    Code: "UpdateError",
+                    Message: "Error occurred trying to update",
+                },
+            };
+            throw new ClientError(errorResponse, "UpdateError");
+        }
+
+        const responseTicket = await dynamoDBDocumentClient.send(new QueryCommand({
+            TableName: TICKETS_TABLE,
+            KeyConditionExpression: "ticket_id = :ticket_id",
+            ExpressionAttributeValues: {
+                ":ticket_id": tenderItem.ticket_id
+            }
+        }));
+
+        if (responseTicket.Items && responseTicket.Items.length > 0) {
+            const ticketChange = responseTicket.Items[0];
+            const updateExpT = "set #state = :r";
+            const expattrNameT = { "#state": "state" };
+            const expattrValueT = { ":r": "Taking Tenders" };
+
+            try {
+                await updateTicketTable(ticketChange.ticket_id, ticketChange.dateOpened, updateExpT, expattrNameT, expattrValueT);
+            }
+            catch (error: any) {
+                const errorResponse = {
+                    Error: {
+                        Code: "UpdateError",
+                        Message: "Error occurred trying to update",
+                    },
+                };
+                throw new ClientError(errorResponse, "UpdateError");
+            }
+        }
+    }
+
+    return {
+        Status: "Success",
+        Contract_id: senderData.contract_id,
+    };
+};
+
+export const doneContract = async (senderData: { contract_id: string }) => {
+    const requiredFields = ["contract_id"];
+
+    for (const field of requiredFields) {
+        if (!(field in senderData)) {
+            const errorResponse = {
+                Error: {
+                    Code: "IncorrectFields",
+                    Message: `Missing required field: ${field}`,
+                },
+            };
+            throw new ClientError(errorResponse, "InvalidFields");
+        }
+    }
+
+    const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
+        TableName: CONTRACT_TABLE,
+        Key: {
+            contract_id: senderData.contract_id
+        }
+    }));
+
+    const contractItem = responseContract.Item;
+    if (!contractItem) {
+        const errorResponse = {
+            Error: {
+                Code: "ContractDoesntExist",
+                Message: "Contract Does not Exist",
+            },
+        };
+        throw new ClientError(errorResponse, "ContractDoesntExist");
+    }
+
+    const updateExp = "set #status = :r, #completedatetime = :c";
+    const expattrName = { "#status": "status", "#completedatetime": "completedatetime" };
+    const currentTime = new Date();
+    const submittedTime = currentTime.toISOString();
+    const expattrValue = { ":r": "done", ":c": submittedTime };
+
+    try {
+        await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
+    }
+    catch (error: any) {
+        const errorResponse = {
+            Error: {
+                Code: "UpdateError",
+                Message: "Error occurred trying to update",
+            },
+        };
+        throw new ClientError(errorResponse, "UpdateError");
+    }
+
+    const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+        TableName: TENDERS_TABLE,
+        Key: {
+            tender_id: contractItem.tender_id
+        }
+    }));
+
+    const tender = responseTender.Item;
+    if (tender) {
+        const responseTicket = await dynamoDBDocumentClient.send(new QueryCommand({
+            TableName: TICKETS_TABLE,
+            KeyConditionExpression: "ticket_id = :ticket_id",
+            ExpressionAttributeValues: {
+                ":ticket_id": tender.ticket_id
+            }
+        }));
+
+        if (responseTicket.Items && responseTicket.Items.length > 0) {
+            const ticketChange = responseTicket.Items[0];
+            const updateExpT = "set #state = :r";
+            const expattrNameT = { "#state": "state" };
+            const expattrValueT = { ":r": "Closed" };
+
+            try {
+                await updateTicketTable(ticketChange.ticket_id, ticketChange.dateOpened, updateExpT, expattrNameT, expattrValueT);
+            }
+            catch (error: any) {
+                const errorResponse = {
+                    Error: {
+                        Code: "UpdateError",
+                        Message: "Error occurred trying to update",
+                    },
+                };
+                throw new ClientError(errorResponse, "UpdateError");
+            }
+        }
+    }
+
+    return {
+        Status: "Success",
+        Contract_id: senderData.contract_id,
+    };
+};
+
+export const didMakeTender = async (senderData: { companyname: string, ticket_id: string }) => {
+    const requiredFields = ["companyname", "ticket_id"];
+
+    for (const field of requiredFields) {
+        if (!(field in senderData)) {
+            const errorResponse = {
+                Error: {
+                    Code: "IncorrectFields",
+                    Message: `Missing required field: ${field}`,
+                },
+            };
+            throw new ClientError(errorResponse, "InvalidFields");
+        }
+    }
+
+    const companyId = await getCompanyIDFromName(senderData.companyname);
+
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: TENDERS_TABLE,
+        IndexName: "company_id-index",
+        KeyConditionExpression: "company_id = :company_id",
+        FilterExpression: "ticket_id = :ticket_id",
+        ExpressionAttributeValues: {
+            ":company_id": companyId,
+            ":ticket_id": senderData.ticket_id
+        },
+    }));
+
+    if (responseTender.Items && responseTender.Items.length > 0) {
+        const tender = responseTender.Items[0];
+        await assignCompanyName([tender]);
+        await assignLongLat([tender]);
+        await assignMuni([tender]);
+        return tender;
+    } else {
+        return {
+            Status: "NotFound",
+            Message: "Company hasn't bid for ticket"
+        };
     }
 };
 
@@ -620,7 +880,103 @@ export const getContracts = async (tender_id: string) => {
     return contractItems[0];
 };
 
+export const getMuniContract = async (ticket_id: string) => {
+    if (!ticket_id) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required query: ticket",
+            },
+        };
+        throw new ClientError(errorResponse, "InvalidFields");
+    }
 
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: TENDERS_TABLE,
+        IndexName: "ticket_id-index",
+        KeyConditionExpression: "ticket_id = :ticket_id",
+        FilterExpression: "#status IN (:approved, :accepted, :completed)",
+        ExpressionAttributeNames: {
+            "#status": "status"
+        },
+        ExpressionAttributeValues: {
+            ":ticket_id": ticket_id,
+            ":approved": "approved",
+            ":accepted": "accepted",
+            ":completed": "completed"
+        }
+    }));
+
+    if (!responseTender.Items || responseTender.Items.length === 0) {
+        const errorResponse = {
+            Error: {
+                Code: "TendersDontExist",
+                Message: "There's no tenders for this ticket",
+            },
+        };
+        throw new ClientError(errorResponse, "TendersDontExist");
+    }
+
+    const tender = responseTender.Items[0];
+
+    const responseContracts = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: CONTRACT_TABLE,
+        IndexName: "tender_id-index",
+        KeyConditionExpression: "tender_id = :tender_id",
+        ExpressionAttributeValues: {
+            ":tender_id": tender.tender_id
+        }
+    }));
+
+    if (!responseContracts.Items || responseContracts.Items.length === 0) {
+        const errorResponse = {
+            Error: {
+                Code: "ContractDoesntExist",
+                Message: "Contract does not exist",
+            },
+        };
+        throw new ClientError(errorResponse, "ContractDoesntExist");
+    }
+
+    const contractItem = responseContracts.Items[0];
+
+    const responseTenderDetails = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: TENDERS_TABLE,
+        KeyConditionExpression: "tender_id = :tender_id",
+        ExpressionAttributeValues: {
+            ":tender_id": tender.tender_id
+        }
+    }));
+
+    if (!responseTenderDetails.Items || responseTenderDetails.Items.length === 0) {
+        const errorResponse = {
+            Error: {
+                Code: "TenderDoesntExist",
+                Message: "Tender does not exist",
+            },
+        };
+        throw new ClientError(errorResponse, "TenderDoesntExist");
+    }
+
+    const tenderItem = responseTenderDetails.Items[0];
+
+    const responseCompanyName = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: COMPANIES_TABLE,
+        KeyConditionExpression: "pid = :pid",
+        ExpressionAttributeValues: {
+            ":pid": tenderItem.company_id
+        }
+    }));
+
+    if (!responseCompanyName.Items || responseCompanyName.Items.length === 0) {
+        contractItem.companyname = "Xero Industries";
+    } else {
+        const company = responseCompanyName.Items[0];
+        contractItem.companyname = company.name || "Unknown Company";
+    }
+
+    return contractItem;
+};
 
 export const getCompanyContracts = async (tender_id: string, company_name: string) => {
     if (!tender_id || !company_name) {
@@ -705,3 +1061,85 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
     return contractItems[0];
 };
 
+export const getCompanyFromTicketContracts = async (ticket_id: string, company_name: string) => {
+    if (!ticket_id || !company_name) {
+        const errorResponse = {
+            Error: {
+                Code: "IncorrectFields",
+                Message: "Missing required query: ticket or company_name",
+            },
+        };
+        throw new ClientError(errorResponse, "InvalidFields");
+    }
+
+    const companyId = await getCompanyIDFromName(company_name);
+    if (!companyId) {
+        const errorResponse = {
+            Error: {
+                Code: "CompanyDoesntExist",
+                Message: "Company doesn't exist",
+            },
+        };
+        throw new ClientError(errorResponse, "CompanyDoesntExist");
+    }
+
+    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: TENDERS_TABLE,
+        IndexName: "ticket_id-index",
+        KeyConditionExpression: "ticket_id = :ticket_id",
+        FilterExpression: "company_id = :company_id",
+        ExpressionAttributeValues: {
+            ":ticket_id": ticket_id,
+            ":company_id": companyId
+        },
+    }));
+
+    if (!responseTender.Items || responseTender.Items.length === 0) {
+        const errorResponse = {
+            Error: {
+                Code: "TenderDoesntExist",
+                Message: "Company doesn't have a tender on this ticket",
+            },
+        };
+        throw new ClientError(errorResponse, "TenderDoesntExist");
+    }
+
+    const tender = responseTender.Items[0];
+
+    const responseContracts = await dynamoDBDocumentClient.send(new QueryCommand({
+        TableName: CONTRACT_TABLE,
+        IndexName: "tender_id-index",
+        KeyConditionExpression: "tender_id = :tender_id",
+        ExpressionAttributeValues: {
+            ":tender_id": tender.tender_id
+        },
+    }));
+
+    if (!responseContracts.Items || responseContracts.Items.length === 0) {
+        const errorResponse = {
+            Error: {
+                Code: "ContractDoesntExist",
+                Message: "Contract does not exist",
+            },
+        };
+        throw new ClientError(errorResponse, "ContractDoesntExist");
+    }
+
+    const contract = responseContracts.Items[0];
+
+    const responseName = await dynamoDBDocumentClient.send(new GetCommand({
+        TableName: COMPANIES_TABLE,
+        Key: {
+            pid: tender.company_id
+        },
+    }));
+
+    if (!responseName.Item) {
+        contract.companyname = "Xero Industries";
+    } else {
+        const company = responseName.Item;
+        contract.companyname = company.name;
+    }
+
+    return contract;
+};

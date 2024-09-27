@@ -51,6 +51,35 @@ export const completeContract = async (req: Request, res: Response) => {
     }
 };
 
+export const terminateContract = async (req: Request, res: Response) => {
+    try {
+        const senderData = req.body;
+        const response = await tendersService.terminateContract(senderData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const doneContract = async (req: Request, res: Response) => {
+    try {
+        const senderData = req.body;
+        const response = await tendersService.doneContract(senderData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const didMakeTender = async (req: Request, res: Response) => {
+    try {
+        const senderData = req.body;
+        const response = await tendersService.didMakeTender(senderData);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
 
 export const getCompanyTenders = async (req: Request, res: Response) => {
     try {
@@ -92,11 +121,32 @@ export const getContracts = async (req: Request, res: Response) => {
     }
 };
 
+export const getMuniContract = async (req: Request, res: Response) => {
+    try {
+        const ticketId = req.query["ticket"] as string;
+        const response = await tendersService.getMuniContract(ticketId);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
 export const getCompanyContracts = async (req: Request, res: Response) => {
     try {
         const tenderId = req.query["tender"] as string;
         const companyName = req.query["company"] as string;
         const response = await tendersService.getCompanyContracts(tenderId, companyName);
+        return res.status(200).json(response);
+    } catch (error: any) {
+        return res.status(500).json({ Error: error.message });
+    }
+};
+
+export const getCompanyContractByTicket = async (req: Request, res: Response) => {
+    try {
+        const ticketId = req.query["ticket"] as string;
+        const companyName = req.query["company"] as string;
+        const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
