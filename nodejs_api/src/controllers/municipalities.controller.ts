@@ -11,11 +11,12 @@ export const getAllMunicipalitiesList = async (req: Request, res: Response) => {
 };
 
 export const getMunicipalityCoordinates = async (req: Request, res: Response) => {
+    const municipality = req.query["municipality"] as string;
+    if (!municipality) {
+        return res.status(400).json({ Error: "Missing parameter: municipality" });
+    }
+
     try {
-        const municipality = req.query["municipality"] as string;
-        if (!municipality) {
-            return res.status(400).json({ error: "Municipality Not Found" });
-        }
         const response = await municipalitiesService.getMunicipalityCoordinates(municipality);
         return res.status(200).json(response);
     } catch (error: any) {

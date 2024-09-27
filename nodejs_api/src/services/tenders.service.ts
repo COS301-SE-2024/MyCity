@@ -22,20 +22,6 @@ interface AcceptOrRejectTenderData {
 }
 
 export const createTender = async (senderData: TenderData) => {
-    const requiredFields = ["company_name", "quote", "ticket_id", "duration"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
         const errorResponse = {
@@ -100,20 +86,6 @@ export const createTender = async (senderData: TenderData) => {
 };
 
 export const inReview = async (senderData: InReviewData) => {
-    const requiredFields = ["company_name", "ticket_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
         const errorResponse = {
@@ -174,20 +146,6 @@ export const inReview = async (senderData: InReviewData) => {
 };
 
 export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
-    const requiredFields = ["company_id", "ticket_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
@@ -285,20 +243,6 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
 };
 
 export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
-    const requiredFields = ["company_id", "ticket_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
@@ -345,20 +289,6 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
 };
 
 export const completeContract = async (senderData: { contract_id: string }) => {
-    const requiredFields = ["contract_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
         TableName: CONTRACT_TABLE,
         Key: {
@@ -430,20 +360,6 @@ export const completeContract = async (senderData: { contract_id: string }) => {
 };
 
 export const terminateContract = async (senderData: { contract_id: string }) => {
-    const requiredFields = ["contract_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
         TableName: CONTRACT_TABLE,
         Key: {
@@ -541,20 +457,6 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
 };
 
 export const doneContract = async (senderData: { contract_id: string }) => {
-    const requiredFields = ["contract_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
         TableName: CONTRACT_TABLE,
         Key: {
@@ -637,20 +539,6 @@ export const doneContract = async (senderData: { contract_id: string }) => {
 };
 
 export const didMakeTender = async (senderData: { companyname: string, ticket_id: string }) => {
-    const requiredFields = ["companyname", "ticket_id"];
-
-    for (const field of requiredFields) {
-        if (!(field in senderData)) {
-            const errorResponse = {
-                Error: {
-                    Code: "IncorrectFields",
-                    Message: `Missing required field: ${field}`,
-                },
-            };
-            throw new ClientError(errorResponse, "InvalidFields");
-        }
-    }
-
     const companyId = await getCompanyIDFromName(senderData.companyname);
 
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -679,16 +567,6 @@ export const didMakeTender = async (senderData: { companyname: string, ticket_id
 };
 
 export const getMunicipalityTenders = async (municipality: string) => {
-    if (!municipality) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: municipality",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TICKETS_TABLE,
         IndexName: "municipality_id-dateOpened-index",
@@ -734,16 +612,6 @@ export const getMunicipalityTenders = async (municipality: string) => {
 };
 
 export const getCompanyTenders = async (company_name: string) => {
-    if (!company_name) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: name",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
         const errorResponse = {
@@ -773,16 +641,6 @@ export const getCompanyTenders = async (company_name: string) => {
 };
 
 export const getTicketTender = async (ticket_id: string) => {
-    if (!ticket_id) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: ticket",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
         IndexName: "ticket_id-index",
@@ -811,16 +669,6 @@ export const getTicketTender = async (ticket_id: string) => {
 };
 
 export const getContracts = async (tender_id: string) => {
-    if (!tender_id) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: tender",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const responseContracts = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: CONTRACT_TABLE,
         IndexName: "tender_id-index",
@@ -881,16 +729,6 @@ export const getContracts = async (tender_id: string) => {
 };
 
 export const getMuniContract = async (ticket_id: string) => {
-    if (!ticket_id) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: ticket",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: TENDERS_TABLE,
         IndexName: "ticket_id-index",
@@ -979,16 +817,6 @@ export const getMuniContract = async (ticket_id: string) => {
 };
 
 export const getCompanyContracts = async (tender_id: string, company_name: string) => {
-    if (!tender_id || !company_name) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: tender or company_name",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
         const errorResponse = {
@@ -1062,16 +890,6 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 };
 
 export const getCompanyFromTicketContracts = async (ticket_id: string, company_name: string) => {
-    if (!ticket_id || !company_name) {
-        const errorResponse = {
-            Error: {
-                Code: "IncorrectFields",
-                Message: "Missing required query: ticket or company_name",
-            },
-        };
-        throw new ClientError(errorResponse, "InvalidFields");
-    }
-
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
         const errorResponse = {
