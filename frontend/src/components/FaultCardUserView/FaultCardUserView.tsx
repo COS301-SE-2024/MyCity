@@ -545,141 +545,124 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           </div>
         </div>
 
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto"
-          onClick={onClose} // Close modal when clicking outside
-        >
-          <div
-            className="dark:bg-gray-700 dark:text-white bg-white rounded-lg shadow-lg w-[85%] h-[70%] p-4 relative flex flex-col justify-center overflow-hidden"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
-          >
-            <button
-              className="absolute top-2 right-2 text-gray-700 z-50"
-              onClick={onClose}
-            >
-              <FaTimes size={24} />
-            </button>
-
-            {/* Mobile View */}
-            <div className="block sm:hidden h-full overflow-auto flex justify-center items-center">
-              <div className="flex flex-col w-full gap-2 text-black relative h-full overflow-y-auto justify-center">
-                {/* Title and Ticket Number */}
-                <div className="text-center">
-                  <div className="font-bold text-base sm:text-lg truncate">
-                    {title}
-                  </div>
-                  <div className="text-gray-400 text-sm sm:text-md truncate">
-                    {ticketNumber}
-                  </div>
-                </div>
-
-                {/* Status */}
-                <div
-                  className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-2 py-1 w-full`}
-                >
-                  {text}
-                </div>
-
-                {/* Description */}
-                <div className="text-gray-700 text-xs sm:text-sm text-center px-2 truncate overflow-hidden">
-                  {description}
-                </div>
-
-                {/* Address */}
-                <div className="text-gray-500 text-xs sm:text-sm text-center px-2 truncate overflow-hidden">
-                  {address}
-                </div>
-
-                {/* Image */}
-                <div className="relative w-full flex justify-center mt-2 h-[30%]">
-                  {!imageError ? (
-                    <img
-                      src={image || undefined}
-                      alt="Fault"
-                      className="rounded-lg object-cover w-full h-full"
-                      onError={() => setImageError(true)}
-                    />
-                  ) : (
-                    <div className="flex justify-center items-center w-full h-full bg-gray-200">
-                      <ImageIcon size={32} color="#6B7280" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Google Maps Button */}
-                <Button
-                  className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1 border text-sm"
-                  onClick={showDirections}
-                >
-                  Google Maps
-                </Button>
-
-                {/* Actions */}
-                <div className="flex justify-around w-full mt-2">
-                  {/* Upvote */}
-                  <div className="flex flex-col items-center text-xs sm:text-sm">
-                    <FaArrowUp
-                      className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
-                      style={{ color: arrowColor }}
-                      onClick={handleArrowClick}
-                    />
-                    <span className="text-gray-700">
-                      {formatNumber(currentArrowCount)}
-                    </span>
-                  </div>
-
-                  {/* Comments */}
-                  <div
-                    className="flex flex-col items-center text-xs sm:text-sm cursor-pointer transform transition-transform hover:scale-105"
-                    onClick={toggleComments}
-                  >
-                    <FaComment
-                      className="text-gray-600"
-                      style={{ color: commentColor }}
-                    />
-                    <span className="text-gray-700">
-                      {formatNumber(currentCommentCount)}
-                    </span>
-                  </div>
-
-                  {/* Watchlist */}
-                  <div className="flex flex-col items-center text-xs sm:text-sm">
-                    <FaEye
-                      className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
-                      style={{ color: eyeColor }}
-                      onClick={handleEyeClick}
-                    />
-                    <span className="text-gray-700">
-                      {formatNumber(currentViewCount)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Fault's Municipality */}
-                <div className="flex w-full items-center justify-center mt-2">
-                  <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                    <img
-                      src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                        municipality_id
-                      )}.png`}
-                      alt=""
-                    />
-                  </div>
-                  <div className="ml-2 text-sm">{municipality_id}</div>
-                </div>
-
-                {/* Comments Section (only visible when showComments is true) */}
-                {showComments && (
-                  <div className="absolute top-0 left-0 w-full h-full bg-white z-20">
-                    <Comments
-                      onBack={toggleComments}
-                      isCitizen={false}
-                      ticketId={ticketId}
-                    />
-                  </div>
-                )}
+        {/* Mobile View */}
+        <div className="block sm:hidden h-full overflow-auto flex justify-center items-center">
+          <div className="flex flex-col w-full gap-2 text-black relative h-full overflow-y-auto justify-center">
+            {/* Title and Ticket Number */}
+            <div className="text-center">
+              <div className="font-bold text-base sm:text-lg truncate">
+                {title}
+              </div>
+              <div className="text-gray-400 text-sm sm:text-md truncate">
+                {ticketNumber}
               </div>
             </div>
+
+            {/* Status */}
+            <div
+              className={`${color} bg-opacity-75 text-black font-bold text-center rounded-lg px-2 py-1 w-full`}
+            >
+              {text}
+            </div>
+
+            {/* Description */}
+            <div className="text-gray-700 text-xs sm:text-sm text-center px-2 truncate overflow-hidden">
+              {description}
+            </div>
+
+            {/* Address */}
+            <div className="text-gray-500 text-xs sm:text-sm text-center px-2 truncate overflow-hidden">
+              {address}
+            </div>
+
+            {/* Image */}
+            <div className="relative w-full flex justify-center mt-2 h-[30%]">
+              {!imageError ? (
+                <img
+                  src={image || undefined}
+                  alt="Fault"
+                  className="rounded-lg object-cover w-full h-full"
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div className="flex justify-center items-center w-full h-full bg-gray-200">
+                  <ImageIcon size={32} color="#6B7280" />
+                </div>
+              )}
+            </div>
+
+            {/* Google Maps Button */}
+            <Button
+              className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1 border text-sm"
+              onClick={showDirections}
+            >
+              Google Maps
+            </Button>
+
+            {/* Actions */}
+            <div className="flex justify-around w-full mt-2">
+              {/* Upvote */}
+              <div className="flex flex-col items-center text-xs sm:text-sm">
+                <FaArrowUp
+                  className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                  style={{ color: arrowColor }}
+                  onClick={handleArrowClick}
+                />
+                <span className="text-gray-700">
+                  {formatNumber(currentArrowCount)}
+                </span>
+              </div>
+
+              {/* Comments */}
+              <div
+                className="flex flex-col items-center text-xs sm:text-sm cursor-pointer transform transition-transform hover:scale-105"
+                onClick={toggleComments}
+              >
+                <FaComment
+                  className="text-gray-600"
+                  style={{ color: commentColor }}
+                />
+                <span className="text-gray-700">
+                  {formatNumber(currentCommentCount)}
+                </span>
+              </div>
+
+              {/* Watchlist */}
+              <div className="flex flex-col items-center text-xs sm:text-sm">
+                <FaEye
+                  className="text-gray-600 cursor-pointer transform transition-transform hover:scale-110"
+                  style={{ color: eyeColor }}
+                  onClick={handleEyeClick}
+                />
+                <span className="text-gray-700">
+                  {formatNumber(currentViewCount)}
+                </span>
+              </div>
+            </div>
+
+            {/* Fault's Municipality */}
+            <div className="flex w-full items-center justify-center mt-2">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+                <img
+                  src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                    municipality_id
+                  )}.png`}
+                  alt=""
+                />
+              </div>
+              <div className="ml-2 text-sm">{municipality_id}</div>
+            </div>
+
+            {/* Comments Section (only visible when showComments is true) */}
+            {showComments && (
+              <div className="absolute top-0 left-0 w-full h-full bg-white z-20">
+                <Comments
+                  onBack={toggleComments}
+                  isCitizen={false}
+                  ticketId={ticketId}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

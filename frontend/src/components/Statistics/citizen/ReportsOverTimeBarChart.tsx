@@ -46,7 +46,7 @@ export default function ReportsOverTimeLineChart({ data }: ReportsOverTimeLineCh
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-lg h-[38vh]">
+    <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-lg h-[38vh]">
       <h2 className="text-2xl font-bold mb-4 text-center">Total Reports Over Time</h2>
       <div className="h-[80%]">
         <Line data={lineChartData} options={{ maintainAspectRatio: false }} />
