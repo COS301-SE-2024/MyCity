@@ -1,14 +1,13 @@
-
 import { Request, Response } from "express";
 import * as upvotesService from "../services/upvotes.service";
-import { BadRequestError } from "../types/error.types";
 
 export const searchUpvotes = async (req: Request, res: Response) => {
+    const searchTerm = req.query["q"] as string;
+    if (!searchTerm) {
+        return res.status(400).json({ Error: "Missing parameter: q" });
+    }
+
     try {
-        const searchTerm =  req.query["q"] as string;
-        if (!searchTerm) {
-            throw new BadRequestError("Search term is required");
-        }
         const response = await upvotesService.searchUpvotes(searchTerm);
         return res.status(200).json(response);
     } catch (error: any) {

@@ -9,14 +9,6 @@ interface TokenData {
 }
 
 export const insertNotificationToken = async (tokenData: TokenData) => {
-    const requiredFields = ["username", "deviceID", "token"];
-
-    for (const field of requiredFields) {
-        if (!(field in tokenData)) {
-            throw new ClientError({ Error: { Code: "BadRequest", Message: `${field} is required` } }, "BadRequestError");
-        }
-    }
-
     const { username, deviceID, token } = tokenData;
     const currentDatetime = new Date().toISOString();
     const subscriptions = ["status", "upvotes", "comments"];
@@ -39,10 +31,6 @@ export const insertNotificationToken = async (tokenData: TokenData) => {
 };
 
 export const getNotificationTokens = async (username: string) => {
-    if (!username) {
-        throw new ClientError({ Error: { Code: "IncorrectFields", Message: "Missing required field: username" } }, "InvalidFields");
-    }
-
     const response = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: NOTIFICATIONS_TABLE,
         KeyConditionExpression: "username = :username",
