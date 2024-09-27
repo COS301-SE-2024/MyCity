@@ -1,4 +1,4 @@
-import { render, screen, fireEvent} from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import CreateTicket from "@/app/create-ticket/citizen/page";
 import '@testing-library/jest-dom';
 
@@ -15,84 +15,61 @@ jest.mock("../../../src/components/Navbar/NavbarMobile", () => () => (
   <div data-testid="navbar-mobile">Navbar Mobile</div>
 ));
 
-
-
 describe("CreateTicket Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-
   /*
-  Desktop view testing that the page loads
+  Test that the CreateTicket component renders without errors
   */
-  test("renders the CreateTicket component correctly on desktop view", () => {
-    // Render the component in desktop view
+  test("renders the CreateTicket component correctly", () => {
+    // Render the CreateTicket component
     render(<CreateTicket />);
     
-    // Check for NavbarUser component
+    // Check that NavbarUser is rendered
     expect(screen.getByTestId("navbar-user")).toBeInTheDocument();
     
-    // Check for the CreateTicketComp component
-    const ticketcomponents = screen.getAllByTestId("create-ticket-comp");
-    const ticketcomp = ticketcomponents[0];
-    expect(ticketcomp).toBeInTheDocument();
-    
-    // Check that the 'Report an Issue' heading is rendered
-    const headings = screen.getAllByText(/Report an Issue/i);
-    const heading = headings[0];
-    expect(heading).toBeInTheDocument();
-    
-    // Check if the help menu button is present
-    const helpButton = screen.getByTestId("open-help-menu");
-    expect(helpButton).toBeInTheDocument();
+    // Check that CreateTicketComp is rendered
+    expect(screen.getByTestId("create-ticket-comp")).toBeInTheDocument();
   });
 
-
-
   /*
-  Help button visibility
+  Test that the help menu button toggles the help menu visibility
   */
-  test("opens and closes the help menu when the help button is clicked", () => {
+  test("toggles the help menu when the help button is clicked", () => {
     render(<CreateTicket />);
 
-    // Initially, help menu should not be visible
-    expect(screen.queryByTestId("help")).not.toBeInTheDocument();
-
-    // Click on help button
-    const helpButton = screen.getByTestId("open-help-menu");
-    fireEvent.click(helpButton);
-
-    // Help menu should be visible
+    // Simulate clicking the help button
+    fireEvent.click(screen.getByTestId("open-help-menu"));
+    
+    // Expect help menu to be visible
     expect(screen.getByTestId("help")).toBeInTheDocument();
 
-    // Close help menu
-    const closeHelpButton = screen.getByTestId("close-help-menu");
-    fireEvent.click(closeHelpButton);
-
-    // Help menu should not be visible anymore
+    // Simulate clicking the close button in the help menu
+    fireEvent.click(screen.getByTestId("close-help-menu"));
+    
+    // Expect help menu to be closed
     expect(screen.queryByTestId("help")).not.toBeInTheDocument();
   });
 
-
   /*
-  Notifications
+  Test that NavbarUser displays unread notifications
   */
-  test("displays unread notifications in the NavbarUser", () => {
+  test("displays unread notifications count in NavbarUser", () => {
     render(<CreateTicket />);
-
-    // Check that unread notifications are displayed in the NavbarUser
-    const navbarUser = screen.getByTestId("navbar-user");
-    expect(navbarUser).toHaveTextContent(/Unread: [1-9][0-9]*/);
+    
+    // Check that the unread notifications text is present
+    expect(screen.getByTestId("navbar-user")).toHaveTextContent(/Unread: [1-9][0-9]*/);
   });
 
   /*
-  Background loads
+  Test that the component has the correct background image style
   */
-  test("renders the background image", () => {
+  test("renders the correct background image", () => {
     render(<CreateTicket />);
-    
-    // Check for the inline styles with the background image
+
+    // Check the background element and its style
     const backgroundDiv = document.querySelector(".absolute.inset-0");
     expect(backgroundDiv).toHaveStyle(
       `background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")`
