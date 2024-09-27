@@ -126,8 +126,13 @@ export default function ServiceProviderSignup() {
       if (signedUp.isSignedIn == true) {
         router.push("/dashboard/service-provider");
       }
-    } catch (error) {
-      setError(`Error: ${error}`);
+      else {
+        setError("Auto login failed. Please log in manually using your credentials.");
+        setIsLoading(false);
+      }
+    } catch (error: any) {
+      setError(error.message);
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -372,8 +377,8 @@ export default function ServiceProviderSignup() {
             <Button
               name="submit"
               className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid && isEmailValid
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               type="submit"
               disabled={!isFormValid || isLoading}
@@ -611,8 +616,8 @@ export default function ServiceProviderSignup() {
             <Button
               name="submit"
               className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid && isEmailValid
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               type="submit"
               disabled={!isFormValid || isLoading}

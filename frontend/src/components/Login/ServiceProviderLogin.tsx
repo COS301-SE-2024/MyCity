@@ -52,11 +52,11 @@ export default function ServiceProviderLogin() {
       if (isSignedIn) {
         router.push("/dashboard/service-provider");
       } else {
-        setError("Login failed. Please wait a few minutes and try again.");
+        setError("Login failed. Please wait a few minutes and try again");
         setIsLoading(false);
       }
-    } catch (error) {
-      setError("Incorrect credentials. Please try again.");
+    } catch (error: any) {
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -134,8 +134,8 @@ export default function ServiceProviderLogin() {
               name="submit"
               data-testid="submit-btn"
               className={`w-28 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               type="submit"
               disabled={!isFormValid || isLoading}
@@ -226,8 +226,8 @@ export default function ServiceProviderLogin() {
               name="submit"
               data-testid="submit-btn"
               className={`w-28 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               type="submit"
               disabled={!isFormValid || isLoading}

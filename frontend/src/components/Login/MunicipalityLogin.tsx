@@ -53,11 +53,11 @@ export default function MunicipalityLogin() {
       if (isSignedIn) {
         router.push("/dashboard/municipality");
       } else {
-        setError("Login failed. Please wait a few minutes and try again.");
+        setError("Login failed. Please wait a few minutes and try again");
         setIsLoading(false);
       }
-    } catch (error) {
-      setError("Incorrect credentials. Please try again.");
+    } catch (error: any) {
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }

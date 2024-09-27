@@ -177,13 +177,6 @@ export default function CitizenSignup() {
     const form = new FormData(event.currentTarget as HTMLFormElement);
     form.set("municipality", selectedMunicipality); // Append selected municipality to the form data
 
-    // do not allow user to submit form municipality is not selected
-    if (!selectedMunicipality) {
-      setError("Please select a municipality.");
-      setIsLoading(false);
-      return;
-    }
-
     setIsLoading(true);
 
     try {
@@ -191,8 +184,13 @@ export default function CitizenSignup() {
       if (signedUp.isSignedIn) {
         router.push("/dashboard/citizen");
       }
+      else {
+        setError("Auto login failed. Please log in manually using your credentials.");
+        setIsLoading(false);
+      }
     } catch (error: any) {
-      setError("An unexpected error occurred. Please try again later.");
+      setError(error.message);
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }

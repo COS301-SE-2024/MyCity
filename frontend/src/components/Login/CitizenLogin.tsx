@@ -56,11 +56,12 @@ export default function CitizenLogin() {
       if (isSignedIn) {
         router.push("/dashboard/citizen");
       } else {
-        setError("Login failed. Please wait a few minutes and try again.");
+        setError("Login failed. Please wait a few minutes and try again");
         setIsLoading(false);
       }
-    } catch (error) {
-      setError("Incorrect email or password. Please try again.");
+    } catch (error: any) {
+      setError(error.message);
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +74,7 @@ export default function CitizenLogin() {
     try {
       await handleGoogleSignIn();
     } catch (error) {
-      setError("An error occurred during Google login. Please try again.");
+      setError("An error occurred during Google login. Please wait a few minutes and try again");
     } finally {
       setIsLoading(false);
     }
@@ -150,8 +151,8 @@ export default function CitizenLogin() {
               name="submit"
               data-testid="submit-btn"
               className={`w-56 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               type="submit"
               disabled={!isFormValid || isLoading}
@@ -262,8 +263,8 @@ export default function CitizenLogin() {
               name="submit"
               data-testid="submit-btn"
               className={`w-56 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               type="submit"
               disabled={!isFormValid || isLoading}
