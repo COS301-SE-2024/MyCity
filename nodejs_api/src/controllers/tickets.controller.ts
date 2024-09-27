@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as ticketsService from "../services/tickets.service";
-import { cacheResponse } from "../config/elasticache.config";
+import { cacheResponse } from "../config/redis.config";
 
 
 export const createTicket = async (req: Request, res: Response) => {

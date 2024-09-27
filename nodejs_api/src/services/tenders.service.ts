@@ -1,4 +1,4 @@
-import { PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { ClientError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened } from "../utils/tickets.utils";
@@ -359,16 +359,15 @@ export const completeContract = async (senderData: { contract_id: string }) => {
         }
     }
 
-    const responseContract = await dynamoDBDocumentClient.send(new QueryCommand({
+    const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
         TableName: CONTRACT_TABLE,
-        KeyConditionExpression: "contract_id = :contract_id",
-        ExpressionAttributeValues: {
-            ":contract_id": senderData.contract_id
-        },
+        Key: {
+            contract_id: senderData.contract_id
+        }
     }));
 
-    const contractItems = responseContract.Items;
-    if (!contractItems || contractItems.length === 0) {
+    const contractItem = responseContract.Item;
+    if (!contractItem) {
         const errorResponse = {
             Error: {
                 Code: "ContractDoesntExist",
@@ -382,14 +381,33 @@ export const completeContract = async (senderData: { contract_id: string }) => {
     const expattrName = { "#status": "status" };
     const expattrValue = { ":r": "completed" };
 
-    const response = await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
+    try {
+        const response = await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
 
-    if (response.$metadata.httpStatusCode === 200) {
+        // editing ticket to closed
+        const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+            TableName: TENDERS_TABLE,
+            Key: {
+                tender_id: contractItem.tender_id
+            }
+        }));
+
+        const tenderItem = responseTender.Item;
+        if (tenderItem) {
+            const updateExpT = "set #status = :r";
+            const expattrNameT = { "#status": "status" };
+            const expattrValueT = { ":r": "completed" };
+
+            await updateTenderTable(tenderItem.tender_id, updateExpT, expattrNameT, expattrValueT);
+        }
+
+        // editing ticket as well to In Progress
         return {
             Status: "Success",
             Contract_id: senderData.contract_id,
         };
-    } else {
+    }
+    catch (error: any) {
         const errorResponse = {
             Error: {
                 Code: "UpdateError",

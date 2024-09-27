@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import multer from "multer";
 
 import * as ticketsController from "../controllers/tickets.controller";
-import { cacheMiddleware } from "../config/elasticache.config";
+import { cacheMiddleware } from "../config/redis.config";
 
 const router: Router = express.Router();
 
