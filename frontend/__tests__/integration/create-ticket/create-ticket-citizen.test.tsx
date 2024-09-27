@@ -2,15 +2,6 @@ import { render, screen, fireEvent} from "@testing-library/react";
 import CreateTicket from "@/app/create-ticket/citizen/page";
 import '@testing-library/jest-dom';
 
-/*
-Mocked components
-*/
-jest.mock("../../../src/components/CreateTicket/CreateTicketComp", () => () => (
-  <div data-testid="create-ticket-comp">Create Ticket Component</div>
-));
-jest.mock("../../../src/components/Navbar/NavbarUser", () => ({ unreadNotifications }: { unreadNotifications: number }) => (
-  <div data-testid="navbar-user">Navbar User (Unread: {unreadNotifications})</div>
-));
 jest.mock("../../../src/components/Navbar/NavbarMobile", () => () => (
   <div data-testid="navbar-mobile">Navbar Mobile</div>
 ));
@@ -29,20 +20,20 @@ describe("CreateTicket Component", () => {
   test("renders the CreateTicket component correctly on desktop view", () => {
     // Render the component in desktop view
     render(<CreateTicket />);
-    
+
     // Check for NavbarUser component
     expect(screen.getByTestId("navbar-user")).toBeInTheDocument();
-    
+
     // Check for the CreateTicketComp component
     const ticketcomponents = screen.getAllByTestId("create-ticket-comp");
     const ticketcomp = ticketcomponents[0];
     expect(ticketcomp).toBeInTheDocument();
-    
+
     // Check that the 'Report an Issue' heading is rendered
     const headings = screen.getAllByText(/Report an Issue/i);
     const heading = headings[0];
     expect(heading).toBeInTheDocument();
-    
+
     // Check if the help menu button is present
     const helpButton = screen.getByTestId("open-help-menu");
     expect(helpButton).toBeInTheDocument();
@@ -62,36 +53,29 @@ describe("CreateTicket Component", () => {
     // Click on help button
     const helpButton = screen.getByTestId("open-help-menu");
     fireEvent.click(helpButton);
-
     // Help menu should be visible
     expect(screen.getByTestId("help")).toBeInTheDocument();
-
     // Close help menu
     const closeHelpButton = screen.getByTestId("close-help-menu");
     fireEvent.click(closeHelpButton);
-
     // Help menu should not be visible anymore
     expect(screen.queryByTestId("help")).not.toBeInTheDocument();
   });
-
-
   /*
   Notifications
   */
   test("displays unread notifications in the NavbarUser", () => {
     render(<CreateTicket />);
-
     // Check that unread notifications are displayed in the NavbarUser
     const navbarUser = screen.getByTestId("navbar-user");
     expect(navbarUser).toHaveTextContent(/Unread: [1-9][0-9]*/);
   });
-
   /*
   Background loads
   */
   test("renders the background image", () => {
     render(<CreateTicket />);
-    
+
     // Check for the inline styles with the background image
     const backgroundDiv = document.querySelector(".absolute.inset-0");
     expect(backgroundDiv).toHaveStyle(
