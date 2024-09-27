@@ -56,10 +56,11 @@ export default function CitizenLogin() {
       if (isSignedIn) {
         router.push("/dashboard/citizen");
       } else {
-        throw new Error("Login failed. Please try again.");
+        setError("Login failed. Please wait a few minutes and try again.");
+        setIsLoading(false);
       }
     } catch (error) {
-      setError("An error occurred during login. Please try again.");
+      setError("Incorrect email or password. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -98,11 +99,10 @@ export default function CitizenLogin() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
-              
+
               type="email"
               name="email"
               autoComplete="new-email"
@@ -142,18 +142,17 @@ export default function CitizenLogin() {
               </button>
             </div>
             <Button
-                className="min-w-fit h-fit p-2 dark:bg-gray-800 dark:text-white bg-gray-100"
-                // onClick={f}
-              >Forgot password?</Button>
+              className="min-w-fit h-fit p-2 dark:bg-gray-800 dark:text-white bg-gray-100"
+            // onClick={f}
+            >Forgot password?</Button>
 
             <Button
               name="submit"
               data-testid="submit-btn"
-              className={`w-56 h-11 rounded-3xl m-auto font-semibold ${
-                isFormValid && !isLoading
+              className={`w-56 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
                   ? "bg-blue-500 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >
@@ -215,9 +214,8 @@ export default function CitizenLogin() {
                 }
                 labelPlacement={"outside"}
                 classNames={{
-                  inputWrapper: `h-[3em] ${
-                    !isEmailValid ? "border-red-500" : ""
-                  }`,
+                  inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                    }`,
                 }}
                 type="email"
                 name="email"
@@ -227,70 +225,69 @@ export default function CitizenLogin() {
                 value={formData.email}
                 onChange={handleInputChange}
               />
-              </div>
+            </div>
 
-              <div className="relative w-full">
-                <Input
-                  variant={"bordered"}
-                  fullWidth
-                  label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
-                      Password <span className="text-blue-500">*</span>
-                    </span>
-                  }
-                  labelPlacement={"outside"}
-                  classNames={{
-                    inputWrapper: "h-[3em]",
-                  }}
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  autoComplete="new-password"
-                  placeholder="Password"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                />
-                <button
-                  type="button"
-                  className="absolute top-1/2 right-3 transform translate-y-1 text-black"
-                  data-testid="eye-button"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-
-              <Button
-                name="submit"
-                data-testid="submit-btn"
-                className={`w-56 h-11 rounded-3xl m-auto font-semibold ${
-                  isFormValid && !isLoading
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-                type="submit"
-                disabled={!isFormValid || isLoading}
-              >
-                {isLoading ? <FaSpinner className="animate-spin" /> : "Login"}
-              </Button>
-
-              <div className="w-full flex flex-row items-center">
-                <hr className="flex-grow border-t border-gray-300" />
-                <span className="mx-4 text-sm">OR</span>
-                <hr className="flex-grow border-t border-gray-300" />
-              </div>
-
-              <Button
-                onClick={googleButtonOnClick}
-                name="google-submit"
-                data-testid="google-login-btn"
-                className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+            <div className="relative w-full">
+              <Input
+                variant={"bordered"}
+                fullWidth
+                label={
+                  <span className="font-semibold text-medium block mb-[0.20em]">
+                    Password <span className="text-blue-500">*</span>
+                  </span>
+                }
+                labelPlacement={"outside"}
+                classNames={{
+                  inputWrapper: "h-[3em]",
+                }}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                autoComplete="new-password"
+                placeholder="Password"
+                required
+                value={formData.password}
+                onChange={handleInputChange}
+              />
+              <button
                 type="button"
-                disabled={isLoading}
+                className="absolute top-1/2 right-3 transform translate-y-1 text-black"
+                data-testid="eye-button"
+                onClick={togglePasswordVisibility}
               >
-                <FcGoogle size={20} />
-                <span className="ml-2">Continue with Google</span>
-              </Button>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
+            <Button
+              name="submit"
+              data-testid="submit-btn"
+              className={`w-56 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              type="submit"
+              disabled={!isFormValid || isLoading}
+            >
+              {isLoading ? <FaSpinner className="animate-spin" /> : "Login"}
+            </Button>
+
+            <div className="w-full flex flex-row items-center">
+              <hr className="flex-grow border-t border-gray-300" />
+              <span className="mx-4 text-sm">OR</span>
+              <hr className="flex-grow border-t border-gray-300" />
+            </div>
+
+            <Button
+              onClick={googleButtonOnClick}
+              name="google-submit"
+              data-testid="google-login-btn"
+              className="text-gray-800 rounded-3xl px-4 py-2 hover:bg-gray-300 transition duration-300 text-center font-semibold w-56 m-auto"
+              type="button"
+              disabled={isLoading}
+            >
+              <FcGoogle size={20} />
+              <span className="ml-2">Continue with Google</span>
+            </Button>
           </form>
 
           {error && (
