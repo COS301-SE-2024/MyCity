@@ -72,7 +72,7 @@ const ServiceProvidersGrid = ({
   }
 
   return (
-    <div className="bg-white bg-opacity-80 rounded-lg p-4 shadow-lg h-[38vh]">
+    <div className="bg-white bg-opacity-90 rounded-lg p-4 shadow-lg h-[38vh]">
       <h2 className="text-2xl font-bold mb-2 text-center">Service Providers</h2>
       <div className="grid grid-cols-5 gap-2 h-[75%] overflow-hidden mb-2">
         {displayedProviders.map((provider, index) => (

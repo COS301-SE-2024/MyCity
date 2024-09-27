@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, PlusCircle, Bell, Search, FileText } from "lucide-react";
+import { Home, PlusCircle, Bell, Search, FileText, ChartNoAxesCombined } from "lucide-react";
 import {
   Avatar,
   Dropdown,
@@ -83,6 +83,15 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
                 <div className="flex flex-col gap-1 items-center">
                   <Home size={25} />
                   <span>Dashboard</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/statistics/municipality" passHref>
+              <div className={getNavItemClass("/statistics/municipality")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <ChartNoAxesCombined  size={25} />
+                  <span>Statistics</span>
                 </div>
               </div>
             </Link>

@@ -35,7 +35,7 @@ const MunicipalityRank: React.FC<MunicipalityRankProps> = ({
   };
 
   return (
-    <div className="h-[38vh] bg-opacity-80  w-full flex flex-col justify-center border bg-white overflow-hidden rounded-lg">
+    <div className="h-[38vh] bg-opacity-90  w-full flex flex-col justify-center border bg-white overflow-hidden rounded-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Municipality Rankings</h2>
 
       <div className="grid grid-cols-2 gap-4">
