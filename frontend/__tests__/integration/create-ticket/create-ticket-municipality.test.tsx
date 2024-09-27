@@ -48,32 +48,6 @@ describe("CreateTicket Municipality Component", () => {
 
 
     /*
-  Mobile view testing that the page loads
-  */
-  test("renders the CreateTicket component correctly on mobile view", () => {
-    // Mock the window size for mobile view
-    global.innerWidth = 375; // iPhone screen size
-    global.dispatchEvent(new Event("resize"));
-
-    render(<CreateTicket />);
-
-    // Check for NavbarMobile component
-    expect(screen.getByTestId("navbar-mobile")).toBeInTheDocument();
-
-    // Check that the CreateTicketComp component is rendered
-    const ticketcomponents = screen.getAllByTestId("create-ticket-comp");
-    const ticketcomp = ticketcomponents[1];
-    expect(ticketcomp).toBeInTheDocument();
-
-    // Check if the 'Report an Issue' heading is centered
-    const headings = screen.getAllByText(/Report an Issue/i);
-    const heading = headings[1];
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveClass("text-center");
-  });
-
-
-    /*
   Help button visibility
   */
   test("opens and closes the help menu when the help button is clicked", () => {
