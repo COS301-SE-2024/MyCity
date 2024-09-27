@@ -50,16 +50,17 @@ export async function handleSignUp(form: FormData, userRole: UserRole) {
                 email: String(form.get("email")).toLowerCase(),
                 given_name: String(form.get("firstname")),
                 family_name: String(form.get("surname")),
-                "custom:user_role": userRole,
-
+                "custom:user_role": userRole
             },
             autoSignIn: true,
         },
     };
 
-    if (userRole == UserRole.MUNICIPALITY) {
+    if (userRole == UserRole.CITIZEN) {
+        signupOptions.options!.userAttributes["custom:municipality"] = String(form.get("municipality"));
+    }
+    else if (userRole == UserRole.MUNICIPALITY) {
         signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("municode"));
-
     }
     else if (userRole == UserRole.PRIVATE_COMPANY) {
         signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("authcode"));
