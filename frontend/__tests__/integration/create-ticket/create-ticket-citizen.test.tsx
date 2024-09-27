@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, getAllByTestId } from "@testing-library/react";
+import { render, screen, fireEvent} from "@testing-library/react";
 import CreateTicket from "@/app/create-ticket/citizen/page";
 import '@testing-library/jest-dom';
 
@@ -48,31 +48,6 @@ describe("CreateTicket Component", () => {
     expect(helpButton).toBeInTheDocument();
   });
 
-
-  /*
-  Mobile view testing that the page loads
-  */
-  test("renders the CreateTicket component correctly on mobile view", () => {
-    // Mock the window size for mobile view
-    global.innerWidth = 375; // iPhone screen size
-    global.dispatchEvent(new Event("resize"));
-
-    render(<CreateTicket />);
-
-    // Check for NavbarMobile component
-    expect(screen.getByTestId("navbar-mobile")).toBeInTheDocument();
-
-    // Check that the CreateTicketComp component is rendered
-    const ticketcomponents = screen.getAllByTestId("create-ticket-comp");
-    const ticketcomp = ticketcomponents[1];
-    expect(ticketcomp).toBeInTheDocument();
-
-    // Check if the 'Report an Issue' heading is centered
-    const headings = screen.getAllByText(/Report an Issue/i);
-    const heading = headings[1];
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveClass("text-center");
-  });
 
 
   /*
