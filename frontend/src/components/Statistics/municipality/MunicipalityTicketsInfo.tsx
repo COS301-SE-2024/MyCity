@@ -22,14 +22,14 @@ const MunicipalityTicketsInfo: React.FC<MunicipalityTicketsInfoProps> = ({
   citizens,
 }) => {
   return (
-    <div className="h-[38vh] w-1/2 flex flex-col justify-center items-center border bg-white shadow-lg rounded-lg p-4">
+    <div className="h-[38vh] bg-opacity-80  w-full flex flex-col justify-center items-center border bg-white shadow-lg rounded-lg p-4">
       {/* Municipality Logo */}
       <img
         src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
           municipalityName
         )}.png`}
         alt={`${municipalityName} logo`}
-        className="w-24 h-24 mb-4 object-contain"
+        className="w-32 h-32 mb-4 object-contain rounded-full"
       />
 
       {/* Municipality Name */}

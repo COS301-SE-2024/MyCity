@@ -172,7 +172,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await getMuniContract(ticket_id,user_session);
+      const response_contract = await getMuniContract(ticket_id,user_session,true);
       
       if (response_contract == null) {
         setShowTenderMax(false);
