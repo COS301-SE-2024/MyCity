@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, PlusCircle, Bell, Search, FileText } from "lucide-react";
+import { Home, PlusCircle, Bell, Search, FileText, ChartNoAxesCombined } from "lucide-react";
 import {
   Avatar,
   Dropdown,
@@ -87,6 +87,15 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
               </div>
             </Link>
 
+            <Link href="/statistics/municipality" passHref>
+              <div className={getNavItemClass("/statistics/municipality")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <ChartNoAxesCombined  size={25} />
+                  <span>Statistics</span>
+                </div>
+              </div>
+            </Link>
+
             <Link href="/create-ticket/municipality" passHref>
               <div className={getNavItemClass("/create-ticket/municipality")}>
                 <div className="flex flex-col gap-1 items-center">
@@ -140,10 +149,6 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
               <DropdownMenu aria-label="profile dropdown" className="px-0 py-2 gap-0 rounded-sm text-black">
                 <DropdownItem key="settings" href="/settings/municipality" role="link" className="h-9 hover:bg-grey-500" textValue="Settings">
                   <span className="text-sm">Settings</span>
-                </DropdownItem>
-
-                <DropdownItem key="about" href="/about" role="link" className="h-9 hover:bg-grey-500" textValue="About us">
-                  <span className="text-sm">About us</span>
                 </DropdownItem>
 
                 <DropdownItem key="logout" onClick={onLogout} role="button" className="h-9 hover:bg-grey-500" textValue="Log out">

@@ -35,7 +35,7 @@ ChartJS.register(
   Legend
 );
 
-export default function StatisticsPage() {
+export default function CitizenStatisticsPage() {
   const userProfile = useProfile();
   const [selectedMunicipality, setSelectedMunicipality] = useState<string>(""); // Start with empty state
   const [data, setData] = useState<any>(null);
@@ -127,7 +127,7 @@ export default function StatisticsPage() {
         <div className="flex justify-between w-[80%] mb-4">
           <div className="w-[50%]">
             <h1 className="text-4xl font-bold text-white text-opacity-80 w-full">
-              Statistics Dashboard
+              Statistics
             </h1>
           </div>
           <div className="w-[50%]">

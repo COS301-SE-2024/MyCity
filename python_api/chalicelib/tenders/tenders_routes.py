@@ -13,6 +13,7 @@ from chalicelib.tenders.tenders_controllers import (
     complete_contract,
     getMunicipalityTenders,
     terminate_contract,
+    done_contract,
     DidMakeTender,
 )
 
@@ -78,6 +79,16 @@ def terminate_the_contract():
     request = tenders_blueprint.current_request
     sender_data = request.json_body
     response = terminate_contract(sender_data)
+    return response
+
+
+@tenders_blueprint.route(
+    "/done", authorizer=cognito_authorizer, methods=["POST"], cors=True
+)
+def done_with_the_contract():
+    request = tenders_blueprint.current_request
+    sender_data = request.json_body
+    response = done_contract(sender_data)
     return response
 
 

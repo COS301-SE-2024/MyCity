@@ -100,6 +100,27 @@ const IncidentTable: React.FC<IncidentProps> = ({
     [key: number]: boolean;
   }>({});
   const addressRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(tableitems.length / itemsPerPage);
+
+  // Functions to navigate pages
+  const goToNextPage = () => {
+    if (startIndex + itemsPerPage < tableitems.length) {
+      setStartIndex(startIndex + itemsPerPage);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (startIndex - itemsPerPage >= 0) {
+      setStartIndex(startIndex - itemsPerPage);
+    }
+  };
+
+  const currentPageItems = tableitems.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   useEffect(() => {
     const overflowState: { [key: number]: boolean } = {};
@@ -160,12 +181,12 @@ const IncidentTable: React.FC<IncidentProps> = ({
         <>
           {/* Desktop View */}
           <div className="hidden sm:block w-full h-[80%] overflow-hidden">
-            {tableitems.map((incident, index) => {
+            {currentPageItems.map((incident, index) => {
               const formattedStateKey = formatState(incident.state);
-
-              let color = "bg-gray-200"; // Default color
-              let text = "Default"; // Default text
-
+  
+              let color = "bg-gray-200";
+              let text = "Default";
+  
               if (formattedStateKey in notificationStates) {
                 color =
                   notificationStates[
@@ -176,98 +197,121 @@ const IncidentTable: React.FC<IncidentProps> = ({
                     formattedStateKey as keyof typeof notificationStates
                   ].text;
               }
-
+  
               return (
                 <div
                   key={index}
-                  className="flex gap-4 items-center mb-2 px-2 py-1 h-[10%]  rounded-3xl bg-white bg-opacity-70 text-black cursor-pointer overflow-y-auto transform transition-colors duration-300 hover:bg-gray-200"
+                  className="flex gap-4 items-center mb-2 px-2 py-1 h-[10%] rounded-3xl bg-white bg-opacity-70 text-black cursor-pointer overflow-y-auto transform transition-colors duration-300 hover:bg-gray-200"
                   onClick={() => handleRowClick(incident)}
                 >
                   {/* Urgency */}
-                  <div className="w-[3%]  col-span-1 flex justify-center">
+                  <div className="w-[3%] flex justify-center">
                     {urgencyMapping[getUrgency(incident.upvotes)].icon}
                   </div>
-
+  
                   {/* Ticket Number */}
-                  <div className="w-[12%] lg:text-md md:text-sm  col-span-1 flex justify-start font-bold">
+                  <div className="w-[12%] lg:text-md md:text-sm font-bold">
                     {incident.ticketnumber}
                   </div>
-
+  
                   {/* Fault Type */}
-                  <div className=" w-[20%] font-bold h-full  col-span-1 flex justify-start">
-                    {incident.asset_id}
-                  </div>
-
+                  <div className="w-[20%] font-bold">{incident.asset_id}</div>
+  
                   {/* Status */}
                   <div
-                    className={`${color}  w-[15%] bg-opacity-75 text-black font-bold lg:text-md md:text-sm text-center rounded-lg px-3 py-2 mt-1`}
+                    className={`${color} w-[15%] bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-2 mt-1`}
                   >
                     {incident.state}
                   </div>
-
+  
                   {/* Fault Image */}
-                  <div className="flex w-[7%] h-full items-center justify-start ">
-                    <div className=" h-[80%] rounded-lg overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                      <img src={`${S3_BUCKET_BASE_URL}${incident.imageURL}`} alt="" />
+                  <div className="flex w-[7%] items-center">
+                    <div className="h-[80%] rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
+                      <img src={incident.imageURL?`${S3_BUCKET_BASE_URL}${incident.imageURL}`:undefined} alt="" />
                     </div>
                   </div>
-
+  
                   {/* Municipality */}
-                  <div className="w-[15%]  overflow-hidden flex items-center justify-start ">
+                  <div className="w-[15%] flex items-center">
                     <img
                       src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                         incident.municipality_id
                       )}.png`}
                       alt="Ticket"
-                      className="w-[22%] h-full object-cover overflow-hidden rounded-full"
+                      className="w-[22%] h-full object-cover rounded-full"
                     />
-                    <div className="ml-2 lg:text-md md:text-sm font-bold">{incident.municipality_id}</div>
+                    <div className="ml-2 font-bold">
+                      {incident.municipality_id}
+                    </div>
                   </div>
-
+  
                   {/* Upvotes */}
-                  <div className="col-span-1 w-[3%]  flex justify-center text-center">
+                  <div className="w-[3%] flex justify-center">
                     <div className="flex flex-col items-center">
                       <FaArrowUp />
                       <div>{formatNumber(incident.upvotes)}</div>
                     </div>
                   </div>
-                    
-                    {/* Comments */}
-                  <div className="col-span-1 w-[3%]  flex justify-center text-center">
+  
+                  {/* Comments */}
+                  <div className="w-[3%] flex justify-center">
                     <div className="flex flex-col items-center">
                       <FaComment />
                       <div>{formatNumber(incident.commentcount)}</div>
                     </div>
                   </div>
-
+  
                   {/* Address */}
                   <div
-                    className="w-[17%]  col-span-1 flex justify-start overflow-hidden whitespace-nowrap"
+                    className="w-[17%] flex justify-start overflow-hidden whitespace-nowrap"
                     ref={(el) => {
                       addressRefs.current[index] = el;
                     }}
                   >
-                    <div
-                      style={{
-                        display: "inline-block",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                    <div style={{ display: "inline-block", whiteSpace: "nowrap" }}>
                       {truncateAddress(incident.address)}
                     </div>
                   </div>
-
                 </div>
               );
             })}
+  
+            {/* Desktop Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+              <button
+                onClick={goToPreviousPage}
+                className={`px-4 py-2 text-white ${
+                  startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={startIndex === 0}
+              >
+                Previous
+              </button>
+  
+              <span className="text-white text-opacity-80">
+                Page {startIndex / itemsPerPage + 1} of {totalPages}
+              </span>
+  
+              <button
+                onClick={goToNextPage}
+                className={`px-4 py-2 text-white ${
+                  startIndex + itemsPerPage >= tableitems.length
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                disabled={startIndex + itemsPerPage >= tableitems.length}
+              >
+                Next
+              </button>
+            </div>
           </div>
-
+  
           {/* Mobile View */}
-          <div className="block sm:hidden h-[80vh] overflow-y-auto">
-            {tableitems.map((incident, index) => (
+          <div className="block sm:hidden h-[80vh] overflow-y-auto pb-16">
+            {currentPageItems.map((incident, index) => (
               <div
                 key={index}
-                className="p-4 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer transform transition-colors duration-300 hover:bg-gray-200 mb-2"
+                className="p-4 rounded-3xl bg-white bg-opacity-70 text-black border-b border-gray-200 cursor-pointer hover:bg-gray-200 mb-2"
                 onClick={() => handleRowClick(incident)}
               >
                 <div className="flex justify-between items-center mb-2">
@@ -291,9 +335,39 @@ const IncidentTable: React.FC<IncidentProps> = ({
                 </div>
               </div>
             ))}
+  
+            {/* Mobile Pagination Controls */}
+            <div className="flex justify-between items-center mt-4">
+              <button
+                onClick={goToPreviousPage}
+                className={`px-4 py-2 text-white ${
+                  startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={startIndex === 0}
+              >
+                Previous
+              </button>
+  
+              <span className="text-white text-opacity-80">
+                Page {startIndex / itemsPerPage + 1} of {totalPages}
+              </span>
+  
+              <button
+                onClick={goToNextPage}
+                className={`px-4 py-2 text-white ${
+                  startIndex + itemsPerPage >= tableitems.length
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                disabled={startIndex + itemsPerPage >= tableitems.length}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </>
       )}
+  
       {selectedIncident && (
         <FaultCardUserView
           show={!!selectedIncident}
@@ -318,6 +392,8 @@ const IncidentTable: React.FC<IncidentProps> = ({
       )}
     </div>
   );
+  
 };
+
 
 export default IncidentTable;

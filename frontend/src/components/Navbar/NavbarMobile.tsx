@@ -111,16 +111,6 @@ export default function NavbarMobile({ unreadNotifications = 0 }) {
                     </DropdownItem>
 
                     <DropdownItem
-                      key="about"
-                      href="/about"
-                      role="link"
-                      className="h-9 hover:bg-gray-500"
-                      textValue="About us"
-                    >
-                      <span className="text-sm">About us</span>
-                    </DropdownItem>
-
-                    <DropdownItem
                       key="logout"
                       onClick={onLogout}
                       role="button"

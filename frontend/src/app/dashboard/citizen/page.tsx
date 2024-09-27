@@ -219,9 +219,9 @@ export default function CitizenDashboard({
 
           <main className="flex justify-center">
             <div className="relative">
-              <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+              <div className="fixed top-22 left-8 text-4xl font-bold text-white text-opacity-80 ">
                 Dashboard
-              </h1>
+              </div>
             </div>
 
             <div className="fixed bottom-4 left-4 z-20">
@@ -265,11 +265,12 @@ export default function CitizenDashboard({
             )}
 
             <div className="flex flex-col w-[80%] h-[66%] items-center lg:mt-10 overflow-hidden">
-              <div className="flex w-full h-full dark:bg-gray-700 dark:text-white dark:bg-opacity-70 bg-gray-100 bg-opacity-70 border border-red flex-col items-center rounded-3xl overflow-hidden">
+              <div className="flex w-full h-full flex-col items-center rounded-3xl overflow-hidden">
+                {/* <div className="flex w-full h-full dark:bg-gray-700 dark:text-white dark:bg-opacity-70 bg-gray-100 bg-opacity-70 border border-red flex-col items-center rounded-3xl overflow-hidden">  */}
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
-                  className="flex justify-center w-full rounded-3xl pt-4"
+                  className="flex justify-center w-full rounded-3xl pt-4 z-50"
                   classNames={{
                     tab: "min-w-28 bg-opacity-30 text-black",
                     panel: "w-full h-full",
@@ -279,7 +280,7 @@ export default function CitizenDashboard({
                   }}
                   onSelectionChange={handleTabChange}
                 >
-                  <Tab key={0} title="Cards" className="h-full ">
+                  <Tab key={0} title="Cards" className="h-full z-50">
                     <Tabs
                       aria-label="Signup Options"
                       defaultSelectedKey={0}
@@ -321,16 +322,18 @@ export default function CitizenDashboard({
                               />
                             </div>
                           ) : (
-                            <p className="text-center text-white text-opacity-60 text-sm">
+                            <div
+                              className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
+                              style={{ transform: "translateY(2vh)" }}
+                            >
                               There are no faults to display.
-                            </p>
+                            </div>
                           )}
                         </div>
                       </Tab>
 
                       {/* Most Upvoted*/}
                       <Tab key={1} title="Most Upvoted">
-                        <div className="w-full text-center"></div>
                         <div className="w-full text-center">
                           <h1 className="sm:text-sm md:text-md lg:text-lg text-white text-opacity-80">
                             Based on votes from the community in your area.
@@ -355,9 +358,12 @@ export default function CitizenDashboard({
                             refreshwatch={refreshwatchlist}
                           />
                         ) : (
-                          <p className="text-center text-white text-opacity-60 text-sm">
-                            There are no faults to display.
-                          </p>
+                          <div
+                              className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
+                              style={{ transform: "translateY(2vh)" }}
+                            >
+                              There are no faults to display.
+                            </div>
                         )}
                       </Tab>
 
@@ -386,9 +392,12 @@ export default function CitizenDashboard({
                             refreshwatch={refreshwatchlist}
                           />
                         ) : (
-                          <p className="text-center text-sm text-opacity-60 text-white">
-                            There are no faults to display.
-                          </p>
+                          <div
+                              className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
+                              style={{ transform: "translateY(2vh)" }}
+                            >
+                              There are no faults to display.
+                            </div>
                         )}
                       </Tab>
                     </Tabs>
@@ -504,10 +513,10 @@ export default function CitizenDashboard({
                             </div>
                           ) : dashWatchResults.length > 0 ? (
                             <div className="flex justify-center items-center">
-                            <DashboardFaultCardContainer
-                              cardData={dashWatchResults}
-                              refreshwatch={refreshwatchlist}
-                            />
+                              <DashboardFaultCardContainer
+                                cardData={dashWatchResults}
+                                refreshwatch={refreshwatchlist}
+                              />
                             </div>
                           ) : (
                             <p className="text-center text-white text-opacity-60 text-sm">
@@ -538,10 +547,10 @@ export default function CitizenDashboard({
                             </div>
                           ) : dashMostUpvoteResults.length > 0 ? (
                             <div className="flex justify-center items-center">
-                            <DashboardFaultCardContainer
-                              cardData={dashMostUpvoteResults}
-                              refreshwatch={refreshwatchlist}
-                            />
+                              <DashboardFaultCardContainer
+                                cardData={dashMostUpvoteResults}
+                                refreshwatch={refreshwatchlist}
+                              />
                             </div>
                           ) : (
                             <p className="text-center text-white text-opacity-60 text-sm">
@@ -572,10 +581,10 @@ export default function CitizenDashboard({
                             </div>
                           ) : dashMuniResults.length > 0 ? (
                             <div className="flex justify-center items-center">
-                            <DashboardFaultCardContainer
-                              cardData={dashMuniResults}
-                              refreshwatch={refreshwatchlist}
-                            />
+                              <DashboardFaultCardContainer
+                                cardData={dashMuniResults}
+                                refreshwatch={refreshwatchlist}
+                              />
                             </div>
                           ) : (
                             <p className="text-center text-sm text-opacity-60 text-white">

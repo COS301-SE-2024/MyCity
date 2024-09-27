@@ -5,7 +5,11 @@ import { AlertCircle } from "lucide-react";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
 import MuniTenders from "../RecordsTableCompany/MuniTenders";
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
-import { getTicketTenders, getContract, getMuniContract } from "@/services/tender.service";
+import {
+  getTicketTenders,
+  getContract,
+  getMuniContract,
+} from "@/services/tender.service";
 import { AcceptTicket, CloseTicket } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import Modal from "react-modal";
@@ -77,6 +81,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
   const [tenders, setTenders] = useState<any>(null);
   const [contract, setContract] = useState<any>();
   const [ticketstatus, setTicketstatus] = useState<string>("");
+  const [loadingImage, setLoadingImage] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -173,12 +179,15 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     try {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await getMuniContract(ticket_id, user_session);
+      const response_contract = await getMuniContract(
+        ticket_id,
+        user_session,
+        true
+      );
 
       if (response_contract == null) {
         setShowTenderMax(false);
       } else {
-
         if (response_contract) {
           setContract(response_contract);
           setShowTenderMax(true);
@@ -198,8 +207,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     if (data == -2) {
       setTicketstatus("Closed");
       onClose(-2);
-    }
-    else if (data == - 1) {
+    } else if (data == -1) {
       setTicketstatus("Taking Tenders");
       onClose(-1);
     }
@@ -216,7 +224,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     const user_session = String(user_data.current?.session_token);
 
     const rspgettenders = await getTicketTenders(ticket_id, user_session, true);
-    console.log(ticket_id)
+    console.log(ticket_id);
     console.log(rspgettenders); // Add this line to inspect the data
 
     setIsLoading(false);
@@ -235,9 +243,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
     if (data === 1) {
       setTicketstatus("In Progress");
       onClose(1);
-    }
-    else onClose(0);
-
+    } else onClose(0);
   };
 
   return (
@@ -245,10 +251,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
       {/* Render MuniTenders if it is visible */}
       {showMuniTenders && (
         <div className="mt-4">
-          <MuniTenders
-            tenders={tenders}
-            onBack={handleBack}
-          />
+          <MuniTenders tenders={tenders} onBack={handleBack} />
         </div>
       )}
 
@@ -259,7 +262,11 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
             } z-50`}
         >
           {!showTenderMax && !showMuniTenders && (
-            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col">
+            <div
+            className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col"
+            style={{ maxHeight: '75vh', height: 'auto', overflowY: 'auto' }}
+          >
+          
               <button
                 className="absolute top-2 right-2 text-gray-700 z-20"
                 onClick={handleCloseClick}
@@ -282,30 +289,51 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
                 {/* Image and Description */}
                 <div className="text-center">
-                  <div className="relative">
-                    <img
-                      src={`${S3_BUCKET_BASE_URL}${imageURL}`}
-                      alt="Fault"
-                      className="rounded-lg w-full h-[300px] object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = ""; // Empty the src to hide broken image icon
-                        e.currentTarget.style.display = "none"; // Hide the image tag if it fails to load
-                        document
-                          .getElementById("image-placeholder")
-                          ?.classList.remove("hidden"); // Show the placeholder div
-                      }}
-                      style={{ display: imageURL ? "block" : "none" }} // Conditionally render image if URL exists
-                    />
-                    <div
-                      id="image-placeholder"
-                      className={`${imageURL ? "hidden" : "flex"
-                        } justify-center items-center w-full h-[300px] rounded-lg bg-gray-200 border border-gray-300`}
-                    >
-                      <div className="flex justify-center items-center w-full h-full">
-                        <ImageIcon size={48} className="text-gray-500" />
-                      </div>
+                  <div className="relative w-full h-[300px]">
+                    {/* Wrapper div to enforce size of loader */}
+                    <div className="absolute inset-0 flex items-center justify-center w-full h-full">
+                      {/* Show loading spinner only if the image is loading */}
+                      {loadingImage && !imageError && (
+                        <div className="flex justify-center items-center w-full h-full rounded-lg bg-gray-200 border border-gray-300">
+                          <ThreeDots
+                            height="80"
+                            width="80"
+                            radius="9"
+                            color="#ADD8E6"
+                            ariaLabel="three-dots-loading"
+                            visible={true}
+                          />
+                        </div>
+                      )}
+
+                      {/* Conditionally render image only when successfully loaded */}
+                      {!imageError && (
+                        <img
+                          src={imageURL?`${S3_BUCKET_BASE_URL}${imageURL}`: undefined}
+                          alt="Fault"
+                          className={`rounded-lg w-full h-full object-cover ${
+                            loadingImage ? "hidden" : "block"
+                          }`}
+                          onLoad={() => setLoadingImage(false)} // Set loadingImage to false when image loads
+                          onError={() => {
+                            setImageError(true); // Set imageError to true if loading fails
+                            setLoadingImage(false); // Stop showing loader on error
+                          }}
+                        />
+                      )}
+
+                      {/* Render the placeholder if image fails to load */}
+                      {imageError && (
+                        <div
+                          id="image-placeholder"
+                          className="flex justify-center items-center w-full h-full rounded-lg bg-gray-200 border border-gray-300"
+                        >
+                          <ImageIcon size={48} className="text-gray-500" />
+                        </div>
+                      )}
                     </div>
                   </div>
+
                   <p className="text-gray-700 text-sm mt-2 mb-4">
                     {description}
                   </p>

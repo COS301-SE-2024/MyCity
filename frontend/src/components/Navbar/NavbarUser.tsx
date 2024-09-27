@@ -155,25 +155,6 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
                   <span className="text-sm">Settings</span>
                 </DropdownItem>
 
-                <DropdownItem
-                  key="about"
-                  href="/about"
-                  role="link"
-                  className="h-9 hover:bg-grey-500"
-                  textValue="About us"
-                >
-                  <span className="text-sm">About us</span>
-                </DropdownItem>
-
-                <DropdownItem
-                  key="guide"
-                  href="/guide"
-                  role="link"
-                  className="h-9 hover:bg-grey-500"
-                  textValue="How it works"
-                >
-                  <span className="text-sm">How it works</span>
-                </DropdownItem>
 
                 <DropdownItem
                   key="logout"

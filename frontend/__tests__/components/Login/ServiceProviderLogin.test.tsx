@@ -1,6 +1,6 @@
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
 import { colorVariants } from "@nextui-org/react";
-import { fireEvent, render, screen, waitFor} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as AuthService from "../../../src/services/auth.service";
 import { useRouter } from "next/router";
 
@@ -141,12 +141,12 @@ describe("ServiceProviderLogin", () => {
         fireEvent.submit(form);
 
         await waitFor(() => {
-            const outputs = screen.getAllByText("An error occurred during login. Please try again.")
+            const outputs = screen.getAllByText("Login failed")
             const out = outputs[0];
             expect(out).toBeInTheDocument();
-            //expect(screen.getByText("An error occurred during login. Please try again.")).toBeInTheDocument();
+            //expect(screen.getByText("Login failed. Please wait a few minutes and try again.")).toBeInTheDocument();
         });
-        
+
     });;
 
     /* Test 11: Disables submit button when form is invalid */

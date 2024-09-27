@@ -3,7 +3,7 @@ import { getMunicipalityCoordinates } from "@/services/municipalities.service";
 import { getTicketsGeoData } from "@/services/tickets.service";
 import { FaultGeoData, MunicipalityCoordinates } from "@/types/custom.types";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Rings } from "react-loader-spinner"; // Importing the Rings loader
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
@@ -93,7 +93,9 @@ export default function FaultMapView() {
 
             {/* Map Section */}
             <div className="w-full md:w-5/6 flex-grow rounded-lg bg-gray-200">
-            <MapboxMap centerLng={Number(municipalityCoordinates?.longitude)} centerLat={Number(municipalityCoordinates?.latitude)} faultMarkers={faultGeoData} zoom={6} />
+              {faultGeoData.length > 0 && (
+                <MapboxMap centerLng={Number(municipalityCoordinates?.longitude)} centerLat={Number(municipalityCoordinates?.latitude)} faultMarkers={faultGeoData} zoom={6} />
+              )}
             </div>
 
             {/* Key Section */}

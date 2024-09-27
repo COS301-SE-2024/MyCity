@@ -167,7 +167,6 @@ export default function CitizenSignup() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setIsLoading(true);
 
     if (!isEmailValid) {
       setError("Please enter a valid email address.");
@@ -178,14 +177,20 @@ export default function CitizenSignup() {
     const form = new FormData(event.currentTarget as HTMLFormElement);
     form.set("municipality", selectedMunicipality); // Append selected municipality to the form data
 
+    setIsLoading(true);
+
     try {
       const signedUp = await handleSignUp(form, UserRole.CITIZEN);
       if (signedUp.isSignedIn) {
         router.push("/dashboard/citizen");
       }
+      else {
+        setError("Auto login failed. Please log in manually using your credentials.");
+        setIsLoading(false);
+      }
     } catch (error: any) {
-      console.error("Signup error:", error);
-      setError("An unexpected error occurred. Please try again later.");
+      setError(error.message);
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -255,9 +260,8 @@ export default function CitizenSignup() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
               type="email"
               name="email"
@@ -280,11 +284,10 @@ export default function CitizenSignup() {
                     <span className="font-semibold text-medium block mb-[0.20em]">
                       Municipality{" "}
                       <span
-                        className={`${
-                          selectedMunicipality
-                            ? "text-green-500"
-                            : "text-red-500"
-                        } *`}
+                        className={`${selectedMunicipality
+                          ? "text-green-500"
+                          : "text-red-500"
+                          } *`}
                       ></span>
                     </span>
                   }
@@ -419,11 +422,10 @@ export default function CitizenSignup() {
             <Button
               name="submit"
               data-testid="signup-submit-btn"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${
-                isFormValid
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               type="submit"
               disabled={!isFormValid}
             >
@@ -514,9 +516,8 @@ export default function CitizenSignup() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
               type="email"
               name="email"
@@ -538,11 +539,10 @@ export default function CitizenSignup() {
                     <span className="font-semibold text-medium block mb-[0.20em]">
                       Municipality{" "}
                       <span
-                        className={`${
-                          selectedMunicipality
-                            ? "text-green-500"
-                            : "text-red-500"
-                        } *`}
+                        className={`${selectedMunicipality
+                          ? "text-green-500"
+                          : "text-red-500"
+                          } *`}
                       ></span>
                     </span>
                   }
@@ -612,7 +612,7 @@ export default function CitizenSignup() {
                   variant={"bordered"}
                   label={
                     <span className="font-semibold text-medium block mb-[0.20em]">
-                      Confirm Password 
+                      Confirm Password
                     </span>
                   }
                   labelPlacement={"outside"}
@@ -674,11 +674,10 @@ export default function CitizenSignup() {
             {/* Submit Button */}
             <Button
               name="submit"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${
-                isFormValid
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               type="submit"
               disabled={!isFormValid}
             >

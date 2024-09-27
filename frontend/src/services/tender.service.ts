@@ -147,6 +147,34 @@ export async function CompleteContract(contract_id: string, user_session: string
     }
 }
 
+export async function DoneContract(contract_id: string, user_session: string) {
+    const data = {
+        contract_id: contract_id,
+    }
+
+    const apiURL = "/api/tenders/done";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json();
+    if (result.Status == "Success") {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 export async function DidBid(comp_name: string,ticket : string, user_session: string) {
     const data = {
         companyname: comp_name,
@@ -296,7 +324,12 @@ export async function getMunicipalityTenders(municipality: string, user_session:
     }
 }
 
-export async function getContract(tender_id: string, user_session: string) {
+export async function getContract(tender_id: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tenders-getcontracts"); //invalidate the cache
+    }
+
+    
     const apiURL = "/api/tenders/getcontracts";
     const urlWithParams = `${apiURL}?tender=${encodeURIComponent(tender_id)}`;
     const response = await fetch(urlWithParams, {
@@ -323,7 +356,13 @@ export async function getContract(tender_id: string, user_session: string) {
     }
 }
 
-export async function getMuniContract(ticket_id: string, user_session: string) {
+export async function getMuniContract(ticket_id: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tenders-getmunicontract"); //invalidate the cache
+    }
+
+
+
     const apiURL = "/api/tenders/getmunicontract";
     const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
     const response = await fetch(urlWithParams, {
@@ -357,6 +396,37 @@ export async function getCompanyContract(company_name: string, tender_id: string
 
     const apiURL = "/api/tenders/getcompanycontracts";
     const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}&tender=${encodeURIComponent(tender_id)}`;
+    const response = await fetch(urlWithParams, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json();
+
+    if (result.Status) {
+        return null;
+    }
+    else {
+        console.log(result);
+        AssignContractNumbers(result);
+        return result;
+    }
+}
+
+export async function getCompanyTicketContract(company_name: string, ticket_id: string, user_session: string, revalidate?: boolean) {
+    if (revalidate) {
+        invalidateCache("tenders-getcompanycontractbyticket")
+    }
+
+    const apiURL = "/api/tenders/getcompanycontractbyticket";
+    const urlWithParams = `${apiURL}?company=${encodeURIComponent(company_name)}&ticket=${encodeURIComponent(ticket_id)}`;
     const response = await fetch(urlWithParams, {
         method: "GET",
         headers: {

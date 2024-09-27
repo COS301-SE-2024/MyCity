@@ -5,7 +5,7 @@ import TenderMax from "../Tenders/CompanyTenderMax";
 import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
-import { DidBid, getCompanyTenders } from "@/services/tender.service";
+import { DidBid, getCompanyTenders,getCompanyTicketContract } from "@/services/tender.service";
 import dynamic from "next/dynamic";
 import { S3_BUCKET_BASE_URL } from "@/config/s3bucket.config";
 
@@ -66,6 +66,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   const [showBid, setShowBid] = useState(false);
   const [hasBidded, setHasBidded] = useState(false);
   const [tender, setTender] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null);
   const [reRender, setReRender] = useState(Boolean);
   const [mapKey, setMapKey] = useState(0);
   const [imageError, setImageError] = useState(false);
@@ -121,9 +122,21 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
   const addressParts = address.split(",");
 
-  const handleTenderContractClick = () => {
-    setReRender(false);
-    setShowTenderMax(true);
+  const handleTenderContractClick = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const company_name = String(user_data.current?.company_name);
+    const user_session = String(user_data.current?.session_token);
+    const rspcontract = await getCompanyTicketContract(company_name,ticket_id,user_session,true);
+    if(rspcontract != null)
+    {
+      setContract(rspcontract);
+      setReRender(false);
+      setShowTenderMax(true);
+    }
+    else {
+
+    }
+    
   };
 
   const handleBidClick = async () => {
@@ -245,6 +258,33 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showTenderMax && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="w-full h-full overflow-auto">
+            <TenderMax
+              contract_id={contract.contract_id}
+              status={contract.status}
+              companyname={contract.companyname}
+              contractdatetime={contract.contractdatetime}
+              finalCost={contract.finalCost}
+              finalDuration={contract.finalDuration}
+              ticketnumber={ticketNumber}
+              longitude={longitude}
+              latitude={latitude}
+              completedatetime={contract.completedatetime}
+              contractnumber={contract.contractnumber}
+              municipality="Umdoni"
+              upload={tender.upload}
+              hasReportedCompletion={tender.hasReportedCompletion}
+              onClose={() => {
+                setShowTenderMax(false);
+                setReRender(true); // Re-render the main view when closing TenderMax
+              }}
+            />
           </div>
         </div>
       )}

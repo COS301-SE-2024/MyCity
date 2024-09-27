@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { ArrowLeft, Edit2, Lock, User } from "lucide-react";
+import { ArrowLeft, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -37,6 +37,11 @@ const ChangeCompanyInfo: React.FC<ChangeCompanyInfoProps> = ({ onBack }) => {
     toast.success("Changes saved successfully!");
   };
 
+  // Truncate email if it's too long
+  const truncateEmail = (email: string, length = 30) => {
+    return email.length > length ? `${email.slice(0, length)}...` : email;
+  };
+
   return (
     <div className="w-full rounded-lg p-4">
       <button
@@ -66,13 +71,21 @@ const ChangeCompanyInfo: React.FC<ChangeCompanyInfoProps> = ({ onBack }) => {
         />
       </div>
 
+      {/* Email Section with Tooltip */}
       <div className="mb-4 text-center">
         <p className="text-gray-600 flex items-center justify-center">
           Email
           <Lock className="ml-2 h-4 w-4" />
         </p>
-        <p className="text-xl font-semibold">{data.email}</p>
+        <p
+          className="text-xl font-semibold cursor-pointer"
+          title={data.email} // Tooltip with full email
+        >
+          {truncateEmail(data.email)}
+        </p>
       </div>
+
+      {/* Company Name */}
       <div className="mb-4 text-center">
         <p className="text-gray-600">Company Name</p>
         <div className="text-xl font-semibold flex items-center justify-center">
@@ -83,9 +96,10 @@ const ChangeCompanyInfo: React.FC<ChangeCompanyInfoProps> = ({ onBack }) => {
             onChange={(event) => setCompany(event.target.value)}
             className="border-b-2 border-gray-300 focus:outline-none rounded-3xl focus:border-blue-500"
           />
-          <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
         </div>
       </div>
+
+      {/* Save Changes Button */}
       <div className="flex justify-center">
         <button
           type="submit"
