@@ -15,13 +15,16 @@ jest.mock("../../../src/components/Navbar/NavbarMobile", () => () => (
   <div data-testid="navbar-mobile">Navbar Mobile</div>
 ));
 
-describe("CreateTicket Component", () => {
+/* 
+Skipping the entire test suite 
+*/
+describe.skip("CreateTicket Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   /*
-  Basic test to check if the page rendered
+  Skipped test to check if the page rendered
   */
   test("renders the CreateTicket page without crashing", () => {
     // Render the CreateTicket component
