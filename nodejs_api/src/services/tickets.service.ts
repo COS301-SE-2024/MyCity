@@ -658,7 +658,7 @@ export const getCompanyTickets = async (companyname: string) => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 16 // limit result set to the top 16 items
     }));
 
     const topItems = response.Items || [];
