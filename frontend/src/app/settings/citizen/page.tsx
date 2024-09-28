@@ -48,28 +48,12 @@ export default function Settings() {
       const profile = await getUserProfile();
 
       if (profile.current) {
-        const storedProfileImage = localStorage.getItem("profileImage")
-          ? localStorage.getItem("profileImage")!
-          : undefined;
-        const storedFirstName = localStorage.getItem("firstName")
-          ? localStorage.getItem("firstName")!
-          : undefined;
-        const storedSurname = localStorage.getItem("surname")
-          ? localStorage.getItem("surname")!
-          : undefined;
-
         const updatedUserData: UserData = {
           sub: profile.current.sub,
           email: profile.current.email,
-          given_name: profile.current.given_name
-            ? profile.current.given_name
-            : storedFirstName,
-          family_name: profile.current.family_name
-            ? profile.current.family_name
-            : storedSurname,
-          picture: profile.current.picture
-            ? profile.current.picture
-            : storedProfileImage,
+          given_name: profile.current.given_name,
+          family_name: profile.current.family_name,
+          picture: profile.current.picture,
           user_role: profile.current.user_role,
           municipality: profile.current.municipality,
         };
