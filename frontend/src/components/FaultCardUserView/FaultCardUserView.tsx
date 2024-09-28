@@ -416,7 +416,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             {/* Fault Image */}
             <div className="w-full h-full border flex items-center justify-center mt-2">
               {image && !imageError ? (
-                <div className="flex justify-center relative">
+                <div className="flex justify-center relative w-full h-full">
                   {/* Loading Icon */}
                   {loading && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -435,10 +435,9 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     priority={true}
                     src={getImageBucketUrl(image)}
                     alt="Fault"
-                    width={300}
-                    height={300}
-                    className={`rounded-lg object-cover ${loading ? "hidden" : "block"
-                      }`}
+                    layout="fill" // Ensure the image fills its container
+                    objectFit="cover" // Maintain aspect ratio while covering the div
+                    className={`rounded-lg ${loading ? "hidden" : "block"}`}
                     onLoad={() => setLoading(false)} // Set loading to false when image loads
                     onError={() => setImageError(true)} // Set error state if image fails to load
                   />
@@ -460,9 +459,9 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 {"Google Maps"}
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
-                  className="h-[50%] border"
-                  width={75}
-                  height={75}
+                  className="h-auto w-auto object-contain"
+                  width={20}
+                  height={20}
                   alt="Google"
                 />
               </Button>
@@ -539,8 +538,9 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Comments Section with Slide Animation */}
             <div
-              className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${showComments ? "translate-x-0" : "translate-x-full"
-                }`}
+              className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
+                showComments ? "translate-x-0" : "translate-x-full"
+              }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
               <Comments
