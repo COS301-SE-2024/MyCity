@@ -43,7 +43,6 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
           municipality: data?.municipality,
         };
 
-        localStorage.setItem("profileImage", imageUrl);
         setData(updatedUserData);
         setFirstname(updatedUserData.given_name);
         setSurname(updatedUserData.family_name);
@@ -61,12 +60,10 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
 
     if (firstname && firstname != data?.given_name) {
       updatedUserData.given_name = firstname;
-      localStorage.setItem("firstName", firstname);
     }
 
     if (surname && surname != data?.family_name) {
       updatedUserData.family_name = surname;
-      localStorage.setItem("surname", surname);
     }
 
     // upload profile picture
