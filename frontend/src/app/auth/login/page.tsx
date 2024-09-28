@@ -97,8 +97,8 @@ export default function Login() {
             <Image
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
               alt="MyCity"
-              width={75}
-              height={75}
+              width={128}
+              height={128}
             />
           </div>
 

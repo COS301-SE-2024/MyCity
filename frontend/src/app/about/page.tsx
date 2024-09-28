@@ -253,8 +253,8 @@ export default function About() {
       <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
         alt="MyCity"
-        width={180}
-        height={180}
+        width={256}
+        height={256}
       />
     </div>
     

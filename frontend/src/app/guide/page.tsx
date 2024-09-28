@@ -309,8 +309,8 @@ export default function Guide() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
                 alt="MyCity"
-                width={180}
-                height={180}
+                width={256}
+                height={256}
               />
             </div>
             <h1 className="text-3xl font-bold text-white mb-6 text-center">

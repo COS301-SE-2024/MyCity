@@ -279,7 +279,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
               <div className="flex flex-col items-center justify-center">
                 <h3 className="font-bold text-md">Created By</h3>
-                <Image src={user_picture} alt="Created By" width={48} height={48} className="rounded-full mb-1 object-cover w-12 h-12" />
+                <Image src={user_picture} alt="Created By" width={128} height={128} className="rounded-full mb-1 object-cover w-12 h-12" />
                 <p className="text-gray-700 text-sm">{createdBy}</p>
               </div>
             </div>

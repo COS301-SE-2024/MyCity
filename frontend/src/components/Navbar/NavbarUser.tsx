@@ -71,8 +71,8 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
                 alt="MyCity"
-                width={50}
-                height={50}
+                width={128}
+                height={128}
                 className="w-50 h-50"
               />
             </div>
