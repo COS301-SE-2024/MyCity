@@ -100,7 +100,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
               onError={() => setImageError(true)}
             />
           ) : (
-            <imgIcon size={32} color="#6B7280" />
+            <ImageIcon size={32} color="#6B7280" />
           )}
         </div>
 
@@ -167,7 +167,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
                 onError={() => setImageError(true)}
               />
             ) : (
-              <imgIcon size={24} color="#6B7280" />
+              <ImageIcon size={24} color="#6B7280" />
             )}
           </div>
         </div>
