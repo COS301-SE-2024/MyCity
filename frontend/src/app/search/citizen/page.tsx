@@ -177,7 +177,7 @@ export default function CreateTicket() {
     ? searchResults.slice(indexOfFirstResult, indexOfLastResult)
     : [];
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 81;
 
   return (
     <div className=" w-screen h-screen">

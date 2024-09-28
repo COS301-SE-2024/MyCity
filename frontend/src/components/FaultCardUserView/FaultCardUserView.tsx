@@ -553,10 +553,10 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
         </div>
 
         {/* Mobile View */}
-        <div className="block sm:hidden h-full overflow-auto flex justify-center items-center">
-          <div className="flex flex-col w-full gap-2 text-black relative h-full overflow-y-auto justify-center">
+        <div className="block sm:hidden min-h-[60vh] max-h-[90vh] overflow-auto flex items-start">
+          <div className="flex flex-col w-full gap-2 text-black relative min-h-[60vh] max-h-[90vh] overflow-y-auto p-2">
             {/* Title and Ticket Number */}
-            <div className="text-center">
+            <div className="text-center mb-1">
               <div className="font-bold text-base sm:text-lg truncate">
                 {title}
               </div>
@@ -583,18 +583,18 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             </div>
 
             {/* Image */}
-            <div className="relative w-full flex justify-center mt-2 h-[30%]">
+            <div className="relative w-full flex justify-center mt-2 overflow-hidden">
               {!imageError ? (
                 <Image
                   src={getImageBucketUrl(image)}
                   alt="Fault"
                   width={300}
                   height={300}
-                  className="rounded-lg object-cover w-full h-full"
+                  className="rounded-lg object-cover w-full max-h-[200px]"
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="flex justify-center items-center w-full h-full bg-gray-200">
+                <div className="flex justify-center items-center w-full h-full bg-gray-200 max-h-[200px]">
                   <ImageIcon size={32} color="#6B7280" />
                 </div>
               )}
@@ -602,14 +602,21 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Google Maps Button */}
             <Button
-              className="w-full mt-2 bg-opacity-45 text-black font-bold text-center rounded-lg py-1 border text-sm"
-              onClick={showDirections}
-            >
-              Google Maps
-            </Button>
+                className="w-full bg-opacity-45 mt-2 text-black font-bold lg:text-md md:text-sm text-center rounded-lg lg:mx-2 md:mx-1"
+                onClick={showDirections}
+              >
+                {"Google Maps"}
+                <Image
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
+                  className="h-auto w-auto object-contain"
+                  width={20}
+                  height={20}
+                  alt="Google"
+                />
+              </Button>
 
             {/* Actions */}
-            <div className="flex justify-around w-full mt-2">
+            <div className="flex justify-around w-full mt-4">
               {/* Upvote */}
               <div className="flex flex-col items-center text-xs sm:text-sm">
                 <FaArrowUp
@@ -650,7 +657,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             </div>
 
             {/* Fault's Municipality */}
-            <div className="flex w-full items-center justify-center mt-2">
+            <div className="flex w-full items-center justify-center mt-4">
               <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
                 <Image
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
