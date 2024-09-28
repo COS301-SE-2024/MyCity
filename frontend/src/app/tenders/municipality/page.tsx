@@ -47,14 +47,10 @@ export default function MuniTenders() {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const user_municipality = String(user_data.current?.municipality);
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session
-      );
-      const rspmunitenders = await getMunicipalityTenders(
-        user_municipality,
-        user_session
-      );
+      const [rspmunicipality, rspmunitenders] = await Promise.all([
+        getTicketsInMunicipality(user_municipality, user_session),
+        getMunicipalityTenders(user_municipality, user_session)
+      ]);
       setMuniTenders(rspmunitenders);
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
       setLoadingOpenTickets(false);
