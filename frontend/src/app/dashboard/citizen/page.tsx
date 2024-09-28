@@ -193,7 +193,7 @@ export default function CitizenDashboard({
       <div className="hidden sm:block">
         <div className="flex flex-col">
           <NavbarUser unreadNotifications={unreadNotifications} />
-          <div className="flex justify-center z-50 pt-8">
+          <div className="flex justify-center z-555 pt-8">
             <NotificationPromt userEmail={userEmail} />
           </div>
 
@@ -447,7 +447,7 @@ export default function CitizenDashboard({
             <NavbarMobile />
 
             {/* Notification Prompt */}
-            <div className="flex justify-center z-50 pt-8">
+            <div className="flex justify-center z-100 pt-8">
               <NotificationPromt userEmail={userEmail} />
             </div>
 
