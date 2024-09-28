@@ -310,7 +310,7 @@ export default function Dashboard() {
           {/* City Information */}
           <div className="flex flex-col items-center justify-center text-white text-opacity-80 mb-6">
             <div className="w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden mb-4">
-              <imgIcon size={20} className="text-gray-500" />
+              <ImageIcon size={20} className="text-gray-500" />
             </div>
             {cityLoading ? (
               <ThreeDots
