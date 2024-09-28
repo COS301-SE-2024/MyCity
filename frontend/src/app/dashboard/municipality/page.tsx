@@ -198,7 +198,7 @@ export default function Dashboard() {
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
               <Image
-                src={String(muniprofile)}
+                src={String(muniprofile?muniprofile:"/")}
                 alt="Description of image"
                 width={20}
                 height={20}
