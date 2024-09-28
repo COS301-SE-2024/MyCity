@@ -144,21 +144,13 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         TableName: TENDERS_TABLE,
         IndexName: "ticket_id-index",
         KeyConditionExpression: "ticket_id = :ticket_id",
-        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":ticket_id": ticketId
         }
     }));
 
     const responseItems = responseTickets.Items;
-    if (responseItems && responseItems.length > 0) {
-        for (const data of responseItems) {
-            if (data.tender_id !== tenderId) {
-                const rejectExpattrValue = { ":r": "rejected" };
-                const responseReject = await updateTenderTable(data.tender_id, updateExp, expattrName, rejectExpattrValue);
-            }
-        }
-    }
+   
 
     const ticketDateOpened = await getTicketDateOpened(ticketId);
 
