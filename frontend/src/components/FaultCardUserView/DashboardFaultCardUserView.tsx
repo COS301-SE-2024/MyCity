@@ -6,6 +6,8 @@ import mapboxgl, { Map, Marker } from 'mapbox-gl';
 import { InteractTicket, addWatchlist } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
+
 
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
