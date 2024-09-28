@@ -17,6 +17,7 @@ import { ArrowBigUp } from "lucide-react";
 import dynamic from "next/dynamic";
 import { ThreeDots } from "react-loader-spinner";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -430,7 +431,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     </div>
                   )}
 
-                  <img
+                  <Image
                     src={getImageBucketUrl(image)}
                     alt="Fault"
                     className={`rounded-lg object-cover ${
@@ -455,7 +456,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 onClick={showDirections}
               >
                 {"Google Maps"}
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
                   className="h-[50%] border"
                   alt="Google"
@@ -507,7 +508,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             {/* Fault's Municipality */}
             <div className="flex w-full items-center justify-start mt-2">
               <div className="text-black w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <img
+                <Image
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                     municipality_id
                   )}.png`}
@@ -579,7 +580,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             {/* Image */}
             <div className="relative w-full flex justify-center mt-2 h-[30%]">
               {!imageError ? (
-                <img
+                <Image
                   src={getImageBucketUrl(image)}
                   alt="Fault"
                   className="rounded-lg object-cover w-full h-full"
@@ -644,7 +645,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             {/* Fault's Municipality */}
             <div className="flex w-full items-center justify-center mt-2">
               <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <img
+                <Image
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                     municipality_id
                   )}.png`}

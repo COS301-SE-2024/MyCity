@@ -49,41 +49,64 @@ export default function MuniTenders() {
     }
   };
 
-  const handleTabChange = async (key: Key) => {
-    const index = Number(key);
+  const fetchDataForAllTabs = async () => {
+    try {
+      setLoadingTabs({ openTickets: true, activeTenders: true, closedTenders: false });
+      const user_data = await userProfile.getUserProfile();
+      const user_company = String(user_data.current?.company_name);
+      const user_session = String(user_data.current?.session_token);
 
-    switch (index) {
-      case 0:
-        if (!openTickets.length) await fetchDataForTab("openTickets");
-        break;
-      case 1:
-        if (!mytenders.length) await fetchDataForTab("activeTenders");
-        break;
-      case 2:
-        if (!loadingTabs.closedTenders) {
-          // Assume closed tenders don't require fetching
-          setLoadingTabs((prev) => ({ ...prev, closedTenders: false }));
-        }
-        break;
-      default:
-        break;
+      const [rspmostupvotes, rsptenders] = await Promise.all([
+        getOpenCompanyTickets(user_session),
+        getCompanyTenders(user_company, user_session, true),
+      ]);
+      setOpenTickets(rspmostupvotes);
+      console.log(rsptenders);
+      setMytenders(rsptenders);
+      // You could handle fetching for "closedTenders" similarly if needed
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoadingTabs({ openTickets: false, activeTenders: false, closedTenders: false });
     }
   };
+
+  // const handleTabChange = async (key: Key) => {
+  //   const index = Number(key);
+
+  //   switch (index) {
+  //     case 0:
+  //       if (!openTickets.length) await fetchDataForTab("openTickets");
+  //       break;
+  //     case 1:
+  //       if (!mytenders.length) await fetchDataForTab("activeTenders");
+  //       break;
+  //     case 2:
+  //       if (!loadingTabs.closedTenders) {
+  //         // Assume closed tenders don't require fetching
+  //         setLoadingTabs((prev) => ({ ...prev, closedTenders: false }));
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
   const toggleHelpMenu = () => {
     setIsHelpOpen(!isHelpOpen);
   };
 
   useEffect(() => {
-    fetchDataForTab("openTickets");
+    // fetchDataForTab("openTickets");
+    fetchDataForAllTabs();
   }, [userProfile]);
 
   const unreadNotifications = Math.floor(Math.random() * 10) + 1;
 
   return (
     <div>
-    
-  
+
+
       {isHelpOpen && (
         <div
           data-testid="help"
@@ -110,7 +133,7 @@ export default function MuniTenders() {
           </div>
         </div>
       )}
-  
+
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
@@ -149,7 +172,6 @@ export default function MuniTenders() {
                   tabContent:
                     "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
                 }}
-                onSelectionChange={handleTabChange}
               >
                 <Tab key={0} title="Open Tickets">
                   {loadingTabs.openTickets ? (
@@ -167,7 +189,7 @@ export default function MuniTenders() {
                     <OpenTicketsTable records={openTickets} />
                   )}
                 </Tab>
-  
+
                 <Tab key={1} title="Active Tenders">
                   {loadingTabs.activeTenders ? (
                     <div className="flex justify-center items-center h-64">
@@ -184,7 +206,7 @@ export default function MuniTenders() {
                     <ActiveTenders tenders={mytenders} />
                   )}
                 </Tab>
-  
+
                 {/* <Tab key={2} title="Closed Tenders">
                   {loadingTabs.closedTenders ? (
                     <div className="flex justify-center items-center h-64">
@@ -206,7 +228,7 @@ export default function MuniTenders() {
           </main>
         </div>
       </div>
-  
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <NavbarCompany unreadNotifications={unreadNotifications} />
@@ -234,7 +256,7 @@ export default function MuniTenders() {
               zIndex: -1,
             }}
           ></div>
-  
+
           {/* Content */}
           <div className="container mx-auto relative pt-10 px-4">
             <div className="rounded-lg mt-10 mb-4">
@@ -253,7 +275,6 @@ export default function MuniTenders() {
                     "group-data-[selected=true]:font-bold group-data-[selected=true]:bg-transparent text-black",
                   panel: "w-full",
                 }}
-                onSelectionChange={handleTabChange}
               >
                 <Tab key={0} title="Open Tickets">
                   {loadingTabs.openTickets ? (
@@ -271,7 +292,7 @@ export default function MuniTenders() {
                     <OpenTicketsTable records={openTickets} />
                   )}
                 </Tab>
-  
+
                 <Tab key={1} title="Active Tenders">
                   {loadingTabs.activeTenders ? (
                     <div className="flex justify-center items-center mt-4">
@@ -288,7 +309,7 @@ export default function MuniTenders() {
                     <ActiveTenders tenders={mytenders} />
                   )}
                 </Tab>
-  
+
                 <Tab key={2} title="Closed Tenders">
                   {loadingTabs.closedTenders ? (
                     <div className="flex justify-center items-center mt-4">
@@ -312,5 +333,5 @@ export default function MuniTenders() {
       </div>
     </div>
   );
-  
+
 }
