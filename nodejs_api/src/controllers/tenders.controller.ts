@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as tendersService from "../services/tenders.service";
+import { BadRequestError, NotFoundError } from "../types/error.types";
 
 export const createTender = async (req: Request, res: Response) => {
     const requiredFields = ["company_name", "quote", "ticket_id", "duration"];
@@ -14,6 +15,12 @@ export const createTender = async (req: Request, res: Response) => {
         const response = await tendersService.createTender(senderData);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -31,6 +38,12 @@ export const inReview = async (req: Request, res: Response) => {
         const tenders = await tendersService.inReview(senderData);
         return res.status(200).json(tenders);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -48,6 +61,12 @@ export const acceptTender = async (req: Request, res: Response) => {
         const tenders = await tendersService.acceptTender(senderData);
         return res.status(200).json(tenders);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -65,6 +84,12 @@ export const rejectTender = async (req: Request, res: Response) => {
         const tenders = await tendersService.rejectTender(senderData);
         return res.status(200).json(tenders);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -82,6 +107,12 @@ export const completeContract = async (req: Request, res: Response) => {
         const tenders = await tendersService.completeContract(senderData);
         return res.status(200).json(tenders);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -99,6 +130,12 @@ export const terminateContract = async (req: Request, res: Response) => {
         const response = await tendersService.terminateContract(senderData);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -116,6 +153,12 @@ export const doneContract = async (req: Request, res: Response) => {
         const response = await tendersService.doneContract(senderData);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -133,6 +176,12 @@ export const didMakeTender = async (req: Request, res: Response) => {
         const response = await tendersService.didMakeTender(senderData);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -147,6 +196,12 @@ export const getCompanyTenders = async (req: Request, res: Response) => {
         const response = await tendersService.getCompanyTenders(companyName);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 }
@@ -161,6 +216,12 @@ export const getMunicipalityTenders = async (req: Request, res: Response) => {
         const response = await tendersService.getMunicipalityTenders(municipality);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -175,6 +236,12 @@ export const getTicketTender = async (req: Request, res: Response) => {
         const response = await tendersService.getTicketTender(ticketId);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -189,6 +256,12 @@ export const getContracts = async (req: Request, res: Response) => {
         const response = await tendersService.getContracts(tenderId);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -203,6 +276,12 @@ export const getMuniContract = async (req: Request, res: Response) => {
         const response = await tendersService.getMuniContract(ticketId);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -218,6 +297,12 @@ export const getCompanyContracts = async (req: Request, res: Response) => {
         const response = await tendersService.getCompanyContracts(tenderId, companyName);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };
@@ -233,6 +318,12 @@ export const getCompanyContractByTicket = async (req: Request, res: Response) =>
         const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName);
         return res.status(200).json(response);
     } catch (error: any) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ Error: error.message });
+        }
+        else if (error instanceof BadRequestError) {
+            return res.status(400).json({ Error: error.message });
+        }
         return res.status(500).json({ Error: error.message });
     }
 };

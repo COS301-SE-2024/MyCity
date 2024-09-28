@@ -23,7 +23,6 @@ const uploadFile = async (folder: string, username: string, file: Express.Multer
     }
 };
 
-
 export {
     s3Client,
     uploadFile
