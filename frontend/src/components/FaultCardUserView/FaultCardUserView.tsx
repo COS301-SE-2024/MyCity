@@ -521,7 +521,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
           {/* Right Section */}
           <div className="relative w-2/3 mt-5 mb-2 flex flex-col justify-center overflow-hidden">
             {/* Map Display */}
-            <div className="relative w-full h-full bg-blue-400">
+            <div className="relative w-full h-full bg-blue-100">
               <MapboxMap
                 centerLng={Number(longitude)}
                 centerLat={Number(latitude)}

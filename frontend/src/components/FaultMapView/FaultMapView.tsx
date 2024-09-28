@@ -77,7 +77,7 @@ export default function FaultMapView() {
             </div>
 
             {/* Map Section */}
-            <div className="w-full md:w-5/6 flex-grow rounded-lg bg-gray-200">
+            <div className="w-full md:w-5/6 flex-grow rounded-lg bg-blue-100">
               {faultGeoData.length > 0 && (
                 <MapboxMap centerLng={Number(municipalityCoordinates?.longitude)} centerLat={Number(municipalityCoordinates?.latitude)} faultMarkers={faultGeoData} zoom={6} />
               )}
@@ -92,7 +92,7 @@ export default function FaultMapView() {
           <div className="flex flex-col md:flex-row w-full max-w-7xl h-[55vh] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
 
             {/* Map Section */}
-            <div className="w-full md:w-5/6 flex-grow rounded-lg bg-gray-200">
+            <div className="w-full md:w-5/6 flex-grow rounded-lg bg-blue-100">
               {faultGeoData.length > 0 && (
                 <MapboxMap centerLng={Number(municipalityCoordinates?.longitude)} centerLat={Number(municipalityCoordinates?.latitude)} faultMarkers={faultGeoData} zoom={6} />
               )}
