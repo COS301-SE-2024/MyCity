@@ -317,7 +317,7 @@ def getMyTickets(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="username-index",
+            IndexName="username-dateOpened-index",
             KeyConditionExpression=Key("username").eq(tickets_data),
         )
         items = response["Items"]
@@ -360,7 +360,7 @@ def get_in_my_municipality(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="municipality_id-index",
+            IndexName="municipality_id-dateOpened-index",
             KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
@@ -410,7 +410,7 @@ def get_open_tickets_in_municipality(tickets_data):
             }
             raise ClientError(error_response, "InvalideFields")
         response = tickets_table.query(
-            IndexName="municipality_id-index",
+            IndexName="municipality_id-dateOpened-index",
             KeyConditionExpression=Key("municipality_id").eq(tickets_data),
         )
         items = response["Items"]
@@ -465,12 +465,14 @@ def get_watchlist(tickets_data):
             KeyConditionExpression=Key("user_id").eq(tickets_data)
         )
         items = response["Items"]
+        # print(items)
         if len(items) > 0:
             for item in items:
                 respitem = tickets_table.query(
                     KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
                 )
                 ticketsItems = respitem["Items"]
+                print(ticketsItems)
                 if len(ticketsItems) > 0:
                     for tckitem in ticketsItems:
                         response_item = ticketupdate_table.query(
@@ -480,16 +482,18 @@ def get_watchlist(tickets_data):
                             ),
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
-                else:
-                    error_response = {
-                        "Error": {
-                            "Code": "Inconsistency",
-                            "Message": "Inconsistency in ticket_id",
-                        }
+
+                    getUserprofile(ticketsItems)
+                    collective.extend(ticketsItems)
+
+            if len(collective) <= 0:
+                error_response = {
+                    "Error": {
+                        "Code": "Theres no tickets in watchlist",
+                        "Message": "Doesnt have a tickets in watchlist",
                     }
-                    raise ClientError(error_response, "Inconsistencies")
-                getUserprofile(ticketsItems)
-                collective.extend(ticketsItems)
+                }
+                raise ClientError(error_response, "NoTicketsInWatchlist")
             return collective
 
         else:
@@ -560,7 +564,6 @@ def interact_ticket(ticket_data):
                 raise ClientError(error_response, "InvalideFields")
         interact_type = str(ticket_data["type"])
         response = tickets_table.query(
-            ProjectionExpression="upvotes,viewcount",
             KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"]),
         )
         items = response["Items"]
@@ -569,7 +572,10 @@ def interact_ticket(ticket_data):
                 for item in items:
                     votes = Decimal(str(item["upvotes"])) + 1
                     tickets_table.update_item(
-                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        Key={
+                            "ticket_id": ticket_data["ticket_id"],
+                            "dateOpened": item["dateOpened"],
+                        },
                         UpdateExpression="SET upvotes = :votes",
                         ExpressionAttributeValues={":votes": votes},
                     )
@@ -578,7 +584,10 @@ def interact_ticket(ticket_data):
                 for item in items:
                     views = Decimal(str(item["viewcount"])) + 1
                     tickets_table.update_item(
-                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        Key={
+                            "ticket_id": ticket_data["ticket_id"],
+                            "dateOpened": item["dateOpened"],
+                        },
                         UpdateExpression="SET viewcount = :views",
                         ExpressionAttributeValues={":views": views},
                     )
@@ -587,7 +596,10 @@ def interact_ticket(ticket_data):
                 for item in items:
                     votes = Decimal(str(item["upvotes"])) - 1
                     tickets_table.update_item(
-                        Key={"ticket_id": ticket_data["ticket_id"]},
+                        Key={
+                            "ticket_id": ticket_data["ticket_id"],
+                            "dateOpened": item["dateOpened"],
+                        },
                         UpdateExpression="SET upvotes = :votes",
                         ExpressionAttributeValues={":votes": votes},
                     )
@@ -660,14 +672,24 @@ def ClosedTicket(ticket_data):
         updateExp = "set #state=:r"
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Closed"}
-        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        response_t = tickets_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"])
+        )
+        ticket_change = response_t["Items"][0]
+        response = updateTicketTable(
+            ticket_id, ticket_change["dateOpened"], updateExp, expattrName, expattrValue
+        )
         dateExpr = "set #dateClosed=:r"
         CloseexpattrName = {"#dateClosed": "dateClosed"}
         current_datetime = datetime.now()
         formatted_datetime = current_datetime.strftime("%Y-%m-%dT%H:%M:%S")
         CloseexpattrValue = {":r": formatted_datetime}
         response_closed = updateTicketTable(
-            ticket_id, dateExpr, CloseexpattrName, CloseexpattrValue
+            ticket_id,
+            ticket_change["dateOpened"],
+            dateExpr,
+            CloseexpattrName,
+            CloseexpattrValue,
         )
         if response["ResponseMetadata"]:
             return {
@@ -712,10 +734,16 @@ def AcceptTicket(ticket_data):
             raise ClientError(error_response, "TicketDoesntExist")
 
         ticket_id = ticket_data["ticket_id"]
+        response_t = tickets_table.query(
+            KeyConditionExpression=Key("ticket_id").eq(ticket_data["ticket_id"])
+        )
+        ticket_change = response_t["Items"][0]
         updateExp = "set #state=:r"
         expattrName = {"#state": "state"}
         expattrValue = {":r": "Taking Tenders"}
-        response = updateTicketTable(ticket_id, updateExp, expattrName, expattrValue)
+        response = updateTicketTable(
+            ticket_id, ticket_change["dateOpened"], updateExp, expattrName, expattrValue
+        )
         if response["ResponseMetadata"]:
             return {
                 "Status": "Success",
@@ -808,11 +836,11 @@ def get_Open_Company_Tickets():
     try:
         collective = []
 
-        response = tickets_table.scan(
+        response = tickets_table.query(
+            IndexName="municipality_id-dateOpened-index",
+            KeyConditionExpression=Key("municipality_id").eq("Umdoni"),
             FilterExpression=Attr("upvotes").exists()
-            & Attr("state").eq("Taking Tenders")
-            & Attr("municipality_id").ne("City of Johannesburg Metropolitan")
-            & Attr("municipality_id").ne("City of Cape Town Metropolitan")
+            & Attr("state").eq("Taking Tenders"),
         )
         items = response["Items"]
         sorted_items = sorted(items, key=lambda x: x["upvotes"], reverse=True)
@@ -1127,12 +1155,13 @@ def get_geodata_all():
 
 def updateTicketTable(
     ticket_id,
+    sort_key,
     update_expression,
     expression_attribute_names,
     expression_attribute_values,
 ):
     response = tickets_table.update_item(
-        Key={"ticket_id": ticket_id},
+        Key={"ticket_id": ticket_id, "dateOpened": sort_key},
         UpdateExpression=update_expression,
         ExpressionAttributeNames=expression_attribute_names,
         ExpressionAttributeValues=expression_attribute_values,

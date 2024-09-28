@@ -153,7 +153,7 @@ const AssetExpense: React.FC<AssetExpenseProps> = ({ data }) => {
     return <div></div>; // You can replace this with any loader or message
   }
   return (
-    <div className="bg-white flex flex-col bg-opacity-80 text-center items-center justify-center w-full h-[38vh] rounded-lg p-4 shadow-lg">
+    <div className="bg-white bg-opacity-90 flex flex-col bg-opacity-80 text-center items-center justify-center w-full h-[38vh] rounded-lg p-4 shadow-lg">
       <h2 className="text-2xl w-full font-bold mb-2">
         Total Expense by Fault Type
       </h2>

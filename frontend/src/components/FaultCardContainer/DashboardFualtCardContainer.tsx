@@ -78,24 +78,10 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
     setSelectedCard(null);
   };
 
-  const showNextItems = () => {
-    setStartIndex((prevIndex) =>
-      Math.min(prevIndex + itemsPerPage, cardData.length - itemsPerPage)
-    );
-  };
-
-  const showPreviousItems = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
-  };
-
-  // console.log(cardData);
-
   const visibleItems = cardData
     .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
     .map((item) => (
       <div key={item.ticket_id}>
-        {" "}
-        {/* Added margin-right for spacing */}
         <FaultCardUser
           data={{
             title: item.asset_id,
@@ -121,15 +107,15 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="flex flex-col items-center w-full overflow-hidden">
-          <div className=" flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-2 w-full h-[60%]">
+          <div className="flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-2 w-full h-[60%]">
             {visibleItems}
           </div>
 
-          {/* Pagination Controls */}
+          {/* Desktop Pagination Controls */}
           <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
+              className={`px-4 py-2 w-[25%] text-white ${
                 startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={startIndex === 0}
@@ -137,13 +123,13 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               Previous
             </button>
 
-            <span className="text-gray-700">
+            <span className="text-white text-opacity-80">
               Page {startIndex / itemsPerPage + 1} of {totalPages}
             </span>
 
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] bg-blue-500 text-white rounded-lg ${
+              className={`px-4 py-2 w-[25%] text-white ${
                 startIndex + itemsPerPage >= cardData.length
                   ? "opacity-50 cursor-not-allowed"
                   : ""
@@ -188,20 +174,20 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               paddingLeft: "8px",
               paddingRight: "8px",
               scrollbarWidth: "thin",
-              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent", // Adjust the height as needed
+              scrollbarColor: "rgba(255, 255, 255, 0.3) transparent",
             }}
           >
             <style jsx>{`
               ::-webkit-scrollbar {
-                width: 4px; /* Smaller width for vertical scrollbar */
+                width: 4px;
               }
               ::-webkit-scrollbar-thumb {
-                background: rgba(255, 255, 255, 0.7); /* Lighter color */
-                border-radius: 9999px; /* Fully rounded scrollbar */
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 9999px;
               }
               ::-webkit-scrollbar-track {
                 background: transparent;
-                margin: 8px 0; /* Shrink the scrollable area by increasing the margin */
+                margin: 8px 0;
               }
             `}</style>
             <div className="grid grid-cols-2 gap-4">
@@ -212,29 +198,59 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
               ))}
             </div>
           </div>
-          {showModal && selectedCard && (
-            <FaultCardUserView
-              show={showModal}
-              onClose={handleCloseModal}
-              title={selectedCard.asset_id}
-              address={selectedCard.address}
-              arrowCount={selectedCard.upvotes}
-              commentCount={selectedCard.commentcount}
-              viewCount={selectedCard.viewcount}
-              ticketId={selectedCard.ticket_id}
-              ticketNumber={selectedCard.ticketnumber}
-              description={selectedCard.description}
-              image={selectedCard.imageURL}
-              createdBy={selectedCard.createdby}
-              latitude={selectedCard.latitude}
-              longitude={selectedCard.longitude}
-              urgency={selectedCard.urgency}
-              municipality_id={selectedCard.municipality_id}
-              state={selectedCard.state}
-              refreshwatchlist={refreshwatch}
-            />
-          )}
         </div>
+
+        {/* Mobile Pagination Controls */}
+        <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={goToPreviousPage}
+            className={`px-4 py-2 text-white ${
+              startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={startIndex === 0}
+          >
+            Previous
+          </button>
+
+          <span className="text-white text-opacity-80">
+            Page {startIndex / itemsPerPage + 1} of {totalPages}
+          </span>
+
+          <button
+            onClick={goToNextPage}
+            className={`px-4 py-2 text-white ${
+              startIndex + itemsPerPage >= cardData.length
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
+            disabled={startIndex + itemsPerPage >= cardData.length}
+          >
+            Next
+          </button>
+        </div>
+
+        {showModal && selectedCard && (
+          <FaultCardUserView
+            show={showModal}
+            onClose={handleCloseModal}
+            title={selectedCard.asset_id}
+            address={selectedCard.address}
+            arrowCount={selectedCard.upvotes}
+            commentCount={selectedCard.commentcount}
+            viewCount={selectedCard.viewcount}
+            ticketId={selectedCard.ticket_id}
+            ticketNumber={selectedCard.ticketnumber}
+            description={selectedCard.description}
+            image={selectedCard.imageURL}
+            createdBy={selectedCard.createdby}
+            latitude={selectedCard.latitude}
+            longitude={selectedCard.longitude}
+            urgency={selectedCard.urgency}
+            municipality_id={selectedCard.municipality_id}
+            state={selectedCard.state}
+            refreshwatchlist={refreshwatch}
+          />
+        )}
       </div>
     </div>
   );

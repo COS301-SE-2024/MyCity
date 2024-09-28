@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MapComponent from "@/context/MapboxMap";
-import { CompleteContract,TerminateContract } from "@/services/tender.service";
+import { DoneContract,TerminateContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
+import dynamic from "next/dynamic";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
@@ -40,8 +44,8 @@ function getStatus(status: string) {
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-green bg-green-200 rounded-full",
-  closed: "text-red bg-red-200 rounded-full",
+  completed: "text-green bg-green-200 border-green-500 rounded-full",
+  closed: "text-red bg-red-200 border-red-500 rounded-full",
 };
 
 const TenderMax = ({
@@ -93,7 +97,7 @@ const TenderMax = ({
     {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      const response_contract = await DoneContract(tender.contract_id,user_session)
       console.log(response_contract)
     }
     setDialog({ action: "", show: false });
@@ -118,7 +122,7 @@ const TenderMax = ({
     if (dialog.action === "Mark as Complete") {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await CompleteContract(tender.contract_id,user_session)
+      const response_contract = await DoneContract(tender.contract_id,user_session)
       console.log(response_contract)
       toast.success(`${dialog.action} action confirmed.`);
       onClose(-2); // Example: Mark as complete would close the ticket
@@ -128,7 +132,7 @@ const TenderMax = ({
       const response_contract = await TerminateContract(tender.contract_id,user_session)
       console.log(response_contract)
       toast.success(`${dialog.action} action confirmed.`);
-      onClose(0); // Example: Terminate contract would also close the ticket
+      onClose(-1); // Example: Terminate contract would also close the ticket
     }
   };
 
@@ -204,7 +208,7 @@ const TenderMax = ({
                 >
                   Back
                 </button>
-                {(tender.status === "in progress" ||
+                {(
                   tender.status === "completed") && (
                   <>
                     <button
@@ -226,13 +230,7 @@ const TenderMax = ({
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500">
-                <MapComponent
-                  longitude={tender.longitude}
-                  latitude={tender.latitude}
-                  zoom={14}
-                  containerId="map"
-                  style="mapbox://styles/mapbox/streets-v12"
-                />
+                <MapboxMap centerLng={tender.longitude} centerLat={tender.latitude} dropMarker={true} zoom={14} />
               </div>
             </div>
           </div>

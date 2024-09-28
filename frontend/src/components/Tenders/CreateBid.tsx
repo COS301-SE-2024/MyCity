@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaMapMarkedAlt, FaInfoCircle } from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
-import RenderMap from '@/hooks/mapboxmap'; // Adjust this import to your actual Mapbox hook
 import { useProfile } from "@/hooks/useProfile";
 import { CreatTender } from '@/services/tender.service';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface CreateBidProps {
   ticket_id: string;
@@ -29,7 +34,6 @@ const CreateBid: React.FC<CreateBidProps> = ({
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const [mapInitialized, setMapInitialized] = useState(false); // Track map initialization
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -56,23 +60,6 @@ const CreateBid: React.FC<CreateBidProps> = ({
     event.preventDefault();
     setShowDialog(true);
   };
-
-  // Initialize map when map toggle is activated
-  useEffect(() => {
-    if (showMap && !mapInitialized) {
-      RenderMap(Number(longitude), Number(latitude));
-      setMapInitialized(true);
-    }
-  }, [showMap, mapInitialized, longitude, latitude]);
-
-  // Ensure the map is resized when toggling from small to large screens
-  useEffect(() => {
-    if (showMap && mapInitialized) {
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize')); // Trigger a resize event for the map
-      }, 100); // Delay to allow rendering
-    }
-  }, [showMap, mapInitialized]);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9.]/g, '');
@@ -103,7 +90,7 @@ const CreateBid: React.FC<CreateBidProps> = ({
               />
             </div>
             {/* Municipality Image */}
-            <img src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
+            <Image src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
             <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticketnumber}</h2>
             <p className="text-lg font-semibold mb-2 text-center">{faultType}</p>
             <p className="text-md mb-4 text-center">{description}</p>
@@ -181,7 +168,7 @@ const CreateBid: React.FC<CreateBidProps> = ({
               />
             </div>
             <div className="w-full h-96 text-gray-500" id="map">
-              {/* Map renders here */}
+              <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} addNavigationControl={true} zoom={14} />
             </div>
           </div>
         )}

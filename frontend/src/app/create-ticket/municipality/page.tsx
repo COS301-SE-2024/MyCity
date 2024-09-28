@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import CreateTicketComp from "@/components/CreateTicket/CreateTicketComp";
-import { useMapbox } from "@/hooks/useMapbox";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import { FaTimes } from "react-icons/fa";
@@ -81,24 +80,24 @@ export default function CreateTicket() {
         {/* Desktop View */}
         <div className="hidden sm:block">
           <h1 className="text-4xl font-bold mb-3 text-white text-opacity-80 absolute ml-9 mt-5">
-            Report an Issue
+            Report a Fault
           </h1>
           <main className="flex flex-col items-center justify-start py-5">
             <div className="relative"></div>
             <div className="w-full max-w-7xl px-5">
               <div className="mt-20">
-                <CreateTicketComp useMapboxProp={useMapbox} />
+                <CreateTicketComp />
               </div>
             </div>
             {/* Help Menu Button */}
-        <div className="fixed bottom-4 left-4 z-20">
-          <HelpCircle
-            data-testid="open-help-menu"
-            className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
-            size={24}
-            onClick={toggleHelpMenu}
-          />
-        </div>
+            <div className="fixed bottom-4 left-4 z-20">
+              <HelpCircle
+                data-testid="open-help-menu"
+                className="text-white cursor-pointer transform transition-transform duration-300 hover:scale-110 z-20"
+                size={24}
+                onClick={toggleHelpMenu}
+              />
+            </div>
           </main>
         </div>
 
@@ -111,7 +110,7 @@ export default function CreateTicket() {
             </h1>
             <div className="w-full max-w-7xl px-5">
               <div className="mt-10">
-                <CreateTicketComp useMapboxProp={useMapbox}/>
+                <CreateTicketComp />
               </div>
             </div>
           </main>

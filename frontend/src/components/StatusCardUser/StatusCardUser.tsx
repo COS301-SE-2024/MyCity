@@ -2,6 +2,8 @@ import React from "react";
 import { FaArrowUp, FaEye, FaCommentAlt } from "react-icons/fa";
 import { User, ArrowBigUp } from "lucide-react";
 import { Default } from "node_modules/react-toastify/dist/utils";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface CardData {
   title: string;
@@ -115,14 +117,14 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
           <div className="flex justify-between items-start w-full">
             <div className="flex flex-col">
               <div
-                // className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
+              // className={`${color} bg-opacity-75 text-black font-bold rounded-lg px-3 py-1 mt-1`}
               >
                 {state}
               </div>
             </div>
             <div className="flex items-end justify-center p-4">
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <img
+                <Image
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                     municipality_id
                   )}.png`}
@@ -133,8 +135,8 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
             </div>
           </div>
           <div className="flex items-center justify-center w-full mt-4">
-            <img
-              src={image}
+            <Image
+              src={getImageBucketUrl(image)}
               alt="Fault image"
               width={200}
               className="rounded-md"

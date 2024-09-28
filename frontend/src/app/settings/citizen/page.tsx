@@ -13,7 +13,7 @@ import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import ToggleTheme from "@/components/Theme/ToggleTheme";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 import LocationPrompt from "@/components/Location/LocationPrompt";
-
+import Image from "next/image";
 
 export default function Settings() {
   const { getUserProfile } = useProfile();
@@ -242,7 +242,7 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
@@ -250,7 +250,7 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg  shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -310,7 +310,7 @@ export default function Settings() {
 
         case "SecurityPrivacy":
           return (
-            <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+            <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
               <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
               <div className="space-y-4">
                 <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -347,7 +347,7 @@ export default function Settings() {
 
       case "Accessibility":
         return (
-          <div className="w-full dark:bg-gray-700 dark:text-white bg-white  bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg rounded-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full dark:bg-gray-700 dark:text-white bg-white  bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -446,7 +446,7 @@ export default function Settings() {
                 <div className="w-[30%] dark:bg-gray-700 dark:text-white  bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                   <div className="flex w-full items-center mb-4">
                     {data?.picture ? (
-                      <img
+                      <Image
                         src={data?.picture}
                         alt="Profile"
                         width={12}
@@ -547,7 +547,7 @@ export default function Settings() {
           <div className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
             <div className="flex items-center mb-4">
               {data?.picture ? (
-                <img
+                <Image
                   src={data?.picture}
                   alt="Profile"
                   width={12}

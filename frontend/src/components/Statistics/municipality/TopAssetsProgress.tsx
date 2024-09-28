@@ -61,7 +61,7 @@ export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
   );
 
   return (
-    <div className="bg-white bg-opacity-80 rounded-lg p-2 shadow-lg h-[38vh] w-full overflow-hidden">
+    <div className="bg-white bg-opacity-90 rounded-lg p-2 shadow-lg h-[38vh] w-full overflow-hidden">
       <h2 className="text-2xl font-bold mb-2 text-center">
         Asset Resolution Times
       </h2>

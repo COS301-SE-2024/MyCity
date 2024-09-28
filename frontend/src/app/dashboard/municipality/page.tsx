@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect,useRef } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import RecordsTable from "@/components/RecordsTable/IntegratedRecordsTable";
@@ -11,15 +11,75 @@ import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from Lucide
+import Image from "next/image";
 
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
+  const [muniprofile,setMuniprofile] = useState<string | null>(null);
   const [cityLoading, setCityLoading] = useState(true);
   const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+
+
+
+  const websocketRef = useRef<WebSocket | null>(null);
+
+  // Function to handle incoming WebSocket messages
+  const handleWebSocketMessage = (message : any) => {
+    const data = JSON.parse(message.data);
+    if (data.type === 'RefreshMunicipalityDashboard') {
+      fetchData();
+      console.log("it refreshedd baby")
+    }
+  };
+
+  useEffect(() => {
+    const websocketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+    // Establish WebSocket connection
+    console.log(String(websocketUrl))
+    websocketRef.current = new WebSocket(String(websocketUrl)); // Use wss for secure connection
+
+    // Set up event listeners
+    websocketRef.current.onopen = async () => {
+      console.log('WebSocket connection opened.');
+      const user_data = await userProfile.getUserProfile();
+      const user_municipality = String(user_data.current?.municipality);
+      const data_send = {
+        action : "initialMunicipality",
+        body : user_municipality
+      }
+      if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN){
+        const jsonMessage = JSON.stringify(data_send);
+        websocketRef.current.send(jsonMessage);
+        console.log('Message sent:', jsonMessage);
+      }
+      else{
+        console.log("Connection wasnt open")
+      }
+    };
+
+    websocketRef.current.onmessage = (message) => {
+      handleWebSocketMessage(message);
+    };
+
+    websocketRef.current.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    websocketRef.current.onclose = () => {
+      console.log('WebSocket connection closed.');
+    };
+
+    // Clean up WebSocket on component unmount
+    return () => {
+      if (websocketRef.current) {
+        websocketRef.current.close();
+      }
+    };
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -33,6 +93,8 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
+    const profile_pic = String(user_data.current?.picture)
+    setMuniprofile(profile_pic)
     setCity(String(user_data.current?.municipality));
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
@@ -48,7 +110,9 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
+    const profile_pic = String(user_data.current?.picture)
     setCity(String(user_data.current?.municipality));
+    setMuniprofile(profile_pic)
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
@@ -133,7 +197,13 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-                <ImageIcon size={20} className="text-gray-500" />
+              <Image
+                src={String(muniprofile)}
+                alt="Description of image"
+                width={20}
+                height={20}
+                className="w-full h-full object-cover"
+              />
               </div>
               {cityLoading ? (
                 <ThreeDots

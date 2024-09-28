@@ -1,20 +1,25 @@
-import React from 'react';
-import RenderMap from '@/hooks/mapboxmap';
+import dynamic from "next/dynamic";
+import React from "react";
+import Image from "next/image";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface TenderProps {
   tender_id: string;
-  tendernumber : string;
-  company_id : string;
-  companyname : string;
-  datetimesubmitted : string;
+  tendernumber: string;
+  company_id: string;
+  companyname: string;
+  datetimesubmitted: string;
   ticket_id: string;
   status: string;
   quote: number;
   description: string;
   estimatedTimeHours: number;
-  longitude : string;
-  latitude : string;
-  municipalityImage : string;
+  longitude: string;
+  latitude: string;
+  municipalityImage: string;
   title: string;
   address: string;
   onBack: () => void;
@@ -26,7 +31,7 @@ interface TenderProps {
 //   onBack: () => void;
 // }
 
-const ViewBid: React.FC<TenderProps> = ({ 
+const ViewBid: React.FC<TenderProps> = ({
   tender_id,
   tendernumber,
   company_id,
@@ -42,18 +47,16 @@ const ViewBid: React.FC<TenderProps> = ({
   municipalityImage,
   title,
   address,
-   onBack }) => {
+  onBack }) => {
   // Mocked data for demonstration
   const proposedPrice = quote;
   const jobDuration = '5';
   const fileName = 'example_file.pdf';
 
-  RenderMap(Number(longitude),Number(latitude))
-
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 max-w-4xl mx-auto flex flex-col lg:flex-row">
       <div className="flex-1 p-4">
-        <img src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
+        <Image src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
         <h2 className="text-xl font-bold mb-2 text-center">Fault #{tendernumber}</h2>
         <p className="text-lg font-semibold mb-2 text-center">{title}</p>
         <p className="text-md mb-4 text-center">{description}</p>
@@ -103,7 +106,7 @@ const ViewBid: React.FC<TenderProps> = ({
       </div>
       <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
         <div className="w-full h-full text-gray-500" id="map">
-          <p className="text-center">Map Placeholder</p>
+          <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} addNavigationControl={true} zoom={14} />
         </div>
       </div>
     </div>

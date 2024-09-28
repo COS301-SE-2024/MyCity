@@ -14,6 +14,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { UserData } from "@/types/custom.types";
 import { usePathname } from "next/navigation";
 import { handleSignOut } from "@/services/auth.service"; // Import handleSignOut
+import Image from "next/image";
 
 export default function NavbarUser({ unreadNotifications = 0 }) {
   const pathname = usePathname(); // Get the current pathname
@@ -67,7 +68,7 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
         <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center z-1 justify-between">
           <Link href="/">
             <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
                 alt="MyCity"
                 width={50}
@@ -155,25 +156,6 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
                   <span className="text-sm">Settings</span>
                 </DropdownItem>
 
-                <DropdownItem
-                  key="about"
-                  href="/about"
-                  role="link"
-                  className="h-9 hover:bg-grey-500"
-                  textValue="About us"
-                >
-                  <span className="text-sm">About us</span>
-                </DropdownItem>
-
-                <DropdownItem
-                  key="guide"
-                  href="/guide"
-                  role="link"
-                  className="h-9 hover:bg-grey-500"
-                  textValue="How it works"
-                >
-                  <span className="text-sm">How it works</span>
-                </DropdownItem>
 
                 <DropdownItem
                   key="logout"

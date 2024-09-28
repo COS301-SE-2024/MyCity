@@ -1,4 +1,3 @@
-
 export enum UserRole {
     CITIZEN = "CITIZEN",
     MUNICIPALITY = "MUNICIPALITY",
@@ -22,6 +21,11 @@ export const USER_PATH_SUFFIX_COOKIE_NAME = "mycity.net.za.userpathsuffix";
 
 export interface BasicMunicipality {
     municipality_id: string;
+}
+
+export interface MunicipalityCoordinates {
+    latitude: string;
+    longitude: string;
 }
 
 export interface FaultType {

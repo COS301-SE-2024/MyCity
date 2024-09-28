@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface SearchTicketProps {
   tickets: Ticket[];
   municipalities: Municipality[];
 }
 
-// states.ts
+// Notification states mapping
 export const notificationStates = {
   AssigningContract: {
     color: "bg-blue-200",
@@ -33,7 +35,7 @@ export const notificationStates = {
   },
   Default: {
     color: "bg-gray-200",
-    text: "Taking Tenders",
+    text: "Default",
   },
 };
 
@@ -41,81 +43,72 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
   tickets,
   municipalities = [],
 }) => {
-  // Helper function to find the corresponding municipality by id
-  const findMunicipality = (municipalityId: string) => {
-    // Ensure municipalities is an array before calling .find()
-    if (Array.isArray(municipalities)) {
-      return municipalities.find((muni) => muni.municipality_id === municipalityId);
-    }
-    return null; // Return null if municipalities is not an array
-  };
-  
+  // Create a map for quick municipality lookup
+  const municipalityMap = useMemo(() => {
+    const map = new Map<string, Municipality>();
+    (Array.isArray(municipalities) ? municipalities : []).forEach((muni) => {
+      map.set(muni.municipality_id, muni);
+    });
+    return map;
+  }, [municipalities]);
 
-  function formatStatecolor(state: string | undefined): string {
+
+  // Function to format the state color
+  function formatStateColor(state: string | undefined): string {
     if (typeof state !== "string") {
-      return ""; // Or some other default value
+      return notificationStates.Default.color;
     }
-    state.replace(/ /g, "");
-
-    let color = "bg-gray-200"; // Default color
-
-    if (state.replace(/ /g, "") in notificationStates) {
-      color =
-        notificationStates[
-          state.replace(/ /g, "") as keyof typeof notificationStates
-        ].color;
-    } else {
-      color = notificationStates.Default.color;
-    }
-    return color;
+    state = state.replace(/ /g, "");
+    return (
+      notificationStates[state as keyof typeof notificationStates]?.color ||
+      notificationStates.Default.color
+    );
   }
 
-  function formatStatetitle(state: string | undefined): string {
+  // Function to format the state title
+  function formatStateTitle(state: string | undefined): string {
     if (typeof state !== "string") {
-      return ""; // Or some other default value
+      return notificationStates.Default.text;
     }
-
-    state.replace(/ /g, "");
-
-    let text = "Default"; // Default text
-
-    if (state.replace(/ /g, "") in notificationStates) {
-      text =
-        notificationStates[
-          state.replace(/ /g, "") as keyof typeof notificationStates
-        ].text;
-    } else {
-      text = notificationStates.Default.text;
-    }
-    return text;
+    state = state.replace(/ /g, "");
+    return (
+      notificationStates[state as keyof typeof notificationStates]?.text ||
+      notificationStates.Default.text
+    );
   }
 
-  const [imageError, setImageError] = useState(false);
-  
+  // Function to calculate the distance
   function calculateDistance(
     lat1: string,
     lon1: string,
     lat2: string,
     lon2: string
   ) {
-    if (!lat1 || !lon1 || !lat2 || !lon2) return "N/A"; // If coordinates are missing, return N/A
+    const clean = (str: any) => String(str).replace(/'/g, "").trim();
 
-    const removeSingleQuote = (str: any) => String(str).replace(/'/g, "");
+    lat1 = clean(lat1);
+    lon1 = clean(lon1);
+    lat2 = clean(lat2);
+    lon2 = clean(lon2);
 
-    
-    lat1 = removeSingleQuote(lat1);
-    lon1 = removeSingleQuote(lon1);
-    lat2 = removeSingleQuote(lat2);
-    lon2 = removeSingleQuote(lon2);
+    if (!lat1 || !lon1 || !lat2 || !lon2) return "N/A";
 
     const toRadians = (degree: number) => (degree * Math.PI) / 180;
-
-    const R = 6371; // Radius of the Earth in kilometers
+    const R = 6371; // Earth's radius in kilometers
 
     const lat1Rad = toRadians(parseFloat(lat1));
     const lon1Rad = toRadians(parseFloat(lon1));
     const lat2Rad = toRadians(parseFloat(lat2));
     const lon2Rad = toRadians(parseFloat(lon2));
+
+    if (
+      isNaN(lat1Rad) ||
+      isNaN(lon1Rad) ||
+      isNaN(lat2Rad) ||
+      isNaN(lon2Rad)
+    ) {
+      return "N/A";
+    }
 
     const dLat = lat2Rad - lat1Rad;
     const dLon = lon2Rad - lon1Rad;
@@ -123,182 +116,217 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1Rad) *
-        Math.cos(lat2Rad) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(lat2Rad) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    const totalDistance = R * c; // Distance in kilometers
+    const totalDistance = R * c;
 
     return totalDistance.toFixed(2) + " km";
   }
 
+  // Pre-calculate data for all tickets
+  const ticketData = tickets.map((ticket) => {
+    const municipality = municipalityMap.get(ticket.municipality_id);
+    const color = formatStateColor(ticket.state);
+    const title = formatStateTitle(ticket.state);
+    const image = ticket.imageURL;
+
+    const distance = municipality
+      ? calculateDistance(
+        ticket.latitude,
+        ticket.longitude,
+        municipality.latitude ?? "",
+        municipality.longitude ?? ""
+      )
+      : "N/A";
+
+    return {
+      ticket,
+      municipality,
+      color,
+      title,
+      image,
+      distance,
+    };
+  });
+
+  const [imageError, setImageError] = useState(false);
+
   return (
     <div>
-      {/* Desktop View */}
-      <div className="hidden lg:block">
-        <div className="space-y-1 px-6 rounded-3xl">
-          {tickets.map((ticket: Ticket, index: number) => {
-            const municipality = findMunicipality(ticket.municipality_id);
-            let color = formatStatecolor(ticket.state);
-            let title = formatStatetitle(ticket.state);
-            let image = ticket.imageURL;
-            let distance = municipality
-              ? calculateDistance(
-                  ticket.latitude,
-                  ticket.longitude,
-                  municipality.latitude ?? "",
-                  municipality.longitude ?? ""
-                )
-              : "N/A"; // Fallback if municipality data is unavailable
+      {ticketData.map(
+        ({ ticket, municipality, color, title, image, distance }, index) => (
+          <div key={index}>
+            {/* Desktop View */}
+            <div className="hidden lg:block">
+              <div className="space-y-1 px-6 rounded-3xl">
+                <div
+                  className="flex w-full h-full gap-2 bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4"
+                >
+                  {/* Urgent */}
+                  <div className="flex w-[5%] flex-col items-center justify-center">
+                    <AlertTriangle width={"100%"} color="red" />
+                  </div>
 
-            return (
-              <div
-                key={index}
-                className="flex w-full h-full gap-2 bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4"
-              >
-                {/* Urgent */}
-                <div className="flex w-[5%] flex-col items-center justify-center">
-                  <AlertTriangle width={"100%"} color="red" />
-                </div>
+                  {/* Fault Image */}
+                  <div className="w-[10%] overflow-hidden flex items-center justify-center ">
+                    {image && !imageError ? (
+                      <Image
+                        src={getImageBucketUrl(image)}
+                        alt="Ticket"
+                        className="w-[70%] h-full object-cover overflow-hidden rounded-md"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <ImageIcon size={32} color="#6B7280" />
+                    )}
+                  </div>
 
-                {/* Fault Image */}
-                <div className="w-[10%] overflow-hidden flex items-center justify-center ">
-                  {image && !imageError ? (
-                    <img
-                      src={image}
-                      alt="Ticket"
-                      className="w-[70%] h-full object-cover overflow-hidden rounded-md"
-                      onError={() => setImageError(true)}
-                    />
-                  ) : (
-                    <ImageIcon size={32} color="#6B7280" />
-                  )}
-                </div>
+                  {/* Asset Type */}
+                  <div className="flex w-[25%] flex-col items-start justify-center align-center ">
+                    <span className="text-black align-center lg:text-lg md:text-md font-bold">
+                      {ticket.asset_id}
+                    </span>
+                  </div>
 
-                {/*Asset Type */}
-                <div className="flex w-[25%] flex-col items-start justify-center align-center ">
-                  <span className="text-black align-center lg:text-lg md:text-md font-bold">
-                    {ticket.asset_id}
-                  </span>
-                </div>
+                  {/* Date Opened */}
+                  <div className="flex w-[10%] flex-col items-center justify-center font-bold">
+                    <span className="text-xs text-black">Date Opened</span>
+                    <span className="text-black">
+                      {new Date(ticket.dateOpened).toLocaleDateString()}
+                    </span>
+                  </div>
 
-                {/* Date Opened */}
-                <div className="flex w-[10%] flex-col items-center justify-center  font-bold">
-                  <span className="text-xs text-black">Date Opened</span>
-                  <span className="text-black">
-                    {new Date(ticket.dateOpened).toLocaleDateString()}
-                  </span>
-                </div>
-
-                {/*  Municipality Logo */}
-                <div className="flex w-[20%] items-center justify-center  gap-2">
-                  <div key={ticket.municipality_id}>
-                    {municipality ? (
-                      <>
+                  {/* Municipality Logo */}
+                  <div className="flex w-[20%] items-center justify-center gap-2">
+                    <div>
+                      {municipality ? (
                         <ImageWithLoader
                           src={municipality.municipalityLogo || ""}
                           alt={"Municipality Logo"}
                         />
-                      </>
+                      ) : (
+                        <p>Municipality data not available</p>
+                      )}
+                    </div>
+                    {/* Municipality Name */}
+                    <div className="flex flex-col items-center text-start break-words">
+                      <span className="lg:text-md md:text-sm font-bold">
+                        {municipality?.name || "Unknown"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* State */}
+                  <div className="flex w-[15%] items-center justify-center py-2">
+                    <div
+                      className={`${color} bg-opacity-75 text-black font-bold sm:text-xs md:text-sm lg:text-md text-center flex items-center justify-center rounded-lg h-full w-full`}
+                    >
+                      {title}
+                    </div>
+                  </div>
+
+                  {/* Distance */}
+                  <div className="flex flex-col font-bold w-[15%] items-center justify-center">
+                    <span className="text-xs text-black">Distance</span>
+                    <span className="text-black">{distance}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile View */}
+            <div className="block lg:hidden">
+              <div className="space-y-4 px-4">
+                <div
+                  className="relative bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4"
+                >
+                  {/* Top Section - Asset ID & Urgency */}
+                  <div className="flex items-center justify-center mb-2 relative">
+                    {/* Urgency Indicator - Aligned to Asset ID */}
+                    <div className="absolute left-0">
+                      <AlertTriangle size={20} color="red" />
+                    </div>
+                    {/* Asset Type - Centered */}
+                    <span className="text-black font-bold text-lg">
+                      {ticket.asset_id}
+                    </span>
+                  </div>
+
+                  {/* Fault Image - Centered Below Asset Type */}
+                  <div className="flex justify-center mb-4">
+                    {image && !imageError ? (
+                      <Image
+                        alt="Ticket"
+                        src={image}
+                        className="w-full max-w-[300px] h-40 object-cover rounded-md"
+                        onError={() => setImageError(true)}
+                      />
                     ) : (
-                      <p>Municipality data not available</p>
+                      <div className="w-full max-w-[300px] h-40 border border-gray-300 flex items-center justify-center rounded-md">
+                        <ImageIcon size={40} color="#6B7280" />
+                      </div>
                     )}
                   </div>
-                  {/* Municipality Name */}
-                  <div className="flex flex-col items-center text-start break-words">
-                    <span className="lg:text-md md:text-sm font-bold">
+
+                  {/* Municipality Info - Logo and Name on One Line */}
+                  <div className="flex items-center justify-center mb-4">
+                    {/* Municipality Logo */}
+                    {municipality?.municipalityLogo ? (
+                      <Image
+                        alt="Municipality Logo"
+                        src={municipality.municipalityLogo}
+                        className="w-10 h-10 object-cover rounded-full mr-2"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-200 flex items-center justify-center text-black rounded-full mr-2">
+                        <ImageIcon size={24} color="#6B7280" />
+                      </div>
+                    )}
+                    {/* Municipality Name */}
+                    <span className="text-black font-bold text-center">
                       {municipality?.name || "Unknown"}
                     </span>
                   </div>
-                </div>
 
-                {/* State */}
-                <div className="flex w-[15%] items-center justify-center  py-2">
-                  <div
-                    className={`${color} bg-opacity-75 text-black font-bold sm:text-xs md:text-sm lg:text-md text-center flex items-center justify-center rounded-lg h-full w-full`}
-                  >
-                    {title}
+                  {/* Details Section - Aligned Columns */}
+                  <div className="flex justify-around mt-4">
+                    {/* Column 1: Date Opened */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="block text-xs text-gray-600">
+                        Date Opened
+                      </span>
+                      <span className="text-black font-bold">
+                        {new Date(ticket.dateOpened).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    {/* Column 2: State (Center) */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="block text-xs text-gray-600">State</span>
+                      <div
+                        className={`${color} text-black font-bold text-center py-1 px-3 rounded-full`}
+                      >
+                        {title}
+                      </div>
+                    </div>
+
+                    {/* Column 3: Distance */}
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="block text-xs text-gray-600">
+                        Distance
+                      </span>
+                      <span className="text-black font-bold">{distance}</span>
+                    </div>
                   </div>
                 </div>
-
-                {/* Distance */}
-                <div className="flex flex-col font-bold w-[15%] items-center justify-center  ">
-                  <span className="text-xs text-black">Distance</span>
-                  <span className="text-black">{distance}</span>
-                </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Mobile View */}
-      <div className="block lg:hidden">
-        <div className="space-y-1 px-4 rounded-3xl">
-          {tickets.map((ticket: Ticket, index: number) => {
-            const municipality = findMunicipality(ticket.municipality_id);
-            let color = formatStatecolor(ticket.state);
-            let title = formatStatetitle(ticket.state);
-
-            return (
-              <div
-                key={index}
-                className="flex flex-col bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4 space-y-4"
-              >
-                {/* First Field - Ticket */}
-                <div className="text-center font-bold">
-                  <span className="text-sm text-black-500">Ticket</span>
-                </div>
-
-                {/* Second Field - Urgent */}
-                <div className="flex items-center justify-center">
-                  <AlertTriangle size={30} color="red" />
-                </div>
-
-                {/* Third Field - Asset Type */}
-                <div className="flex flex-col">
-                  <span className="text-xs text-black">Asset Type</span>
-                  <span className="text-black">{ticket.asset_id}</span>
-                </div>
-
-                {/* Fourth Field - Date Opened */}
-                <div className="flex flex-col">
-                  <span className="text-xs text-black">Date Opened</span>
-                  <span className="text-black">
-                    {new Date(ticket.dateOpened).toLocaleDateString()}
-                  </span>
-                </div>
-
-                {/* Fifth Field - Municipality */}
-                <div className="flex flex-col items-center border">
-                  {municipality?.municipalityLogo ? (
-                    <img
-                      src={municipality.municipalityLogo}
-                      alt={`${municipality.name} logo`}
-                      className="w-12 h-12 object-cover rounded-full"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-black rounded-full">
-                      No Logo
-                    </div>
-                  )}
-                  <span className="text-black">
-                    {municipality?.name || "Unknown"}
-                  </span>
-                </div>
-
-                {/* Sixth Field - State */}
-                <div className="flex flex-col">
-                  <span className="text-xs text-black">State</span>
-                  <span className="text-black">{ticket.state}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+            </div>
+          </div>
+        )
+      )}
     </div>
   );
 };
@@ -323,12 +351,12 @@ const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
           />
         </div>
       )}
-      <img
+      <Image
         src={src}
         alt={alt}
         className="w-full h-full object-cover rounded-full"
         onLoad={() => setLoading(false)}
-        style={{ display: loading ? "none" : "block" }} // Hide the image until it has loaded
+        style={{ display: loading ? "none" : "block" }}
       />
     </div>
   );

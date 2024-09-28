@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { UserCircle } from "lucide-react";
 import { Municipality } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner"; // Import a small black loading spinner
+import Image from "next/image";
 
 interface SearchMunicipalityProps {
   municipalities: Municipality[];
@@ -74,26 +75,28 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({
 
       {/* Mobile View */}
       <div className="block lg:hidden">
-        <div className="space-y-1 px-4 rounded-3xl">
+        <div className="space-y-2 px-4 rounded-3xl">
           {municipalities.map((municipality: Municipality, index: number) => (
             <div
               key={index}
-              className="flex flex-col bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4 space-y-4"
+              className="flex flex-col bg-white bg-opacity-70 rounded-3xl mt-2 shadow-md p-4"
             >
-              {/* Municipality text */}
-              <div className="text-center">
-                <span className="text-sm font-bold text-black">
-                  Municipality
-                </span>
-              </div>
-
-              {/* User Circle Icon */}
-              <div className="flex items-center justify-center">
-                <UserCircle size={40} />
+              {/* Company Logo */}
+              <div className="flex items-center justify-center mb-2">
+                {municipality.municipalityLogo ? (
+                  <ImageWithLoader
+                    src={municipality.municipalityLogo}
+                    alt={`${municipality.name} logo`}
+                  />
+                ) : (
+                  <div className="w-12 h-12 bg-gray-200 flex items-center justify-center text-black rounded-full">
+                    No Logo
+                  </div>
+                )}
               </div>
 
               {/* Municipality Information */}
-              <div className="flex flex-col items-start space-y-2">
+              <div className="space-y-2">
                 <div className="flex flex-col">
                   <span className="text-xs text-black">Name</span>
                   <span className="text-black">
@@ -108,7 +111,13 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({
 
                 <div className="flex flex-col">
                   <span className="text-xs text-black">Email</span>
-                  <span className="text-black max-w-[150px] text-sm overflow-hidden whitespace-nowrap text-ellipsis">
+                  <span
+                    className="text-black truncate max-w-full"
+                    style={{
+                      fontSize:
+                        municipality.email.length > 35 ? "0.75rem" : "1rem",
+                    }}
+                  >
                     {municipality.email}
                   </span>
                 </div>
@@ -127,7 +136,6 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({
     </div>
   );
 };
-
 
 // A custom component that shows a loading spinner while the image is loading
 const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
@@ -150,7 +158,7 @@ const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
           />
         </div>
       )}
-      <img
+      <Image
         src={src}
         alt={alt}
         className="w-full h-full object-cover rounded-full"
@@ -160,6 +168,5 @@ const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
     </div>
   );
 };
-
 
 export default SearchMunicipality;

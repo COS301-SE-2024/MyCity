@@ -1,8 +1,8 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import serverless from "serverless-http";
-
 import dotenv from "dotenv";
+import cors from "cors";
 
 import ticketsRouter from "./src/routes/tickets.route";
 import municipalitiesRouter from "./src/routes/municipalities.route";
@@ -12,9 +12,9 @@ import tendersRouter from "./src/routes/tenders.route";
 import upvotesRouter from "./src/routes/upvotes.route";
 import usersRouter from "./src/routes/users.route";
 import watchlistRouter from "./src/routes/watchlist.route";
-
-import cors from "cors";
+import analyticsRouter from "./src/routes/analytics.route";
 import { corsOptions } from "./src/config/cors";
+
 dotenv.config();
 
 const app: Express = express();
@@ -22,8 +22,6 @@ const app: Express = express();
 //middleware
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
-
-
 
 app.use("/tickets", ticketsRouter);
 app.use("/municipality", municipalitiesRouter);
@@ -33,7 +31,7 @@ app.use("/tenders", tendersRouter);
 app.use("/upvotes", upvotesRouter);
 app.use("/users", usersRouter);
 app.use("/watchlist", watchlistRouter);
-
+app.use("/analytics", analyticsRouter);
 
 
 app.use((req: Request, res: Response, next: NextFunction) => {

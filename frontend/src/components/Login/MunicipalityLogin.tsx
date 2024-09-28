@@ -53,10 +53,11 @@ export default function MunicipalityLogin() {
       if (isSignedIn) {
         router.push("/dashboard/municipality");
       } else {
-        throw new Error("Login failed. Please try again.");
+        setError("Login failed. Please wait a few minutes and try again");
+        setIsLoading(false);
       }
-    } catch (error) {
-      setError("An error occurred during login. Please try again.");
+    } catch (error: any) {
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -82,9 +83,8 @@ export default function MunicipalityLogin() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
               type="email"
               name="email"
@@ -127,18 +127,17 @@ export default function MunicipalityLogin() {
               </button>
             </div>
             <Button
-                className="min-w-fit h-fit p-2 bg-white"
-                // onClick={f}
-              >Forgot password?</Button>
+              className="min-w-fit h-fit p-2 bg-white"
+            // onClick={f}
+            >Forgot password?</Button>
 
             <Button
               name="submit"
               data-testid="submit-btn"
-              className={`w-28 h-11 rounded-3xl m-auto font-semibold ${
-                isFormValid && !isLoading
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`w-28 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >
@@ -162,7 +161,7 @@ export default function MunicipalityLogin() {
         </div>
       </div>
 
-      
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <div>
@@ -181,9 +180,8 @@ export default function MunicipalityLogin() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${
-                  !isEmailValid ? "border-red-500" : ""
-                }`,
+                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                  }`,
               }}
               type="email"
               name="email"
@@ -228,11 +226,10 @@ export default function MunicipalityLogin() {
             <Button
               name="submit"
               data-testid="submit-btn"
-              className={`w-28 h-11 rounded-3xl m-auto font-semibold ${
-                isFormValid && !isLoading
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`w-28 h-11 rounded-3xl m-auto font-semibold ${isFormValid && !isLoading
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >

@@ -7,6 +7,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { StoreToken } from "@/services/notification.service";
 import { X } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
+import Image from "next/image";
 
 declare global {
   interface Navigator {
@@ -115,7 +116,7 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
           onClick={closePopup}
         >
           <div
-            className="dark:bg-gray-700 dark:text-white bg-white w-1/3 rounded-lg p-4 relative"
+            className="dark:bg-gray-700 dark:text-white bg-white w-1/3 rounded-lg p-4 relative z-50"
             onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the popup
           >
             <button
@@ -125,7 +126,7 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
                 alt="Notification Logo"
                 width={100}
@@ -174,7 +175,7 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
                 alt="Notification Logo"
                 width={100}

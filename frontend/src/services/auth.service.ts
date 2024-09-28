@@ -3,14 +3,19 @@ import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
 import { SignUpInput, SignUpOutput, UpdatePasswordInput, autoSignIn, fetchAuthSession, signIn, signInWithRedirect, signOut, signUp, updatePassword } from 'aws-amplify/auth';
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
-    await setUserPathSuffix(userRole);
-    let username = String(form.get("email"));
-    const { isSignedIn } = await signIn({
-        username: username.toLowerCase(),
-        password: String(form.get("password")),
-    });
+    try {
+        await setUserPathSuffix(userRole);
+        let username = String(form.get("email"));
+        const { isSignedIn } = await signIn({
+            username: username.toLowerCase(),
+            password: String(form.get("password")),
+        });
 
-    return { isSignedIn };
+        return { isSignedIn };
+    }
+    catch (error: any) {
+        throw error;
+    }
 }
 
 export async function handleGoogleSignIn() {
@@ -41,38 +46,47 @@ export async function handleUpdatePassword(form: FormData) {
 }
 
 export async function handleSignUp(form: FormData, userRole: UserRole) {
-    await setUserPathSuffix(userRole);
-    const signupOptions: SignUpInput = {
-        username: String(form.get("email")).toLowerCase(),
-        password: String(form.get("password")),
-        options: {
-            userAttributes: {
-                email: String(form.get("email")).toLowerCase(),
-                given_name: String(form.get("firstname")),
-                family_name: String(form.get("surname")),
-                "custom:user_role": userRole,
-
+    try {
+        await setUserPathSuffix(userRole);
+        const signupOptions: SignUpInput = {
+            username: String(form.get("email")).toLowerCase(),
+            password: String(form.get("password")),
+            options: {
+                userAttributes: {
+                    email: String(form.get("email")).toLowerCase(),
+                    given_name: String(form.get("firstname")),
+                    family_name: String(form.get("surname")),
+                    "custom:user_role": userRole
+                },
+                autoSignIn: true,
             },
-            autoSignIn: true,
-        },
-    };
+        };
 
-    if (userRole == UserRole.MUNICIPALITY) {
-        signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("municode"));
+        if (userRole == UserRole.CITIZEN) {
+            // do not allow a citizen to submit signup if municipality is not selected
+            if (!form.get("municipality")) {
+                throw new Error("Please select a municipality");
+            }
 
+            signupOptions.options!.userAttributes["custom:municipality"] = String(form.get("municipality"));
+        }
+        else if (userRole == UserRole.MUNICIPALITY) {
+            signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("municode"));
+        }
+        else if (userRole == UserRole.PRIVATE_COMPANY) {
+            signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("authcode"));
+        }
+
+        const { nextStep } = await signUp(signupOptions);
+
+        return handleSignUpStep(nextStep, userRole);
     }
-    else if (userRole == UserRole.PRIVATE_COMPANY) {
-        signupOptions.options!.userAttributes["custom:auth_code"] = String(form.get("authcode"));
+    catch (error: any) {
+        throw error;
     }
-
-
-    const { nextStep } = await signUp(signupOptions);
-
-    return handleSignUpStep(nextStep, userRole);
 }
 
 const handleSignUpStep = async (step: SignUpOutput["nextStep"], userRole: UserRole) => {
-    console.log(String("Signup step:" + step.signUpStep))
     switch (step.signUpStep) {
         case "CONFIRM_SIGN_UP":
         // Redirect end-user to confirm-sign up screen.

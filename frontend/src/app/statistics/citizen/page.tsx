@@ -127,7 +127,7 @@ export default function CitizenStatisticsPage() {
         <div className="flex justify-between w-[80%] mb-4">
           <div className="w-[50%]">
             <h1 className="text-4xl font-bold text-white text-opacity-80 w-full">
-              Statistics Dashboard
+              Statistics
             </h1>
           </div>
           <div className="w-[50%]">

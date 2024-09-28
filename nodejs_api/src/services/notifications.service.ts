@@ -1,7 +1,6 @@
-import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
+import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { ClientError } from "../types/error.types";
-import { dynamoDBClient, NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
-import { formatResponse } from "../utils/tickets.utils";
+import { dynamoDBDocumentClient, NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
 
 interface TokenData {
     username: string;
@@ -10,46 +9,34 @@ interface TokenData {
 }
 
 export const insertNotificationToken = async (tokenData: TokenData) => {
-    const requiredFields = ["username", "deviceID", "token"];
-
-    for (const field of requiredFields) {
-        if (!(field in tokenData)) {
-            throw new ClientError({ Error: { Code: "BadRequest", Message: `${field} is required` } }, "BadRequestError");
-        }
-    }
-
     const { username, deviceID, token } = tokenData;
     const currentDatetime = new Date().toISOString();
     const subscriptions = ["status", "upvotes", "comments"];
 
     const notificationItem = {
-        username: { S: username },
-        deviceID: { S: deviceID },
-        token: { S: token },
-        subscriptions: { SS: subscriptions },
-        date: { S: currentDatetime },
+        username: username,
+        deviceID: deviceID,
+        token: token,
+        subscriptions: subscriptions,
+        date: currentDatetime
     };
 
-    const response = await dynamoDBClient.send(new PutItemCommand({
+    const response = await dynamoDBDocumentClient.send(new PutCommand({
         TableName: NOTIFICATIONS_TABLE,
         Item: notificationItem,
     }));
 
     const accresponse = { message: "Notification Token Saved", token };
-    return formatResponse(200, accresponse);
+    return accresponse;
 };
 
 export const getNotificationTokens = async (username: string) => {
-    if (!username) {
-        throw new ClientError({ Error: { Code: "IncorrectFields", Message: "Missing required field: username" } }, "InvalidFields");
-    }
-
-    const response = await dynamoDBClient.send(new QueryCommand({
+    const response = await dynamoDBDocumentClient.send(new QueryCommand({
         TableName: NOTIFICATIONS_TABLE,
         KeyConditionExpression: "username = :username",
         ExpressionAttributeValues: {
-            ":username": { S: username },
-        },
+            ":username": username
+        }
     }));
 
     const items = response.Items || [];

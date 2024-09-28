@@ -1,5 +1,7 @@
+import { getImageBucketUrl } from "@/config/s3bucket.config";
 import React, { useState, useEffect } from "react";
-import {FaArrowUp,FaCommentAlt,FaEye,FaExclamationTriangle,FaTicketAlt} from "react-icons/fa";
+import { FaArrowUp, FaCommentAlt, FaEye, FaExclamationTriangle, FaTicketAlt } from "react-icons/fa";
+import Image from "next/image";
 
 interface StatusCardUserViewProps {
   show: boolean;
@@ -32,13 +34,13 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
     return data
       ? JSON.parse(data)
       : {
-          arrowCount,
-          commentCount,
-          viewCount,
-          arrowColor: "black",
-          commentColor: "black",
-          eyeColor: "black",
-        };
+        arrowCount,
+        commentCount,
+        viewCount,
+        arrowColor: "black",
+        commentColor: "black",
+        eyeColor: "black",
+      };
   };
 
   const initialData = getLocalStorageData();
@@ -86,7 +88,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
       setCurrentArrowCount((prevCount: number) => prevCount - 1);
     }
   };
-  
+
   const handleCommentClick = () => {
     if (commentColor === "black") {
       setCommentColor("blue");
@@ -96,7 +98,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
       setCurrentCommentCount((prevCount: number) => prevCount - 1);
     }
   };
-  
+
   const handleEyeClick = () => {
     if (eyeColor === "black") {
       setEyeColor("blue");
@@ -106,7 +108,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
       setCurrentViewCount((prevCount: number) => prevCount - 1);
     }
   };
-  
+
 
   if (!show) return null;
 
@@ -115,7 +117,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
       <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-1/2 p-4 relative">
-        
+
         <div className="p-4">
           {/* Header Section */}
           <div className="flex justify-between items-center mb-4">
@@ -144,7 +146,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
           {/* Image and Stats Section */}
           <div className="flex justify-center items-center mb-4">
             <div className="mb-4 text-center">
-              <img src={image} alt="Fault" className="rounded-lg w-72 h-54" />
+              <Image src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-72 h-54" />
             </div>
             <div className="flex flex-col items-center ml-4">
               <div className="flex flex-col items-center mb-4">

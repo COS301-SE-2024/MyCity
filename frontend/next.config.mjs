@@ -50,6 +50,9 @@ const withPWA = nextPWA({
 });
 
 const nextConfig = {
+    images: {
+        domains: ["mycity-storage-bucket.s3.eu-west-1.amazonaws.com", "github.com", "i.imgur.com", "via.placeholder.com"],
+    },
     env: {
         USER_POOL_ID: process.env.NEXT_PUBLIC_USER_POOL_ID,
         USER_POOL_CLIENT_ID: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
@@ -69,9 +72,10 @@ const nextConfig = {
         FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
         FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         FIREBASE_MEASUREMENT_ID: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-        
+
         NODEAPI_URL: process.env.NEXT_PUBLIC_NODEAPI_URL,
-    
+        S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME
+
     },
     webpack(config) {
         // SVG handling configuration

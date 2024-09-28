@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect, FormEvent } from "react";
-import { ArrowLeft, Edit2, Lock, User } from "lucide-react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Image from "next/image";
+import { ArrowLeft, Lock, User } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import { uploadProfilePicture } from "@/services/users.service";
+import Image from "next/image";
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
   profileData: UserData | null;
 };
 
-const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileData }) => {
+const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
+  onBack,
+  profileData,
+}) => {
   const [data, setData] = useState<UserData | null>(profileData);
   const [firstname, setFirstname] = useState(profileData?.given_name);
   const [surname, setSurname] = useState(profileData?.family_name);
@@ -37,10 +40,10 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
           family_name: data?.family_name,
           picture: imageUrl,
           user_role: data?.user_role,
-          municipality: data?.municipality
+          municipality: data?.municipality,
         };
 
-        localStorage.setItem('profileImage', imageUrl);
+        localStorage.setItem("profileImage", imageUrl);
         setData(updatedUserData);
         setFirstname(updatedUserData.given_name);
         setSurname(updatedUserData.family_name);
@@ -50,25 +53,23 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
   };
 
   const handleSaveChanges = async () => {
-
     let updatedUserData = data;
 
     if (!updatedUserData) {
       return;
     }
 
-
     if (firstname && firstname != data?.given_name) {
       updatedUserData.given_name = firstname;
-      localStorage.setItem('firstName', firstname);
+      localStorage.setItem("firstName", firstname);
     }
 
     if (surname && surname != data?.family_name) {
       updatedUserData.family_name = surname;
-      localStorage.setItem('surname', surname);
+      localStorage.setItem("surname", surname);
     }
 
-    //upload profile picture
+    // upload profile picture
     if (file && data?.email) {
       const formData = new FormData();
       formData.append("username", data?.email);
@@ -83,26 +84,21 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
       }
     }
 
-    //upload user new profile details
+    // upload user new profile details
     if (updatedUserData) {
       updateUserProfile(updatedUserData);
     }
-
 
     toast.success("Changes saved successfully!", {
       onClose: () => window.location.reload(),
     });
   };
 
-  // useEffect(() => {
-  //   const storedFirstName = localStorage.getItem('firstName');
-  //   const storedSurname = localStorage.getItem('surname');
-  //   const storedProfileImage = localStorage.getItem('profileImage');
-
-  //   if (storedFirstName) setFirstName(storedFirstName);
-  //   if (storedSurname) setSurname(storedSurname);
-  //   if (storedProfileImage) setProfileImage(storedProfileImage);
-  // }, []);
+  // Truncate email if it's too long
+  const truncateEmail = (email: string | undefined, length = 30) => {
+    if (!email) return "";
+    return email.length > length ? `${email.slice(0, length)}...` : email;
+  };
 
   return (
     <div className="w-full rounded-lg p-4">
@@ -116,11 +112,20 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
 
       <div className="mb-4 flex flex-col items-center justify-center">
         {data?.picture ? (
-          <img src={data?.picture} alt="Profile" width={24} height={24} className="h-24 w-24 rounded-full mb-2" />
+          <Image
+            src={data?.picture}
+            alt="Profile"
+            width={24}
+            height={24}
+            className="h-24 w-24 rounded-full mb-2"
+          />
         ) : (
           <User className="h-24 w-24 rounded-full mb-2" />
         )}
-        <button className="text-blue-600 hover:underline" onClick={() => fileInputRef.current?.click()}>
+        <button
+          className="text-blue-600 hover:underline"
+          onClick={() => fileInputRef.current?.click()}
+        >
           Edit
         </button>
         <input
@@ -133,13 +138,21 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
         />
       </div>
 
+      {/* Email Section with Tooltip */}
       <div className="mb-4 text-center">
         <p className="text-gray-600 flex items-center justify-center">
           Email
           <Lock className="ml-2 h-4 w-4" />
         </p>
-        <p className="text-xl font-semibold">{data?.email}</p>
+        <p
+          className="text-xl font-semibold cursor-pointer"
+          title={data?.email} // Tooltip with the full email
+        >
+          {truncateEmail(data?.email)}
+        </p>
       </div>
+
+      {/* First Name */}
       <div className="mb-4 text-center">
         <p className="text-gray-600">First Name(s)</p>
         <div className="text-xl font-semibold flex items-center justify-center">
@@ -150,9 +163,10 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
             onChange={(event) => setFirstname(event.target.value)}
             className="rounded-3xl focus:outline-none focus:border-blue-500"
           />
-          <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
         </div>
       </div>
+
+      {/* Surname */}
       <div className="mb-4 text-center">
         <p className="text-gray-600">Surname</p>
         <div className="text-xl font-semibold flex items-center justify-center">
@@ -163,9 +177,10 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
             onChange={(event) => setSurname(event.target.value)}
             className="rounded-3xl focus:outline-none focus:border-blue-500"
           />
-          <Edit2 className="ml-2 h-4 w-4 cursor-pointer" />
         </div>
       </div>
+
+      {/* Municipality */}
       <div className="mb-4 text-center">
         <p className="text-gray-600 flex items-center justify-center">
           Municipality
@@ -173,6 +188,8 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
         </p>
         <p className="text-xl font-semibold">{data?.municipality}</p>
       </div>
+
+      {/* Save Changes Button */}
       <div className="flex justify-center">
         <button
           type="submit"
@@ -184,7 +201,6 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({ onBack, profileDa
       </div>
       <ToastContainer />
     </div>
-
   );
 };
 

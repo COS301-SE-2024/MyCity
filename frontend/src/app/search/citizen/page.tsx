@@ -251,7 +251,8 @@ export default function CreateTicket() {
           )}
 
           <div className="flex w-full h-full justify-center overflow-hidden">
-            <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center">
+          {/* <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center"> */}
+            <div className="pt-4 rounded-3xl justify-center">
               <div className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto">
                 {/* Search Form */}
                 <div className="flex flex-col items-center mb-4">

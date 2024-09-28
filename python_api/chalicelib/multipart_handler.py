@@ -91,7 +91,7 @@ def upload_file(request, folder=""):
             ContentType=file_content_type,
         )
 
-        return f"https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/{output_file_name}"
+        return f"/{output_file_name}"
 
     except Exception as e:
         raise BadRequestError(f"Failed to upload file: {str(e)}")

@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CompleteContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
-import MapComponent from "@/context/MapboxMap";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
@@ -24,13 +28,14 @@ interface TenderType {
   municipality : string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
-  onClose : ()=> void;
+  onClose : (data: number)=> void;
 }
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
-  completed: "text-green bg-green-300 rounded-full",
-  closed: "text-red bg-red-300 rounded-full",
+  completed: "text-green-500 bg-green-300 rounded-full",
+  closed: "text-red-500 bg-red-300 rounded-full",
+  done : "text-purple-500 bg-purple-300 rounded-full"
 };
 
 const TenderMax : React.FC<TenderType> = ({
@@ -52,12 +57,21 @@ const TenderMax : React.FC<TenderType> = ({
 }) => {
   const [dialog, setDialog] = useState<{ action: string; show: boolean }>({ action: "", show: false });
   const userProfile = useProfile();
+  const [contractstatus, setContractstatus] = useState<string>("");
   // Map "Fix in progress" to "Active" for the tender's status
-  const tenderStatus = status;
+  
+  useEffect(() => {
+    setContractstatus(status)
+    console.log(status)
+  }, [status]);
 
   const handleAction = (action: string) => {
     setDialog({ action, show: true });
   };
+
+  const handleClose = () => {
+    onClose(0);
+  }
 
   const confirmAction = async () => {
     switch (dialog.action) {
@@ -68,8 +82,9 @@ const TenderMax : React.FC<TenderType> = ({
           const rspcompleted = await CompleteContract(contract_id,user_session)
           if(rspcompleted == true)
           {
+            setContractstatus("completed")
             toast.success(`${dialog.action} action confirmed.`);
-            onClose();
+            onClose(-1);
           }
           else {
             toast.error(`${dialog.action} couldnt go through`)
@@ -80,16 +95,19 @@ const TenderMax : React.FC<TenderType> = ({
       case "Terminate Contract" :
         {
           toast.success(`${dialog.action} action confirmed.`);
-          onClose();
+          onClose(0);
         }
     
       default:
-        onClose();
+        onClose(0);
         break;
     }
     setDialog({ action: "", show: false });
-    onClose()
+    onClose(0)
   };
+
+  // console.log(latitude)
+  // console.log(longitude)
 
   const getDialogText = (action: string) => {
     switch (action) {
@@ -116,6 +134,8 @@ const TenderMax : React.FC<TenderType> = ({
       case "closed":
         return "closed"
         break;
+      case "done":
+        return "done"
       default:
         return "in_progress"
         break;
@@ -132,18 +152,18 @@ const TenderMax : React.FC<TenderType> = ({
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 overflow-auto">
         <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/4 xl:w-2/3 max-w-4xl max-h-[90vh] p-4 relative flex flex-col lg:flex-row">
-          <button className="absolute top-2 right-2 text-gray-700" onClick={onClose}>
+          <button className="absolute top-2 right-2 text-gray-700" onClick={handleClose}>
             <FaTimes size={24} />
           </button>
           <div className="flex flex-col lg:flex-row w-full overflow-auto">
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
               {/* <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
+                <Image src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
               </div> */}
               <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
               <div className={`px-2 py-1 rounded-full text-sm text-black border-2 mb-2 ${statusStyles[getStatus()]}`}>
-  {tenderStatus.charAt(0).toUpperCase() + tenderStatus.slice(1)}
+  {status.charAt(0).toUpperCase() + status.slice(1)}
 </div>
 
 
@@ -154,7 +174,7 @@ const TenderMax : React.FC<TenderType> = ({
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R{finalCost.toFixed(2)}
+                <strong>Proposed Price:</strong> R{finalCost}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Estimated Duration:</strong> {finalDuration} days
@@ -176,10 +196,10 @@ const TenderMax : React.FC<TenderType> = ({
               </div>
 
               <div className="mt-2 flex justify-center gap-2">
-                <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={onClose}>
+                <button className="bg-gray-200 text-gray-700 rounded-lg px-2 py-1 hover:bg-gray-300" onClick={handleClose}>
                   Back
                 </button>
-                {tenderStatus === "in progress" ? (
+                {contractstatus === "in progress" && (
                   <>
                     <button className="bg-red-500 text-white text-sm rounded-lg px-2 py-1 hover:bg-red-600" onClick={() => handleAction("Terminate Contract")}>
                       Terminate Contract
@@ -188,22 +208,14 @@ const TenderMax : React.FC<TenderType> = ({
                       Report Completion
                     </button>
                   </>
-                ) : (
-                  <>
-                    <button className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600" onClick={() => handleAction("Decline")}>
-                      Decline
-                    </button>
-                    <button className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600" onClick={() => handleAction("Accept")}>
-                      Accept
-                    </button>
-                  </>
+                
                 )}
               </div>
             </div>
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-              <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+              <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
               </div>
             </div>
           </div>

@@ -47,14 +47,10 @@ export default function MuniTenders() {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const user_municipality = String(user_data.current?.municipality);
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session
-      );
-      const rspmunitenders = await getMunicipalityTenders(
-        user_municipality,
-        user_session
-      );
+      const [rspmunicipality, rspmunitenders] = await Promise.all([
+        getTicketsInMunicipality(user_municipality, user_session),
+        getMunicipalityTenders(user_municipality, user_session)
+      ]);
       setMuniTenders(rspmunitenders);
       setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
       setLoadingOpenTickets(false);
@@ -150,7 +146,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingClosedTenders ? (
                     <div className="flex justify-center items-center">
                       <ThreeDots
@@ -167,7 +163,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders tickets={dashMuniResults} />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </main>
@@ -217,7 +213,7 @@ export default function MuniTenders() {
               <Tabs
                 aria-label="Tender options"
                 defaultSelectedKey={0}
-                className="w-full"
+                className="w-full items-center justify-center"
                 classNames={{
                   tab: "min-w-24 min-h-8 text-black",
                   tabContent:
@@ -263,7 +259,7 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                <Tab key={2} title="Closed Tenders">
+                {/* <Tab key={2} title="Closed Tenders">
                   {loadingClosedTenders ? (
                     <div className="flex justify-center items-center mt-4">
                       <ThreeDots
@@ -278,7 +274,7 @@ export default function MuniTenders() {
                   ) : (
                     <ClosedTenders tickets={dashMuniResults} />
                   )}
-                </Tab>
+                </Tab> */}
               </Tabs>
             </div>
           </div>

@@ -189,69 +189,98 @@ export default function Notifications() {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        <div
-          style={{
-            position: "relative",
-            height: "100vh",
-            overflow: "hidden",
-          }}
-        >
-          <NavbarUser unreadNotifications={unreadNotifications} />
+  <div
+    style={{
+      position: "relative",
+      height: "100vh",
+      overflow: "hidden",
+    }}
+  >
+    <NavbarUser unreadNotifications={unreadNotifications} />
 
-          {/* Background image */}
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundImage:
-                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1,
-            }}
-          />
+    {/* Background image */}
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundImage:
+          'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        zIndex: -1,
+      }}
+    />
 
-          {/* Content */}
-          <div className="fixed w-full h-full inset-0">
-            <main className="flex w-full h-full">
-              <div className="relative pt-8">
-                <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
-                  Notifications
-                </h1>
-              </div>
+    {/* Inline scrollbar styles */}
+    <style jsx>{`
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
 
-              {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                  <ThreeDots
-                    height="80"
-                    width="80"
-                    radius="9"
-                    color="#ADD8E6"
-                    ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                    visible={true}
-                  />
-                </div>
-              ) : (
-                <div className="flex w-full h-full justify-center items-center overflow-hidden">
-                  <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center">
-                    <div className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto">
-                      {visibleNotifications}
-                    </div>
-                  </div>
-                </div>
-              )}
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
 
-              {/* Add other static TicketNoti components if needed */}
-            </main>
-          </div>
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #6b7280;
+        border-radius: 4px;
+        border: 2px solid transparent;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: #4b5563;
+      }
+    `}</style>
+
+    {/* Content */}
+    <div className="fixed w-full h-full inset-0">
+      <main className="flex w-full h-full">
+        <div className="relative pt-8">
+          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+            Notifications
+          </h1>
         </div>
-      </div>
+
+        {isLoading ? (
+          <div className="flex justify-center items-center fixed inset-0">
+            <ThreeDots
+              height="80"
+              width="80"
+              radius="9"
+              color="#ADD8E6"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          </div>
+        ) : (
+          <div className="flex w-full h-full justify-center items-center overflow-hidden">
+            <div className="pt-4 rounded-3xl w-[80%] h-[75%] justify-center">
+              <div
+                className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto custom-scrollbar"
+                style={{
+                  scrollbarWidth: 'thin', // For Firefox
+                  scrollbarColor: '#6b7280 rgba(255, 255, 255, 0.2)', // For Firefox
+                }}
+              >
+                {visibleNotifications}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add other static TicketNoti components if needed */}
+      </main>
+    </div>
+  </div>
+</div>
+
 
       {/* Mobile View */}
       <div className="block sm:hidden">

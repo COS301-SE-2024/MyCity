@@ -5,8 +5,14 @@ import TenderMax from "../Tenders/CompanyTenderMax";
 import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
-import MapComponent from "@/context/MapboxMap";
-import { DidBid, getCompanyTenders } from "@/services/tender.service";
+import { DidBid, getCompanyTenders,getCompanyTicketContract } from "@/services/tender.service";
+import dynamic from "next/dynamic";
+import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
+
+const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
+  ssr: false,
+});
 
 interface TicketViewCompanyProps {
   show: boolean;
@@ -61,6 +67,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
   const [showBid, setShowBid] = useState(false);
   const [hasBidded, setHasBidded] = useState(false);
   const [tender, setTender] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null);
   const [reRender, setReRender] = useState(Boolean);
   const [mapKey, setMapKey] = useState(0);
   const [imageError, setImageError] = useState(false);
@@ -116,9 +123,21 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
 
   const addressParts = address.split(",");
 
-  const handleTenderContractClick = () => {
-    setReRender(false);
-    setShowTenderMax(true);
+  const handleTenderContractClick = async () => {
+    const user_data = await userProfile.getUserProfile();
+    const company_name = String(user_data.current?.company_name);
+    const user_session = String(user_data.current?.session_token);
+    const rspcontract = await getCompanyTicketContract(company_name,ticket_id,user_session,true);
+    if(rspcontract != null)
+    {
+      setContract(rspcontract);
+      setReRender(false);
+      setShowTenderMax(true);
+    }
+    else {
+
+    }
+    
   };
 
   const handleBidClick = async () => {
@@ -163,7 +182,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 <div className="absolute top-2 left-2">
                   {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
-                <img
+                <Image
                   src={municipalityImage}
                   alt="Municipality"
                   className="w-16 h-16 mb-2 rounded-full"
@@ -182,8 +201,8 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 {/* Image Placeholder Logic */}
                 <div className="mb-2 flex justify-center">
                   {!imageError ? (
-                    <img
-                      src={imageURL}
+                    <Image
+                      src={getImageBucketUrl(imageURL)}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
                       onError={(e) => {
@@ -198,7 +217,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 </div>
                 <div className="flex justify-around mb-2 w-full">
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-md">Address</h3>
+                    <h3 className="font-bold text-md text-black">Address</h3>
                     {addressParts.map((part, index) => (
                       <p key={index} className="text-gray-700 text-sm">
                         {part.trim()}
@@ -206,8 +225,8 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                     ))}
                   </div>
                   <div className="flex flex-col items-center justify-center">
-                    <h3 className="font-bold text-sm">Created By</h3>
-                    <img src={user_picture} alt="Created By" className="rounded-full mb-1 w-12 h-12 object-cover" />
+                    <h3 className="font-bold text-sm text-black">Created By</h3>
+                    <Image src={user_picture} alt="Created By" className="rounded-full mb-1 w-12 h-12 object-cover" />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
                 </div>
@@ -236,10 +255,37 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
               {/* Right Section (Map Placeholder) */}
               <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center">
                 <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-                  <MapComponent longitude={Number(longitude)} latitude={Number(latitude)} zoom={14} containerId="map" style="mapbox://styles/mapbox/streets-v12" />
+                  <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showTenderMax && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="w-full h-full overflow-auto">
+            <TenderMax
+              contract_id={contract.contract_id}
+              status={contract.status}
+              companyname={contract.companyname}
+              contractdatetime={contract.contractdatetime}
+              finalCost={contract.finalCost}
+              finalDuration={contract.finalDuration}
+              ticketnumber={ticketNumber}
+              longitude={longitude}
+              latitude={latitude}
+              completedatetime={contract.completedatetime}
+              contractnumber={contract.contractnumber}
+              municipality="Umdoni"
+              upload={tender.upload}
+              hasReportedCompletion={tender.hasReportedCompletion}
+              onClose={() => {
+                setShowTenderMax(false);
+                setReRender(true); // Re-render the main view when closing TenderMax
+              }}
+            />
           </div>
         </div>
       )}
