@@ -165,6 +165,8 @@ export default function About() {
                       <Image
                         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_placekit.webp"
                         alt="Vision"
+                        width={100}
+                        height={100}
                         className="w-full h-auto object-cover rounded-lg mx-auto"
                       />
                     </a>
@@ -268,8 +270,8 @@ export default function About() {
       </h2>
       <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/about_1.webp"
-        width={100}
-        height={100}
+        width={180}
+        height={180}
         alt="MyCity Vision"
         className="w-full h-auto rounded-lg mb-4"
       />
@@ -292,6 +294,8 @@ export default function About() {
           <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Dominique_Da_Silva.webp"
             alt="Dominique Da Silva"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Dominique Da Silva</h3>
@@ -301,6 +305,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -308,6 +314,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -319,6 +327,8 @@ export default function About() {
           <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Kyle_Marshall.webp"
             alt="Kyle Marshall"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Kyle Marshall</h3>
@@ -328,6 +338,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -335,6 +347,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -346,6 +360,8 @@ export default function About() {
           <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Tino_Gwanyanya.webp"
             alt="Tino Gwanyanya"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Tino Gwanyanya</h3>
@@ -357,6 +373,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -364,6 +382,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -375,6 +395,8 @@ export default function About() {
           <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Matthew_Els.webp"
             alt="Matthew Els"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Matthew Els</h3>
@@ -384,6 +406,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -391,6 +415,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -402,6 +428,8 @@ export default function About() {
           <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Andinda_Bakainaga.webp"
             alt="Andinda Bakainaga"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Andinda Bakainaga</h3>
@@ -411,6 +439,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -418,6 +448,8 @@ export default function About() {
               <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -433,6 +465,8 @@ export default function About() {
       <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_epi-use.webp"
         alt="Epi-Use"
+        width={180}
+        height={180}
         className="w-24 h-auto"
       />
     </a>
@@ -440,6 +474,8 @@ export default function About() {
       <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_group-elephant.webp"
         alt="Group Elephant"
+        width={180}
+        height={180}
         className="w-24 h-auto"
       />
     </a>
@@ -475,6 +511,8 @@ function TeamMember({
         <Image
           src={imgSrc}
           alt={name}
+          width={130}
+          height={130}
           className="w-3/5 h-auto object-cover rounded-full mx-auto"
         />
 
@@ -486,6 +524,8 @@ function TeamMember({
             <Image
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
               alt="GitHub"
+              width={24}
+              height={24}
               className="w-6 sm:w-8"
             />
           </a>
@@ -493,6 +533,8 @@ function TeamMember({
             <Image
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
               alt="LinkedIn"
+              width={24}
+              height={24}
               className="w-6 sm:w-8"
             />
           </a>
@@ -527,6 +569,8 @@ function VisionItem({
         <Image
           src={image}
           alt="Vision"
+          width={100}
+          height={100}
           className="w-full h-auto object-cover rounded-lg mx-auto"
         />
       </div>
@@ -550,7 +594,7 @@ function AssociationLogo({ link, imgSrc }: AssociationLogoProps) {
   return (
     <div className="p-2 w-1/6">
       <a href={link}>
-        <Image src={imgSrc} alt="Association Logo" className="w-full h-auto" />
+        <Image src={imgSrc} alt="Association Logo" width={100} height={100} className="w-full h-auto" />
       </a>
     </div>
   );
