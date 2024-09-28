@@ -1,6 +1,7 @@
 // components/Statistics/citizen/MunicipalityTicketsInfo.tsx
 
 import React from "react";
+import Image from "next/image";
 
 interface MunicipalityTicketsInfoProps {
   municipalityName: string;
@@ -24,7 +25,7 @@ const MunicipalityTicketsInfo: React.FC<MunicipalityTicketsInfoProps> = ({
   return (
     <div className="h-[38vh] bg-opacity-90  w-full flex flex-col justify-center items-center border bg-white shadow-lg rounded-lg p-4">
       {/* Municipality Logo */}
-      <img
+      <Image
         src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
           municipalityName
         )}.png`}

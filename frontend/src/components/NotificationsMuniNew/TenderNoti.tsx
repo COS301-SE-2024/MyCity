@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import TenderMax from "../Tenders/MuniTenderMax"; // Adjust the import path as necessary
+import Image from "next/image";
 
 interface TenderNotificationProps {
   tenderId: string;
@@ -57,7 +58,7 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
         <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
           {image ? (
-            <img src={image} alt="Tender" className="w-full h-full object-cover" />
+            <Image src={image} alt="Tender" className="w-full h-full object-cover" />
           ) : (
             <FaUserCircle size={32} color="#6B7280" />
           )}
@@ -77,7 +78,7 @@ const TenderNotification: React.FC<TenderNotificationProps> = ({
           </div>
           <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300">
             {image ? (
-              <img src={image} alt="Tender" className="w-full h-full object-cover" />
+              <Image src={image} alt="Tender" className="w-full h-full object-cover" />
             ) : (
               <FaUserCircle size={32} color="#6B7280" />
             )}

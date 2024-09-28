@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaArrowUp, FaEye, FaCommentAlt } from "react-icons/fa";
 import { Image as ImageIcon } from "lucide-react"; // Importing the Image icon
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface CardData {
   title: string;
@@ -94,7 +95,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ data, onClick }) => {
           <div className="relative flex-grow-0 h-2/3 w-full bg-gray-200 flex items-center justify-center">
             {/* Image */}
             {imgSrc ? (
-              <img
+              <Image
                 src={getImageBucketUrl(imgSrc)}
                 alt={title}
                 className="w-full h-full object-cover"
@@ -129,7 +130,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ data, onClick }) => {
         >
           <div className="flex-grow-0 h-2/3 w-full bg-gray-200 flex items-center justify-center">
             {imgSrc ? (
-              <img
+              <Image
                 src={getImageBucketUrl(imgSrc)}
                 alt={title}
                 className="w-full h-full object-cover"

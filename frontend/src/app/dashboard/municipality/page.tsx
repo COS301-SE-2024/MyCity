@@ -11,6 +11,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from Lucide
+import Image from "next/image";
 
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
@@ -196,7 +197,7 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
               <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-              <img
+              <Image
                 src={String(muniprofile)}
                 alt="Description of image"
                 width={20}

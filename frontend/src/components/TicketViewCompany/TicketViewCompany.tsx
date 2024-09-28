@@ -8,6 +8,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { DidBid, getCompanyTenders,getCompanyTicketContract } from "@/services/tender.service";
 import dynamic from "next/dynamic";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -181,7 +182,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 <div className="absolute top-2 left-2">
                   {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
-                <img
+                <Image
                   src={municipalityImage}
                   alt="Municipality"
                   className="w-16 h-16 mb-2 rounded-full"
@@ -200,7 +201,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 {/* Image Placeholder Logic */}
                 <div className="mb-2 flex justify-center">
                   {!imageError ? (
-                    <img
+                    <Image
                       src={getImageBucketUrl(imageURL)}
                       alt="Fault"
                       className="rounded-lg w-48 h-36 object-cover"
@@ -225,7 +226,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                   </div>
                   <div className="flex flex-col items-center justify-center">
                     <h3 className="font-bold text-sm text-black">Created By</h3>
-                    <img src={user_picture} alt="Created By" className="rounded-full mb-1 w-12 h-12 object-cover" />
+                    <Image src={user_picture} alt="Created By" className="rounded-full mb-1 w-12 h-12 object-cover" />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
                 </div>

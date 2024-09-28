@@ -5,6 +5,7 @@ import CitizenLogin from "@/components/Login/CitizenLogin";
 import MunicipalityLogin from "@/components/Login/MunicipalityLogin";
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
 import NavbarGuest from "@/components/Navbar/NavbarGuest";
+import Image from "next/image";
 
 export default function Login() {
   const formHeader: string = "Log In.";
@@ -35,7 +36,7 @@ export default function Login() {
           <main className="flex justify-center mb-8">
             <div className="flex dark:bg-gray-700 dark:text-white bg-gray-100 items-center justify-center rounded-lg shadow-lg shadow-blue-800/15 w-1/2 h-fit py-12 mt-12">
               <div>
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/login_icon.webp"
                   alt="MyCity"
                   width={512}
@@ -93,7 +94,7 @@ export default function Login() {
           className="px-2"
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-3 ml-3 transition-transform duration-200">
-            <img
+            <Image
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
               alt="MyCity"
               width={75}
@@ -124,7 +125,7 @@ export default function Login() {
               <span className="text-[2.5em] font-bold">{formHeader}</span>
               <div className="overflow-auto h-[65vh] rounded-lg">
               <div className="flex justify-center">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
                     alt="MyCity"
                     width={128}

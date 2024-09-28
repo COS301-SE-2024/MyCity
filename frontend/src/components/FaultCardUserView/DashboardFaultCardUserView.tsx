@@ -6,6 +6,7 @@ import mapboxgl, {Map, Marker } from 'mapbox-gl';
 import { InteractTicket,addWatchlist } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -214,7 +215,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div className="absolute top-2 left-2">
               {urgencyMapping[getUrgency(viewCount)].icon}
             </div>
-            <img src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
+            <Image src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
             <div className="flex items-center justify-center mb-2">
               <div className={`flex items-center ${getStatusColor()} border-2 rounded-full px-2 py-1`}>
                 <span className="ml-1">{status}</span>
@@ -230,7 +231,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {image && (
               <div className="mb-2 flex justify-center">
-                <img src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
+                <Image src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
               </div>
             )}
 
@@ -278,7 +279,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
               <div className="flex flex-col items-center justify-center">
                 <h3 className="font-bold text-md">Created By</h3>
-                <img src={user_picture} alt="Created By" className="rounded-full mb-1 object-cover w-12 h-12" />
+                <Image src={user_picture} alt="Created By" className="rounded-full mb-1 object-cover w-12 h-12" />
                 <p className="text-gray-700 text-sm">{createdBy}</p>
               </div>
             </div>

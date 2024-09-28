@@ -25,6 +25,7 @@ import { PlaceKit, PlaceKitOptions } from "@placekit/autocomplete-react";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import { Locate, Pin, PinOff, Info } from "lucide-react";
+import Image from "next/image";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -246,7 +247,7 @@ const CreateTicketComp: React.FC = () => {
                       textValue={faultType.asset_id}
                     >
                       <div className="flex gap-2 items-center">
-                        <img
+                        <Image
                           src={faultType.assetIcon}
                           alt={faultType.asset_id}
                           className="w-6 h-6"
@@ -286,7 +287,7 @@ const CreateTicketComp: React.FC = () => {
                 <span className="font-semibold text-sm mb-2">Attach Image</span>
                 <div className="flex border rounded-lg overflow-hidden">
                   <div className="flex justify-center p-2 w-1/5 bg-gray-100">
-                    <img
+                    <Image
                       src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                       alt="Camera Icon"
                       className="h-10 w-10"
@@ -310,7 +311,7 @@ const CreateTicketComp: React.FC = () => {
                         {selectedImage && (
                           <div>
                             <h2>Image Preview:</h2>
-                            <img
+                            <Image
                               src={String(selectedImage)}
                               alt="Uploaded"
                               style={{ maxWidth: "50%", height: "auto" }}

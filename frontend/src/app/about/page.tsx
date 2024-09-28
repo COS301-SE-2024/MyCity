@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar/Navbar";
-
+import Image from "next/image";
 interface TeamMemberProps {
   name: string;
   title: string;
@@ -162,9 +162,11 @@ export default function About() {
                 >
                   <div className="w-full sm:w-1/4 text-center">
                     <a href={"https://placekit.io/"}>
-                      <img
+                      <Image
                         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_placekit.webp"
                         alt="Vision"
+                        width={100}
+                        height={100}
                         className="w-full h-auto object-cover rounded-lg mx-auto"
                       />
                     </a>
@@ -248,7 +250,7 @@ export default function About() {
 
   <main className="relative z-[-10] p-4 mt-0 mb-7">
     <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-      <img
+      <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
         alt="MyCity"
         width={180}
@@ -266,8 +268,10 @@ export default function About() {
       <h2 className="text-2xl font-bold text-white text-center mb-4">
         What is MyCity?
       </h2>
-      <img
+      <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/about_1.webp"
+        width={180}
+        height={180}
         alt="MyCity Vision"
         className="w-full h-auto rounded-lg mb-4"
       />
@@ -287,25 +291,31 @@ export default function About() {
       <div className="grid grid-cols-1 gap-6">
         {/* Dominique */}
         <div className="flex flex-col items-center text-center">
-          <img
+          <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Dominique_Da_Silva.webp"
             alt="Dominique Da Silva"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Dominique Da Silva</h3>
           <p className="text-white text-sm mb-2">Team Leader | Documentation</p>
           <div className="flex gap-4">
             <a href="https://github.com/Dominique-Da-Silva">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
             <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -314,25 +324,31 @@ export default function About() {
 
         {/* Kyle */}
         <div className="flex flex-col items-center text-center">
-          <img
+          <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Kyle_Marshall.webp"
             alt="Kyle Marshall"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Kyle Marshall</h3>
           <p className="text-white text-sm mb-2">UI Engineer | Documentation</p>
           <div className="flex gap-4">
             <a href="https://github.com/KyleMarshall23">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
             <a href="https://www.linkedin.com/in/kyle-marshall23/">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -341,9 +357,11 @@ export default function About() {
 
         {/* Tino */}
         <div className="flex flex-col items-center text-center">
-          <img
+          <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Tino_Gwanyanya.webp"
             alt="Tino Gwanyanya"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Tino Gwanyanya</h3>
@@ -352,16 +370,20 @@ export default function About() {
           </p>
           <div className="flex gap-4">
             <a href="https://github.com/Tinogwanz">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
             <a href="https://www.linkedin.com/in/anold-tinotenda-gwanyanya/">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -370,25 +392,31 @@ export default function About() {
 
         {/* Matthew */}
         <div className="flex flex-col items-center text-center">
-          <img
+          <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Matthew_Els.webp"
             alt="Matthew Els"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Matthew Els</h3>
           <p className="text-white text-sm mb-2">DevOps Engineer | Front-End Engineer | Data Engineer</p>
           <div className="flex gap-4">
             <a href="https://github.com/MatthewEls">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
             <a href="https://www.linkedin.com/in/matthewels/">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -397,25 +425,31 @@ export default function About() {
 
         {/* Andinda */}
         <div className="flex flex-col items-center text-center">
-          <img
+          <Image
             src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Andinda_Bakainaga.webp"
             alt="Andinda Bakainaga"
+            width={130}
+            height={130}
             className="w-32 h-32 rounded-full mb-2"
           />
           <h3 className="text-lg font-bold text-white">Andinda Bakainaga</h3>
           <p className="text-white text-sm mb-2">Backend Engineer | Documentation</p>
           <div className="flex gap-4">
             <a href="https://github.com/Dindosss">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
                 alt="GitHub"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
             <a href="https://www.linkedin.com/in/andinda-bakainaga-b8b011216/">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
                 alt="LinkedIn"
+                width={24}
+                height={24}
                 className="w-6"
               />
             </a>
@@ -428,16 +462,20 @@ export default function About() {
   </h2>
   <div className="flex justify-center gap-6">
     <a href="https://www.epiuselabs.com/">
-      <img
+      <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_epi-use.webp"
         alt="Epi-Use"
+        width={180}
+        height={180}
         className="w-24 h-auto"
       />
     </a>
     <a href="https://www.groupelephant.com/">
-      <img
+      <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_group-elephant.webp"
         alt="Group Elephant"
+        width={180}
+        height={180}
         className="w-24 h-auto"
       />
     </a>
@@ -470,9 +508,11 @@ function TeamMember({
       } flex-col h-[40vh] overflow-hidden`}
     >
       <div className="w-1/4 text-center ">
-        <img
+        <Image
           src={imgSrc}
           alt={name}
+          width={130}
+          height={130}
           className="w-3/5 h-auto object-cover rounded-full mx-auto"
         />
 
@@ -481,16 +521,20 @@ function TeamMember({
         </h5>
         <div className="flex gap-2 justify-center mt-2">
           <a href={github}>
-            <img
+            <Image
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
               alt="GitHub"
+              width={24}
+              height={24}
               className="w-6 sm:w-8"
             />
           </a>
           <a href={linkedin}>
-            <img
+            <Image
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
               alt="LinkedIn"
+              width={24}
+              height={24}
               className="w-6 sm:w-8"
             />
           </a>
@@ -522,9 +566,11 @@ function VisionItem({
       } flex-col sm:h-[33vh] md:h-[50vh] lg:h-[60vh] w-3/4`}
     >
       <div className="w-full sm:w-1/4 text-center">
-        <img
+        <Image
           src={image}
           alt="Vision"
+          width={100}
+          height={100}
           className="w-full h-auto object-cover rounded-lg mx-auto"
         />
       </div>
@@ -548,7 +594,7 @@ function AssociationLogo({ link, imgSrc }: AssociationLogoProps) {
   return (
     <div className="p-2 w-1/6">
       <a href={link}>
-        <img src={imgSrc} alt="Association Logo" className="w-full h-auto" />
+        <Image src={imgSrc} alt="Association Logo" width={100} height={100} className="w-full h-auto" />
       </a>
     </div>
   );
