@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { UserCircle } from "lucide-react";
 import { Municipality } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner"; // Import a small black loading spinner
-import Image from "next/image";
+
 
 interface SearchMunicipalityProps {
   municipalities: Municipality[];

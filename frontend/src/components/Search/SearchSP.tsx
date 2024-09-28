@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Star } from "lucide-react";
 import { ServiceProvider } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner"; // Import a small black loading spinner
-import Image from "next/image";
+
 
 interface SearchSPProps {
   serviceProviders: ServiceProvider[];

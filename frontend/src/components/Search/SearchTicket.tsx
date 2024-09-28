@@ -4,7 +4,7 @@ import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
-import Image from "next/image";
+
 
 interface SearchTicketProps {
   tickets: Ticket[];
@@ -173,7 +173,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   {/* Fault Image */}
                   <div className="w-[10%] overflow-hidden flex items-center justify-center ">
                     {image && !imageError ? (
-                      <Image
+                      <img
                         src={getImageBucketUrl(image)}
                         alt="Ticket"
                         width={100}
@@ -260,7 +260,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   {/* Fault Image - Centered Below Asset Type */}
                   <div className="flex justify-center mb-4">
                     {image && !imageError ? (
-                      <Image
+                      <img
                         alt="Ticket"
                         width={200}
                         height={200}
@@ -279,9 +279,9 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   <div className="flex items-center justify-center mb-4">
                     {/* Municipality Logo */}
                     {municipality?.municipalityLogo ? (
-                      <Image
-                      width={40}
-                      height={40}
+                      <img
+                        width={40}
+                        height={40}
                         alt="Municipality Logo"
                         src={municipality.municipalityLogo}
                         className="w-10 h-10 object-cover rounded-full mr-2"

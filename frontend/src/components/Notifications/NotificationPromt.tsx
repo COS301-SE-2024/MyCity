@@ -6,8 +6,8 @@ import { onMessage } from "@firebase/messaging";
 import { useProfile } from "@/hooks/useProfile";
 import { StoreToken } from "@/services/notification.service";
 import { X } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";  
-import Image from "next/image";
+import { toast, ToastContainer } from "react-toastify";
+
 
 declare global {
   interface Navigator {
@@ -109,51 +109,51 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
     <div>
       {/* Desktop View */}
       <div
-  className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-70 z-[999999]"
-  onClick={closePopup}
->
-  <div
-    className="dark:bg-gray-700 dark:text-white bg-white w-1/3 rounded-lg p-4 relative z-[999999]"
-    onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the popup
-  >
-    <button
-      className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-      onClick={closePopup}
-    >
-      <X size={24} />
-    </button>
-    <div className="flex justify-center">
-      <Image
-        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
-        alt="Notification Logo"
-        width={100}
-        height={100}
-        className="p-2"
-      />
-    </div>
-    <h1 className="text-2xl font-bold my-4 text-center">
-      Stay Connected!
-    </h1>
-    <p className="text-md mb-4 text-center">
-      Enable notifications to stay updated with the latest information
-      and updates.
-    </p>
-    <div className="flex justify-center space-x-4">
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600 transition duration-300"
-        onClick={handleEnableNotifications}
-      >
-        Enable Notifications
-      </button>
-      <button
-        className="bg-blue-100 text-gray-700 px-4 py-2 rounded-3xl hover:bg-blue-200 transition duration-300"
+        className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-70 z-[999999]"
         onClick={closePopup}
       >
-        No Thanks
-      </button>
-    </div>
-  </div>
-</div>
+        <div
+          className="dark:bg-gray-700 dark:text-white bg-white w-1/3 rounded-lg p-4 relative z-[999999]"
+          onClick={(e) => e.stopPropagation()} // Prevents closing when clicking inside the popup
+        >
+          <button
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            onClick={closePopup}
+          >
+            <X size={24} />
+          </button>
+          <div className="flex justify-center">
+            <img
+              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
+              alt="Notification Logo"
+              width={100}
+              height={100}
+              className="p-2"
+            />
+          </div>
+          <h1 className="text-2xl font-bold my-4 text-center">
+            Stay Connected!
+          </h1>
+          <p className="text-md mb-4 text-center">
+            Enable notifications to stay updated with the latest information
+            and updates.
+          </p>
+          <div className="flex justify-center space-x-4">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-3xl hover:bg-blue-600 transition duration-300"
+              onClick={handleEnableNotifications}
+            >
+              Enable Notifications
+            </button>
+            <button
+              className="bg-blue-100 text-gray-700 px-4 py-2 rounded-3xl hover:bg-blue-200 transition duration-300"
+              onClick={closePopup}
+            >
+              No Thanks
+            </button>
+          </div>
+        </div>
+      </div>
 
 
       {/* Mobile View */}
@@ -173,7 +173,7 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-              <Image
+              <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
                 alt="Notification Logo"
                 width={100}

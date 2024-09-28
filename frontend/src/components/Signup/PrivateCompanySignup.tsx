@@ -14,7 +14,7 @@ import {
   FaAngleUp,
   FaAngleDown,
 } from "react-icons/fa";
-import Image from "next/image";
+
 
 export default function ServiceProviderSignup() {
   const router = useRouter();
@@ -115,9 +115,8 @@ export default function ServiceProviderSignup() {
                 }
                 labelPlacement={"outside"}
                 classNames={{
-                  inputWrapper: `h-[3em] ${
-                    !isEmailValid ? "border-red-500" : ""
-                  }`,
+                  inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                    }`,
                 }}
                 type="email"
                 name="email"
@@ -157,7 +156,7 @@ export default function ServiceProviderSignup() {
               {logoPreview && (
                 <div className="flex justify-center mb-4">
                   <div className="w-24 h-24 rounded-full overflow-hidden">
-                    <Image
+                    <img
                       src={logoPreview}
                       alt="Logo Preview"
                       width={100}
@@ -234,11 +233,10 @@ export default function ServiceProviderSignup() {
 
             <Button
               name="submit"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${
-                isFormValid && isEmailValid
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid && isEmailValid
                   ? "bg-blue-500 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >
@@ -288,9 +286,8 @@ export default function ServiceProviderSignup() {
                 }
                 labelPlacement={"outside"}
                 classNames={{
-                  inputWrapper: `h-[3em] ${
-                    !isEmailValid ? "border-red-500" : ""
-                  }`,
+                  inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
+                    }`,
                 }}
                 type="email"
                 name="email"
@@ -330,7 +327,7 @@ export default function ServiceProviderSignup() {
               {logoPreview && (
                 <div className="flex justify-center mb-4">
                   <div className="w-24 h-24 rounded-full overflow-hidden">
-                    <Image
+                    <img
                       src={logoPreview}
                       alt="Logo Preview"
                       width={100}
@@ -407,11 +404,10 @@ export default function ServiceProviderSignup() {
 
             <Button
               name="submit"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${
-                isFormValid && isEmailValid
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid && isEmailValid
                   ? "bg-blue-500 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                }`}
               type="submit"
               disabled={!isFormValid || isLoading}
             >

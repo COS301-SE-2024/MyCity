@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { ArrowLeft, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Image from "next/image";
+
 
 type ChangeMuniInfoProps = {
   onBack: () => void;
@@ -58,7 +58,7 @@ const ChangeMuniInfo: React.FC<ChangeMuniInfoProps> = ({ onBack }) => {
 
       <div className="mb-4 flex flex-col items-center justify-center">
         {data.picture ? (
-          <Image src={data.picture} alt="Profile" width={24} height={24} className="h-24 w-24 rounded-full mb-2" />
+          <img src={data.picture} alt="Profile" width={24} height={24} className="h-24 w-24 rounded-full mb-2" />
         ) : (
           <User className="h-24 w-24 rounded-full mb-2" />
         )}

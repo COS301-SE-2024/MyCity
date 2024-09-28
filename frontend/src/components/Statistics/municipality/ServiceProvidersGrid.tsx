@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
+
 
 const ServiceProvidersGrid = ({
   serviceProviders,
@@ -83,7 +83,7 @@ const ServiceProvidersGrid = ({
               className="bg-white bg-opacity-80 h-full text-sm font-bold rounded-lg p-2 text-center flex flex-col items-center mb-2"
             >
               {provider.includes(" - Inhouse") ? (
-                <Image
+                <img
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatServiceProvider(
                     provider.substring(0, provider.length - 10)
                   )}.png`}
@@ -93,7 +93,7 @@ const ServiceProvidersGrid = ({
                   className="w-[50%] mb-2 object-contain rounded-full"
                 />
               ) : (
-                <Image
+                <img
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/service-providers/${formatServiceProvider(
                     provider
                   )}.webp`}

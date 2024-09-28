@@ -25,7 +25,7 @@ import { PlaceKit, PlaceKitOptions } from "@placekit/autocomplete-react";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import { Locate, Pin, PinOff, Info } from "lucide-react";
-import Image from "next/image";
+
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -247,7 +247,7 @@ const CreateTicketComp: React.FC = () => {
                       textValue={faultType.asset_id}
                     >
                       <div className="flex gap-2 items-center">
-                        <Image
+                        <img
                           src={faultType.assetIcon}
                           alt={faultType.asset_id}
                           width={24}
@@ -289,7 +289,7 @@ const CreateTicketComp: React.FC = () => {
                 <span className="font-semibold text-sm mb-2">Attach Image</span>
                 <div className="flex border rounded-lg overflow-hidden">
                   <div className="flex justify-center p-2 w-1/5 bg-gray-100">
-                    <Image
+                    <img
                       src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                       alt="Camera Icon"
                       width={40}
@@ -315,7 +315,7 @@ const CreateTicketComp: React.FC = () => {
                         {selectedImage && (
                           <div>
                             <h2>Image Preview:</h2>
-                            <Image
+                            <img
                               src={String(selectedImage)}
                               alt="Uploaded"
                               width={200}
@@ -334,11 +334,10 @@ const CreateTicketComp: React.FC = () => {
               <Button
                 type="submit"
                 disabled={!isFormValid || loading} // Disable button when loading or form is invalid
-                className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0 ${
-                  isFormValid && !loading
+                className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0 ${isFormValid && !loading
                     ? "bg-blue-500 text-white hover:bg-blue-600"
                     : "bg-blue-200 text-white cursor-not-allowed"
-                }`}
+                  }`}
               >
                 {loading ? "Loading..." : "Submit"}{" "}
                 {/* Show "Loading..." when loading */}
