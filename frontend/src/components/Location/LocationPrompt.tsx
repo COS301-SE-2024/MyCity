@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import ToggleTheme from '@/components/Theme/ToggleTheme';
+import Image from "next/image";
 
 export default function Promt_Popup() {
   const [userResponded, setUserResponded] = useState(false);
@@ -28,7 +29,7 @@ export default function Promt_Popup() {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/location_icon.webp"
                 alt="Location Logo"
                 width={100}
@@ -78,7 +79,7 @@ export default function Promt_Popup() {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-            <img
+            <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/location_icon.webp"
                 alt="Location Logo"
                 width={100}

@@ -14,6 +14,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { UserData } from "@/types/custom.types";
 import { usePathname } from "next/navigation";
 import { handleSignOut } from "@/services/auth.service";
+import Image from "next/image";
 
 export default function NavbarMunicipality({ unreadNotifications = 0 }) {
   const pathname = usePathname(); // Get the current pathname
@@ -67,7 +68,7 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
         <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
           <Link href="/">
             <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
                 alt="MyCity"
                 width={50}

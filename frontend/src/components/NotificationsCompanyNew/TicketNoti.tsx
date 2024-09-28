@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaCircle, FaRegCircle, FaUserCircle } from "react-icons/fa";
 import TicketViewCompany from "../TicketViewCompany/TicketViewCompany";
+import Image from "next/image";
 
 interface TicketNotificationProps {
   ticketNumber: string;
@@ -77,7 +78,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
           {image ? (
-            <img src={image} alt="Ticket" className="w-full h-full object-cover" />
+            <Image src={image} alt="Ticket" className="w-full h-full object-cover" />
           ) : (
             <FaUserCircle size={32} color="#6B7280" />
           )}
@@ -98,7 +99,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           </div>
           <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300">
             {image ? (
-              <img src={image} alt="Ticket" className="w-full h-full object-cover" />
+              <Image src={image} alt="Ticket" className="w-full h-full object-cover" />
             ) : (
               <FaUserCircle size={32} color="#6B7280" />
             )}

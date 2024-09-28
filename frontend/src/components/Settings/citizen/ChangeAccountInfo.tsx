@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect, FormEvent } from "react";
 import { ArrowLeft, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Image from "next/image";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import { uploadProfilePicture } from "@/services/users.service";
+import Image from "next/image";
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
@@ -112,7 +112,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
 
       <div className="mb-4 flex flex-col items-center justify-center">
         {data?.picture ? (
-          <img
+          <Image
             src={data?.picture}
             alt="Profile"
             width={24}

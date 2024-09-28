@@ -4,6 +4,7 @@ import { Municipality, Ticket } from "@/types/custom.types";
 import { ThreeDots } from "react-loader-spinner";
 import { Image as ImageIcon } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface SearchTicketProps {
   tickets: Ticket[];
@@ -50,7 +51,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
     });
     return map;
   }, [municipalities]);
-  
+
 
   // Function to format the state color
   function formatStateColor(state: string | undefined): string {
@@ -134,11 +135,11 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
 
     const distance = municipality
       ? calculateDistance(
-          ticket.latitude,
-          ticket.longitude,
-          municipality.latitude ?? "",
-          municipality.longitude ?? ""
-        )
+        ticket.latitude,
+        ticket.longitude,
+        municipality.latitude ?? "",
+        municipality.longitude ?? ""
+      )
       : "N/A";
 
     return {
@@ -172,7 +173,7 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   {/* Fault Image */}
                   <div className="w-[10%] overflow-hidden flex items-center justify-center ">
                     {image && !imageError ? (
-                      <img
+                      <Image
                         src={getImageBucketUrl(image)}
                         alt="Ticket"
                         className="w-[70%] h-full object-cover overflow-hidden rounded-md"
@@ -257,7 +258,8 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   {/* Fault Image - Centered Below Asset Type */}
                   <div className="flex justify-center mb-4">
                     {image && !imageError ? (
-                      <img
+                      <Image
+                        alt="Ticket"
                         src={image}
                         className="w-full max-w-[300px] h-40 object-cover rounded-md"
                         onError={() => setImageError(true)}
@@ -273,7 +275,8 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                   <div className="flex items-center justify-center mb-4">
                     {/* Municipality Logo */}
                     {municipality?.municipalityLogo ? (
-                      <img
+                      <Image
+                        alt="Municipality Logo"
                         src={municipality.municipalityLogo}
                         className="w-10 h-10 object-cover rounded-full mr-2"
                       />
@@ -348,7 +351,7 @@ const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
           />
         </div>
       )}
-      <img
+      <Image
         src={src}
         alt={alt}
         className="w-full h-full object-cover rounded-full"

@@ -432,11 +432,11 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                   )}
 
                   <Image
+                    priority={true}
                     src={getImageBucketUrl(image)}
                     alt="Fault"
-                    className={`rounded-lg object-cover ${
-                      loading ? "hidden" : "block"
-                    }`}
+                    className={`rounded-lg object-cover ${loading ? "hidden" : "block"
+                      }`}
                     onLoad={() => setLoading(false)} // Set loading to false when image loads
                     onError={() => setImageError(true)} // Set error state if image fails to load
                   />
@@ -533,9 +533,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Comments Section with Slide Animation */}
             <div
-              className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${
-                showComments ? "translate-x-0" : "translate-x-full"
-              }`}
+              className={`absolute top-0 left-0 w-full h-full bg-white z-20 transform transition-transform duration-300 ${showComments ? "translate-x-0" : "translate-x-full"
+                }`}
               style={{ pointerEvents: showComments ? "auto" : "none" }}
             >
               <Comments

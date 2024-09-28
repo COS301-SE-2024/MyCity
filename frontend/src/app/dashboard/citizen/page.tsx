@@ -106,13 +106,13 @@ export default function CitizenDashboard({
         ]);
 
         // Preload images for all the fetched results
-        const imagesToPreload = [
-          ...rspmostupvotes,
-          ...rspwatchlist,
-          ...rspmunicipality,
-        ].map((item) => item.image);
+        // const imagesToPreload = [
+        //   ...rspmostupvotes,
+        //   ...rspwatchlist,
+        //   ...rspmunicipality,
+        // ].map((item) => item.image);
 
-        preloadImages(imagesToPreload);
+        // preloadImages(imagesToPreload);
 
         console.log("Upvotes", rspmostupvotes);
 
@@ -135,17 +135,17 @@ export default function CitizenDashboard({
     fetchData();
   }, []);
 
-  const preloadImages = (srcs: string[]) => {
-    srcs.forEach((src) => {
-      if (src) {
-        const link = document.createElement("link");
-        link.rel = "preload";
-        link.as = "image";
-        link.href = src;
-        document.head.appendChild(link);
-      }
-    });
-  };
+  // const preloadImages = (srcs: string[]) => {
+  //   srcs.forEach((src) => {
+  //     if (src) {
+  //       const link = document.createElement("link");
+  //       link.rel = "preload";
+  //       link.as = "image";
+  //       link.href = src;
+  //       document.head.appendChild(link);
+  //     }
+  //   });
+  // };
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);

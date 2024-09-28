@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css"; // Import the CSS for the toast 
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from "@/types/custom.types";
 import { getFaultTypes, CreatTicket } from "@/services/tickets.service";
+import Image from "next/image";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   useMapboxProp: () => MapboxContextProps;
@@ -130,7 +131,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                     textValue={faultType.asset_id}
                   >
                     <div className="flex gap-2 items-center">
-                      <img
+                      <Image
                         src={faultType.assetIcon}
                         alt={faultType.asset_id}
                         width={6}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface TicketNotificationProps {
   ticketNumber: string;
@@ -90,7 +91,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
 
         <div className="w-[7%] overflow-hidden flex items-center justify-center bg-gray-200  mr-4 rounded-md">
           {image && !imageError ? (
-            <img
+            <Image
               src={getImageBucketUrl(image)}
               alt="Ticket"
               className="w-full h-full object-cover overflow-hidden"
@@ -127,7 +128,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
                 {municipality_id}
               </div>
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <img
+                <Image
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                     municipality_id
                   )}.png`}
@@ -153,7 +154,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         <div className="flex justify-center mt-2">
           <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 border border-gray-300 flex items-center justify-center">
             {image && !imageError ? (
-              <img
+              <Image
                 src={getImageBucketUrl(image)}
                 alt="Ticket"
                 className="w-full h-full object-cover"

@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/Navbar/Navbar";
 import React from "react";
+import Image from "next/image";
 
 interface HowItWorksItemProps {
   image1: string;
@@ -57,7 +58,7 @@ function HowItWorksItem({
       {/* Citizen */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <img src={image1} alt="How It Works" className="w-2/5 mb-4" />
+        <Image src={image1} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title1}
         </h1>
@@ -79,7 +80,7 @@ function HowItWorksItem({
       {/* Municipalities */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <img src={image2} alt="How It Works" className="w-2/5 mb-4" />
+        <Image src={image2} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title2}
         </h1>
@@ -100,7 +101,7 @@ function HowItWorksItem({
       {/* Service Providers */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <img src={image3} alt="How It Works" className="w-2/5 mb-4" />
+        <Image src={image3} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title3}
         </h1>
@@ -135,7 +136,7 @@ function StepItem({
       } flex-col [33vh] w-3/4`}
     >
       <div className="w-full sm:w-1/4 text-center">
-        <img
+        <Image
           src={image}
           alt="Vision"
           className="w-full h-auto object-cover rounded-lg mx-auto"
@@ -303,7 +304,7 @@ export default function Guide() {
           <main className="relative z-[-10] p-4 mt-0 pb-16">
             {/* Page Title */}
             <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-              <img
+              <Image
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
                 alt="MyCity"
                 width={180}
@@ -322,7 +323,7 @@ export default function Guide() {
               <div className="flex flex-col items-center text-center">
                 {/* Citizens */}
                 <div className="mb-6">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_1.webp"
                     alt="Citizens"
                     className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -336,7 +337,7 @@ export default function Guide() {
 
                 {/* Municipalities */}
                 <div className="mb-6">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_2.webp"
                     alt="Municipalities"
                     className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -352,7 +353,7 @@ export default function Guide() {
 
                 {/* Service Providers */}
                 <div className="mb-6">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_3.webp"
                     alt="Service Providers"
                     className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -376,7 +377,7 @@ export default function Guide() {
               <div className="flex flex-col items-center text-center">
                 {/* Mobile PWA */}
                 <div className="mb-6">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_4.webp"
                     alt="Mobile PWA"
                     className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -390,7 +391,7 @@ export default function Guide() {
 
                 {/* Web Browsers */}
                 <div className="mb-6">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_5.webp"
                     alt="Web Browsers"
                     className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -404,7 +405,7 @@ export default function Guide() {
 
                 {/* Windows PWA */}
                 <div className="mb-6">
-                  <img
+                  <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_6.webp"
                     alt="Windows PWA"
                     className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -426,7 +427,7 @@ export default function Guide() {
 
               {/* Step 1 */}
               <div className="mb-6">
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_1.webp"
                   alt="Step 1"
                   className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -442,7 +443,7 @@ export default function Guide() {
 
               {/* Step 2 */}
               <div className="mb-6">
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_2.webp"
                   alt="Step 2"
                   className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -458,7 +459,7 @@ export default function Guide() {
 
               {/* Step 3 */}
               <div className="mb-6">
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_3.webp"
                   alt="Step 3"
                   className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -474,7 +475,7 @@ export default function Guide() {
 
               {/* Step 4 */}
               <div className="mb-6">
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_4.webp"
                   alt="Step 4"
                   className="w-1/2 mx-auto mb-2 rounded-lg"
@@ -489,7 +490,7 @@ export default function Guide() {
 
               {/* Step 5 */}
               <div className="mb-6">
-                <img
+                <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_5.webp"
                   alt="Step 5"
                   className="w-1/2 mx-auto mb-2 rounded-lg"

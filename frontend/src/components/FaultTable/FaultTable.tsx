@@ -10,6 +10,7 @@ import { ThreeDots } from "react-loader-spinner";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import { AlertCircle } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface Incident {
   ticket_id: string;
@@ -227,13 +228,13 @@ const IncidentTable: React.FC<IncidentProps> = ({
                   {/* Fault Image */}
                   <div className="flex w-[7%] items-center">
                     <div className="h-[80%] rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
-                      <img src={getImageBucketUrl(incident.imageURL)} alt="" />
+                      <Image src={getImageBucketUrl(incident.imageURL)} alt="" />
                     </div>
                   </div>
   
                   {/* Municipality */}
                   <div className="w-[15%] flex items-center">
-                    <img
+                    <Image
                       src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                         incident.municipality_id
                       )}.png`}

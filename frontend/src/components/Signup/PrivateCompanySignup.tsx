@@ -14,6 +14,7 @@ import {
   FaAngleUp,
   FaAngleDown,
 } from "react-icons/fa";
+import Image from "next/image";
 
 export default function ServiceProviderSignup() {
   const router = useRouter();
@@ -156,7 +157,7 @@ export default function ServiceProviderSignup() {
               {logoPreview && (
                 <div className="flex justify-center mb-4">
                   <div className="w-24 h-24 rounded-full overflow-hidden">
-                    <img
+                    <Image
                       src={logoPreview}
                       alt="Logo Preview"
                       className="w-full h-full object-cover"
@@ -327,7 +328,7 @@ export default function ServiceProviderSignup() {
               {logoPreview && (
                 <div className="flex justify-center mb-4">
                   <div className="w-24 h-24 rounded-full overflow-hidden">
-                    <img
+                    <Image
                       src={logoPreview}
                       alt="Logo Preview"
                       className="w-full h-full object-cover"

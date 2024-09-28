@@ -13,7 +13,7 @@ import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import ToggleTheme from "@/components/Theme/ToggleTheme";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 import LocationPrompt from "@/components/Location/LocationPrompt";
-
+import Image from "next/image";
 
 export default function Settings() {
   const { getUserProfile } = useProfile();
@@ -446,7 +446,7 @@ export default function Settings() {
                 <div className="w-[30%] dark:bg-gray-700 dark:text-white  bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                   <div className="flex w-full items-center mb-4">
                     {data?.picture ? (
-                      <img
+                      <Image
                         src={data?.picture}
                         alt="Profile"
                         width={12}
@@ -547,7 +547,7 @@ export default function Settings() {
           <div className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
             <div className="flex items-center mb-4">
               {data?.picture ? (
-                <img
+                <Image
                   src={data?.picture}
                   alt="Profile"
                   width={12}

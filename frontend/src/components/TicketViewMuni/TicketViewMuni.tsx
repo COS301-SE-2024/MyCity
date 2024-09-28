@@ -16,6 +16,7 @@ import Modal from "react-modal";
 import { Image as ImageIcon } from "lucide-react";
 import { User as UserIcon } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -308,7 +309,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
                       {/* Conditionally render image only when successfully loaded */}
                       {!imageError && (
-                        <img
+                        <Image
                           src={getImageBucketUrl(imageURL)}
                           alt="Fault"
                           className={`rounded-lg w-full h-full object-cover ${
@@ -380,7 +381,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Created By
                     </h3>
                     {user_picture ? (
-                      <img
+                      <Image
                         src={user_picture}
                         alt="Created By"
                         className="rounded-full mb-1 object-cover w-10 h-10"
