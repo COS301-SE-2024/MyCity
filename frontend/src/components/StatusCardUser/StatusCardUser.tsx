@@ -129,6 +129,8 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
                     municipality_id
                   )}.png`}
                   alt=""
+                  width={50}
+                  height={50}
                 />
               </div>
               <div className="ml-2 border">{municipality_id}</div>
@@ -139,6 +141,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
               src={getImageBucketUrl(image)}
               alt="Fault image"
               width={200}
+              height={200}
               className="rounded-md"
             />
           </div>

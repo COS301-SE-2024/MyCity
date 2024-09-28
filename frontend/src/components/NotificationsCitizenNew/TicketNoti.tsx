@@ -94,6 +94,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
             <Image
               src={getImageBucketUrl(image)}
               alt="Ticket"
+              width={100}
+              height={100}
               className="w-full h-full object-cover overflow-hidden"
               onError={() => setImageError(true)}
             />
@@ -133,6 +135,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
                     municipality_id
                   )}.png`}
                   alt=""
+                  width={100}
+                  height={100}
                 />
               </div>
             </div>
@@ -157,6 +161,8 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
               <Image
                 src={getImageBucketUrl(image)}
                 alt="Ticket"
+                width={100}
+                height={100}
                 className="w-full h-full object-cover"
                 onError={() => setImageError(true)}
               />

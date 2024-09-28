@@ -90,7 +90,7 @@ const CreateBid: React.FC<CreateBidProps> = ({
               />
             </div>
             {/* Municipality Image */}
-            <Image src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
+            <Image src={municipalityImage} alt="Municipality" width={64} height={64} className="w-16 h-16 rounded-full mb-4 mx-auto" />
             <h2 className="text-xl font-bold mb-2 text-center">Fault #{ticketnumber}</h2>
             <p className="text-lg font-semibold mb-2 text-center">{faultType}</p>
             <p className="text-md mb-4 text-center">{description}</p>

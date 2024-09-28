@@ -176,6 +176,8 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                       <Image
                         src={getImageBucketUrl(image)}
                         alt="Ticket"
+                        width={100}
+                        height={100}
                         className="w-[70%] h-full object-cover overflow-hidden rounded-md"
                         onError={() => setImageError(true)}
                       />
@@ -260,6 +262,8 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                     {image && !imageError ? (
                       <Image
                         alt="Ticket"
+                        width={200}
+                        height={200}
                         src={image}
                         className="w-full max-w-[300px] h-40 object-cover rounded-md"
                         onError={() => setImageError(true)}
@@ -276,6 +280,8 @@ const SearchTicket: React.FC<SearchTicketProps> = ({
                     {/* Municipality Logo */}
                     {municipality?.municipalityLogo ? (
                       <Image
+                      width={40}
+                      height={40}
                         alt="Municipality Logo"
                         src={municipality.municipalityLogo}
                         className="w-10 h-10 object-cover rounded-full mr-2"
@@ -351,7 +357,7 @@ const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
           />
         </div>
       )}
-      <Image
+      <img
         src={src}
         alt={alt}
         className="w-full h-full object-cover rounded-full"

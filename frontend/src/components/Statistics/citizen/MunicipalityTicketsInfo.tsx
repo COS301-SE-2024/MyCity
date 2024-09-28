@@ -30,6 +30,8 @@ const MunicipalityTicketsInfo: React.FC<MunicipalityTicketsInfoProps> = ({
           municipalityName
         )}.png`}
         alt={`${municipalityName} logo`}
+        width={96}
+        height={96}
         className="w-24 h-24 mb-4 object-contain"
       />
 

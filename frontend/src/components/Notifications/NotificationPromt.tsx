@@ -130,6 +130,7 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
                 alt="Notification Logo"
                 width={100}
+                height={100}
                 className="p-2"
               />
             </div>
@@ -179,6 +180,7 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/notification_icon.webp"
                 alt="Notification Logo"
                 width={100}
+                height={100}
                 className="p-2"
               />
             </div>

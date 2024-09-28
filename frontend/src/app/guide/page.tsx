@@ -58,7 +58,7 @@ function HowItWorksItem({
       {/* Citizen */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <Image src={image1} alt="How It Works" className="w-2/5 mb-4" />
+        <Image src={image1} width={100} height={100} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title1}
         </h1>
@@ -80,7 +80,7 @@ function HowItWorksItem({
       {/* Municipalities */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <Image src={image2} alt="How It Works" className="w-2/5 mb-4" />
+        <Image src={image2}  width={100} height={100} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title2}
         </h1>
@@ -101,7 +101,7 @@ function HowItWorksItem({
       {/* Service Providers */}
       <div className="flex flex-col items-center w-full mt-10 mb-4 h-full">
         {/* Image stays fixed */}
-        <Image src={image3} alt="How It Works" className="w-2/5 mb-4" />
+        <Image src={image3}  width={100} height={100} alt="How It Works" className="w-2/5 mb-4" />
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold dark:text-white text-opacity-80 text-center mt-10 mb-4">
           {title3}
         </h1>
@@ -138,6 +138,8 @@ function StepItem({
       <div className="w-full sm:w-1/4 text-center">
         <Image
           src={image}
+          width={100}
+          height={100}
           alt="Vision"
           className="w-full h-auto object-cover rounded-lg mx-auto"
         />
@@ -326,6 +328,8 @@ export default function Guide() {
                   <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_1.webp"
                     alt="Citizens"
+                    width={100}
+                    height={100}
                     className="w-1/2 mx-auto mb-2 rounded-lg"
                   />
                   <h3 className="text-lg font-bold text-white">Citizens</h3>
@@ -340,6 +344,8 @@ export default function Guide() {
                   <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_2.webp"
                     alt="Municipalities"
+                    width={100}
+                    height={100}
                     className="w-1/2 mx-auto mb-2 rounded-lg"
                   />
                   <h3 className="text-lg font-bold text-white">
@@ -356,6 +362,8 @@ export default function Guide() {
                   <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_3.webp"
                     alt="Service Providers"
+                    width={100}
+                    height={100}
                     className="w-1/2 mx-auto mb-2 rounded-lg"
                   />
                   <h3 className="text-lg font-bold text-white">
@@ -380,6 +388,8 @@ export default function Guide() {
                   <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_4.webp"
                     alt="Mobile PWA"
+                    width={100}
+                    height={100}
                     className="w-1/2 mx-auto mb-2 rounded-lg"
                   />
                   <h3 className="text-lg font-bold text-white">Mobile PWA</h3>
@@ -394,6 +404,8 @@ export default function Guide() {
                   <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_5.webp"
                     alt="Web Browsers"
+                    width={100}
+                    height={100}
                     className="w-1/2 mx-auto mb-2 rounded-lg"
                   />
                   <h3 className="text-lg font-bold text-white">Web Browsers</h3>
@@ -408,6 +420,8 @@ export default function Guide() {
                   <Image
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/guide_6.webp"
                     alt="Windows PWA"
+                    width={100}
+                    height={100}
                     className="w-1/2 mx-auto mb-2 rounded-lg"
                   />
                   <h3 className="text-lg font-bold text-white">Windows PWA</h3>
@@ -430,6 +444,8 @@ export default function Guide() {
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_1.webp"
                   alt="Step 1"
+                  width={100}
+                  height={100}
                   className="w-1/2 mx-auto mb-2 rounded-lg"
                 />
                 <h3 className="text-lg font-bold text-white text-center">
@@ -446,6 +462,8 @@ export default function Guide() {
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_2.webp"
                   alt="Step 2"
+                  width={100}
+                  height={100}
                   className="w-1/2 mx-auto mb-2 rounded-lg"
                 />
                 <h3 className="text-lg font-bold text-white text-center">
@@ -462,6 +480,8 @@ export default function Guide() {
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_3.webp"
                   alt="Step 3"
+                  width={100}
+                  height={100}
                   className="w-1/2 mx-auto mb-2 rounded-lg"
                 />
                 <h3 className="text-lg font-bold text-white text-center">
@@ -478,6 +498,8 @@ export default function Guide() {
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_4.webp"
                   alt="Step 4"
+                  width={100}
+                  height={100}
                   className="w-1/2 mx-auto mb-2 rounded-lg"
                 />
                 <h3 className="text-lg font-bold text-white text-center">
@@ -493,6 +515,8 @@ export default function Guide() {
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/step_5.webp"
                   alt="Step 5"
+                  width={100}
+                  height={100}
                   className="w-1/2 mx-auto mb-2 rounded-lg"
                 />
                 <h3 className="text-lg font-bold text-white text-center">

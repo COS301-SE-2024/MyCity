@@ -250,6 +250,8 @@ const CreateTicketComp: React.FC = () => {
                         <Image
                           src={faultType.assetIcon}
                           alt={faultType.asset_id}
+                          width={24}
+                          height={24}
                           className="w-6 h-6"
                         />
                         <span>{faultType.asset_id}</span>
@@ -290,6 +292,8 @@ const CreateTicketComp: React.FC = () => {
                     <Image
                       src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                       alt="Camera Icon"
+                      width={40}
+                      height={40}
                       className="h-10 w-10"
                     />
                   </div>
@@ -314,6 +318,8 @@ const CreateTicketComp: React.FC = () => {
                             <Image
                               src={String(selectedImage)}
                               alt="Uploaded"
+                              width={200}
+                              height={200}
                               style={{ maxWidth: "50%", height: "auto" }}
                             />
                           </div>

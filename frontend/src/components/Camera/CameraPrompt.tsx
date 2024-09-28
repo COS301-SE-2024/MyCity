@@ -30,6 +30,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                 alt="Install Logo"
                 width={400}
+                height={400}
               />
             </div>
             <h1 className="text-2xl font-bold mb-4 text-center">
@@ -78,6 +79,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/location_icon.webp"
                 alt="Location Logo"
                 width={100}
+                height={100}
                 className="p-2"
               />
             </div>

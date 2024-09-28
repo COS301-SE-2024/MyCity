@@ -228,7 +228,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
                   {/* Fault Image */}
                   <div className="flex w-[7%] items-center">
                     <div className="h-[80%] rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
-                      <Image src={getImageBucketUrl(incident.imageURL)} alt="" />
+                      <Image src={getImageBucketUrl(incident.imageURL)} alt="" width={200} height={200} />
                     </div>
                   </div>
   
@@ -239,6 +239,8 @@ const IncidentTable: React.FC<IncidentProps> = ({
                         incident.municipality_id
                       )}.png`}
                       alt="Ticket"
+                      width={50}
+                      height={50}
                       className="w-[22%] h-full object-cover rounded-full"
                     />
                     <div className="ml-2 font-bold">
