@@ -173,7 +173,7 @@ const TenderMax = ({
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Proposed Price:</strong> R
-                {(tender.finalCost || 0).toFixed(2)}
+                {(tender.finalCost || 0)}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Estimated Duration:</strong> {tender.finalDuration} days
