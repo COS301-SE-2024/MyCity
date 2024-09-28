@@ -24,8 +24,8 @@ export default function NavbarGuest({ showLogin = false }) {
               <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
                 alt="MyCity"
-                width={128}
-                height={128}
+                width={64}
+                height={64}
                 className="w-50 h-50"
               />
             </div>

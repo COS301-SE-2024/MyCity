@@ -101,7 +101,7 @@ export default function MuniTenders() {
     fetchDataForAllTabs();
   }, [userProfile]);
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 74;
 
   return (
     <div>

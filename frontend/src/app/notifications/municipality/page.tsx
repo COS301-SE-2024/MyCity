@@ -49,7 +49,7 @@ export default function Notifications() {
     },
   ];
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 99;
 
   // Simulate loading delay (e.g., fetching notifications from an API)
   useEffect(() => {

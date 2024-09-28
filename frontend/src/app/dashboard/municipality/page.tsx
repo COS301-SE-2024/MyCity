@@ -126,7 +126,7 @@ export default function Dashboard() {
     fetchDataWithoutCache();
   }, [fetchDataWithoutCache]);
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 99;
 
   return (
     <div>
