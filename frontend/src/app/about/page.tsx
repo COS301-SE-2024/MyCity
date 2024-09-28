@@ -268,6 +268,8 @@ export default function About() {
       </h2>
       <Image
         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/about_1.webp"
+        width={100}
+        height={100}
         alt="MyCity Vision"
         className="w-full h-auto rounded-lg mb-4"
       />
