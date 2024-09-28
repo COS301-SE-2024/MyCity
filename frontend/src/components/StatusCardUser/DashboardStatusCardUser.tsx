@@ -1,6 +1,6 @@
 import { getImageBucketUrl } from "@/config/s3bucket.config";
 import React from "react";
-import Image from "next/image";
+
 
 interface CardData {
   title: string;
@@ -41,7 +41,7 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({
     >
       <div className="w-full bg-gray-200">
         {image ? (
-          <Image src={getImageBucketUrl(image)} alt={title} width={100} height={100} className="w-full h-full object-cover" />
+          <img src={getImageBucketUrl(image)} alt={title} width={100} height={100} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-500">
             Image Placeholder

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { X } from "lucide-react";
-import Image from "next/image";
+
 
 interface PWAPromptProps {
   onInstall: () => void;
@@ -26,7 +26,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-              <Image
+              <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/installl_pwa.webp"
                 alt="Install Logo"
                 width={400}
@@ -75,7 +75,7 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-              <Image
+              <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/location_icon.webp"
                 alt="Location Logo"
                 width={100}

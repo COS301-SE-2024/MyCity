@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css"; // Import the CSS for the toast 
 import { useProfile } from "@/hooks/useProfile";
 import { FaultType } from "@/types/custom.types";
 import { getFaultTypes, CreatTicket } from "@/services/tickets.service";
-import Image from "next/image";
+
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   useMapboxProp: () => MapboxContextProps;
@@ -55,32 +55,32 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     const user_data = await getUserProfile();
     const formElement = formRef.current;
-    
+
     if (!formElement || !(formElement instanceof HTMLFormElement)) {
       console.error("Form is not recognized as HTMLFormElement");
       return;
     }
-  
+
     const formData = new FormData(formElement);  // Create FormData object
-  
+
     // Adding additional fields manually if they are not in the form
     const latitude = selectedAddress?.lat || "";
     const longitude = selectedAddress?.lng || "";
     const fullAddress = `${selectedAddress?.street?.name || ''}, ${selectedAddress?.county || ''}, ${selectedAddress?.city || ''}, ${selectedAddress?.administrative || ''}`;
-    
+
     formData.append("latitude", String(latitude));
     formData.append("longitude", String(longitude));
     formData.append("address", fullAddress);
     formData.append("username", user_data.current?.email || "");
     formData.append("state", "OPEN");
-  
+
     try {
       const sessiont = user_data.current?.session_token || "";
       const isCreated = await CreatTicket(sessiont, formData);
-      
+
       if (isCreated) {
         toast.success("Ticket created successfully!");
       } else {
@@ -91,7 +91,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
       toast.error(`Error: ${error.message}`);
     }
   };
-  
+
 
   return (
     <div className={cn("", className)}>
@@ -131,7 +131,7 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
                     textValue={faultType.asset_id}
                   >
                     <div className="flex gap-2 items-center">
-                      <Image
+                      <img
                         src={faultType.assetIcon}
                         alt={faultType.asset_id}
                         width={6}
@@ -166,8 +166,8 @@ export default function CreateTicketForm({ className, useMapboxProp }: Props) {
               type="submit"
               disabled={!isFormValid}
               className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 ${isFormValid
-                  ? "bg-blue-500 text-white hover:bg-blue-600"
-                  : "bg-blue-200 text-white cursor-not-allowed"
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-blue-200 text-white cursor-not-allowed"
                 }`}
             >
               Submit

@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import { uploadProfilePicture } from "@/services/users.service";
-import Image from "next/image";
+
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
@@ -109,7 +109,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
 
       <div className="mb-4 flex flex-col items-center justify-center">
         {data?.picture ? (
-          <Image
+          <img
             src={data?.picture}
             alt="Profile"
             width={24}

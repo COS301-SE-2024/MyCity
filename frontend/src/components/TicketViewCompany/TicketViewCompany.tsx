@@ -5,10 +5,10 @@ import TenderMax from "../Tenders/CompanyTenderMax";
 import CreateBid from "../Tenders/CreateBid";
 import ViewBid from "../Tenders/ViewBid";
 import { useProfile } from "@/hooks/useProfile";
-import { DidBid, getCompanyTenders,getCompanyTicketContract } from "@/services/tender.service";
+import { DidBid, getCompanyTenders, getCompanyTicketContract } from "@/services/tender.service";
 import dynamic from "next/dynamic";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
-import Image from "next/image";
+
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -127,9 +127,8 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     const user_data = await userProfile.getUserProfile();
     const company_name = String(user_data.current?.company_name);
     const user_session = String(user_data.current?.session_token);
-    const rspcontract = await getCompanyTicketContract(company_name,ticket_id,user_session,true);
-    if(rspcontract != null)
-    {
+    const rspcontract = await getCompanyTicketContract(company_name, ticket_id, user_session, true);
+    if (rspcontract != null) {
       setContract(rspcontract);
       setReRender(false);
       setShowTenderMax(true);
@@ -137,7 +136,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
     else {
 
     }
-    
+
   };
 
   const handleBidClick = async () => {
@@ -182,7 +181,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 <div className="absolute top-2 left-2">
                   {urgencyMapping[getUrgency(upvotes)].icon}
                 </div>
-                <Image
+                <img
                   src={municipalityImage}
                   alt="Municipality"
                   width={64}
@@ -203,7 +202,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                 {/* Image Placeholder Logic */}
                 <div className="mb-2 flex justify-center">
                   {!imageError ? (
-                    <Image
+                    <img
                       src={getImageBucketUrl(imageURL)}
                       alt="Fault"
                       width={192}
@@ -230,7 +229,7 @@ const TicketViewCompany: React.FC<TicketViewCompanyProps> = ({
                   </div>
                   <div className="flex flex-col items-center justify-center">
                     <h3 className="font-bold text-sm text-black">Created By</h3>
-                    <Image src={user_picture} alt="Created By" width={48} height={48} className="rounded-full mb-1 w-12 h-12 object-cover" />
+                    <img src={user_picture} alt="Created By" width={48} height={48} className="rounded-full mb-1 w-12 h-12 object-cover" />
                     <p className="text-gray-700 text-sm">{createdBy}</p>
                   </div>
                 </div>

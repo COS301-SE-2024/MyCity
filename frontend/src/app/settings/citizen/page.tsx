@@ -13,7 +13,7 @@ import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import ToggleTheme from "@/components/Theme/ToggleTheme";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
 import LocationPrompt from "@/components/Location/LocationPrompt";
-import Image from "next/image";
+
 
 export default function Settings() {
   const { getUserProfile } = useProfile();
@@ -246,15 +246,13 @@ export default function Settings() {
                     </span>
                   </div>
                   <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      emailNotifications ? "bg-green-400" : "bg-gray-400"
-                    }`}
+                    className={`relative w-12 h-6 rounded-full ${emailNotifications ? "bg-green-400" : "bg-gray-400"
+                      }`}
                     onClick={toggleEmailNotifications}
                   >
                     <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        emailNotifications ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${emailNotifications ? "translate-x-6" : "translate-x-0"
+                        } transition-transform`}
                     ></div>
                   </div>
                 </div>
@@ -272,15 +270,13 @@ export default function Settings() {
                     </span>
                   </div>
                   <div
-                    className={`relative w-12 h-6 rounded-full ${
-                      muteNotifications ? "bg-green-400" : "bg-gray-400"
-                    }`}
+                    className={`relative w-12 h-6 rounded-full ${muteNotifications ? "bg-green-400" : "bg-gray-400"
+                      }`}
                     onClick={toggleMuteNotifications}
                   >
                     <div
-                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                        muteNotifications ? "translate-x-6" : "translate-x-0"
-                      } transition-transform`}
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${muteNotifications ? "translate-x-6" : "translate-x-0"
+                        } transition-transform`}
                     ></div>
                   </div>
                 </div>
@@ -292,42 +288,40 @@ export default function Settings() {
           </div>
         );
 
-        case "SecurityPrivacy":
-          return (
-            <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
-              <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
-              <div className="space-y-4">
-                <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
-                  <div className="flex items-center justify-between p-2 rounded">
-                    <div className="flex items-center">
-                      <MapPin className="h-6 w-6 text-black mr-2" />
-                      <span className="text-lg font-semibold">
-                        Enable Location Access
-                      </span>
-                    </div>
-                    <div
-                      className={`relative w-12 h-6 rounded-full ${
-                        locationAccess ? "bg-green-400" : "bg-gray-400"
-                      }`}
-                      onClick={toggleLocationAccess} // Toggle access
-                    >
-                      <div
-                        className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${
-                          locationAccess ? "translate-x-6" : "translate-x-0"
-                        } transition-transform`}
-                      ></div>
-                    </div>
+      case "SecurityPrivacy":
+        return (
+          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
+            <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
+            <div className="space-y-4">
+              <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
+                <div className="flex items-center justify-between p-2 rounded">
+                  <div className="flex items-center">
+                    <MapPin className="h-6 w-6 text-black mr-2" />
+                    <span className="text-lg font-semibold">
+                      Enable Location Access
+                    </span>
                   </div>
-                  <p className="text-gray-600">
-                    Enable or disable location access for better service recommendations.
-                  </p>
+                  <div
+                    className={`relative w-12 h-6 rounded-full ${locationAccess ? "bg-green-400" : "bg-gray-400"
+                      }`}
+                    onClick={toggleLocationAccess} // Toggle access
+                  >
+                    <div
+                      className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform ${locationAccess ? "translate-x-6" : "translate-x-0"
+                        } transition-transform`}
+                    ></div>
+                  </div>
                 </div>
-  
-                {/* Conditionally render LocationPrompt */}
-                {locationAccess && <LocationPrompt />}
+                <p className="text-gray-600">
+                  Enable or disable location access for better service recommendations.
+                </p>
               </div>
+
+              {/* Conditionally render LocationPrompt */}
+              {locationAccess && <LocationPrompt />}
             </div>
-          );
+          </div>
+        );
 
       case "Accessibility":
         return (
@@ -430,7 +424,7 @@ export default function Settings() {
                 <div className="w-[30%] dark:bg-gray-700 dark:text-white  bg-white bg-opacity-80 rounded-tl-lg rounded-bl-lg shadow-md p-4 ml-6 mt-4">
                   <div className="flex w-full items-center mb-4">
                     {data?.picture ? (
-                      <Image
+                      <img
                         src={data?.picture}
                         alt="Profile"
                         width={12}
@@ -531,7 +525,7 @@ export default function Settings() {
           <div className="dark:bg-gray-700 dark:text-white bg-white bg-opacity-80 rounded-t-lg shadow-md p-4 mb-0">
             <div className="flex items-center mb-4">
               {data?.picture ? (
-                <Image
+                <img
                   src={data?.picture}
                   alt="Profile"
                   width={12}
@@ -551,41 +545,37 @@ export default function Settings() {
             {/* Tabs */}
             <nav className="space-y-2">
               <button
-                className={`w-full text-left py-2 px-4 rounded-t ${
-                  activeTab === "AccountInformation"
+                className={`w-full text-left py-2 px-4 rounded-t ${activeTab === "AccountInformation"
                     ? "bg-gray-200"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
                 onClick={() => setActiveTab("AccountInformation")}
               >
                 Account Information
               </button>
               <button
-                className={`w-full text-left py-2 px-4 ${
-                  activeTab === "Notifications"
+                className={`w-full text-left py-2 px-4 ${activeTab === "Notifications"
                     ? "bg-gray-200"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
                 onClick={() => setActiveTab("Notifications")}
               >
                 Notifications
               </button>
               <button
-                className={`w-full text-left py-2 px-4 ${
-                  activeTab === "SecurityPrivacy"
+                className={`w-full text-left py-2 px-4 ${activeTab === "SecurityPrivacy"
                     ? "bg-gray-200"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
                 onClick={() => setActiveTab("SecurityPrivacy")}
               >
                 Security & Privacy
               </button>
               <button
-                className={`w-full text-left py-2 px-4 rounded-b ${
-                  activeTab === "Accessibility"
+                className={`w-full text-left py-2 px-4 rounded-b ${activeTab === "Accessibility"
                     ? "bg-gray-200"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
                 onClick={() => setActiveTab("Accessibility")}
               >
                 Accessibility

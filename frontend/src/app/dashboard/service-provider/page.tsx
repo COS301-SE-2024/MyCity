@@ -10,7 +10,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle, Image as ImageIcon } from "lucide-react"; // Import ImageIcon from Lucide
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
-import Image from "next/image";
+
 
 export default function Dashboard() {
   const userProfile = useProfile();
@@ -62,7 +62,7 @@ export default function Dashboard() {
           onClick={toggleHelpMenu}
         />
       </div>
-  
+
       {isHelpOpen && (
         <div
           data-testid="help"
@@ -87,7 +87,7 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-  
+
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div
@@ -113,7 +113,7 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-col items-center justify-center text-white text-opacity-80">
             <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-              <Image
+              <img
                 src={companypicture}
                 alt="Description of image"
                 width={20}
@@ -179,13 +179,13 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
-  
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <NavbarCompany unreadNotifications={unreadNotifications} />
         <NavbarMobile />
-        
-  
+
+
         {/* Background Image */}
         <div
           style={{
@@ -202,13 +202,13 @@ export default function Dashboard() {
             zIndex: -1,
           }}
         ></div>
-  
+
         <main className="relative z-10 p-4 pb-16">
-        <h1 className="text-4xl font-bold text-center mb-4 text-white text-opacity-80">Dashboard</h1>
+          <h1 className="text-4xl font-bold text-center mb-4 text-white text-opacity-80">Dashboard</h1>
           {/* Company Logo and Info */}
           <div className="flex flex-col items-center justify-center text-white text-opacity-80 mb-6">
             <div className="w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden mb-4">
-              <Image
+              <img
                 src={companypicture}
                 alt="Company Logo"
                 width={75}
@@ -229,7 +229,7 @@ export default function Dashboard() {
               <span className="text-xl font-bold">{company}</span>
             )}
           </div>
-  
+
           {/* Dropdown and Report Fault Button */}
           <div className="flex items-center justify-between mt-6">
             <div className="relative inline-block text-center items-center justify-center">
@@ -258,7 +258,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-  
+
           {/* Records Table */}
           <div className="mt-8 mb-4">
             {isLoading ? (
@@ -280,5 +280,5 @@ export default function Dashboard() {
       </div>
     </div>
   );
-  
+
 }

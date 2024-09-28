@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
-import Image from "next/image";
+
 
 export default function Home() {
   return (
@@ -79,7 +79,7 @@ export default function Home() {
           }}
         >
           <div className="text-white font-bold ms-2 transform hover:scale-105 mt-5 ml-5 transition-transform duration-200 flex justify-center">
-            <Image
+            <img
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
               alt="MyCity"
               width={256}
@@ -129,7 +129,7 @@ export default function Home() {
               </Link>
             </div>
 
-            
+
           </div>
           <Navbar />
         </div>

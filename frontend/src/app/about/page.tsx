@@ -1,7 +1,7 @@
 "use client";
 
 import Navbar from "@/components/Navbar/Navbar";
-import Image from "next/image";
+
 interface TeamMemberProps {
   name: string;
   title: string;
@@ -162,7 +162,7 @@ export default function About() {
                 >
                   <div className="w-full sm:w-1/4 text-center">
                     <a href={"https://placekit.io/"}>
-                      <Image
+                      <img
                         src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_placekit.webp"
                         alt="Vision"
                         width={100}
@@ -227,265 +227,265 @@ export default function About() {
       </div>
 
       {/* Mobile View */}
-<div className="block sm:hidden">
-  <Navbar showLogin={true} />
+      <div className="block sm:hidden">
+        <Navbar showLogin={true} />
 
-  {/* Background Image */}
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundImage:
-        'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      backgroundAttachment: "fixed",
-      zIndex: -11,
-    }}
-  ></div>
+        {/* Background Image */}
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage:
+              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundAttachment: "fixed",
+            zIndex: -11,
+          }}
+        ></div>
 
-  <main className="relative z-[-10] p-4 mt-0 mb-7">
-    <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
-      <Image
-        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
-        alt="MyCity"
-        width={256}
-        height={256}
-      />
-    </div>
-    
-    {/* Page Title */}
-    <h1 className="text-3xl font-bold text-white mb-6 text-center">
-      About Us
-    </h1>
-
-    {/* What is MyCity Section */}
-    <section className="mb-10">
-      <h2 className="text-2xl font-bold text-white text-center mb-4">
-        What is MyCity?
-      </h2>
-      <Image
-        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/about_1.webp"
-        width={180}
-        height={180}
-        alt="MyCity Vision"
-        className="w-full h-auto rounded-lg mb-4"
-      />
-      <p className="text-white text-sm mb-4">
-        MyCity is a Progressive Web Application (PWA) that seeks to redefine the relationship between citizens, municipalities, and service providers by creating a centralized platform for reporting and tracking municipal faults.
-      </p>
-      <p className="text-white text-sm mb-4">
-        The platform simplifies the process of logging issues like broken streetlights or potholes, providing real-time tracking of reports. It helps municipalities to streamline the process by eliminating duplicate reports and making data-driven decisions.
-      </p>
-    </section>
-
-    {/* Meet The Team Section */}
-    <section className="mb-10">
-      <h2 className="text-2xl font-bold text-white text-center mb-4">
-        Meet The Team
-      </h2>
-      <div className="grid grid-cols-1 gap-6">
-        {/* Dominique */}
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Dominique_Da_Silva.webp"
-            alt="Dominique Da Silva"
-            width={130}
-            height={130}
-            className="w-32 h-32 rounded-full mb-2"
-          />
-          <h3 className="text-lg font-bold text-white">Dominique Da Silva</h3>
-          <p className="text-white text-sm mb-2">Team Leader | Documentation</p>
-          <div className="flex gap-4">
-            <a href="https://github.com/Dominique-Da-Silva">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
-                alt="GitHub"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-            <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
-                alt="LinkedIn"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
+        <main className="relative z-[-10] p-4 mt-0 mb-7">
+          <div className="text-white font-bold transform hover:scale-105 transition-transform duration-200 flex justify-center">
+            <img
+              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
+              alt="MyCity"
+              width={256}
+              height={256}
+            />
           </div>
-        </div>
 
-        {/* Kyle */}
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Kyle_Marshall.webp"
-            alt="Kyle Marshall"
-            width={130}
-            height={130}
-            className="w-32 h-32 rounded-full mb-2"
-          />
-          <h3 className="text-lg font-bold text-white">Kyle Marshall</h3>
-          <p className="text-white text-sm mb-2">UI Engineer | Documentation</p>
-          <div className="flex gap-4">
-            <a href="https://github.com/KyleMarshall23">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
-                alt="GitHub"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-            <a href="https://www.linkedin.com/in/kyle-marshall23/">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
-                alt="LinkedIn"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-          </div>
-        </div>
+          {/* Page Title */}
+          <h1 className="text-3xl font-bold text-white mb-6 text-center">
+            About Us
+          </h1>
 
-        {/* Tino */}
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Tino_Gwanyanya.webp"
-            alt="Tino Gwanyanya"
-            width={130}
-            height={130}
-            className="w-32 h-32 rounded-full mb-2"
-          />
-          <h3 className="text-lg font-bold text-white">Tino Gwanyanya</h3>
-          <p className="text-white text-sm mb-2">
-            Backend Engineer | Integration Engineer
-          </p>
-          <div className="flex gap-4">
-            <a href="https://github.com/Tinogwanz">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
-                alt="GitHub"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-            <a href="https://www.linkedin.com/in/anold-tinotenda-gwanyanya/">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
-                alt="LinkedIn"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-          </div>
-        </div>
+          {/* What is MyCity Section */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-bold text-white text-center mb-4">
+              What is MyCity?
+            </h2>
+            <img
+              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/about_1.webp"
+              width={180}
+              height={180}
+              alt="MyCity Vision"
+              className="w-full h-auto rounded-lg mb-4"
+            />
+            <p className="text-white text-sm mb-4">
+              MyCity is a Progressive Web Application (PWA) that seeks to redefine the relationship between citizens, municipalities, and service providers by creating a centralized platform for reporting and tracking municipal faults.
+            </p>
+            <p className="text-white text-sm mb-4">
+              The platform simplifies the process of logging issues like broken streetlights or potholes, providing real-time tracking of reports. It helps municipalities to streamline the process by eliminating duplicate reports and making data-driven decisions.
+            </p>
+          </section>
 
-        {/* Matthew */}
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Matthew_Els.webp"
-            alt="Matthew Els"
-            width={130}
-            height={130}
-            className="w-32 h-32 rounded-full mb-2"
-          />
-          <h3 className="text-lg font-bold text-white">Matthew Els</h3>
-          <p className="text-white text-sm mb-2">DevOps Engineer | Front-End Engineer | Data Engineer</p>
-          <div className="flex gap-4">
-            <a href="https://github.com/MatthewEls">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
-                alt="GitHub"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-            <a href="https://www.linkedin.com/in/matthewels/">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
-                alt="LinkedIn"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-          </div>
-        </div>
+          {/* Meet The Team Section */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-bold text-white text-center mb-4">
+              Meet The Team
+            </h2>
+            <div className="grid grid-cols-1 gap-6">
+              {/* Dominique */}
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Dominique_Da_Silva.webp"
+                  alt="Dominique Da Silva"
+                  width={130}
+                  height={130}
+                  className="w-32 h-32 rounded-full mb-2"
+                />
+                <h3 className="text-lg font-bold text-white">Dominique Da Silva</h3>
+                <p className="text-white text-sm mb-2">Team Leader | Documentation</p>
+                <div className="flex gap-4">
+                  <a href="https://github.com/Dominique-Da-Silva">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                      alt="GitHub"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/in/DominiqueDaSilva/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                      alt="LinkedIn"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                </div>
+              </div>
 
-        {/* Andinda */}
-        <div className="flex flex-col items-center text-center">
-          <Image
-            src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Andinda_Bakainaga.webp"
-            alt="Andinda Bakainaga"
-            width={130}
-            height={130}
-            className="w-32 h-32 rounded-full mb-2"
-          />
-          <h3 className="text-lg font-bold text-white">Andinda Bakainaga</h3>
-          <p className="text-white text-sm mb-2">Backend Engineer | Documentation</p>
-          <div className="flex gap-4">
-            <a href="https://github.com/Dindosss">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
-                alt="GitHub"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-            <a href="https://www.linkedin.com/in/andinda-bakainaga-b8b011216/">
-              <Image
-                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
-                alt="LinkedIn"
-                width={24}
-                height={24}
-                className="w-6"
-              />
-            </a>
-          </div>
-        </div>
-        {/* In Association With Section */}
-<section className="mb-10">
-  <h2 className="text-2xl font-bold text-white text-center mb-4">
-    In Association With
-  </h2>
-  <div className="flex justify-center gap-6">
-    <a href="https://www.epiuselabs.com/">
-      <Image
-        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_epi-use.webp"
-        alt="Epi-Use"
-        width={180}
-        height={180}
-        className="w-24 h-auto"
-      />
-    </a>
-    <a href="https://www.groupelephant.com/">
-      <Image
-        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_group-elephant.webp"
-        alt="Group Elephant"
-        width={180}
-        height={180}
-        className="w-24 h-auto"
-      />
-    </a>
-  </div>
-</section>
+              {/* Kyle */}
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Kyle_Marshall.webp"
+                  alt="Kyle Marshall"
+                  width={130}
+                  height={130}
+                  className="w-32 h-32 rounded-full mb-2"
+                />
+                <h3 className="text-lg font-bold text-white">Kyle Marshall</h3>
+                <p className="text-white text-sm mb-2">UI Engineer | Documentation</p>
+                <div className="flex gap-4">
+                  <a href="https://github.com/KyleMarshall23">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                      alt="GitHub"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/in/kyle-marshall23/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                      alt="LinkedIn"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                </div>
+              </div>
 
+              {/* Tino */}
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Tino_Gwanyanya.webp"
+                  alt="Tino Gwanyanya"
+                  width={130}
+                  height={130}
+                  className="w-32 h-32 rounded-full mb-2"
+                />
+                <h3 className="text-lg font-bold text-white">Tino Gwanyanya</h3>
+                <p className="text-white text-sm mb-2">
+                  Backend Engineer | Integration Engineer
+                </p>
+                <div className="flex gap-4">
+                  <a href="https://github.com/Tinogwanz">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                      alt="GitHub"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/in/anold-tinotenda-gwanyanya/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                      alt="LinkedIn"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                </div>
+              </div>
+
+              {/* Matthew */}
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Matthew_Els.webp"
+                  alt="Matthew Els"
+                  width={130}
+                  height={130}
+                  className="w-32 h-32 rounded-full mb-2"
+                />
+                <h3 className="text-lg font-bold text-white">Matthew Els</h3>
+                <p className="text-white text-sm mb-2">DevOps Engineer | Front-End Engineer | Data Engineer</p>
+                <div className="flex gap-4">
+                  <a href="https://github.com/MatthewEls">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                      alt="GitHub"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/in/matthewels/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                      alt="LinkedIn"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                </div>
+              </div>
+
+              {/* Andinda */}
+              <div className="flex flex-col items-center text-center">
+                <img
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/profile_Andinda_Bakainaga.webp"
+                  alt="Andinda Bakainaga"
+                  width={130}
+                  height={130}
+                  className="w-32 h-32 rounded-full mb-2"
+                />
+                <h3 className="text-lg font-bold text-white">Andinda Bakainaga</h3>
+                <p className="text-white text-sm mb-2">Backend Engineer | Documentation</p>
+                <div className="flex gap-4">
+                  <a href="https://github.com/Dindosss">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
+                      alt="GitHub"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                  <a href="https://www.linkedin.com/in/andinda-bakainaga-b8b011216/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
+                      alt="LinkedIn"
+                      width={24}
+                      height={24}
+                      className="w-6"
+                    />
+                  </a>
+                </div>
+              </div>
+              {/* In Association With Section */}
+              <section className="mb-10">
+                <h2 className="text-2xl font-bold text-white text-center mb-4">
+                  In Association With
+                </h2>
+                <div className="flex justify-center gap-6">
+                  <a href="https://www.epiuselabs.com/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_epi-use.webp"
+                      alt="Epi-Use"
+                      width={180}
+                      height={180}
+                      className="w-24 h-auto"
+                    />
+                  </a>
+                  <a href="https://www.groupelephant.com/">
+                    <img
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_group-elephant.webp"
+                      alt="Group Elephant"
+                      width={180}
+                      height={180}
+                      className="w-24 h-auto"
+                    />
+                  </a>
+                </div>
+              </section>
+
+            </div>
+          </section>
+        </main>
       </div>
-    </section>
-  </main>
-</div>
 
     </div>
   );
@@ -503,12 +503,11 @@ function TeamMember({
 }: TeamMemberProps) {
   return (
     <div
-      className={`flex p-4 my-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${
-        reverse ? "sm:flex-row-reverse" : "sm:flex-row"
-      } flex-col h-[40vh] overflow-hidden`}
+      className={`flex p-4 my-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${reverse ? "sm:flex-row-reverse" : "sm:flex-row"
+        } flex-col h-[40vh] overflow-hidden`}
     >
       <div className="w-1/4 text-center ">
-        <Image
+        <img
           src={imgSrc}
           alt={name}
           width={130}
@@ -521,7 +520,7 @@ function TeamMember({
         </h5>
         <div className="flex gap-2 justify-center mt-2">
           <a href={github}>
-            <Image
+            <img
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_github.webp"
               alt="GitHub"
               width={24}
@@ -530,7 +529,7 @@ function TeamMember({
             />
           </a>
           <a href={linkedin}>
-            <Image
+            <img
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/logo_linkedin.webp"
               alt="LinkedIn"
               width={24}
@@ -561,12 +560,11 @@ function VisionItem({
 }: VisionItemProps) {
   return (
     <div
-      className={`flex m-4 p-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${
-        reverse ? "sm:flex-row-reverse" : "sm:flex-row"
-      } flex-col sm:h-[33vh] md:h-[50vh] lg:h-[60vh] w-3/4`}
+      className={`flex m-4 p-4 dark:bg-gray-700 dark:text-white bg-gray-100 rounded-3xl items-center ${reverse ? "sm:flex-row-reverse" : "sm:flex-row"
+        } flex-col sm:h-[33vh] md:h-[50vh] lg:h-[60vh] w-3/4`}
     >
       <div className="w-full sm:w-1/4 text-center">
-        <Image
+        <img
           src={image}
           alt="Vision"
           width={100}
@@ -594,7 +592,7 @@ function AssociationLogo({ link, imgSrc }: AssociationLogoProps) {
   return (
     <div className="p-2 w-1/6">
       <a href={link}>
-        <Image src={imgSrc} alt="Association Logo" width={100} height={100} className="w-full h-auto" />
+        <img src={imgSrc} alt="Association Logo" width={100} height={100} className="w-full h-auto" />
       </a>
     </div>
   );

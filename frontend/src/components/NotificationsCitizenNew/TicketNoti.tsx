@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Image as ImageIcon } from "lucide-react";
 import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
-import Image from "next/image";
+
 
 interface TicketNotificationProps {
   ticketNumber: string;
@@ -91,16 +91,16 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
 
         <div className="w-[7%] overflow-hidden flex items-center justify-center bg-gray-200  mr-4 rounded-md">
           {image && !imageError ? (
-            <Image
+            <img
               src={getImageBucketUrl(image)}
               alt="Ticket"
-              width={100}
-              height={100}
+              width={300}
+              height={300}
               className="w-full h-full object-cover overflow-hidden"
               onError={() => setImageError(true)}
             />
           ) : (
-            <ImageIcon size={32} color="#6B7280" />
+            <imgIcon size={32} color="#6B7280" />
           )}
         </div>
 
@@ -130,7 +130,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
                 {municipality_id}
               </div>
               <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <Image
+                <img
                   src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                     municipality_id
                   )}.png`}
@@ -158,16 +158,16 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         <div className="flex justify-center mt-2">
           <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 border border-gray-300 flex items-center justify-center">
             {image && !imageError ? (
-              <Image
+              <img
                 src={getImageBucketUrl(image)}
                 alt="Ticket"
-                width={100}
-                height={100}
+                width={300}
+                height={300}
                 className="w-full h-full object-cover"
                 onError={() => setImageError(true)}
               />
             ) : (
-              <ImageIcon size={24} color="#6B7280" />
+              <imgIcon size={24} color="#6B7280" />
             )}
           </div>
         </div>
