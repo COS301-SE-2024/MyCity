@@ -435,6 +435,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     priority={true}
                     src={getImageBucketUrl(image)}
                     alt="Fault"
+                    width={200}
+                    height={200}
                     className={`rounded-lg object-cover ${loading ? "hidden" : "block"
                       }`}
                     onLoad={() => setLoading(false)} // Set loading to false when image loads
@@ -459,6 +461,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
                   className="h-[50%] border"
+                  width={100}
+                  height={100}
                   alt="Google"
                 />
               </Button>
@@ -513,6 +517,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     municipality_id
                   )}.png`}
                   alt=""
+                  width={100}
+                  height={100}
                 />
               </div>
               <div className="ml-2 text-black">{municipality_id}</div>
@@ -582,6 +588,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 <Image
                   src={getImageBucketUrl(image)}
                   alt="Fault"
+                  width={200}
+                  height={200}
                   className="rounded-lg object-cover w-full h-full"
                   onError={() => setImageError(true)}
                 />
@@ -649,6 +657,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                     municipality_id
                   )}.png`}
                   alt=""
+                  width={100}
+                  height={100}
                 />
               </div>
               <div className="ml-2 text-sm">{municipality_id}</div>

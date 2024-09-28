@@ -56,7 +56,7 @@ const ViewBid: React.FC<TenderProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 max-w-4xl mx-auto flex flex-col lg:flex-row">
       <div className="flex-1 p-4">
-        <Image src={municipalityImage} alt="Municipality" className="w-16 h-16 rounded-full mb-4 mx-auto" />
+        <Image src={municipalityImage} alt="Municipality" width={64} height={64} className="w-16 h-16 rounded-full mb-4 mx-auto" />
         <h2 className="text-xl font-bold mb-2 text-center">Fault #{tendernumber}</h2>
         <p className="text-lg font-semibold mb-2 text-center">{title}</p>
         <p className="text-md mb-4 text-center">{description}</p>

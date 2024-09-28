@@ -276,6 +276,8 @@ const CreateTicketMobile: React.FC = () => {
                     <Image
                       src={faultType.assetIcon}
                       alt={faultType.asset_id}
+                      width={24}
+                      height={24}
                       className="flex-shrink-0 w-6 h-6"
                     />
                     <span className="text-small">{faultType.asset_id}</span>
@@ -324,6 +326,8 @@ const CreateTicketMobile: React.FC = () => {
                 <Image
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                   alt="Camera Icon"
+                  width={40}
+                  height={40}
                   className="h-10 w-10"
                 />
               </div>
@@ -348,6 +352,8 @@ const CreateTicketMobile: React.FC = () => {
                         <Image
                           src={String(selectedImage)}
                           alt="Uploaded"
+                          width={100}
+                          height={100}
                           style={{ maxWidth: "50%", height: "auto" }}
                         />
                       </div>

@@ -181,7 +181,7 @@ const ImageWithLoader: React.FC<{ src: string; alt: string }> = ({
           />
         </div>
       )}
-      <Image
+      <img
         src={src}
         alt={alt}
         className="w-full h-full object-cover rounded-full"

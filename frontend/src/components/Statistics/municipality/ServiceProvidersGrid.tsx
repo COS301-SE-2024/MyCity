@@ -88,6 +88,8 @@ const ServiceProvidersGrid = ({
                     provider.substring(0, provider.length - 10)
                   )}.png`}
                   alt={`${provider} logo`}
+                  width={100}
+                  height={100}
                   className="w-[50%] mb-2 object-contain rounded-full"
                 />
               ) : (
@@ -96,6 +98,8 @@ const ServiceProvidersGrid = ({
                     provider
                   )}.webp`}
                   alt={`${provider} logo`}
+                  width={100}
+                  height={100}
                   className="w-[50%] mb-2 object-contain rounded-full"
                 />
               )}

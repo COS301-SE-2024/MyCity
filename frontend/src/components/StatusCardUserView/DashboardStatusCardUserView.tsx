@@ -184,7 +184,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             <div className="absolute top-2 left-2">
               {urgencyMapping[getUrgency(viewCount)].icon}
             </div>
-            <Image src={municipalityImage} alt="Municipality" className="w-16 h-16 mb-2 rounded-full" />
+            <Image src={municipalityImage} alt="Municipality" width={64} height={64} className="w-16 h-16 mb-2 rounded-full" />
             <div className="flex items-center justify-center mb-2">
               <div className={`flex items-center ${getStatusColor()} border-2 rounded-full px-2 py-1`}>
                 <span className="ml-1">{status}</span>
@@ -200,7 +200,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {image && (
               <div className="mb-2 flex justify-center">
-                <Image src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-48 h-36 object-cover" />
+                <Image src={getImageBucketUrl(image)} alt="Fault" width={192} height={144} className="rounded-lg w-48 h-36 object-cover" />
               </div>
             )}
 
@@ -248,7 +248,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
               <div className="flex flex-col items-center justify-center">
                 <h3 className="font-bold text-md">Created By</h3>
-                <Image src="https://via.placeholder.com/40" alt="Created By" className="rounded-full mb-1" />
+                <Image src="https://via.placeholder.com/40" alt="Created By" width={50} height={50} className="rounded-full mb-1" />
                 <p className="text-gray-700 text-sm">{createdBy}</p>
               </div>
             </div>

@@ -146,7 +146,7 @@ const StatusCardUserView: React.FC<StatusCardUserViewProps> = ({
           {/* Image and Stats Section */}
           <div className="flex justify-center items-center mb-4">
             <div className="mb-4 text-center">
-              <Image src={getImageBucketUrl(image)} alt="Fault" className="rounded-lg w-72 h-54" />
+              <Image src={getImageBucketUrl(image)} alt="Fault" width={300} height={280} className="rounded-lg w-72 h-54" />
             </div>
             <div className="flex flex-col items-center ml-4">
               <div className="flex flex-col items-center mb-4">

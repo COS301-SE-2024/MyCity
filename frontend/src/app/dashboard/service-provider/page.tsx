@@ -211,6 +211,8 @@ export default function Dashboard() {
               <Image
                 src={companypicture}
                 alt="Company Logo"
+                width={75}
+                height={75}
                 className="w-full h-full object-cover"
               />
             </div>
