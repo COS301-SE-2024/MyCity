@@ -39,23 +39,23 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
       initializedMap.on("load", () => {
         mapInstanceRef.current = initializedMap;
         setMap(mapInstanceRef.current); // save the map instance in context only after it"s fully loaded
+
+        if (faultMarkers) {
+          addFaultMarkers(initializedMap, faultMarkers);
+        }
+        else {
+          if (dropMarker) {
+            new mapboxgl.Marker()
+              .setLngLat([centerLng, centerLat])
+              .addTo(initializedMap);
+          }
+
+          if (addNavigationControl) {
+            // Add navigation controls (zoom and rotation)
+            initializedMap.addControl(new mapboxgl.NavigationControl());
+          }
+        }
       });
-
-      if (faultMarkers) {
-        addFaultMarkers(initializedMap, faultMarkers);
-      }
-      else {
-        if (dropMarker) {
-          new mapboxgl.Marker()
-            .setLngLat([centerLng, centerLat])
-            .addTo(initializedMap);
-        }
-
-        if (addNavigationControl) {
-          // Add navigation controls (zoom and rotation)
-          initializedMap.addControl(new mapboxgl.NavigationControl());
-        }
-      }
 
       // cleanup the map on component unmount
       return () => {
