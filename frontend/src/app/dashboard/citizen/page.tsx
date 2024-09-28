@@ -97,18 +97,13 @@ export default function CitizenDashboard({
         setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
         const user_email = String(user_id).toLowerCase();
-        const rspmostupvotes = await getMostUpvote(user_session, true);
-        const rspwatchlist = await getWatchlistTickets(
-          user_email,
-          user_session,
-          true
-        );
         const municipality = user_data.current?.municipality;
-        const rspmunicipality = await getTicketsInMunicipality(
-          municipality,
-          user_session,
-          true
-        );
+
+        const [rspmostupvotes, rspwatchlist, rspmunicipality] = await Promise.all([
+          getMostUpvote(user_session, true),
+          getWatchlistTickets(user_email, user_session, true),
+          getTicketsInMunicipality(municipality, user_session, true),
+        ]);
 
         // Preload images for all the fetched results
         const imagesToPreload = [
@@ -142,11 +137,13 @@ export default function CitizenDashboard({
 
   const preloadImages = (srcs: string[]) => {
     srcs.forEach((src) => {
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "image";
-      link.href = src;
-      document.head.appendChild(link);
+      if (src) {
+        const link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "image";
+        link.href = src;
+        document.head.appendChild(link);
+      }
     });
   };
 
@@ -359,11 +356,11 @@ export default function CitizenDashboard({
                           />
                         ) : (
                           <div
-                              className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
-                              style={{ transform: "translateY(2vh)" }}
-                            >
-                              There are no faults to display.
-                            </div>
+                            className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
+                            style={{ transform: "translateY(2vh)" }}
+                          >
+                            There are no faults to display.
+                          </div>
                         )}
                       </Tab>
 
@@ -393,11 +390,11 @@ export default function CitizenDashboard({
                           />
                         ) : (
                           <div
-                              className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
-                              style={{ transform: "translateY(2vh)" }}
-                            >
-                              There are no faults to display.
-                            </div>
+                            className="flex items-center justify-center text-center text-white text-opacity-60 text-sm z-50"
+                            style={{ transform: "translateY(2vh)" }}
+                          >
+                            There are no faults to display.
+                          </div>
                         )}
                       </Tab>
                     </Tabs>
