@@ -159,7 +159,7 @@ const TenderMax : React.FC<TenderType> = ({
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
               {/* <div className="absolute top-7 left-2">
-                <Image src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
+                <Image src="https://via.placeholder.com/50" width={40} height={40} alt={municipality} className="w-10 h-10 rounded-full mb-2" />
               </div> */}
               <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
               <div className={`px-2 py-1 rounded-full text-sm text-black border-2 mb-2 ${statusStyles[getStatus()]}`}>

@@ -51,7 +51,24 @@ const withPWA = nextPWA({
 
 const nextConfig = {
     images: {
-        domains: ["mycity-storage-bucket.s3.eu-west-1.amazonaws.com", "github.com", "i.imgur.com", "via.placeholder.com"],
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "mycity-storage-bucket.s3.eu-west-1.amazonaws.com",
+            },
+            {
+                protocol: "https",
+                hostname: "github.com",
+            },
+            {
+                protocol: "https",
+                hostname: "i.imgur.com",
+            },
+            {
+                protocol: "https",
+                hostname: "via.placeholder.com",
+            },
+        ],
     },
     env: {
         USER_POOL_ID: process.env.NEXT_PUBLIC_USER_POOL_ID,
@@ -62,7 +79,6 @@ const nextConfig = {
         AWS_REGION: process.env.NEXT_PUBLIC_AWS_REGION,
         AWS_ACCESS_KEY_ID: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
         AWS_SECRET_ACCESS_KEY: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-
 
         FIREBASE_VAPID_KEY: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -75,7 +91,6 @@ const nextConfig = {
 
         NODEAPI_URL: process.env.NEXT_PUBLIC_NODEAPI_URL,
         S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME
-
     },
     webpack(config) {
         // SVG handling configuration

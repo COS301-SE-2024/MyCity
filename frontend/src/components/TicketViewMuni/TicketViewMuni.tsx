@@ -312,6 +312,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                         <Image
                           src={getImageBucketUrl(imageURL)}
                           alt="Fault"
+                          width={200}
+                          height={200}
                           className={`rounded-lg w-full h-full object-cover ${
                             loadingImage ? "hidden" : "block"
                           }`}
@@ -384,6 +386,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       <Image
                         src={user_picture}
                         alt="Created By"
+                        width={50}
+                        height={50}
                         className="rounded-full mb-1 object-cover w-10 h-10"
                         onError={(e) => {
                           e.currentTarget.src =
