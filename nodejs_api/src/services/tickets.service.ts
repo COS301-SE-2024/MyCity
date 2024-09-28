@@ -3,6 +3,7 @@ import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
+import WebSocket from "ws";
 
 interface Ticket {
     dateClosed: string;
@@ -112,12 +113,22 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         Item: watchlistItem,
     }));
 
-    // After accepting
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    ws.on("open", () => {
+        console.log(municipalityId);
+        const message = JSON.stringify({ action: "createticket", body: municipalityId });
+        ws.send(message);
+    });
+
+    // after accepting
     const accResponse = {
         message: "Ticket created successfully",
         ticket_id: ticketId,
         watchlist_id: watchlistId,
     };
+
+    ws.close();
 
     return accResponse;
 };
@@ -309,18 +320,9 @@ export const getWatchlist = async (userId: string) => {
 
             if (ticketsItems && ticketsItems.length > 0) {
                 await updateCommentCounts(ticketsItems);
-            } else {
-                const errorResponse = {
-                    Error: {
-                        Code: "Inconsistency",
-                        Message: "Inconsistency in ticket_id",
-                    }
-                };
-                throw new Error(JSON.stringify(errorResponse));
+                await getUserProfile(ticketsItems);
+                collective.push(...ticketsItems);
             }
-
-            await getUserProfile(ticketsItems);
-            collective.push(...ticketsItems);
         }
         return collective;
     } else {
@@ -656,7 +658,7 @@ export const getCompanyTickets = async (companyname: string) => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 16 // limit result set to the top 16 items
     }));
 
     const topItems = response.Items || [];
@@ -692,7 +694,7 @@ export const getOpenCompanyTickets = async (): Promise<any> => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 16 // limit result set to the top 16 items
     }));
 
     const topItems = response.Items || [];

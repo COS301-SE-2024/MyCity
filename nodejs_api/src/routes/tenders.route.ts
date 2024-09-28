@@ -17,6 +17,6 @@ router.get("/getmunicipalitytenders", tendersController.getTicketTender);
 router.get("/getcontracts", tendersController.getContracts);
 router.get("/getmunicontract", tendersController.getMuniContract);
 router.get("/getcompanycontracts", tendersController.getCompanyContracts);
-router.get("/getcompanycontractbyticket ", tendersController.getCompanyContractByTicket);
+router.get("/getcompanycontractbyticket", tendersController.getCompanyContractByTicket);
 
 export default router;
