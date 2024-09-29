@@ -440,6 +440,71 @@ describe("tenders controller controller", () => {
 
 
     describe("doneContract", () => {
+        it("should return 400 if required fields are missing", async () => {
+            req.body = { company_id: "1" }; // Missing fields
+            await tendersController.doneContract(req as Request, res as Response);
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                Error: "Missing parameter(s): contract_id",
+            });
+        });
+    
+        it("should call tendersService.doneContract and return 200 on success", async () => {
+            req.body = {
+                company_id: "1",
+                contract_id: "123",
+            };
+            const serviceResponse = { success: true };
+            (tendersService.doneContract as jest.Mock).mockResolvedValue(serviceResponse);
+    
+            await tendersController.doneContract(req as Request, res as Response);
+    
+            expect(tendersService.doneContract).toHaveBeenCalledWith(req.body);
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(serviceResponse);
+        });
+    
+        it("should handle NotFoundError", async () => {
+            req.body = {
+                company_id: "1",
+                contract_id: "123",
+            };
+            const error = new NotFoundError("Contract not found");
+            (tendersService.doneContract as jest.Mock).mockRejectedValue(error);
+    
+            await tendersController.doneContract(req as Request, res as Response);
+    
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({ Error: "Contract not found" });
+        });
+    
+        it("should handle BadRequestError", async () => {
+            req.body = {
+                company_id: "1",
+                contract_id: "123",
+            };
+            const error = new BadRequestError("Invalid input");
+            (tendersService.doneContract as jest.Mock).mockRejectedValue(error);
+    
+            await tendersController.doneContract(req as Request, res as Response);
+    
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ Error: "Invalid input" });
+        });
+    
+        it("should handle unexpected errors", async () => {
+            req.body = {
+                company_id: "1",
+                contract_id: "123",
+            };
+            const error = new Error("Unexpected error");
+            (tendersService.doneContract as jest.Mock).mockRejectedValue(error);
+    
+            await tendersController.doneContract(req as Request, res as Response);
+    
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: "Unexpected error" });
+        });
     });
 
 
