@@ -163,7 +163,7 @@ describe("tickets controller - getFaultTypes", () => {
     });
 
 
-    
+
     describe("acceptTicket", () => {
         test("should return 400 if required fields are missing", async () => {
             req.body = {}; // Missing ticket_id
@@ -230,6 +230,40 @@ describe("tickets controller - getFaultTypes", () => {
             (ticketsService.closeTicket as jest.Mock).mockRejectedValue(mockError);
 
             await ticketsController.closeTicket(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
+    });
+
+
+    describe("getMyTickets", () => {
+        test("should return 400 if username is missing", async () => {
+            req.query = {}; // No username
+
+            await ticketsController.getMyTickets(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ Error: "Missing parameter: username" });
+        });
+
+        test("should return 200 and call service on success", async () => {
+            req.query = { username: "user1" };
+            const mockResult = [{ ticket_id: 1, description: "test ticket" }];
+            (ticketsService.getMyTickets as jest.Mock).mockResolvedValue(mockResult);
+
+            await ticketsController.getMyTickets(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+
+        test("should return 500 on internal server error", async () => {
+            req.query = { username: "user1" };
+            const mockError = new Error("Internal server error");
+            (ticketsService.getMyTickets as jest.Mock).mockRejectedValue(mockError);
+
+            await ticketsController.getMyTickets(req as Request, res as Response);
 
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
