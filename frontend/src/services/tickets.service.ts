@@ -401,6 +401,7 @@ export async function CreatTicket(sessiont: string, formData: FormData): Promise
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
+            "Content-Type": "multipart/form-data",
             "Authorization": `Bearer ${sessiont}`,
         },
         body: formData,
