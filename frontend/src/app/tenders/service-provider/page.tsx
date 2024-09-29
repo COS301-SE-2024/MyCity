@@ -219,7 +219,7 @@ export default function MuniTenders() {
                     "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md group-data-[selected=true]:bg-white group-data-[selected=true]:bg-opacity-60 group-data-[selected=true]:text-black",
                 }}
               >
-                <Tab key={0} title="Open Tickets">
+                <Tab key={0} title="Taking Tenders">
                   {loadingTabs.openTickets ? (
                     <div className="flex justify-center items-center h-64">
                       <ThreeDots

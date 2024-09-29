@@ -3,7 +3,6 @@ import { Image as ImageIcon } from "lucide-react";
 import FaultCardUserView from "../FaultCardUserView/FaultCardUserView";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
 
-
 interface TicketNotificationProps {
   ticketNumber: string;
   image: string;
@@ -82,64 +81,53 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
 
   return (
     <>
-      {/* Desktop View */}
       <div
-        className="hidden sm:flex items-center justify-center w-[95%] shadow h-full text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
+        className="hidden sm:flex items-center justify-between w-full max-w-[95%] shadow-lg h-full text-black bg-white bg-opacity-70 rounded-3xl p-4 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors"
         onClick={handleNotificationClick}
       >
-        <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`} />
+        {/* Fault and Image Section */}
+        <div className="flex items-center w-[30%] gap-4">
+          {/* Image Circle */}
+          <div className="flex-shrink-0 flex items-center justify-center bg-gray-200 rounded-full overflow-hidden w-10 h-10">
+            {image && !imageError ? (
+              <img
+                src={getImageBucketUrl(image)}
+                alt="Ticket"
+                className="w-full h-full object-cover rounded-full"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <ImageIcon size={32} color="#6B7280" />
+            )}
+          </div>
 
-        <div className="w-[7%] overflow-hidden flex items-center justify-center bg-gray-200  mr-4 rounded-md">
-          {image && !imageError ? (
-            <img
-              src={getImageBucketUrl(image)}
-              alt="Ticket"
-              width={300}
-              height={300}
-              className="w-full h-full object-cover overflow-hidden"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <ImageIcon size={32} color="#6B7280" />
-          )}
+          {/* Fault Details */}
+          <div className="flex flex-col justify-center">
+            <div className="text-lg font-bold truncate">{title}</div>
+            <div className="text-sm text-gray-600 truncate">{ticketNumber}</div>
+          </div>
         </div>
 
-        <div className="flex-1 text-center overflow-hidden whitespace-nowrap">
-          <div className="flex gap-6 text-sm inline-block w-full h-full ">
+        {/* Action Section */}
+        <div className="flex w-[30%] justify-center text-center text-md font-semibold">
+          {getActionText()}.
+        </div>
 
-            <div className="flex flex-col h-full w-[25%] " >
-              {/*Fault Type*/}
-              <div className="flex lg:text-xl md:text-lg font-bold">
-                {title}
-              </div>
-              {/*Ticket ID*/}
-              <div className="flex lg:text-md md:text-sm font-bold">
-                {ticketNumber}
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-2  w-[50%]">
-              <div className="flex h-full lg:text-lg md:text-md font-bold justify-center items-center text-center">
-                {getActionText()}.
-              </div>
-            </div>
-
-            {/* Fault's Municipality */}
-            <div className="flex items-center justify-end gap-2  w-[30%]">
-              <div className="lg:text-md md:text-sm font-bold">
-                {municipality_id}
-              </div>
-              <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <img
-                  src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                    municipality_id
-                  )}.png`}
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </div>
-            </div>
+        {/* Municipality Section */}
+        <div className="flex w-[30%] items-center justify-end gap-4">
+          {/* Municipality Name */}
+          <div className="text-sm font-bold truncate text-right">
+            {municipality_id}
+          </div>
+          {/* Municipality Logo */}
+          <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden bg-gray-200 border border-gray-300 flex items-center justify-center">
+            <img
+              src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                municipality_id
+              )}.png`}
+              alt="Municipality Logo"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>
@@ -161,8 +149,6 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
               <img
                 src={getImageBucketUrl(image)}
                 alt="Ticket"
-                width={300}
-                height={300}
                 className="w-full h-full object-cover"
                 onError={() => setImageError(true)}
               />

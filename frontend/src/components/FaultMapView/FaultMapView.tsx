@@ -17,6 +17,7 @@ export default function FaultMapView() {
   const [loading, setLoading] = useState(true);
   const { addFaultMarkers, mapInstance } = useMapbox();
   const [faultGeoData, setFaultGeoData] = useState<FaultGeoData[]>([]);
+  
 
   useEffect(() => {
     const getFaultData = async () => {
@@ -63,17 +64,27 @@ export default function FaultMapView() {
             <div className="w-full md:w-1/6 p-6 bg-white bg-opacity-80 flex flex-col justify-center">
               <h2 className="text-xl font-bold mb-4 text-center">Key</h2>
               <div className="flex items-center mb-4">
-                <div className="w-6 h-6 rounded-full bg-red-700 mr-4"></div>
+                <div
+                  className="w-6 h-6 rounded-full mr-4"
+                  style={{ backgroundColor: "#FF69B4" }} // Pink (Urgent)
+                ></div>
                 <span className="text-lg">Urgent</span>
               </div>
               <div className="flex items-center mb-4">
-                <div className="w-6 h-6 rounded-full bg-yellow-600 mr-4"></div>
+                <div
+                  className="w-6 h-6 rounded-full mr-4"
+                  style={{ backgroundColor: "#FFD700" }} // Yellow (Semi-urgent)
+                ></div>
                 <span className="text-lg">Semi-urgent</span>
               </div>
               <div className="flex items-center mb-4">
-                <div className="w-6 h-6 rounded-full bg-green-700 mr-4"></div>
+                <div
+                  className="w-6 h-6 rounded-full mr-4"
+                  style={{ backgroundColor: "#00CED1" }} // Blue (Non-urgent)
+                ></div>
                 <span className="text-lg">Non-urgent</span>
               </div>
+
               <div className="mt-6 text-center">
                 <h2 className="text-lg font-bold">Faults Pinned</h2>
                 {loading ? (
@@ -98,7 +109,6 @@ export default function FaultMapView() {
       <div className="block sm:hidden">
         <div className="flex items-center justify-center h-full px-4">
           <div className="flex flex-col md:flex-row w-full max-w-7xl h-[55vh] bg-white bg-opacity-80 rounded-lg shadow-lg overflow-hidden">
-
             {/* Map Section */}
             <div className="w-full md:w-5/6 flex-grow rounded-lg bg-blue-100">
               <MapboxMap zoom={6} centerOnMuni={true} />

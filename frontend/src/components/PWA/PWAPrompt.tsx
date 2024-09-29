@@ -29,8 +29,8 @@ export default function PWAPrompt({ onInstall, onCancel }: PWAPromptProps) {
               <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/installl_pwa.webp"
                 alt="Install Logo"
-                width={400}
-                height={400}
+                width={200}
+                height={200}
               />
             </div>
             <h1 className="text-2xl font-bold mb-4 text-center">

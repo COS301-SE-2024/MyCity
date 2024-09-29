@@ -64,8 +64,8 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
   return (
     <div>
       {/* Desktop View */}
-      <div className="hidden sm:block">
-        <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center z-1 justify-between">
+      <div className="hidden sm:block z-5556">
+        <nav className="z-5556 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
           <Link href="/">
             <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
               <img
