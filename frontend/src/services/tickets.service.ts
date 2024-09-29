@@ -396,8 +396,8 @@ export async function getFaultTypes(revalidate?: boolean) {
 }
 
 export async function CreatTicket(sessiont: string, formData: FormData): Promise<boolean> {
-    console.log(sessiont);
-    const apiURL = "/api/tickets/create";
+    const API_BASE_URL = process.env.API_BASE_URL;
+    const apiURL = `${API_BASE_URL}/api/tickets/create`;
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
