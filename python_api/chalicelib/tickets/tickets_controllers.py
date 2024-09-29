@@ -190,6 +190,7 @@ def create_ticket(request):
             "upvotes": 0,
             "viewcount": 0,
             "ticketnumber": ticketnumber,
+            "updatedAt": formatted_datetime,
         }
 
         # Put the ticket item into the tickets table
