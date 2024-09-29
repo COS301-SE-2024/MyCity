@@ -48,12 +48,10 @@ export default function CitizenDashboard({
 
   const refreshwatchlist = async () => {
     try {
-      console.log("Refresh inside");
       const user_data = await userProfile.getUserProfile();
       const user_id = user_data.current?.email ?? "";
       const user_email = String(user_id).toLowerCase();
       const user_session = String(user_data.current?.session_token);
-      console.log("User Session", user_session);
       const rspwatchlist = await getWatchlistTickets(
         user_email,
         user_session,
@@ -95,7 +93,6 @@ export default function CitizenDashboard({
       try {
         const user_data = await userProfile.getUserProfile();
         const user_id = user_data.current?.email ?? "";
-        setUserEmail(user_id);
         const user_session = String(user_data.current?.session_token);
         const user_email = String(user_id).toLowerCase();
         const municipality = user_data.current?.municipality;

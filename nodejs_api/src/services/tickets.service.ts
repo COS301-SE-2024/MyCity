@@ -91,6 +91,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         upvotes: 0,
         viewcount: 0,
         ticketnumber: ticketNumber,
+        updatedAt : formattedDatetime,
     };
 
     // Put the ticket item into the tickets table
