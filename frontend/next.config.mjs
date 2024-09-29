@@ -89,7 +89,6 @@ const nextConfig = {
         FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         FIREBASE_MEASUREMENT_ID: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 
-        NODEAPI_URL: process.env.NEXT_PUBLIC_NODEAPI_URL,
         S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME
     },
     webpack(config) {
