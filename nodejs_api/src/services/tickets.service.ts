@@ -497,16 +497,16 @@ export const getMostUpvoted = async () => {
 
     const topItems: Ticket[] = [];
     // combine the top items from each state to get a total of 25 items
-    Promise.allSettled(promises).then((results) => {
-        results.forEach((result, index) => {
-            if (result.status === "fulfilled") {
-                const items = result.value.Items as Ticket[] || [];
-                topItems.push(...items);
-            }
-            else {
-                console.error(`Promise ${index} failed with error: ${result.reason}`);
-            }
-        });
+    const results = await Promise.allSettled(promises);
+
+    results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+            const items = result.value.Items as Ticket[] || [];
+            topItems.push(...items);
+        }
+        else {
+            console.error(`Promise ${index} failed with error: ${result.reason}`);
+        }
     });
 
     if (topItems.length > 0) {
