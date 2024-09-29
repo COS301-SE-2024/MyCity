@@ -206,5 +206,5 @@ export default function Promt_Popup({ userEmail }: NotificationPromtProps) {
         </div>
       </div>
     </div>
-  ) : null;
+  ) : undefined;
 }

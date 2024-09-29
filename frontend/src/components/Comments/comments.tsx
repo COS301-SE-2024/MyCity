@@ -33,7 +33,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         throw new Error("USER_POOL_ID is not defined");
       }
 
-      const enrichedComments = await Promise.all(commentsData.map(async (comment: any) => {
+      const enrichedComments = await Promise.allSettled(commentsData.map(async (comment: any) => {
         const userAttributes = await getUserFirstLastName(comment.user_id, userPoolId);
         return {
           ...comment,
@@ -43,7 +43,9 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         };
       }));
 
-      setComments(enrichedComments);
+      const fulfilledComments = enrichedComments.filter((comment: any) => comment.status === "fulfilled").map((comment: any) => comment.value);
+
+      setComments(fulfilledComments);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching comments:", error);

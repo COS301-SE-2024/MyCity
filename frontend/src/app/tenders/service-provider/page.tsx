@@ -56,13 +56,25 @@ export default function MuniTenders() {
       const user_company = String(user_data.current?.company_name);
       const user_session = String(user_data.current?.session_token);
 
-      const [rspmostupvotes, rsptenders] = await Promise.all([
+      const promises = [
         getOpenCompanyTickets(user_session),
         getCompanyTenders(user_company, user_session, true),
-      ]);
-      setOpenTickets(rspmostupvotes);
-      console.log(rsptenders);
-      setMytenders(rsptenders);
+      ];
+
+      const results = await Promise.allSettled(promises);
+
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          if (index === 0) {
+            const rspmostupvotes = result.value;
+            setOpenTickets(rspmostupvotes);
+          } else if (index === 1) {
+            const rsptenders = result.value;
+            setMytenders(rsptenders);
+          }
+        }
+      });
+
       // You could handle fetching for "closedTenders" similarly if needed
     } catch (error) {
       console.error("Error fetching data:", error);

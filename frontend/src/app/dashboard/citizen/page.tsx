@@ -11,7 +11,6 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
-import LocationPrompt from "@/components/Location/LocationPrompt";
 import {
   getMostUpvote,
   getTicket,
@@ -23,6 +22,7 @@ import NotificationPromt from "@/components/Notifications/NotificationPromt";
 import { DashboardTicket } from "@/types/custom.types";
 
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
+import LocationPermissionModal from "@/components/Location/LocationPermissionModal";
 
 interface CitizenDashboardProps {
   searchParams: any;
@@ -75,13 +75,14 @@ export default function CitizenDashboard({
     };
 
     const getDeeplinkTicket = async () => {
-      const user_data = await userProfile.getUserProfile();
-      const userSession = String(user_data.current?.session_token);
       //check if the ticket id query parameter is present
       if (!deeplinkTicketId) {
         //return if not present
         return;
       }
+
+      const user_data = await userProfile.getUserProfile();
+      const userSession = String(user_data.current?.session_token);
 
       //get the ticket
       const deepTicket = await getTicket(deeplinkTicketId, userSession);
@@ -99,30 +100,30 @@ export default function CitizenDashboard({
         const user_email = String(user_id).toLowerCase();
         const municipality = user_data.current?.municipality;
 
-        const [rspmostupvotes, rspwatchlist, rspmunicipality] = await Promise.all([
-          getMostUpvote(user_session, true),
+        const promises = [
           getWatchlistTickets(user_email, user_session, true),
+          getMostUpvote(user_session, true),
           getTicketsInMunicipality(municipality, user_session, true),
-        ]);
+        ];
 
-        // Preload images for all the fetched results
-        // const imagesToPreload = [
-        //   ...rspmostupvotes,
-        //   ...rspwatchlist,
-        //   ...rspmunicipality,
-        // ].map((item) => item.image);
+        const results = await Promise.allSettled(promises);
 
-        // preloadImages(imagesToPreload);
+        results.forEach((result, index) => {
+          if (result.status === "fulfilled") {
+            if (index === 0) {
+              setDashWatchResults(
+                result.value.length > 0 ? result.value : []
+              );
+            } else if (index === 1) {
+              setMostUpvoteResults(
+                result.value.length > 0 ? result.value : []
+              );
+            } else if (index === 2) {
+              setDashMuniResults(result.value.length > 0 ? result.value : []);
+            }
+          }
+        });
 
-        console.log("Upvotes", rspmostupvotes);
-
-        setMostUpvoteResults(rspmostupvotes);
-
-        console.log(Array.isArray(rspmunicipality) ? rspmunicipality : []);
-        setDashMuniResults(
-          Array.isArray(rspmunicipality) ? rspmunicipality : []
-        );
-        setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -134,18 +135,6 @@ export default function CitizenDashboard({
     getDeeplinkTicket();
     fetchData();
   }, []);
-
-  // const preloadImages = (srcs: string[]) => {
-  //   srcs.forEach((src) => {
-  //     if (src) {
-  //       const link = document.createElement("link");
-  //       link.rel = "preload";
-  //       link.as = "image";
-  //       link.href = src;
-  //       document.head.appendChild(link);
-  //     }
-  //   });
-  // };
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -409,7 +398,7 @@ export default function CitizenDashboard({
 
                   <Tab key={2} title="Map">
                     <div className="flex justify-center z-50 pt-8">
-                      <LocationPrompt />
+                      <LocationPermissionModal />
                     </div>
                     <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
                       Faults Near You
@@ -602,7 +591,7 @@ export default function CitizenDashboard({
 
                   <Tab key={2} title="Map">
                     <div className="flex justify-center z-50 pt-8">
-                      <LocationPrompt />
+                      <LocationPermissionModal />
                     </div>
                     <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
                       Faults Near You
