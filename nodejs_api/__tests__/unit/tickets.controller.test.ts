@@ -237,6 +237,8 @@ describe("tickets controller - getFaultTypes", () => {
     });
 
 
+
+
     describe("getMyTickets", () => {
         test("should return 400 if username is missing", async () => {
             req.query = {}; // No username
@@ -264,6 +266,40 @@ describe("tickets controller - getFaultTypes", () => {
             (ticketsService.getMyTickets as jest.Mock).mockRejectedValue(mockError);
 
             await ticketsController.getMyTickets(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
+    });
+
+
+    describe("getOpenTicketsInMunicipality", () => {
+        test("should return 400 if municipality is missing", async () => {
+            req.query = {}; // No municipality
+
+            await ticketsController.getOpenTicketsInMunicipality(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ Error: "Missing parameter: municipality" });
+        });
+
+        test("should return 200 and call service on success", async () => {
+            req.query = { municipality: "Test Municipality" };
+            const mockResult = [{ ticket_id: 1, description: "test ticket" }];
+            (ticketsService.getOpenTicketsInMunicipality as jest.Mock).mockResolvedValue(mockResult);
+
+            await ticketsController.getOpenTicketsInMunicipality(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+
+        test("should return 500 on internal server error", async () => {
+            req.query = { municipality: "Test Municipality" };
+            const mockError = new Error("Internal server error");
+            (ticketsService.getOpenTicketsInMunicipality as jest.Mock).mockRejectedValue(mockError);
+
+            await ticketsController.getOpenTicketsInMunicipality(req as Request, res as Response);
 
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
