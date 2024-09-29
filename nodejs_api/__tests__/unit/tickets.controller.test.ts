@@ -127,7 +127,40 @@ describe("tickets controller - getFaultTypes", () => {
     });
 
 
-    
+    describe("addWatchlist", () => {
+        test("should return 400 if required fields are missing", async () => {
+            req.body = { username: "user" }; // Missing ticket_id
+
+            await ticketsController.addWatchlist(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                Error: "Missing parameter(s): ticket_id",
+            });
+        });
+
+        test("should return 200 and add to watchlist on valid input", async () => {
+            req.body = { username: "user", ticket_id: "123" };
+            const mockResult = { message: "Watchlist updated" };
+            (ticketsService.addWatchlist as jest.Mock).mockResolvedValue(mockResult);
+
+            await ticketsController.addWatchlist(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+
+        test("should return 500 on internal server error", async () => {
+            req.body = { username: "user", ticket_id: "123" };
+            const mockError = new Error("Internal server error");
+            (ticketsService.addWatchlist as jest.Mock).mockRejectedValue(mockError);
+
+            await ticketsController.addWatchlist(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
+    });
 
 });
 
