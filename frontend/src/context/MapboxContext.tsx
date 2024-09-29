@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, createContext, useRef, useState } from "react";
+import { MutableRefObject, ReactNode, createContext, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import mapboxgl, { LngLatLike, Map, Marker } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -9,19 +9,19 @@ import CustomMarker from "../../public/customMarker.svg";
 import { FaultGeoData } from "@/types/custom.types";
 
 export interface MapboxContextProps {
-    map: Map | null;
-    setMap: (map: Map | null) => void;
+    mapInstance: MutableRefObject<Map | null>;
+    setMapInstance: (map: MutableRefObject<Map | null>) => void;
     selectedAddress: PKResult | null;
     dropMarker: (pkResult?: PKResult) => void;
     liftMarker: () => void;
     flyTo: (lng: number | undefined, lat: number | undefined) => void;
     flyToCurrentLocation: () => void;
-    addFaultMarkers: (faultGeoData: FaultGeoData[], map: Map) => void;
+    addFaultMarkers: (faultGeoData: FaultGeoData[], mapInstance: MutableRefObject<Map | null>) => void;
 }
 
 const MapboxContext = createContext<MapboxContextProps>({
-    map: null,
-    setMap: () => { },
+    mapInstance: { current: null },
+    setMapInstance: () => { },
     selectedAddress: null,
     dropMarker: () => { },
     liftMarker: () => { },
@@ -38,16 +38,16 @@ const apiKey = String(process.env.NEXT_PUBLIC_PLACEKIT_API_KEY);
 const pk = placekit(apiKey);
 
 export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
-    const [map, setMap] = useState<Map | null>(null);
+    const [mapInstance, setMapInstance] = useState<MutableRefObject<Map | null>>({ current: null });
     const markerRef = useRef<Marker | null>(null); // store marker reference
     const [selectedAddress, setSelectedAddress] = useState<PKResult | null>(null);
 
     const dropMarker = async (pkResult?: PKResult) => {
-        if (map) {
+        if (mapInstance.current) {
             if (markerRef.current) {
                 markerRef.current.remove(); // remove existing marker if present
             }
-
+            const map = mapInstance.current;
             if (!pkResult) {
                 //drop marker on center of map (current location)
                 const mapCenter = map.getCenter();
@@ -88,7 +88,8 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
     };
 
     const flyTo = (lng: number | undefined, lat: number | undefined) => {
-        if (map) {
+        if (mapInstance.current) {
+            const map = mapInstance.current;
             if (lng && lat) {
                 map.flyTo({ center: [lng, lat], zoom: 14, essential: true });
             }
@@ -101,7 +102,8 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
                 (position: GeolocationPosition) => {
                     const { longitude, latitude } = position.coords;
                     console.log(longitude, latitude);
-                    if (map) {
+                    if (mapInstance.current) {
+                        const map = mapInstance.current;
                         map.flyTo({
                             center: [longitude, latitude],
                             zoom: 12,
@@ -121,14 +123,15 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
         }
     };
 
-    const addFaultMarkers = (faultGeoData: FaultGeoData[], map: Map) => {
+    const addFaultMarkers = (faultGeoData: FaultGeoData[], mapInstance: MutableRefObject<Map | null>) => {
         if (faultGeoData.length === 0) {
             return;
         }
+        const map = mapInstance.current!;
 
         // Ensure the map is fully loaded before adding layers and sources
         if (!map.isStyleLoaded()) {
-            map.once("load", () => addFaultMarkers(faultGeoData, map));
+            map.once("load", () => addFaultMarkers(faultGeoData, mapInstance));
             return;
         }
 
@@ -297,7 +300,7 @@ export const MapboxProvider: React.FC<MapboxProviderProps> = ({ children }) => {
 
 
     return (
-        <MapboxContext.Provider value={{ map, setMap, selectedAddress, dropMarker, liftMarker, flyTo, flyToCurrentLocation, addFaultMarkers }}>
+        <MapboxContext.Provider value={{ mapInstance, setMapInstance, selectedAddress, dropMarker, liftMarker, flyTo, flyToCurrentLocation, addFaultMarkers }}>
             {children}
         </MapboxContext.Provider>
     );
