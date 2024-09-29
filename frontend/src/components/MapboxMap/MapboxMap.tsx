@@ -17,7 +17,7 @@ interface MapboxMapProps {
 }
 
 const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat = -25.75442, dropMarker = false, addNavigationControl = false, zoom = 12, centerOnMuni = false }) => {
-  const { setMap } = useMapbox(); // access setMap from context
+  const { setMapInstance } = useMapbox(); // access setMap from context
   const { getMuniLngLat } = useProfile();
   const mapContainerRef = useRef<HTMLDivElement | null>(null); // reference to the map container
   const mapInstanceRef = useRef<Map | null>(null);
@@ -51,7 +51,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
 
         initializedMap.on("load", () => {
           mapInstanceRef.current = initializedMap;
-          setMap(mapInstanceRef.current); // save the map instance in context only after it"s fully loaded
+          setMapInstance(mapInstanceRef); // save the map instance in context only after it"s fully loaded
 
           if (dropMarker) {
             new mapboxgl.Marker()
@@ -77,7 +77,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
 
     initialiseMap();
 
-  }, [setMap, centerLng, centerLat, dropMarker, zoom]);
+  }, [setMapInstance, centerLng, centerLat, dropMarker, zoom]);
 
 
   useEffect(() => {
