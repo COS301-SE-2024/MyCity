@@ -26,7 +26,6 @@ import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import { Locate, Pin, PinOff, Info } from "lucide-react";
 
-
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
 });
@@ -95,7 +94,7 @@ const CreateTicketComp: React.FC = () => {
         });
       },
       (error) => {
-        toast.error("Error fetching location: " + error.message);
+        console.error("Error getting current location: ", error);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
@@ -246,14 +245,7 @@ const CreateTicketComp: React.FC = () => {
                       key={faultType.asset_id}
                       textValue={faultType.asset_id}
                     >
-                      <div className="flex gap-2 items-center">
-                        <img
-                          src={faultType.assetIcon}
-                          alt={faultType.asset_id}
-                          width={24}
-                          height={24}
-                          className="w-6 h-6"
-                        />
+                      <div className="flex items-center">
                         <span>{faultType.asset_id}</span>
                       </div>
                     </AutocompleteItem>
@@ -262,6 +254,7 @@ const CreateTicketComp: React.FC = () => {
               ) : (
                 <p>Loading fault types...</p>
               )}
+
               <Textarea
                 label="Description"
                 name="fault-description"
@@ -334,10 +327,11 @@ const CreateTicketComp: React.FC = () => {
               <Button
                 type="submit"
                 disabled={!isFormValid || loading} // Disable button when loading or form is invalid
-                className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0 ${isFormValid && !loading
+                className={`m-auto w-24 px-4 py-2 font-bold rounded-3xl transition duration-300 z-0 ${
+                  isFormValid && !loading
                     ? "bg-blue-500 text-white hover:bg-blue-600"
                     : "bg-blue-200 text-white cursor-not-allowed"
-                  }`}
+                }`}
               >
                 {loading ? "Loading..." : "Submit"}{" "}
                 {/* Show "Loading..." when loading */}
