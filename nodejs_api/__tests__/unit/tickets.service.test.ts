@@ -1,12 +1,10 @@
 import * as ticketsService from "../../src/services/tickets.service";
 import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
 import { uploadFile } from "../../src/config/s3bucket.config";
-import WebSocket from "ws";
 
 // Mocking dynamoDBDocumentClient and uploadFile
 jest.mock("../../src/config/dynamodb.config");
 jest.mock("../../src/config/s3bucket.config");
-jest.mock("ws")
 
 
 
