@@ -16,28 +16,28 @@ describe("tickets controller - getFaultTypes", () => {
     });
 
 
-
-    test("should return fault types on absence of error", async () => {
-        const mockResult = [{ asset_id: "1", assetIcon: "icon", multiplier: 1 }];
-        (ticketsService.getFaultTypes as jest.Mock).mockResolvedValue(mockResult); // mock service response
-
-        await ticketsController.getFaultTypes(req as Request, res as Response); // cast to full Request and Response
-
-        expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(mockResult);
+    describe("getFaultTypes", () => {
+        test("should return fault types on absence of error", async () => {
+            const mockResult = [{ asset_id: "1", assetIcon: "icon", multiplier: 1 }];
+            (ticketsService.getFaultTypes as jest.Mock).mockResolvedValue(mockResult); // mock service response
+    
+            await ticketsController.getFaultTypes(req as Request, res as Response); // cast to full Request and Response
+    
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+    
+        test("should return 500 on internal server error", async () => {
+            const mockError = new Error("Internal server error");
+            (ticketsService.getFaultTypes as jest.Mock).mockRejectedValue(mockError);
+    
+            await ticketsController.getFaultTypes(req as Request, res as Response);
+    
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
     });
-
-    test("should return 500 on internal server error", async () => {
-        const mockError = new Error("Internal server error");
-        (ticketsService.getFaultTypes as jest.Mock).mockRejectedValue(mockError);
-
-        await ticketsController.getFaultTypes(req as Request, res as Response);
-
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
-    });
-
-
+    
 
 
     describe("viewTicketData", () => {
