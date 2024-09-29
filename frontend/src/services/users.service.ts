@@ -5,9 +5,12 @@ interface UploadProfilePictureResponse {
 
 export async function uploadProfilePicture(sessionToken: string | undefined, formData: FormData, revalidate?: boolean) {
     try {
-        const response = await fetch(`/api/users/profile-picture/upload`, {
+        const API_BASE_URL = process.env.API_BASE_URL;
+        const apiURL = `${API_BASE_URL}/users/profile-picture/upload`;
+        const response = await fetch(apiURL, {
             method: "POST",
             headers: {
+                "Content-Type": "multipart/form-data",
                 "Authorization": `Bearer ${sessionToken}`,
             },
             body: formData
