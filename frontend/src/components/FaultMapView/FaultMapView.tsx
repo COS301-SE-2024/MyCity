@@ -15,7 +15,7 @@ export default function FaultMapView() {
   const { getUserProfile } = useProfile();
   const [faultCount, setFaultCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const { addFaultMarkers, map } = useMapbox();
+  const { addFaultMarkers, mapInstance } = useMapbox();
   const [faultGeoData, setFaultGeoData] = useState<FaultGeoData[]>([]);
 
   useEffect(() => {
@@ -44,13 +44,13 @@ export default function FaultMapView() {
 
   useEffect(() => {
     const attachFaultMarkers = () => {
-      if (map !== null && faultGeoData.length > 0) {
-        addFaultMarkers(faultGeoData, map);
+      if (mapInstance.current != null && faultGeoData.length > 0) {
+        addFaultMarkers(faultGeoData, mapInstance);
       }
     };
 
     attachFaultMarkers();
-  }, [map, faultGeoData]);
+  }, [mapInstance.current, faultGeoData]);
 
 
   return (
