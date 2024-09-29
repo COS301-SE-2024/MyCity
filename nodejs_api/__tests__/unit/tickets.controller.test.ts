@@ -4,7 +4,7 @@ import * as ticketsService from "../../src/services/tickets.service";
 
 jest.mock("../../src/services/tickets.service");
 
-describe("tickets controller - getFaultTypes", () => {
+describe("tickets controller", () => {
     const req: Partial<Request> = {}; // partial mock request
     const res: Partial<Response> = {
         status: jest.fn().mockReturnThis(),
