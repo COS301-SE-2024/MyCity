@@ -16,7 +16,7 @@ jest.mock('./src/services/auth.service', () => ({
     // autoSignIn: jest.fn()
 }));
 
-jest.mock('./src/utils/authActions');
+jest.mock('./src/utils/auth-actions.utils');
 jest.mock('./src/hooks/useProfile', () => ({
     useProfile: () => { return { getUserProfile: jest.fn(() => { return { current: {} }; }) } },
 }));

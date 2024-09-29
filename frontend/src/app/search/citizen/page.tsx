@@ -62,20 +62,15 @@ export default function CreateTicket() {
             }
 
             // Fetch associated municipalities using municipality_id from each ticket
-            const municipalities = await Promise.all(
+            const municipalities = await Promise.allSettled(
               data.map(async (ticket) => {
-                try {
-                  if (!ticket.municipality_id) {
-                    console.error(
-                      "Missing municipality_id for ticket:",
-                      ticket
-                    );
-                    return null;
-                  }
-                  console.log(
-                    `Fetching municipality for ID: ${ticket.municipality_id}`
-                  );
+                if (!ticket.municipality_id) {
+                  console.error("Missing municipality_id for ticket:", ticket);
+                  return null;
+                }
+                console.log(`Fetching municipality for ID: ${ticket.municipality_id}`);
 
+                try {
                   // Fetch the municipality and get the first item from the array
                   const municipality = await searchMunicipality(
                     sessionToken,
@@ -83,10 +78,7 @@ export default function CreateTicket() {
                   );
 
                   if (!municipality || municipality.length === 0) {
-                    console.error(
-                      "Municipality not found for ID:",
-                      ticket.municipality_id
-                    );
+                    console.error("Municipality not found for ID:", ticket.municipality_id);
                     return null;
                   }
 
@@ -99,8 +91,13 @@ export default function CreateTicket() {
               })
             );
 
+            // Filter out any rejected promises or null values
+            const fulfilledMunicipalities = municipalities
+              .filter((result) => result.status === "fulfilled" && result.value)
+              .map((result) => (result as PromiseFulfilledResult<any>).value);
+
             // Set municipality data in state
-            setMunicipalitiesData(municipalities.filter((m) => m)); // Filter out any null/undefined municipalities
+            setMunicipalitiesData(fulfilledMunicipalities);
           }
           break;
         case "serviceProviders":
@@ -251,7 +248,7 @@ export default function CreateTicket() {
           )}
 
           <div className="flex w-full h-full justify-center overflow-hidden">
-          {/* <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center"> */}
+            {/* <div className="pt-4 rounded-3xl dark:bg-gray-700 dark:text-white bg-gray-100 bg-opacity-80 w-[80%] h-[75%] justify-center"> */}
             <div className="pt-4 rounded-3xl justify-center">
               <div className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto">
                 {/* Search Form */}
@@ -275,11 +272,10 @@ export default function CreateTicket() {
                       <button
                         data-testid="search-btn"
                         type="submit"
-                        className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${
-                          searchTerm.trim() === ""
+                        className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${searchTerm.trim() === ""
                             ? "bg-gray-400 text-gray-300 cursor-not-allowed"
                             : "bg-blue-500 text-white hover:bg-blue-600"
-                        }`}
+                          }`}
                         disabled={searchTerm.trim() === ""}
                       >
                         Search
@@ -295,25 +291,24 @@ export default function CreateTicket() {
                     ].map((filter) => (
                       <div
                         key={filter}
-                        className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${
-                          selectedFilter === filter
+                        className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedFilter === filter
                             ? "bg-gray-500 text-white"
                             : "bg-transparent text-white"
-                        }`}
+                          }`}
                         onClick={() =>
                           handleFilterChange(
                             filter as
-                              | "myMunicipality"
-                              | "municipalities"
-                              | "serviceProviders"
+                            | "myMunicipality"
+                            | "municipalities"
+                            | "serviceProviders"
                           )
                         }
                       >
                         {filter === "myMunicipality"
                           ? "My Municipality"
                           : filter === "municipalities"
-                          ? "Municipalities"
-                          : "Service Providers"}
+                            ? "Municipalities"
+                            : "Service Providers"}
                       </div>
                     ))}
                   </div>
@@ -322,11 +317,10 @@ export default function CreateTicket() {
                       {["Near Me", "Asset"].map((subfilter, index) => (
                         <div
                           key={subfilter}
-                          className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 ${
-                            selectedSubfilter === index
+                          className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 ${selectedSubfilter === index
                               ? "bg-gray-500 text-white"
                               : "bg-transparent text-gray-300 border border-gray-300"
-                          }`}
+                            }`}
                           onClick={() => handleSubfilterChange(index)}
                         >
                           {subfilter}
@@ -398,11 +392,10 @@ export default function CreateTicket() {
                     <div className="flex justify-between mt-4 text-white">
                       <button
                         onClick={handlePrevPage}
-                        className={`px-48 py-2 ${
-                          currentPage === 1
+                        className={`px-48 py-2 ${currentPage === 1
                             ? "cursor-not-allowed opacity-50"
                             : ""
-                        }`}
+                          }`}
                         disabled={currentPage === 1}
                       >
                         Previous
@@ -413,12 +406,11 @@ export default function CreateTicket() {
                       </span>
                       <button
                         onClick={handleNextPage}
-                        className={`px-48 py-2 ${
-                          currentPage ===
-                          Math.ceil(searchResults.length / resultsPerPage)
+                        className={`px-48 py-2 ${currentPage ===
+                            Math.ceil(searchResults.length / resultsPerPage)
                             ? "cursor-not-allowed opacity-50"
                             : ""
-                        }`}
+                          }`}
                         disabled={
                           currentPage ===
                           Math.ceil(searchResults.length / resultsPerPage)
@@ -491,11 +483,10 @@ export default function CreateTicket() {
               <button
                 data-testid="search-btn-mobile"
                 type="submit"
-                className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${
-                  searchTerm.trim() === ""
+                className={`ml-2 px-3 py-2 rounded-full transition duration-300 ${searchTerm.trim() === ""
                     ? "bg-gray-400 text-gray-300 cursor-not-allowed"
                     : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+                  }`}
                 disabled={searchTerm.trim() === ""}
               >
                 Search
@@ -509,18 +500,17 @@ export default function CreateTicket() {
               (filter) => (
                 <div
                   key={filter}
-                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 text-center ${
-                    selectedFilter === filter
+                  className={`px-4 py-2 mx-1 cursor-pointer rounded-full transition duration-300 text-center ${selectedFilter === filter
                       ? "bg-gray-500 text-white"
                       : "bg-transparent text-white"
-                  } flex items-center justify-center`} // Removed the white border
+                    } flex items-center justify-center`} // Removed the white border
                   onClick={() => handleFilterChange(filter as any)}
                 >
                   {filter === "myMunicipality"
                     ? "My Municipality"
                     : filter === "municipalities"
-                    ? "Municipalities"
-                    : "Service Providers"}
+                      ? "Municipalities"
+                      : "Service Providers"}
                 </div>
               )
             )}
@@ -532,11 +522,10 @@ export default function CreateTicket() {
               {["Near Me", "Asset"].map((subfilter, index) => (
                 <div
                   key={subfilter}
-                  className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 text-center ${
-                    selectedSubfilter === index
+                  className={`px-3 py-1 mx-1 cursor-pointer rounded-full transition duration-300 text-center ${selectedSubfilter === index
                       ? "bg-gray-500 text-white"
                       : "bg-transparent text-gray-300 border border-gray-300"
-                  }`}
+                    }`}
                   onClick={() => handleSubfilterChange(index)}
                 >
                   {subfilter}
@@ -596,9 +585,8 @@ export default function CreateTicket() {
               <div className="flex justify-between mt-4 text-white mb-16">
                 <button
                   onClick={handlePrevPage}
-                  className={`px-4 py-2 ${
-                    currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-                  }`}
+                  className={`px-4 py-2 ${currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
+                    }`}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -609,12 +597,11 @@ export default function CreateTicket() {
                 </span>
                 <button
                   onClick={handleNextPage}
-                  className={`px-4 py-2 ${
-                    currentPage ===
-                    Math.ceil(searchResults.length / resultsPerPage)
+                  className={`px-4 py-2 ${currentPage ===
+                      Math.ceil(searchResults.length / resultsPerPage)
                       ? "cursor-not-allowed opacity-50"
                       : ""
-                  }`}
+                    }`}
                   disabled={
                     currentPage ===
                     Math.ceil(searchResults.length / resultsPerPage)

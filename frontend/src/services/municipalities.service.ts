@@ -1,5 +1,5 @@
-import { BasicMunicipality, MunicipalityCoordinates } from "@/types/custom.types";
-import { invalidateCache } from "@/utils/apiUtils";
+import { BasicMunicipality } from "@/types/custom.types";
+import { invalidateCache } from "@/utils/api.utils";
 
 export async function getMunicipalityList(revalidate?: boolean) {
     if (revalidate) {
@@ -30,36 +30,36 @@ export async function getMunicipalityList(revalidate?: boolean) {
     }
 }
 
-export async function getMunicipalityCoordinates(sessionToken: string | undefined, municipality: string | undefined, revalidate?: boolean) {
-    if (!sessionToken || !municipality) {
-        return null;
-    }
-    
-    if (revalidate) {
-        invalidateCache("municipality-coordinates"); //invalidate the cache
-    }
+// export async function getMunicipalityCoordinates(sessionToken: string | undefined, municipality: string | undefined, revalidate?: boolean) {
+//     if (!sessionToken || !municipality) {
+//         throw new Error("Session token and municipality are required");
+//     }
 
-    try {
-        const response = await fetch(`/api/municipality/coordinates?municipality=${encodeURIComponent(municipality)}`,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${sessionToken}`,
-                }
-            }
-        );
+//     if (revalidate) {
+//         invalidateCache("municipality-coordinates"); //invalidate the cache
+//     }
 
-        if (!response.ok) {
-            throw new Error(`Error fetching municipality coordinates: ${response.statusText}`);
-        }
+//     try {
+//         const response = await fetch(`/api/municipality/coordinates?municipality=${encodeURIComponent(municipality)}`,
+//             {
+//                 headers: {
+//                     "Content-Type": "application/json",
+//                     "Authorization": `Bearer ${sessionToken}`,
+//                 }
+//             }
+//         );
 
-        const result = await response.json();
+//         if (!response.ok) {
+//             throw new Error(`Error fetching municipality coordinates: ${response.statusText}`);
+//         }
 
-        const data = result as MunicipalityCoordinates;
+//         const result = await response.json();
 
-        return data;
+//         const data = result as MunicipalityCoordinates;
 
-    } catch (error) {
-        throw error;
-    }
-}
+//         return data;
+
+//     } catch (error) {
+//         throw error;
+//     }
+// }
