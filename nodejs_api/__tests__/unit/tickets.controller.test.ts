@@ -306,5 +306,40 @@ describe("tickets controller - getFaultTypes", () => {
         });
     });
 
+
+    describe("interactTicket", () => {
+        test("should return 400 if required fields are missing", async () => {
+            req.body = {}; // No fields provided
+
+            await ticketsController.interactTicket(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ Error: expect.stringContaining("Missing parameter(s):") });
+        });
+    });
+
+
+    describe("getMostUpvotedTickets", () => {
+        test("should return 200 and call service on success", async () => {
+            const mockResult = [{ ticket_id: 1, description: "test ticket" }];
+            (ticketsService.getMostUpvoted as jest.Mock).mockResolvedValue(mockResult);
+
+            await ticketsController.getMostUpvoted(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+
+        test("should return 500 on internal server error", async () => {
+            const mockError = new Error("Internal server error");
+            (ticketsService.getMostUpvoted as jest.Mock).mockRejectedValue(mockError);
+
+            await ticketsController.getMostUpvoted(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
+    });
+
 });
 
