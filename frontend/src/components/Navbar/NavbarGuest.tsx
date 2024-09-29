@@ -24,8 +24,8 @@ export default function NavbarGuest({ showLogin = false }) {
               <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
                 alt="MyCity"
-                width={50}
-                height={50}
+                width={64}
+                height={64}
               />
             </div>
           </Link>
@@ -58,19 +58,19 @@ export default function NavbarGuest({ showLogin = false }) {
               </div>
             </Link>
 
-            <Link href="/dashboard/guest" passHref>
+            {/* <Link href="/dashboard/guest" passHref>
               <div className={getNavItemClass("/dashboard/guest")}>
                 <div className="flex flex-col gap-1 items-center">
                   <Globe size={25} />
                   <span>Live Activity</span>
                 </div>
               </div>
-            </Link>
+            </Link> */}
 
-            <ToggleTheme />
+            {/* <ToggleTheme /> */}
 
             {/* Conditionally show login button */}
-            {showLogin && (
+            {/* {showLogin && (
               <Link href="/auth/login" passHref>
                 <div className={getNavItemClass("/auth/login")}>
                   <div className="flex flex-col gap-1 items-center">
@@ -79,7 +79,7 @@ export default function NavbarGuest({ showLogin = false }) {
                   </div>
                 </div>
               </Link>
-            )}
+            )} */}
           </div>
         </nav>
       </div>
@@ -112,13 +112,13 @@ export default function NavbarGuest({ showLogin = false }) {
               </div>
             </Link>
 
-            <Link href="/dashboard/guest" passHref>
+            {/* <Link href="/dashboard/guest" passHref>
               <div className={getNavItemClass("/dashboard/guest")}>
                 <div className="flex flex-col gap-1 items-center">
                   <Globe size={50} />
                 </div>
               </div>
-            </Link>
+            </Link> */}
           </div>
         </nav>
       </div>

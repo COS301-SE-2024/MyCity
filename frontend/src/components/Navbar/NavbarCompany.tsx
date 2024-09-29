@@ -58,7 +58,7 @@ export default function NavbarCompany({ unreadNotifications = 0 }) {
         <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
           <Link href="/">
             <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-              <img src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp" alt="MyCity" width={50} height={50}/>
+              <img src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp" alt="MyCity" width={64} height={64} />
             </div>
           </Link>
 
@@ -72,7 +72,7 @@ export default function NavbarCompany({ unreadNotifications = 0 }) {
               </div>
             </Link>
 
-            <Link href="/notifications/service-provider" passHref> 
+            <Link href="/notifications/service-provider" passHref>
               <div className={getNavItemClass("/notifications/service-provider")}>
                 <div className="relative flex flex-col gap-1 items-center">
                   <Bell size={25} />
@@ -86,7 +86,7 @@ export default function NavbarCompany({ unreadNotifications = 0 }) {
               </div>
             </Link>
 
-            <Link href="/search/service-provider" passHref> 
+            <Link href="/search/service-provider" passHref>
               <div className={getNavItemClass("/search/service-provider")}>
                 <div className="flex flex-col gap-1 items-center">
                   <Search size={25} />

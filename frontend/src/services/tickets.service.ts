@@ -370,7 +370,6 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 
     try {
-
         const apiURL = "/api/tickets/fault-types";
 
         const response = await fetch(apiURL,
@@ -398,7 +397,7 @@ export async function getFaultTypes(revalidate?: boolean) {
 
 export async function CreatTicket(sessiont: string, formData: FormData): Promise<boolean> {
     console.log(sessiont);
-    const apiURL = "https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create";
+    const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {

@@ -3,6 +3,7 @@ import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE,
 import { BadRequestError, NotFoundError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
+import WebSocket from "ws";
 
 interface TenderData {
     company_name: string;
@@ -191,6 +192,14 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         Item: contractItem,
     }));
 
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    ws.on("open", () => {
+        const message = JSON.stringify({ action: "refreshcompany"});
+        ws.send(message);
+    });
+    ws.close();
+
     return {
         Status: "Success",
         Tender_id: tenderId,
@@ -219,6 +228,14 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
     const updateExp = "set #status = :r";
     const expattrName = { "#status": "status" };
     const expattrValue = { ":r": "rejected" };
+
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    ws.on("open", () => {
+        const message = JSON.stringify({ action: "refreshcompany"});
+        ws.send(message);
+    });
+    ws.close();
 
     try {
         const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);

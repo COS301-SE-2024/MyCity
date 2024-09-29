@@ -322,7 +322,7 @@ export default function Settings() {
         return null;
     }
   };
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 99;
   return (
     <div>
       {/* Desktop View */}

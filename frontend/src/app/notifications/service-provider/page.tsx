@@ -10,7 +10,7 @@ export default function Notifications() {
   const handleDelete = () => {
     console.log("Delete notification");
   };
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 74;
 
   return (
     <div>

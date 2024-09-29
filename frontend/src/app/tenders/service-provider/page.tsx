@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Key, useEffect, useState } from "react";
+import React, { Key, useEffect, useState,useRef } from "react";
 import NavbarCompany from "@/components/Navbar/NavbarCompany";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import { Tab, Tabs } from "@nextui-org/react";
@@ -83,26 +83,60 @@ export default function MuniTenders() {
     }
   };
 
-  // const handleTabChange = async (key: Key) => {
-  //   const index = Number(key);
+  
+  const websocketRef = useRef<WebSocket | null>(null);
 
-  //   switch (index) {
-  //     case 0:
-  //       if (!openTickets.length) await fetchDataForTab("openTickets");
-  //       break;
-  //     case 1:
-  //       if (!mytenders.length) await fetchDataForTab("activeTenders");
-  //       break;
-  //     case 2:
-  //       if (!loadingTabs.closedTenders) {
-  //         // Assume closed tenders don't require fetching
-  //         setLoadingTabs((prev) => ({ ...prev, closedTenders: false }));
-  //       }
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
+  // Function to handle incoming WebSocket messages
+  const handleWebSocketMessage = (message: any) => {
+    const data = JSON.parse(message.data);
+    if (data.type === 'RefreshCompanyDashboard') {
+      fetchDataForAllTabs
+      console.log("it refreshedd baby")
+    }
+  };
+
+  useEffect(() => {
+    const websocketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+    // Establish WebSocket connection
+    console.log(String(websocketUrl))
+    websocketRef.current = new WebSocket(String(websocketUrl)); // Use wss for secure connection
+
+    // Set up event listeners
+    websocketRef.current.onopen = async () => {
+      console.log('WebSocket connection opened.');
+      const data_send = {
+        action: "initialCompany",
+        body: "None"
+      }
+      if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+        const jsonMessage = JSON.stringify(data_send);
+        websocketRef.current.send(jsonMessage);
+        console.log('Message sent:', jsonMessage);
+      }
+      else {
+        console.log("Connection wasnt open")
+      }
+    };
+
+    websocketRef.current.onmessage = (message) => {
+      handleWebSocketMessage(message);
+    };
+
+    websocketRef.current.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    websocketRef.current.onclose = () => {
+      console.log('WebSocket connection closed.');
+    };
+
+    // Clean up WebSocket on component unmount
+    return () => {
+      if (websocketRef.current) {
+        websocketRef.current.close();
+      }
+    };
+  }, []);
 
   const toggleHelpMenu = () => {
     setIsHelpOpen(!isHelpOpen);
@@ -113,7 +147,7 @@ export default function MuniTenders() {
     fetchDataForAllTabs();
   }, [userProfile]);
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 74;
 
   return (
     <div>

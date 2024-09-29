@@ -136,8 +136,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
 export const addWatchlist = async (ticketData: TicketData) => {
     const userExistCommand = new QueryCommand({
         TableName: WATCHLIST_TABLE,
-        KeyConditionExpression: "user_id = :username",
-        FilterExpression: "ticket_id = :ticket_id",
+        KeyConditionExpression: "user_id = :username AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":username": ticketData.username,
             ":ticket_id": ticketData.ticket_id
@@ -170,7 +169,6 @@ export const addWatchlist = async (ticketData: TicketData) => {
     const watchlistId = generateId();
 
     const watchlistItem = {
-        watchlist_id: watchlistId,
         ticket_id: ticketData.ticket_id,
         user_id: ticketData.username
     };
@@ -371,7 +369,6 @@ export const interactTicket = async (ticketData: any) => {
     const response = await dynamoDBDocumentClient.send(
         new QueryCommand({
             TableName: TICKETS_TABLE,
-            ProjectionExpression: "upvotes, viewcount",
             KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
                 ":ticket_id": ticketData.ticket_id

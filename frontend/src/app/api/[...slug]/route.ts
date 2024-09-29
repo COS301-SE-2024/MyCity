@@ -11,7 +11,6 @@ Amplify.configure({},
 const API_BASE_URL = process.env.API_BASE_URL;
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string[] } }) {
-
   //the request is for invalidating the cache
   if (params.slug[0] === "invalidate-cache") {
     if (params.slug.length < 2) {
@@ -50,7 +49,6 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string[] } }) {
-
   if (!API_BASE_URL) {
     throw new Error("missing api base url");
   }

@@ -79,7 +79,7 @@ export default function MuniTenders() {
     fetchData();
   }, [userProfile]);
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 99;
 
   return (
     <div>
