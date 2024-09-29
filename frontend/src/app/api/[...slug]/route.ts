@@ -61,14 +61,23 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   }
 
   const endpointUrl = req.url.replace(`${protocol}://localhost:3000/api`, API_BASE_URL);
-
   const requestBody = await req.json();
 
-  const res = await fetch(endpointUrl, {
-    method: "POST",
-    headers: req.headers,
-    body: JSON.stringify(requestBody)
-  });
+  if (req.headers.get("content-type") === "multipart/form-data") {
+    const res = await fetch(endpointUrl, {
+      method: "POST",
+      headers: req.headers,
+      body: requestBody
+    });
+    return res;
+  }
+  else {
+    const res = await fetch(endpointUrl, {
+      method: "POST",
+      headers: req.headers,
+      body: JSON.stringify(requestBody)
+    });
+    return res;
+  }
 
-  return res;
 }
