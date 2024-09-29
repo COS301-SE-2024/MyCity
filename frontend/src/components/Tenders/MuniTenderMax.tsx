@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { DoneContract,TerminateContract } from "@/services/tender.service";
+import { DoneContract, TerminateContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 import dynamic from "next/dynamic";
 
@@ -13,7 +13,7 @@ const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  contract_id : string;
+  contract_id: string;
   tender_id: string;
   status: string;
   companyname: string;
@@ -61,8 +61,8 @@ const TenderMax = ({
   });
   const modalRef = useRef<HTMLDivElement>(null);
   const userProfile = useProfile();
-  const tenderStatus = tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
-  
+  const tenderStatus =
+    tender.status.charAt(0).toUpperCase() + tender.status.slice(1);
 
   // useEffect(() => {
   //   function handleClickOutside(event: MouseEvent) {
@@ -81,24 +81,26 @@ const TenderMax = ({
   // }, [onClose]);
 
   const handleAction = (action: string) => {
-    console.log("Trying to understand")
+    console.log("Trying to understand");
     setDialog({ action, show: true });
   };
 
   const Closeapp = () => {
     onClose(0);
-  }
+  };
 
   const confirmAction = async () => {
-    console.log("Trying to understand")
+    console.log("Trying to understand");
     toast.success(`${dialog.action} action confirmed.`);
-    console.log("In this one")
-    if(dialog.action == "Mark as Complete")
-    {
+    console.log("In this one");
+    if (dialog.action == "Mark as Complete") {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await DoneContract(tender.contract_id,user_session)
-      console.log(response_contract)
+      const response_contract = await DoneContract(
+        tender.contract_id,
+        user_session
+      );
+      console.log(response_contract);
     }
     setDialog({ action: "", show: false });
     onClose(0); // Handle the action here, e.g., terminate or mark complete.
@@ -117,20 +119,26 @@ const TenderMax = ({
 
   const handleConfirmClick = async () => {
     // Here you handle the action and only then call onClose with the appropriate data
-    console.log("Trying to understand")
+    console.log("Trying to understand");
     // confirmAction(); // This will display a toast and close the dialog
     if (dialog.action === "Mark as Complete") {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await DoneContract(tender.contract_id,user_session)
-      console.log(response_contract)
+      const response_contract = await DoneContract(
+        tender.contract_id,
+        user_session
+      );
+      console.log(response_contract);
       toast.success(`${dialog.action} action confirmed.`);
       onClose(-2); // Example: Mark as complete would close the ticket
     } else if (dialog.action === "Terminate Contract") {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
-      const response_contract = await TerminateContract(tender.contract_id,user_session)
-      console.log(response_contract)
+      const response_contract = await TerminateContract(
+        tender.contract_id,
+        user_session
+      );
+      console.log(response_contract);
       toast.success(`${dialog.action} action confirmed.`);
       onClose(-1); // Example: Terminate contract would also close the ticket
     }
@@ -172,11 +180,11 @@ const TenderMax = ({
                 <strong>Issue Date:</strong> {formattedDate}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Proposed Price:</strong> R
-                {(tender.finalCost || 0)}
+                <strong>Proposed Price:</strong> R{tender.finalCost || 0}
               </div>
               <div className="text-gray-700 mb-2">
-                <strong>Estimated Duration:</strong> {tender.finalDuration} days
+                <strong>Estimated Duration:</strong>{" "}
+                {tender.finalDuration || "N/A"}
               </div>
               <div className="text-gray-700 mb-2">
                 <strong>Upload:</strong>
@@ -189,16 +197,14 @@ const TenderMax = ({
                     {tender.upload.name}
                   </a>
                 ) : (
-                  "No files attached"
+                  " No files attached"
                 )}
               </div>
               <div className="flex flex-col items-center mb-4 w-full">
                 <FaInfoCircle className="text-blue-500 mb-1" size={24} />
                 <div className="text-gray-500 text-xs text-center">
-                  This Tender Contract is currently {tender.status}.{" "}
-                  {tender.companyname} has
-                  {tender.hasReportedCompletion ? "" : " not"} submitted a
-                  completion report.
+                  This Tender Contract is currently {tender.status} which means
+                  the fault is being addressed by the service provider.
                 </div>
               </div>
               <div className="mt-2 flex justify-center gap-2">
@@ -208,8 +214,7 @@ const TenderMax = ({
                 >
                   Back
                 </button>
-                {(
-                  tender.status === "completed") && (
+                {tender.status === "completed" && (
                   <>
                     <button
                       className="bg-red-500 text-white px-2 rounded-lg hover:bg-red-600"
@@ -230,7 +235,12 @@ const TenderMax = ({
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500">
-                <MapboxMap centerLng={tender.longitude} centerLat={tender.latitude} dropMarker={true} zoom={14} />
+                <MapboxMap
+                  centerLng={tender.longitude}
+                  centerLat={tender.latitude}
+                  dropMarker={true}
+                  zoom={14}
+                />
               </div>
             </div>
           </div>

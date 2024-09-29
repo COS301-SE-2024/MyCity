@@ -192,7 +192,9 @@ export default function CitizenDashboard({
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div className="flex flex-col">
+          <div className="z-555">
           <NavbarUser unreadNotifications={unreadNotifications} />
+          </div>
           <div className="flex justify-center z-555 pt-8">
             <NotificationPromt userEmail={userEmail} />
           </div>
@@ -210,7 +212,7 @@ export default function CitizenDashboard({
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
               backgroundAttachment: "fixed",
-              zIndex: -1,
+              zIndex: -19,
             }}
           ></div>
 
@@ -267,7 +269,7 @@ export default function CitizenDashboard({
                 <Tabs
                   aria-label="Signup Options"
                   defaultSelectedKey={0}
-                  className="flex justify-center w-full rounded-3xl pt-4 z-50"
+                  className="flex justify-center w-full rounded-3xl pt-4 z-[-1]"
                   classNames={{
                     tab: "min-w-28 bg-opacity-30 text-black",
                     panel: "w-full h-full",
@@ -277,7 +279,7 @@ export default function CitizenDashboard({
                   }}
                   onSelectionChange={handleTabChange}
                 >
-                  <Tab key={0} title="Cards" className="h-full z-50">
+                  <Tab key={0} title="Cards" className="h-full">
                     <Tabs
                       aria-label="Signup Options"
                       defaultSelectedKey={0}
@@ -614,7 +616,7 @@ export default function CitizenDashboard({
             </div>
 
             {/* Navbar Bottom */}
-            <div>
+            <div className="z-555">
               <NavbarUser unreadNotifications={unreadNotifications} />
             </div>
           </div>
