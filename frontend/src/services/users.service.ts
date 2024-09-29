@@ -10,7 +10,6 @@ export async function uploadProfilePicture(sessionToken: string | undefined, for
         const response = await fetch(apiURL, {
             method: "POST",
             headers: {
-                "Content-Type": "multipart/form-data",
                 "Authorization": `Bearer ${sessionToken}`,
             },
             body: formData
