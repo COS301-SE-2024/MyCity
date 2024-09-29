@@ -1,42 +1,108 @@
-import * as municipalitiesService from "../../src/services/municipalities.service";
+import * as municipalityService from "../../src/services/municipalities.service";
 import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
 import { ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-// Mock the dynamoDBDocumentClient's send method
-jest.mock("../../src/config/dynamodb.config");
+jest.mock("@aws-sdk/lib-dynamodb", () => ({
+    ScanCommand: jest.fn(),
+    GetCommand: jest.fn(),
+    DynamoDBDocumentClient: {
+        from: jest.fn(() => ({
+            send: jest.fn(),
+        })),
+    },
+}));
 
-describe("Municipalities Service", () => {
-    beforeEach(() => {
-        jest.clearAllMocks(); // Clear mocks before each test
+describe("Municipality Service", () => {
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     describe("getAllMunicipalities", () => {
-        it("should return a sorted list of municipalities", async () => {
-            // Define the expected return value for the ScanCommand
+        it("should return a sorted list of all municipalities", async () => {
             const mockResponse = {
                 Items: [
-                    { municipality_id: "2" },
-                    { municipality_id: "1" },
-                    { municipality_id: "3" }
-                ]
+                    { municipality_id: "B" },
+                    { municipality_id: "A" },
+                    { municipality_id: "C" },
+                ],
             };
 
+            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock successful ScanCommand response
+
+            const result = await municipalityService.getAllMunicipalities();
+
+            expect(result).toEqual([
+                { municipality_id: "A" },
+                { municipality_id: "B" },
+                { municipality_id: "C" },
+            ]);
+            expect(ScanCommand).toHaveBeenCalledWith({
+                TableName: "municipalities",
+            });
+            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
         });
 
-        it("should return an empty list when no municipalities are found", async () => {
-            // Define an empty response
-            const mockEmptyResponse = { Items: [] };
+        it("should return an empty list if no municipalities are found", async () => {
+            const mockResponse = {
+                Items: [],
+            };
+
+            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock empty response
+
+            const result = await municipalityService.getAllMunicipalities();
+
+            expect(result).toEqual([]);
+            expect(ScanCommand).toHaveBeenCalledWith({
+                TableName: "municipalities",
+            });
+            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
         });
     });
 
     describe("getMunicipalityCoordinates", () => {
-        it("should return the correct latitude and longitude for a municipality", async () => {
-            const mockMunicipality = "123";
+        it("should return the coordinates of a given municipality", async () => {
+            const mockMunicipality = "municipality_1";
+            const mockResponse = {
+                Item: {
+                    latitude: 12.345678,
+                    longitude: 98.765432,
+                },
+            };
+
+            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock successful GetCommand response
+
+            const result = await municipalityService.getMunicipalityCoordinates(mockMunicipality);
+
+            expect(result).toEqual(mockResponse.Item);
+            expect(GetCommand).toHaveBeenCalledWith({
+                TableName: "municipalities",
+                Key: {
+                    municipality_id: mockMunicipality,
+                },
+                ProjectionExpression: "latitude, longitude",
+            });
+            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
         });
 
         it("should return null if no coordinates are found for the municipality", async () => {
-            const mockMunicipality = "non-existing-id";
+            const mockMunicipality = "municipality_2";
+            const mockResponse = {
+                Item: null,
+            };
+
+            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock no coordinates response
+
+            const result = await municipalityService.getMunicipalityCoordinates(mockMunicipality);
+
+            expect(result).toBeNull();
+            expect(GetCommand).toHaveBeenCalledWith({
+                TableName: "municipalities",
+                Key: {
+                    municipality_id: mockMunicipality,
+                },
+                ProjectionExpression: "latitude, longitude",
+            });
+            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
         });
     });
 });
