@@ -2,7 +2,6 @@ import express, { Router } from "express";
 import multer from "multer";
 
 import * as ticketsController from "../controllers/tickets.controller";
-import { cacheMiddleware } from "../config/redis.config";
 
 const router: Router = express.Router();
 
@@ -36,7 +35,7 @@ router.get("/getwatchlist", ticketsController.getMyWatchlist);
 router.post("/interact", ticketsController.interactTicket);
 
 // get most upvoted tickets
-router.get("/getUpvotes", cacheMiddleware, ticketsController.getMostUpvoted);
+router.get("/getUpvotes", ticketsController.getMostUpvoted);
 
 router.get("/getcompanytickets", ticketsController.getCompanyTickets);
 
