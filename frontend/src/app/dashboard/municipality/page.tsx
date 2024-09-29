@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import NavbarMunicipality from "@/components/Navbar/NavbarMunicipality";
@@ -12,7 +12,6 @@ import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from Lucide
 
-
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
   const [muniprofile, setMuniprofile] = useState<string | null>(null);
@@ -23,41 +22,41 @@ export default function Dashboard() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-
-
   const websocketRef = useRef<WebSocket | null>(null);
 
   // Function to handle incoming WebSocket messages
   const handleWebSocketMessage = (message: any) => {
     const data = JSON.parse(message.data);
-    if (data.type === 'RefreshMunicipalityDashboard') {
+    if (data.type === "RefreshMunicipalityDashboard") {
       fetchData();
-      console.log("it refreshedd baby")
+      console.log("it refreshedd baby");
     }
   };
 
   useEffect(() => {
     const websocketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
     // Establish WebSocket connection
-    console.log(String(websocketUrl))
+    console.log(String(websocketUrl));
     websocketRef.current = new WebSocket(String(websocketUrl)); // Use wss for secure connection
 
     // Set up event listeners
     websocketRef.current.onopen = async () => {
-      console.log('WebSocket connection opened.');
+      console.log("WebSocket connection opened.");
       const user_data = await userProfile.getUserProfile();
       const user_municipality = String(user_data.current?.municipality);
       const data_send = {
         action: "initialMunicipality",
-        body: user_municipality
-      }
-      if (websocketRef.current && websocketRef.current.readyState === WebSocket.OPEN) {
+        body: user_municipality,
+      };
+      if (
+        websocketRef.current &&
+        websocketRef.current.readyState === WebSocket.OPEN
+      ) {
         const jsonMessage = JSON.stringify(data_send);
         websocketRef.current.send(jsonMessage);
-        console.log('Message sent:', jsonMessage);
-      }
-      else {
-        console.log("Connection wasnt open")
+        console.log("Message sent:", jsonMessage);
+      } else {
+        console.log("Connection wasnt open");
       }
     };
 
@@ -66,11 +65,11 @@ export default function Dashboard() {
     };
 
     websocketRef.current.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error("WebSocket error:", error);
     };
 
     websocketRef.current.onclose = () => {
-      console.log('WebSocket connection closed.');
+      console.log("WebSocket connection closed.");
     };
 
     // Clean up WebSocket on component unmount
@@ -93,8 +92,8 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
-    const profile_pic = String(user_data.current?.picture)
-    setMuniprofile(profile_pic)
+    const profile_pic = String(user_data.current?.picture);
+    setMuniprofile(profile_pic);
     setCity(String(user_data.current?.municipality));
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
@@ -110,9 +109,9 @@ export default function Dashboard() {
     const user_data = await userProfile.getUserProfile();
     const user_session = String(user_data.current?.session_token);
     const user_municipality = String(user_data.current?.municipality);
-    const profile_pic = String(user_data.current?.picture)
+    const profile_pic = String(user_data.current?.picture);
     setCity(String(user_data.current?.municipality));
-    setMuniprofile(profile_pic)
+    setMuniprofile(profile_pic);
     setCityLoading(false);
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
@@ -130,9 +129,6 @@ export default function Dashboard() {
 
   return (
     <div>
-
-
-
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div>
@@ -162,12 +158,18 @@ export default function Dashboard() {
                 <p>This dashboard allows you to:</p>
                 <ul className="list-disc list-inside">
                   <li>View all tickets submitted within your municipality.</li>
-                  <li>Sort tickets by different criteria such as urgency, ticket number, or status.</li>
+                  <li>
+                    Sort tickets by different criteria such as urgency, ticket
+                    number, or status.
+                  </li>
                   <li>Create new tickets directly from this dashboard.</li>
-                  <li>Refresh the data to see the most up-to-date information.</li>
+                  <li>
+                    Refresh the data to see the most up-to-date information.
+                  </li>
                 </ul>
                 <p>
-                  Use the dropdown menu to sort tickets, and click on any ticket to view more details or take action.
+                  Use the dropdown menu to sort tickets, and click on any ticket
+                  to view more details or take action.
                 </p>
               </div>
             </div>
@@ -196,15 +198,6 @@ export default function Dashboard() {
               </h1>
             </div>
             <div className="flex flex-col items-center justify-center text-white text-opacity-80">
-              <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-                <img
-                  src={String(muniprofile ? muniprofile : "/")}
-                  alt="Description of image"
-                  width={20}
-                  height={20}
-                  className="w-full h-full object-cover"
-                />
-              </div>
               {cityLoading ? (
                 <ThreeDots
                   height="40"
@@ -215,7 +208,20 @@ export default function Dashboard() {
                   visible={true}
                 />
               ) : (
-                <span className="text-xl font-bold">{city}</span>
+                <div className="flex flex-col items-center">
+                  {/* Circle image */}
+                  <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+                    <img
+                      src={String(muniprofile ? muniprofile : "/")}
+                      alt="Description of image"
+                      width={20}
+                      height={20}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Text below the circle */}
+                  <span className="text-xl font-bold">{city}</span>
+                </div>
               )}
             </div>
             <div className="flex items-center justify-between mt-8">
@@ -309,9 +315,7 @@ export default function Dashboard() {
 
           {/* City Information */}
           <div className="flex flex-col items-center justify-center text-white text-opacity-80 mb-6">
-            <div className="w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden mb-4">
-              <ImageIcon size={20} className="text-gray-500" />
-            </div>
+          
             {cityLoading ? (
               <ThreeDots
                 height="40"
@@ -322,7 +326,20 @@ export default function Dashboard() {
                 visible={true}
               />
             ) : (
-              <span className="text-xl font-bold">{city}</span>
+              <div className="flex flex-col items-center">
+                  {/* Circle image */}
+                  <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+                    <img
+                      src={String(muniprofile ? muniprofile : "/")}
+                      alt="Description of image"
+                      width={20}
+                      height={20}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Text below the circle */}
+                  <span className="text-xl font-bold">{city}</span>
+                </div>
             )}
           </div>
 
@@ -383,5 +400,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-
 }
