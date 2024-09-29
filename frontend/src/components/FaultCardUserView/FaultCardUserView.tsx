@@ -390,19 +390,15 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
                 Date Opened:
               </div>
               <div className="lg:text-md md:text-sm sm:text-xs font-bold text-gray-500">
-                2 August 2024
+                {new Date().toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </div>
             </div>
 
-            {/* ETC */}
-            <div className="flex justify-between lg:mb-2 md:mb-1 w-full">
-              <div className="lg:text-lg md:text-md sm:text-sm font-bold text-gray-500">
-                ETC:
-              </div>
-              <div className="lg:text-md md:text-sm sm:text-xs font-bold text-gray-500">
-                18 hours
-              </div>
-            </div>
+          
 
             {/* Address */}
             <div className="flex w-full">
@@ -602,18 +598,18 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 
             {/* Google Maps Button */}
             <Button
-                className="w-full bg-opacity-45 mt-2 text-black font-bold lg:text-md md:text-sm text-center rounded-lg lg:mx-2 md:mx-1"
-                onClick={showDirections}
-              >
-                {"Google Maps"}
-                <Image
-                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
-                  className="h-auto w-auto object-contain"
-                  width={20}
-                  height={20}
-                  alt="Google"
-                />
-              </Button>
+              className="w-full bg-opacity-45 mt-2 text-black font-bold lg:text-md md:text-sm text-center rounded-lg lg:mx-2 md:mx-1"
+              onClick={showDirections}
+            >
+              {"Google Maps"}
+              <Image
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/google_maps_icon.webp"
+                className="h-auto w-auto object-contain"
+                width={20}
+                height={20}
+                alt="Google"
+              />
+            </Button>
 
             {/* Actions */}
             <div className="flex justify-around w-full mt-4">
