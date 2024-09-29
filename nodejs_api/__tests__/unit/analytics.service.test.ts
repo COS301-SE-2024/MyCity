@@ -1,6 +1,5 @@
 import * as analyticsService from "../../src/services/analytics.service";
 import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 jest.mock("../../src/config/dynamodb.config");
 
