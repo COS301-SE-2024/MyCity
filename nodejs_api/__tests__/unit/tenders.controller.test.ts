@@ -507,33 +507,4 @@ describe("tenders controller controller", () => {
         });
     });
 
-
-    describe("didMakeTender", () => {
-    });
-
-
-    describe("getCompanyTenders", () => {
-    });
-
-    describe("getMunicipalityTenders", () => {
-    });
-
-
-    describe("getTicketTender", () => {
-    });
-
-
-    describe("getContracts", () => {
-    });
-
-
-    describe("getMuniContract", () => {
-    });
-
-    describe("getCompanyContracts ", () => {
-    });
-
-    describe("getCompanyContractByTicket", () => {
-    });
-
 });
