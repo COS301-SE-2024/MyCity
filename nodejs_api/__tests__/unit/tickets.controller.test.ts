@@ -162,5 +162,40 @@ describe("tickets controller - getFaultTypes", () => {
         });
     });
 
+    describe("acceptTicket", () => {
+        test("should return 400 if required fields are missing", async () => {
+            req.body = {}; // Missing ticket_id
+
+            await ticketsController.acceptTicket(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({
+                Error: "Missing parameter(s): ticket_id",
+            });
+        });
+
+        test("should return 200 and accept ticket on valid input", async () => {
+            req.body = { ticket_id: "123" };
+            const mockResult = { message: "Ticket accepted" };
+            (ticketsService.acceptTicket as jest.Mock).mockResolvedValue(mockResult);
+
+            await ticketsController.acceptTicket(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+
+        test("should return 500 on internal server error", async () => {
+            req.body = { ticket_id: "123" };
+            const mockError = new Error("Internal server error");
+            (ticketsService.acceptTicket as jest.Mock).mockRejectedValue(mockError);
+
+            await ticketsController.acceptTicket(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
+    });
+
 });
 
