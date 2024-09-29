@@ -11,6 +11,12 @@ describe("tickets controller - getFaultTypes", () => {
         json: jest.fn(),
     }; // partial mock response
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+
+
     test("should return fault types on absence of error", async () => {
         const mockResult = [{ asset_id: "1", assetIcon: "icon", multiplier: 1 }];
         (ticketsService.getFaultTypes as jest.Mock).mockResolvedValue(mockResult); // mock service response
@@ -30,4 +36,46 @@ describe("tickets controller - getFaultTypes", () => {
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
     });
+
+
+
+
+    describe("viewTicketData", () => {
+        test("should return 400 if ticket_id is missing", async () => {
+            req.query = {}; // Missing ticket_id
+
+            await ticketsController.viewTicketData(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(res.json).toHaveBeenCalledWith({ Error: "Missing parameter: ticket_id" });
+        });
+
+        test("should return 200 and ticket data on valid input", async () => {
+            req.query = { ticket_id: "123" };
+            const mockResult = { id: "123", description: "Test ticket" };
+            (ticketsService.viewTicketData as jest.Mock).mockResolvedValue(mockResult);
+
+            await ticketsController.viewTicketData(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith(mockResult);
+        });
+
+        test("should return 500 on internal server error", async () => {
+            req.query = { ticket_id: "123" };
+            const mockError = new Error("Internal server error");
+            (ticketsService.viewTicketData as jest.Mock).mockRejectedValue(mockError);
+
+            await ticketsController.viewTicketData(req as Request, res as Response);
+
+            expect(res.status).toHaveBeenCalledWith(500);
+            expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
+        });
+    });
+
+
+
+    
+
 });
+
