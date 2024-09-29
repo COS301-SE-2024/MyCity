@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { authenticate } from './utils/amplifyServerUtils';
+import { authenticate } from './utils/amplify-server.utils';
 import { USER_PATH_SUFFIX_COOKIE_NAME } from './types/custom.types';
 import { handleSignOut } from './services/auth.service';
 

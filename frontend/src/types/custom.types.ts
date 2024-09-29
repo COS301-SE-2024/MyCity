@@ -11,9 +11,10 @@ export interface UserData {
     family_name: string | undefined;
     picture: string | undefined;
     user_role: UserRole | undefined;
-    municipality: string | undefined;
+    municipality?: string | undefined;
     session_token?: string | undefined;
     company_name?: string | undefined
+    municipality_lnglat?: string | undefined;
 }
 
 export const USER_PATH_SUFFIX_COOKIE_NAME = "mycity.net.za.userpathsuffix";
@@ -23,10 +24,13 @@ export interface BasicMunicipality {
     municipality_id: string;
 }
 
-export interface MunicipalityCoordinates {
-    latitude: string;
-    longitude: string;
-}
+// export interface MunicipalityCoordinates {
+//     latitude: string;
+//     longitude: string;
+// }
+
+export type MunicipalityLngLat = [number, number];
+export type UserLngLat = [number, number];
 
 export interface FaultType {
     asset_id: string;

@@ -11,8 +11,8 @@ import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
 import ToggleTheme from "@/components/Theme/ToggleTheme";
+import LocationPermissionModal from "@/components/Location/LocationPermissionModal";
 type SubPage = "ChangeAccountInfo" | "ChangePassword" | null;
-import LocationPrompt from "@/components/Location/LocationPrompt";
 
 
 export default function Settings() {
@@ -318,7 +318,7 @@ export default function Settings() {
               </div>
 
               {/* Conditionally render LocationPrompt */}
-              {locationAccess && <LocationPrompt />}
+              {locationAccess && <LocationPermissionModal />}
             </div>
           </div>
         );
@@ -546,8 +546,8 @@ export default function Settings() {
             <nav className="space-y-2">
               <button
                 className={`w-full text-left py-2 px-4 rounded-t ${activeTab === "AccountInformation"
-                    ? "bg-gray-200"
-                    : "hover:bg-gray-100"
+                  ? "bg-gray-200"
+                  : "hover:bg-gray-100"
                   }`}
                 onClick={() => setActiveTab("AccountInformation")}
               >
@@ -555,8 +555,8 @@ export default function Settings() {
               </button>
               <button
                 className={`w-full text-left py-2 px-4 ${activeTab === "Notifications"
-                    ? "bg-gray-200"
-                    : "hover:bg-gray-100"
+                  ? "bg-gray-200"
+                  : "hover:bg-gray-100"
                   }`}
                 onClick={() => setActiveTab("Notifications")}
               >
@@ -564,8 +564,8 @@ export default function Settings() {
               </button>
               <button
                 className={`w-full text-left py-2 px-4 ${activeTab === "SecurityPrivacy"
-                    ? "bg-gray-200"
-                    : "hover:bg-gray-100"
+                  ? "bg-gray-200"
+                  : "hover:bg-gray-100"
                   }`}
                 onClick={() => setActiveTab("SecurityPrivacy")}
               >
@@ -573,8 +573,8 @@ export default function Settings() {
               </button>
               <button
                 className={`w-full text-left py-2 px-4 rounded-b ${activeTab === "Accessibility"
-                    ? "bg-gray-200"
-                    : "hover:bg-gray-100"
+                  ? "bg-gray-200"
+                  : "hover:bg-gray-100"
                   }`}
                 onClick={() => setActiveTab("Accessibility")}
               >

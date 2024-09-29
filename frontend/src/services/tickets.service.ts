@@ -1,5 +1,5 @@
 import { DashboardTicket, FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
-import { invalidateCache } from "@/utils/apiUtils";
+import { invalidateCache } from "@/utils/api.utils";
 import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 interface UserAttributes {
@@ -370,7 +370,6 @@ export async function getFaultTypes(revalidate?: boolean) {
     }
 
     try {
-
         const apiURL = "/api/tickets/fault-types";
 
         const response = await fetch(apiURL,
@@ -398,7 +397,7 @@ export async function getFaultTypes(revalidate?: boolean) {
 
 export async function CreatTicket(sessiont: string, formData: FormData): Promise<boolean> {
     console.log(sessiont);
-    const apiURL = "https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create";
+    const apiURL = "/api/tickets/create";
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {

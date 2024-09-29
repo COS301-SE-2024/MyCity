@@ -78,8 +78,6 @@ export default function NavbarMobile({ unreadNotifications = 0 }) {
                 <div className="w-[4rem] h-[4rem]  transform hover:scale-105 transition-transform duration-200">
                   <img
                     src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-                    width={128}
-                    height={128}
                     alt="MyCity"
                     className="object-contain w-full h-full"
                   />

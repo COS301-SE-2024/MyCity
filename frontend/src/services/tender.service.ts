@@ -1,4 +1,4 @@
-import { invalidateCache } from "@/utils/apiUtils";
+import { invalidateCache } from "@/utils/api.utils";
 
 export async function CreatTender(companyname: string, amount: number, ticket: string, time: number, user_session: string) {
     const data = {
@@ -204,7 +204,6 @@ export async function DidBid(comp_name: string,ticket : string, user_session: st
     }
 }
 
-
 export async function TerminateContract(contract: string, user_session: string) {
     const data = {
         contract_id: contract,
@@ -360,8 +359,6 @@ export async function getMuniContract(ticket_id: string, user_session: string, r
     if (revalidate) {
         invalidateCache("tenders-getmunicontract"); //invalidate the cache
     }
-
-
 
     const apiURL = "/api/tenders/getmunicontract";
     const urlWithParams = `${apiURL}?ticket=${encodeURIComponent(ticket_id)}`;
