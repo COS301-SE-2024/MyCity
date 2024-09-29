@@ -341,5 +341,7 @@ describe("tickets controller - getFaultTypes", () => {
         });
     });
 
+    
+
 });
 
