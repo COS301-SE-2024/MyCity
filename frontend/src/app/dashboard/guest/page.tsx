@@ -10,7 +10,6 @@ import { HelpCircle } from "lucide-react";
 import DashboardFaultCardContainer from "@/components/FaultCardContainer/DashboardFualtCardContainer";
 import { useProfile } from "@/hooks/useProfile";
 import { ThreeDots } from "react-loader-spinner";
-import LocationPrompt from "@/components/Location/LocationPrompt";
 import {
   getMostUpvote,
   getTicket,
@@ -22,6 +21,7 @@ import NotificationPromt from "@/components/Notifications/NotificationPromt";
 import { DashboardTicket } from "@/types/custom.types";
 
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
+import LocationPermissionModal from "@/components/Location/LocationPermissionModal";
 
 interface CitizenDashboardProps {
   searchParams: any;
@@ -601,7 +601,7 @@ export default function CitizenDashboard({
 
                   <Tab key={2} title="Map">
                     <div className="flex justify-center z-50 pt-8">
-                      <LocationPrompt />
+                    <LocationPermissionModal />
                     </div>
                     <h1 className="text-3xl font-bold mb-4 mt-2 ml-2 text-center text-white text-opacity-70">
                       Faults Near You

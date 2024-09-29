@@ -1,4 +1,4 @@
-import { invalidateCache } from "@/utils/apiUtils";
+import { invalidateCache } from "@/utils/api.utils";
 
 export async function CreatTender(companyname: string, amount: number, ticket: string, time: number, user_session: string) {
     const data = {

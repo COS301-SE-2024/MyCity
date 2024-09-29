@@ -1,22 +1,19 @@
-'use client'
+"use client"
 
-import { UserData, UserRole } from '@/types/custom.types';
-import { fetchUserAttributes, getCurrentUser, updateUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
-import { MutableRefObject, ReactNode, createContext, useContext, useRef } from 'react';
-
-
+import { MunicipalityLngLat, UserData, UserRole } from '@/types/custom.types';
+import { fetchUserAttributes, updateUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
+import { MutableRefObject, ReactNode, createContext, useRef } from 'react';
 
 export interface UserProfileContextProps {
     getUserProfile: () => Promise<MutableRefObject<UserData | null>>;
     updateUserProfile: (data: UserData) => void;
+    getMuniLngLat: () => MunicipalityLngLat | null;
 }
-
 
 const UserProfileContext = createContext<UserProfileContextProps | undefined>(undefined);
 
 export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const userProfile = useRef<UserData | null>(null);
-
 
     const getUserProfile = async () => {
         //if user profile data already cached, return it
@@ -35,22 +32,14 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
             family_name: userDetails.family_name,
             picture: userDetails.picture,
             user_role: userDetails["custom:user_role"] as UserRole,
-            municipality: String(userDetails["custom:municipality"]),
-            company_name: String(userDetails["custom:company_name"]),
-            session_token: String(session.tokens?.idToken),
+            municipality: userDetails["custom:municipality"],
+            company_name: userDetails["custom:company_name"],
+            municipality_lnglat: userDetails["custom:municipality_lnglat"],
+            session_token: session.tokens?.idToken?.toString(),
         };
-
-        //for the picture, prefer what is in local storage (just for demo 2)
-        const pic = localStorage.getItem("profileImage");
-
-        if (pic) {
-            userProfile.current.picture = pic;
-        }
-
 
         return userProfile;
     };
-
 
     const updateUserProfile = async (data: UserData) => {
         if (data) {
@@ -66,10 +55,16 @@ export const UserProfileProvider: React.FC<{ children: ReactNode }> = ({ childre
         });
     };
 
-
+    const getMuniLngLat = () => {
+        if (userProfile.current?.municipality_lnglat) {
+            const lngLat = userProfile.current.municipality_lnglat.split(", ").map((coord) => Number(coord)) as MunicipalityLngLat;
+            return lngLat;
+        }
+        return null;
+    };
 
     return (
-        <UserProfileContext.Provider value={{ getUserProfile, updateUserProfile }}>
+        <UserProfileContext.Provider value={{ getUserProfile, updateUserProfile, getMuniLngLat }}>
             {children}
         </UserProfileContext.Provider>
     );

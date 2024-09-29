@@ -1,5 +1,5 @@
 import { DashboardTicket, FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
-import { invalidateCache } from "@/utils/apiUtils";
+import { invalidateCache } from "@/utils/api.utils";
 import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 interface UserAttributes {

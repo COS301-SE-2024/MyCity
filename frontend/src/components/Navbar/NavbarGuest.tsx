@@ -26,7 +26,6 @@ export default function NavbarGuest({ showLogin = false }) {
                 alt="MyCity"
                 width={64}
                 height={64}
-                className="w-50 h-50"
               />
             </div>
           </Link>

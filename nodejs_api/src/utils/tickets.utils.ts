@@ -182,7 +182,14 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 7) =
         });
 
         // wait for this batch of queries to complete before continuing
-        await Promise.all(queryPromises);
+        Promise.allSettled(queryPromises).then((results) => {
+            results.forEach((result, index) => {
+                if (result.status === "rejected") {
+                    console.error(`Promise ${index} failed with error: ${result.reason}`);
+                }
+            });
+        });
+
     }
 };
 

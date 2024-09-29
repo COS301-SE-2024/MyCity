@@ -457,7 +457,7 @@ export const getMostUpvoted = async () => {
             ":state": "Opened"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 9 // limit result set to the top 9 items
     };
 
     const params2: QueryCommandInput = {
@@ -471,7 +471,7 @@ export const getMostUpvoted = async () => {
             ":state": "In Progress"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 5 // limit result set to the top 5 items
+        Limit: 8 // limit result set to the top 8 items
     };
 
     const params3: QueryCommandInput = {
@@ -485,21 +485,28 @@ export const getMostUpvoted = async () => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 5 // limit result set to the top 5 items
+        Limit: 8 // limit result set to the top 8 items
     };
 
-    const [result1, result2, result3] = await Promise.all([
+    const promises = [
         dynamoDBDocumentClient.send(new QueryCommand(params1)),
         dynamoDBDocumentClient.send(new QueryCommand(params2)),
         dynamoDBDocumentClient.send(new QueryCommand(params3)),
-    ]);
+    ];
 
-    const items1: Ticket[] = result1.Items as Ticket[];
-    const items2: Ticket[] = result2.Items as Ticket[];
-    const items3: Ticket[] = result3.Items as Ticket[];
-
-    // combine the top items from each state to get a total of 16 items
-    const topItems: Ticket[] = [...items1, ...items2, ...items3];
+    const topItems: Ticket[] = [];
+    // combine the top items from each state to get a total of 25 items
+    Promise.allSettled(promises).then((results) => {
+        results.forEach((result, index) => {
+            if (result.status === "fulfilled") {
+                const items = result.value.Items as Ticket[] || [];
+                topItems.push(...items);
+            }
+            else {
+                console.error(`Promise ${index} failed with error: ${result.reason}`);
+            }
+        });
+    });
 
     if (topItems.length > 0) {
         // get the count of comments for each ticket

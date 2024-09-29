@@ -73,7 +73,6 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
                 alt="MyCity"
                 width={64}
                 height={64}
-                className="w-50 h-50"
               />
             </div>
           </Link>
