@@ -33,6 +33,7 @@ companies_table = dynamodb.Table("private_companies")
 cognito_cient = boto3.client("cognito-idp")
 load_dotenv()
 user_poolid = os.getenv("USER_POOL_ID")
+websocket_url = os.getenv("WEBSOCKET_API_URL")
 # users_response = cognito_cient.list_users(
 #     UserPoolId=user_poolid
 # )
