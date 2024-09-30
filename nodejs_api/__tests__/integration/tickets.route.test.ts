@@ -570,7 +570,6 @@ describe("Integration Tests - /tickets", () => {
 
     describe("POST /tickets/add-comment-with-image", () => {
         test("should add comment with image", async () => {
-            // Mock request body
             const mockRequestBody = {
                 comment: "This is a test comment.",
                 ticket_id: "ticket123",
@@ -578,27 +577,21 @@ describe("Integration Tests - /tickets", () => {
                 user_id: "user456"
             };
     
-            // Mock response from the service
             const mockServiceResponse = {
                 message: "Comment added successfully",
                 ticketupdate_id: "update789"
             };
     
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "addTicketCommentWithImage").mockResolvedValue(mockServiceResponse);
-    
-            // Simulate a POST request to the /tickets/add-comment-with-image endpoint
+
             const response = await request(app)
                 .post("/tickets/add-comment-with-image")
                 .send(mockRequestBody);
     
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
     
-            // Assert that the response contains the correct message
             expect(response.body).toEqual(mockServiceResponse);
     
-            // Ensure the service method was called with the correct parameters
             expect(ticketsService.addTicketCommentWithImage).toHaveBeenCalledWith(
                 mockRequestBody.comment,
                 mockRequestBody.ticket_id,
@@ -608,27 +601,22 @@ describe("Integration Tests - /tickets", () => {
         });
     
         test("should return 400 if required fields are missing", async () => {
-            // Mock request body missing the 'comment' field
             const mockRequestBody = {
                 ticket_id: "ticket123",
                 image_url: "http://example.com/image.jpg",
                 user_id: "user456"
             };
     
-            // Simulate a POST request to the /tickets/add-comment-with-image endpoint
             const response = await request(app)
                 .post("/tickets/add-comment-with-image")
                 .send(mockRequestBody);
     
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
     
-            // Assert that the error message is correct
             expect(response.body.error).toBe("Missing parameter(s): comment");
         });
     
         test("should return 500 if there is an internal server error", async () => {
-            // Mock request body
             const mockRequestBody = {
                 comment: "This is a test comment.",
                 ticket_id: "ticket123",
@@ -636,30 +624,87 @@ describe("Integration Tests - /tickets", () => {
                 user_id: "user456"
             };
     
-            // Mock the service to throw an error
             jest.spyOn(ticketsService, "addTicketCommentWithImage").mockRejectedValue(new Error("Internal Server Error"));
-    
-            // Simulate a POST request to the /tickets/add-comment-with-image endpoint
+
             const response = await request(app)
                 .post("/tickets/add-comment-with-image")
                 .send(mockRequestBody);
     
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
     
-            // Assert that the error message is correct
             expect(response.body.Error).toBe("Internal Server Error");
         });
     
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("POST /tickets/add-comment-without-image", () => {
         test("should add comment without image", async () => {
+            const mockRequestBody = {
+                comment: "This is a test comment without an image.",
+                ticket_id: "ticket123",
+                user_id: "user456"
+            };
 
+            const mockServiceResponse = {
+                message: "Comment added successfully",
+                ticketupdate_id: "update789"
+            };
+
+            jest.spyOn(ticketsService, "addTicketCommentWithoutImage").mockResolvedValue(mockServiceResponse);
+
+            const response = await request(app)
+                .post("/tickets/add-comment-without-image")
+                .send(mockRequestBody);
+
+            expect(response.statusCode).toBe(200);
+
+            expect(response.body).toEqual(mockServiceResponse);
+
+            expect(ticketsService.addTicketCommentWithoutImage).toHaveBeenCalledWith(
+                mockRequestBody.comment,
+                mockRequestBody.ticket_id,
+                mockRequestBody.user_id
+            );
+        });
+
+        test("should return 400 if required fields are missing", async () => {
+            const mockRequestBody = {
+                ticket_id: "ticket123",
+                user_id: "user456"
+            };
+
+            const response = await request(app)
+                .post("/tickets/add-comment-without-image")
+                .send(mockRequestBody);
+
+            expect(response.statusCode).toBe(400);
+
+            expect(response.body.error).toBe("Missing parameter(s): comment");
+        });
+
+        test("should return 500 if there is an internal server error", async () => {
+            const mockRequestBody = {
+                comment: "This is a test comment without an image.",
+                ticket_id: "ticket123",
+                user_id: "user456"
+            };
+
+            jest.spyOn(ticketsService, "addTicketCommentWithoutImage").mockRejectedValue(new Error("Internal Server Error"));
+
+            const response = await request(app)
+                .post("/tickets/add-comment-without-image")
+                .send(mockRequestBody);
+
+            expect(response.statusCode).toBe(500);
+
+            expect(response.body.Error).toBe("Internal Server Error");
+        });
+
+        afterEach(() => {
+            jest.restoreAllMocks();
         });
     });
 
