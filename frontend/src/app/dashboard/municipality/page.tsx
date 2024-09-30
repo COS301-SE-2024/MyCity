@@ -100,7 +100,6 @@ export default function Dashboard() {
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
       user_session,
-      true
     );
     console.log(rspmunicipality)
     setDashMuniResults(rspmunicipality.items);
