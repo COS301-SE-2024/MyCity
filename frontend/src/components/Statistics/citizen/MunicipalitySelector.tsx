@@ -36,7 +36,7 @@ export default function MunicipalitySelector({
       <select
         value={selectedMunicipality}
         onChange={(e) => setSelectedMunicipality(e.target.value)}
-        className="p-2 w-[60%] rounded-md bg-white bg-opacity-90 text-black"
+        className="p-2 w-[60%] rounded-md bg-white bg-opacity-80 text-black"
       >
         {municipalities.map((mun, index) => (
           <option key={index} value={mun.municipality_id}>
