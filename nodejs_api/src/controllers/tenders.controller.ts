@@ -165,16 +165,15 @@ export const doneContract = async (req: Request, res: Response) => {
 };
 
 export const didMakeTender = async (req: Request, res: Response) => {
-    const requiredFields = ["companyname", "ticket_id"];
-    const missingFields = requiredFields.filter(field => !req.body[field]);
-
-    if (missingFields.length > 0) {
-        return res.status(400).json({ Error: `Missing parameter(s): ${missingFields.join(", ")}` });
+    const companyName = req.query["companyname"] as string;
+    const ticketId = req.query["ticket_id"] as string;
+    if (!ticketId || !companyName) {
+        return res.status(400).json({ Error: "Missing parameter(s): ticket_id and/or companyname" });
     }
 
     try {
-        const senderData = req.body;
-        const response = await tendersService.didMakeTender(senderData);
+        const response = await tendersService.didMakeTender(companyName, ticketId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {

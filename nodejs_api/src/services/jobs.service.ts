@@ -1,6 +1,6 @@
-import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getFromCache, getReadQueue, getWriteQueue, removeRedisCacheKeys } from "../config/redis.config";
+import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getFromCache, getReadQueue, getWriteQueue, removeRedisCacheKeys, DB_UPDATE } from "../config/redis.config";
 import { dynamoDBDocumentClient } from "../config/dynamodb.config";
-import { GetCommand, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { DoneCallback, Job, JobOptions } from "bull";
 import { JobData } from "../types/job.types";
 
@@ -46,13 +46,13 @@ export const readQueueProcessor = async (job: Job, done: DoneCallback) => {
     const { type, params, cacheKey } = job.data as JobData;
 
     try {
-        if (cacheKey) {
-            const cachedResponse = await getFromCache(cacheKey);
-            if (cachedResponse) {
-                done(null, cachedResponse);    // finish the job and return the cached response
-                return;
-            }
-        }
+        // if (cacheKey) {
+        //     const cachedResponse = await getFromCache(cacheKey);
+        //     if (cachedResponse) {
+        //         done(null, cachedResponse);    // finish the job and return the cached response
+        //         return;
+        //     }
+        // }
 
         if (type === DB_SCAN) {
             const command = new ScanCommand(params);
@@ -89,6 +89,11 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
             await dynamoDBDocumentClient.send(command);
             done();    // finish the job
         }
+        else if (type === DB_UPDATE) {
+            const command = new UpdateCommand(params);
+            await dynamoDBDocumentClient.send(command);
+            done();    // finish the job
+        }
         else {
             done(new Error("Unsupported write job type, cannot process job"));
         }
@@ -101,7 +106,7 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
 
 
 
-export const invalidateCacheOnTicketUpdate = async () => {
+export const invalidateCacheOnTicketUpdateOnly = async () => {
     const ticketsInvalidationList = [
         "/tickets/view",
         "/tickets/getmytickets",
@@ -121,15 +126,16 @@ export const invalidateCacheOnTicketUpdate = async () => {
 };
 
 
-export const invalidateCacheOnNotificationsUpdate = async () => {
+export const invalidateCacheOnNotificationsUpdateOnly = async () => {
     const notificationInvalidationList = [
         "/notifications/get-tokens"
     ];
     await removeRedisCacheKeys(notificationInvalidationList);
 };
 
-export const invalidateCacheOnTenderUpdate = async () => {
+export const invalidateCacheOnTenderUpdateOnly = async () => {
     const tenderInvalidationList = [
+        "/tenders/didbid",
         "/tenders/getmytenders",
         "/tenders/getmunitenders",
         "/tenders/getmunicipalitytenders",
@@ -138,5 +144,33 @@ export const invalidateCacheOnTenderUpdate = async () => {
         "/tenders/getcompanycontracts",
         "/tenders/getcompanycontractbyticket"
     ];
+
     await removeRedisCacheKeys(tenderInvalidationList);
+}
+
+export const invalidateCacheOnTenderAndTicketUpdate = async () => {
+    const tenderInvalidationList = [
+        "/tenders/didbid",
+        "/tenders/getmytenders",
+        "/tenders/getmunitenders",
+        "/tenders/getmunicipalitytenders",
+        "/tenders/getcontracts",
+        "/tenders/getmunicontract",
+        "/tenders/getcompanycontracts",
+        "/tenders/getcompanycontractbyticket"
+    ];
+
+    const ticketsInvalidationList = [
+        "/tickets/view",
+        "/tickets/getmytickets",
+        "/tickets/getinarea",
+        "/tickets/getopeninarea",
+        "/tickets/getwatchlist",
+        "/tickets/getUpvotes",
+        "/tickets/getcompanytickets",
+        "/tickets/getopencompanytickets",
+        "/tickets/comments"
+    ];
+
+    await removeRedisCacheKeys([...tenderInvalidationList, ...ticketsInvalidationList]);
 }

@@ -1,21 +1,29 @@
-import { QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
+import { JobData } from "../types/job.types";
+import { DB_UPDATE } from "../config/redis.config";
+import { addJobToWriteQueue } from "../services/jobs.service";
 
 export const updateTenderTable = async (tender_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
-        const response = await dynamoDBDocumentClient.send(
-            new UpdateCommand({
-                TableName: TENDERS_TABLE,
-                Key: {
-                    tender_id: tender_id
-                },
-                UpdateExpression: update_expression,
-                ExpressionAttributeNames: expression_attribute_names,
-                ExpressionAttributeValues: expression_attribute_values
-            })
-        );
+        const params: UpdateCommandInput = {
+            TableName: TENDERS_TABLE,
+            Key: {
+                tender_id: tender_id
+            },
+            UpdateExpression: update_expression,
+            ExpressionAttributeNames: expression_attribute_names,
+            ExpressionAttributeValues: expression_attribute_values
+        };
 
+        const jobData: JobData = {
+            type: DB_UPDATE,
+            params: params
+        };
+
+        const writeJob = await addJobToWriteQueue(jobData);
+        const response = await writeJob.finished() as UpdateCommandOutput;
         return response;
     } catch (error: any) {
         throw new BadRequestError(`Failed to update tender: ${error.message}`);

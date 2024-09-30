@@ -14,6 +14,7 @@ const DB_SCAN = "DB_SCAN";
 const DB_QUERY = "DB_QUERY";
 const DB_GET = "DB_GET";
 const DB_PUT = "DB_PUT";
+const DB_UPDATE = "DB_UPDATE";
 const DEFAULT_CACHE_DURATION = 3600; // 1 hour
 
 export {
@@ -21,6 +22,7 @@ export {
     DB_QUERY,
     DB_GET,
     DB_PUT,
+    DB_UPDATE,
     DEFAULT_CACHE_DURATION
 }
 
@@ -114,16 +116,15 @@ export const getFromCache = async (cacheKey: string) => {
 };
 
 export const cacheResponse = async (cacheKey: string, duration: number, response: any) => {
-    // if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
-    //     //cache response for duration amount of time 
-    //     const client = await getRedisClient();
-    //     client.setEx(cacheKey, duration, JSON.stringify(response));
-    // }
+    if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
+        //cache response for duration amount of time 
+        const client = await getRedisClient();
+        client.setEx(cacheKey, duration, JSON.stringify(response));
+    }
 };
 
 export const removeRedisKey = async (key: string) => {
     const client = await getRedisClient();
-    //clear all the cache
     const response = await client.del(key);
     return response === 1;
 };

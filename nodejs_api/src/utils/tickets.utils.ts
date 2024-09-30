@@ -1,11 +1,11 @@
-import { GetCommand, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
 import { JobData } from "../types/job.types";
-import { addJobToReadQueue } from "../services/jobs.service";
-import { DB_QUERY, DB_SCAN } from "../config/redis.config";
+import { addJobToReadQueue, addJobToWriteQueue } from "../services/jobs.service";
+import { DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
 
 interface Company {
     name: string;
@@ -92,19 +92,24 @@ export const validateTicketId = (ticketId: string): string => {
 
 export const updateTicketTable = async (ticket_id: string, ticketDateOpened: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
-        const response = await dynamoDBDocumentClient.send(
-            new UpdateCommand({
-                TableName: TICKETS_TABLE,
-                Key: {
-                    ticket_id: ticket_id,
-                    dateOpened: ticketDateOpened
-                },
-                UpdateExpression: update_expression,
-                ExpressionAttributeNames: expression_attribute_names,
-                ExpressionAttributeValues: expression_attribute_values
-            })
-        );
+        const params: UpdateCommandInput = {
+            TableName: TICKETS_TABLE,
+            Key: {
+                ticket_id: ticket_id,
+                dateOpened: ticketDateOpened
+            },
+            UpdateExpression: update_expression,
+            ExpressionAttributeNames: expression_attribute_names,
+            ExpressionAttributeValues: expression_attribute_values
+        };
 
+        const jobData: JobData = {
+            type: DB_UPDATE,
+            params: params
+        };
+
+        const writeJob = await addJobToWriteQueue(jobData);
+        const response = await writeJob.finished() as UpdateCommandOutput;
         return response;
     } catch (error: any) {
         throw new BadRequestError(`Failed to update ticket: ${error.message}`);
@@ -131,7 +136,7 @@ export const getCompanyIDFromName = async (companyName: string) => {
             params: params
         };
 
-        const readJob = await addJobToReadQueue(jobData);
+        const readJob = await addJobToReadQueue(jobData, { priority: 1 });
         const response = await readJob.finished() as QueryCommandOutput;
         const items = response.Items as Company[] || [];
 
@@ -192,7 +197,7 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 7) =
                 params: params
             };
 
-            const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+            const readJob = await addJobToReadQueue(jobData, { priority: 2 });
             const queryResponse = await readJob.finished() as QueryCommandOutput;
             item.commentcount = queryResponse.Count || 0;
         });
