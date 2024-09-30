@@ -219,6 +219,7 @@ def create_ticket(request):
             "ticket_id": ticket_id,
             "watchlist_id": watchlist_id,
         }
+        ws.close()
         return format_response(float(200), accresponse)
 
     except ClientError as e:
