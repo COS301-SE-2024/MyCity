@@ -37,12 +37,10 @@ interface CardComponentProps {
 const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, result, refreshwatch }) => {
   const userProfile = useProfile();
   const itemsPerPage = 15;
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPageNum, setCurrentPageNum] = useState(0);
   const [cardData, setCardData] = useState<CardData[]>(result.items);
   const [lastEvaluatedKey, setLastEvaluatedKey] = useState(result.lastEvaluatedKey);
-  let pageData = new Map<number, CardData[]>([
-    [currentPage, cardData]
-  ]);
+  const [dataHistory, setDataHistory] = useState<CardData[][]>([cardData]);
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
@@ -60,46 +58,53 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
   // const totalPages = Math.ceil(cardData.length / itemsPerPage);
 
   // Get the current page items
-  // const currentPageItems = cardData.slice(startIndex, startIndex + itemsPerPage);
+  // const currentPageNumItems = cardData.slice(startIndex, startIndex + itemsPerPage);
 
   // Function to go to the next page
   const goToNextPage = async () => {
+    const newPageNumber = currentPageNum + 1;
+    if (dataHistory[newPageNumber]) {
+      setCardData(dataHistory[newPageNumber]);
+      setCurrentPageNum(newPageNumber);
+      return;
+    }
+
+    let reso: PaginatedResults | null;
+
     if (type == "watchlist") {
-      const reso = await fetchWatchlistData();
-      if (reso) {
-        const newPageNumber = currentPage + 1;
-        setCurrentPage(newPageNumber);
-        pageData.set(newPageNumber, reso.items);
-        setLastEvaluatedKey(reso.lastEvaluatedKey);
-        setCardData(reso.items);
-      }
+      reso = await fetchWatchlistData();
     } else if (type == "mostupvoted") {
-      const reso = await fetchMostUpvoteData();
-      if (reso) {
-        const newPageNumber = currentPage + 1;
-        setCurrentPage(newPageNumber);
-        pageData.set(newPageNumber, reso.items);
-        setLastEvaluatedKey(reso.lastEvaluatedKey);
-        setCardData(reso.items);
-      }
+      reso = await fetchMostUpvoteData();
     }
     else if (type == "nearest") {
-      const reso = await fetchTcketsInMunicipalityData();
-      if (reso) {
-        const newPageNumber = currentPage + 1;
-        setCurrentPage(newPageNumber);
-        pageData.set(newPageNumber, reso.items);
-        setLastEvaluatedKey(reso.lastEvaluatedKey);
-        setCardData(reso.items);
-      }
+      reso = await fetchTcketsInMunicipalityData();
+    }
+    else {
+      console.log("No data to fetch");
+      return;
+    }
+
+    if (reso) {
+      setCardData(reso.items);
+      setCurrentPageNum(newPageNumber);
+      setLastEvaluatedKey(reso.lastEvaluatedKey);
+      const newHistory = [...dataHistory];  // create a new array (copy the old one)
+      newHistory[newPageNumber] = reso.items as CardData[];  // add the new data to the new array
+      setDataHistory(newHistory);
     }
   };
 
   // Function to go to the previous page
   const goToPreviousPage = () => {
-    const newPageNumber = currentPage - 1;
-    setCurrentPage(newPageNumber);
-    setCardData(pageData.get(newPageNumber) ?? []);
+    if (currentPageNum === 0) {
+      return;
+    }
+
+    const newPageNumber = currentPageNum - 1;
+    if (dataHistory[newPageNumber]) {
+      setCardData(dataHistory[newPageNumber]);
+      setCurrentPageNum(newPageNumber);
+    }
   };
 
   const handleCloseModal = () => {
@@ -189,20 +194,21 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
           <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[25%] text-white ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""
+              className={`px-4 py-2 w-[25%] text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
-              disabled={currentPage === 0}
+              disabled={currentPageNum === 0}
             >
               Previous
             </button>
 
             <span className="text-white text-opacity-80">
               {/* Page {startIndex / itemsPerPage + 1} of {totalPages} */}
+              Page {currentPageNum + 1}
             </span>
 
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] text-white ${currentPage + itemsPerPage >= cardData.length
+              className={`px-4 py-2 w-[25%] text-white ${currentPageNum + itemsPerPage >= cardData.length
                 ? "opacity-50 cursor-not-allowed"
                 : ""
                 }`}
@@ -276,20 +282,21 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={goToPreviousPage}
-            className={`px-4 py-2 text-white ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : ""
+            className={`px-4 py-2 text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
-            disabled={currentPage === 0}
+            disabled={currentPageNum === 0}
           >
             Previous
           </button>
 
           <span className="text-white text-opacity-80">
             {/* Page {startIndex / itemsPerPage + 1} of {totalPages} */}
+            Page {currentPageNum + 1}
           </span>
 
           <button
             onClick={goToNextPage}
-            className={`px-4 py-2 text-white ${currentPage + itemsPerPage >= cardData.length
+            className={`px-4 py-2 text-white ${currentPageNum + itemsPerPage >= cardData.length
               ? "opacity-50 cursor-not-allowed"
               : ""
               }`}
