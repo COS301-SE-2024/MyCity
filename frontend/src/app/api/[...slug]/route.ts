@@ -41,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   const res = await fetch(endpointUrl, {
     headers: req.headers,
     next: { tags: [etag] },
-    cache: "force-cache"
+    // cache: "force-cache"
   });
 
   return res;
