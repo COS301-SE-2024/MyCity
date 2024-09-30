@@ -22,17 +22,14 @@ describe("Integration Tests - /tickets", () => {
 
     describe("POST /tickets/create", () => {
         test("should create a ticket successfully", async () => {
-            // Mock the service to return a successful ticket creation response
             const mockResponse = {
                 message: "Ticket created successfully",
                 ticket_id: "ticket123",
                 watchlist_id: "watchlist123",
             };
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "createTicket").mockResolvedValue(mockResponse);
 
-            // Sample form data for the ticket creation
             const formData = {
                 username: "john_doe",
                 address: "123 Main St",
@@ -43,47 +40,37 @@ describe("Integration Tests - /tickets", () => {
                 state: "Open",
             };
 
-            // Simulate a request with form data
             const response = await request(app)
                 .post("/tickets/create")
-                .send(formData); // In case a file is uploaded, use `.attach()`
+                .send(formData); 
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct form data
             expect(ticketsService.createTicket).toHaveBeenCalledWith(formData, undefined); // No file was uploaded in this case
         });
 
         test("should return 400 if any required fields are missing", async () => {
-            // Simulate a request with missing fields
             const incompleteFormData = {
                 username: "john_doe",
                 address: "123 Main St",
-                // asset, description, latitude, longitude, state are missing
             };
 
             const response = await request(app)
                 .post("/tickets/create")
                 .send(incompleteFormData);
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message contains missing fields
             expect(response.body.Error).toBe(
                 "Missing parameter(s): asset, description, latitude, longitude, state"
             );
         });
 
         test("should return 500 if there is a service error", async () => {
-            // Mock the service to throw an error
             jest.spyOn(ticketsService, "createTicket").mockRejectedValue(new Error("Internal Server Error"));
 
-            // Sample valid form data for ticket creation
             const validFormData = {
                 username: "john_doe",
                 address: "123 Main St",
@@ -94,76 +81,60 @@ describe("Integration Tests - /tickets", () => {
                 state: "Open",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/create")
                 .send(validFormData);
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the error message is correct
             expect(response.body).toEqual({ Error: "Internal Server Error" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("POST /tickets/addwatchlist", () => {
         test("should add a ticket to watchlist successfully", async () => {
-            // Mock the service to return a successful watchlist addition response
             const mockResponse = {
                 Status: "Success",
                 Message: "Ticket has been added to john_doe with id of: watchlist123",
             };
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "addWatchlist").mockResolvedValue(mockResponse);
 
-            // Sample form data for adding to watchlist
             const formData = {
                 username: "john_doe",
                 ticket_id: "ticket123",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/addwatchlist")
                 .send(formData);
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct form data
             expect(ticketsService.addWatchlist).toHaveBeenCalledWith(formData);
         });
 
         test("should return 400 if any required fields are missing", async () => {
-            // Simulate a request with missing fields
             const incompleteFormData = {
                 username: "john_doe",
-                // ticket_id is missing
             };
 
             const response = await request(app)
                 .post("/tickets/addwatchlist")
                 .send(incompleteFormData);
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message contains missing fields
             expect(response.body.Error).toBe("Missing parameter(s): ticket_id");
         });
 
         test("should return error if ticket is already in the watchlist", async () => {
-            // Mock the service to throw an error indicating that the ticket is already in the watchlist
             const errorResponse = {
                 Error: {
                     Code: "AlreadyExists",
@@ -172,85 +143,67 @@ describe("Integration Tests - /tickets", () => {
             };
             jest.spyOn(ticketsService, "addWatchlist").mockRejectedValue(new Error("Already have ticket in watchlist"));
 
-            // Sample form data for adding to watchlist
             const formData = {
                 username: "john_doe",
                 ticket_id: "ticket123",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/addwatchlist")
                 .send(formData);
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Already have ticket in watchlist" });
         });
 
         test("should return error if ticket does not exist", async () => {
-            // Mock the service to throw an error indicating that the ticket doesn't exist
             jest.spyOn(ticketsService, "addWatchlist").mockRejectedValue(new Error("Ticket doesn't exist"));
 
-            // Sample form data for adding to watchlist
             const formData = {
                 username: "john_doe",
                 ticket_id: "nonexistent_ticket",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/addwatchlist")
                 .send(formData);
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Ticket doesn't exist" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("POST /tickets/accept", () => {
         test("should accept a ticket successfully", async () => {
-            // Mock the service to return a successful ticket acceptance response
             const mockResponse = {
                 Status: "Success",
                 Ticket_id: "ticket123",
             };
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "acceptTicket").mockResolvedValue(mockResponse);
 
-            // Sample form data for accepting a ticket
             const formData = {
                 ticket_id: "ticket123",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/accept")
                 .send(formData);
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct form data
             expect(ticketsService.acceptTicket).toHaveBeenCalledWith(formData);
         });
 
         test("should return 400 if required fields are missing", async () => {
-            // Simulate a request with missing fields
             const incompleteFormData = {
                 // ticket_id is missing
             };
@@ -259,57 +212,44 @@ describe("Integration Tests - /tickets", () => {
                 .post("/tickets/accept")
                 .send(incompleteFormData);
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message contains missing fields
             expect(response.body.Error).toBe("Missing parameter(s): ticket_id");
         });
 
         test("should return error if ticket does not exist", async () => {
-            // Mock the service to throw an error indicating the ticket doesn't exist
             jest.spyOn(ticketsService, "acceptTicket").mockRejectedValue(new Error("Ticket doesn't exist"));
 
-            // Sample form data for accepting a ticket
             const formData = {
                 ticket_id: "nonexistent_ticket",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/accept")
                 .send(formData);
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Ticket doesn't exist" });
         });
 
         test("should return error if there is an issue updating the ticket state", async () => {
-            // Mock the service to throw an error indicating there was an update issue
             jest.spyOn(ticketsService, "acceptTicket").mockRejectedValue(new Error("Error occurred while trying to update"));
 
-            // Sample form data for accepting a ticket
             const formData = {
                 ticket_id: "ticket123",
             };
 
-            // Simulate a request with valid form data
             const response = await request(app)
                 .post("/tickets/accept")
                 .send(formData);
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Error occurred while trying to update" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
@@ -317,37 +257,29 @@ describe("Integration Tests - /tickets", () => {
     describe("POST /tickets/close", () => {
         describe("POST /tickets/close", () => {
             test("should close a ticket successfully", async () => {
-                // Mock the service to return a successful ticket close response
                 const mockResponse = {
                     Status: "Success",
                     Ticket_id: "ticket123",
                 };
     
-                // Spy on the service method and mock its return value
                 jest.spyOn(ticketsService, "closeTicket").mockResolvedValue(mockResponse);
     
-                // Sample form data for closing a ticket
                 const formData = {
                     ticket_id: "ticket123",
                 };
     
-                // Simulate a request with valid form data
                 const response = await request(app)
                     .post("/tickets/close")
                     .send(formData);
     
-                // Assert that the response status is 200
                 expect(response.statusCode).toBe(200);
-    
-                // Assert that the response contains the correct data
+
                 expect(response.body).toEqual(mockResponse);
     
-                // Ensure the service method was called with the correct form data
                 expect(ticketsService.closeTicket).toHaveBeenCalledWith(formData);
             });
     
             test("should return 400 if required fields are missing", async () => {
-                // Simulate a request with missing fields
                 const incompleteFormData = {
                     // ticket_id is missing
                 };
@@ -356,57 +288,44 @@ describe("Integration Tests - /tickets", () => {
                     .post("/tickets/close")
                     .send(incompleteFormData);
     
-                // Assert that the response status is 400
                 expect(response.statusCode).toBe(400);
     
-                // Assert that the error message contains missing fields
                 expect(response.body.Error).toBe("Missing parameter(s): ticket_id");
             });
     
             test("should return error if ticket does not exist", async () => {
-                // Mock the service to throw an error indicating the ticket doesn't exist
                 jest.spyOn(ticketsService, "closeTicket").mockRejectedValue(new Error("Ticket doesn't exist"));
     
-                // Sample form data for closing a ticket
                 const formData = {
                     ticket_id: "nonexistent_ticket",
                 };
     
-                // Simulate a request with valid form data
                 const response = await request(app)
                     .post("/tickets/close")
                     .send(formData);
     
-                // Assert that the response status is 500
                 expect(response.statusCode).toBe(500);
     
-                // Assert that the response contains the correct error message
                 expect(response.body).toEqual({ Error: "Ticket doesn't exist" });
             });
     
             test("should return error if there is an issue updating the ticket state", async () => {
-                // Mock the service to throw an error indicating there was an update issue
                 jest.spyOn(ticketsService, "closeTicket").mockRejectedValue(new Error("Error occurred while trying to update"));
-    
-                // Sample form data for closing a ticket
+
                 const formData = {
                     ticket_id: "ticket123",
                 };
     
-                // Simulate a request with valid form data
                 const response = await request(app)
                     .post("/tickets/close")
                     .send(formData);
     
-                // Assert that the response status is 500
                 expect(response.statusCode).toBe(500);
     
-                // Assert that the response contains the correct error message
                 expect(response.body).toEqual({ Error: "Error occurred while trying to update" });
             });
     
             afterEach(() => {
-                // Restore the original implementation after each test
                 jest.restoreAllMocks();
             });
         });
@@ -427,9 +346,8 @@ describe("Integration Tests - /tickets", () => {
 
             const response = await request(app)
                 .get("/tickets/view")
-                .query({ ticket_id: "123" }); // Simulate a request with a ticket ID
+                .query({ ticket_id: "123" });
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
             expect(response.body).toEqual(mockTicketData);
@@ -438,297 +356,215 @@ describe("Integration Tests - /tickets", () => {
         });
 
         test("should return 400 if the ticket_id is missing", async () => {
-            // Make the request without a ticket_id
             const response = await request(app).get("/tickets/view");
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message is correct
             expect(response.body).toEqual({ Error: "Missing parameter: ticket_id" });
         });
 
         test("should return 500 if there is a service error", async () => {
-            // Mock the service to throw an error
             jest.spyOn(ticketsService, "viewTicketData").mockRejectedValue(new Error("Internal Server Error"));
 
-            // Make the request with a valid ticket_id
             const response = await request(app)
                 .get("/tickets/view")
                 .query({ ticket_id: "123" });
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the error message is correct
             expect(response.body).toEqual({ Error: "Internal Server Error" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("GET /tickets/getmytickets", () => {
         test("should return my tickets successfully", async () => {
-            // Mock the service to return a list of tickets
             const mockResponse = [
                 { ticket_id: "ticket123", username: "john_doe", state: "Open" },
                 { ticket_id: "ticket456", username: "john_doe", state: "Closed" },
             ];
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "getMyTickets").mockResolvedValue(mockResponse);
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getmytickets")
                 .query({ username: "john_doe" });
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct username
             expect(ticketsService.getMyTickets).toHaveBeenCalledWith("john_doe");
         });
 
         test("should return 400 if username is missing", async () => {
-            // Simulate a request without the required username parameter
             const response = await request(app)
                 .get("/tickets/getmytickets")
-                .query({}); // No username in the query
+                .query({});
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message is correct
             expect(response.body.Error).toBe("Missing parameter: username");
         });
 
         test("should return error if no tickets are found", async () => {
-            // Mock the service to throw an error indicating no tickets are found
             jest.spyOn(ticketsService, "getMyTickets").mockRejectedValue(new Error("Doesn't have ticket"));
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getmytickets")
                 .query({ username: "nonexistent_user" });
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Doesn't have ticket" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("GET /tickets/getinarea", () => {
         test("should get tickets within a given municipality", async () => {
-            // Mock the service to return a list of tickets for a given municipality
             const mockResponse = [
                 { ticket_id: "ticket123", municipality_id: "municipality_1", state: "Open" },
                 { ticket_id: "ticket456", municipality_id: "municipality_1", state: "Closed" },
             ];
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "getInMyMunicipality").mockResolvedValue(mockResponse);
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getinarea")
                 .query({ municipality: "municipality_1" });
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct municipality
             expect(ticketsService.getInMyMunicipality).toHaveBeenCalledWith("municipality_1");
         });
 
         test("should return 400 if municipality is missing", async () => {
-            // Simulate a request without the required municipality parameter
             const response = await request(app)
                 .get("/tickets/getinarea")
-                .query({}); // No municipality in the query
+                .query({}); 
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message is correct
             expect(response.body.Error).toBe("Missing parameter: municipality");
         });
 
         test("should return error if no tickets are found in the municipality", async () => {
-            // Mock the service to throw an error indicating no tickets are found
             jest.spyOn(ticketsService, "getInMyMunicipality").mockRejectedValue(new Error("Doesn't have a ticket in municipality"));
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getinarea")
                 .query({ municipality: "municipality_2" });
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Doesn't have a ticket in municipality" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("GET /tickets/getopeninarea", () => {
         test("should get open tickets in a municipality", async () => {
-            // Mock the service to return a list of open tickets for a given municipality
             const mockResponse = [
                 { ticket_id: "ticket123", municipality_id: "municipality_1", state: "Opened" },
                 { ticket_id: "ticket456", municipality_id: "municipality_1", state: "Opened" },
             ];
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "getOpenTicketsInMunicipality").mockResolvedValue(mockResponse);
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getopeninarea")
                 .query({ municipality: "municipality_1" });
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct municipality
             expect(ticketsService.getOpenTicketsInMunicipality).toHaveBeenCalledWith("municipality_1");
         });
 
         test("should return 400 if municipality is missing", async () => {
-            // Simulate a request without the required municipality parameter
             const response = await request(app)
                 .get("/tickets/getopeninarea")
-                .query({}); // No municipality in the query
+                .query({});
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message is correct
             expect(response.body.Error).toBe("Missing parameter: municipality");
         });
 
         test("should return error if no open tickets are found in the municipality", async () => {
-            // Mock the service to throw an error indicating no open tickets are found
             jest.spyOn(ticketsService, "getOpenTicketsInMunicipality").mockRejectedValue(new Error("Doesn't have open tickets in municipality"));
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getopeninarea")
                 .query({ municipality: "municipality_2" });
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "Doesn't have open tickets in municipality" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
         });
     });
 
     describe("GET /tickets/getwatchlist", () => {
         test("should return watchlisted tickets", async () => {
-            // Mock the service to return a list of watchlisted tickets
             const mockResponse = [
                 { ticket_id: "ticket123", title: "Broken street light", state: "Opened" },
                 { ticket_id: "ticket456", title: "Pothole repair", state: "Opened" },
             ];
 
-            // Spy on the service method and mock its return value
             jest.spyOn(ticketsService, "getWatchlist").mockResolvedValue(mockResponse);
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getwatchlist")
                 .query({ username: "user_1" });
 
-            // Assert that the response status is 200
             expect(response.statusCode).toBe(200);
 
-            // Assert that the response contains the correct data
             expect(response.body).toEqual(mockResponse);
 
-            // Ensure the service method was called with the correct username
             expect(ticketsService.getWatchlist).toHaveBeenCalledWith("user_1");
         });
 
         test("should return 400 if username is missing", async () => {
-            // Simulate a request without the required username parameter
             const response = await request(app)
                 .get("/tickets/getwatchlist")
-                .query({}); // No username in the query
+                .query({});
 
-            // Assert that the response status is 400
             expect(response.statusCode).toBe(400);
 
-            // Assert that the error message is correct
             expect(response.body.Error).toBe("Missing parameter: username");
         });
 
         test("should return error if no tickets are found in the watchlist", async () => {
-            // Mock the service to throw an error indicating no tickets are found in the watchlist
             jest.spyOn(ticketsService, "getWatchlist").mockRejectedValue(new Error("NoWatchlist: Doesn't have a watchlist"));
 
-            // Simulate a request with valid query parameters
             const response = await request(app)
                 .get("/tickets/getwatchlist")
                 .query({ username: "user_2" });
 
-            // Assert that the response status is 500
             expect(response.statusCode).toBe(500);
 
-            // Assert that the response contains the correct error message
             expect(response.body).toEqual({ Error: "NoWatchlist: Doesn't have a watchlist" });
         });
 
         afterEach(() => {
-            // Restore the original implementation after each test
             jest.restoreAllMocks();
-        });
-    });
-
-    describe("GET /tickets/getUpvotes", () => {
-        test("should return most upvoted tickets", async () => {
-
-        });
-    });
-
-    describe("GET /tickets/getcompanytickets", () => {
-        test("should return company tickets", async () => {
-
-        });
-    });
-
-    describe("GET /tickets/getopencompanytickets", () => {
-        test("should return open company tickets", async () => {
-
         });
     });
 
