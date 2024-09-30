@@ -103,7 +103,7 @@ export default function Tender({
         </div>
         <div className="col-span-1 flex justify-center">{datesubmitted}</div>
         <div className="col-span-1 flex justify-center">
-          R{tender.quote.toFixed(2)}
+          R{tender.quote}
         </div>
         <div className="col-span-1 flex justify-center">
           {getDays(tender.estimatedTimeHours)} days
