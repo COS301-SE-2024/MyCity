@@ -24,8 +24,8 @@ export const addJobToReadQueue = async (jobData: JobData, options?: JobOptions) 
     const readQueue = await getReadQueue();
     const job = await readQueue.add({
         type: jobData.type,
-        params: jobData,
-        cacheKey: jobData
+        params: jobData.params,
+        cacheKey: jobData.cacheKey
     }, options);
 
     return job;

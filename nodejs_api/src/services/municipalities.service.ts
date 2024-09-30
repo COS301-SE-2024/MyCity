@@ -19,11 +19,15 @@ export const getAllMunicipalities = async (cacheKey: string) => {
     const readJob = await addJobToReadQueue(jobData);
     const response = await readJob.finished() as ScanCommandOutput;
     const municipalities = response.Items || [];
-    return municipalities;
+
+       // Note that only the name of the municipality is being fetched
+    // and results are sorted in ascending order
+    const municipalitiesList = municipalities.sort();
+    return municipalitiesList;
 };
 
 export const getMunicipalityCoordinates = async (municipality: string, cacheKey: string) => {
-    const params: GetCommandInput = {
+    const params: GetCommandInput = { 
         TableName: MUNICIPALITIES_TABLE,
         Key: {
             "municipality_id": municipality

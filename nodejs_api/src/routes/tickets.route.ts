@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import multer from "multer";
+import bodyParser from "body-parser";
 
 import * as ticketsController from "../controllers/tickets.controller";
 import { cacheMiddleware } from "../config/redis.config";
@@ -11,6 +12,8 @@ const upload = multer({ storage });
 
 // create a ticket
 router.post("/create", upload.single("file"), ticketsController.createTicket);
+
+router.use(bodyParser.json());
 
 // add a ticket to watchlist
 router.post("/addwatchlist", ticketsController.addWatchlist);
