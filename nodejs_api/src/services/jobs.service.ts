@@ -1,6 +1,6 @@
 import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getFromCache, getReadQueue, getWriteQueue } from "../config/redis.config";
 import { dynamoDBDocumentClient } from "../config/dynamodb.config";
-import { GetCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { DoneCallback, Job, JobOptions } from "bull";
 import { JobData } from "../types/job.types";
 
@@ -85,7 +85,7 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
     const { type, params } = job.data as JobData;
     try {
         if (type === DB_PUT) {
-            const command = new UpdateCommand(params);
+            const command = new PutCommand(params);
             await dynamoDBDocumentClient.send(command);
             done();    // finish the job
         }

@@ -1,10 +1,11 @@
-import { GetCommand, QueryCommand, QueryCommandInput, QueryCommandOutput, ScanCommand, ScanCommandInput, ScanCommandOutput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
 import { JobData } from "../types/job.types";
-import { addJobToReadQueue, addJobToWriteQueue } from "../services/jobs.service";
+import { addJobToReadQueue } from "../services/jobs.service";
+import { DB_QUERY, DB_SCAN } from "../config/redis.config";
 
 interface Company {
     name: string;
@@ -240,7 +241,7 @@ export const getMunicipality = async (latitude: number, longitude: number): Prom
             ExclusiveStartKey: lastEvaluatedKey
         };
         const jobData: JobData = {
-            type: "DB_SCAN",
+            type: DB_SCAN,
             params: params
         };
 
@@ -292,7 +293,7 @@ export const getTicketDateOpened = async (ticketId: string) => {
         ProjectionExpression: "dateOpened"
     };
     const jobData: JobData = {
-        type: "DB_QUERY",
+        type: DB_QUERY,
         params: params
     };
     const readJob = await addJobToReadQueue(jobData, { priority: 1 });
@@ -307,20 +308,3 @@ export const getTicketDateOpened = async (ticketId: string) => {
     const dateOpened = queryResultItems[0].dateOpened as string;
     return dateOpened;
 };
-
-
-// export const formatResponse = (statusCode: number, body: any) => {
-//     return new Response(
-//         JSON.stringify(body, (key, value) => {
-//             return typeof value === 'object' && value !== null ? convertDecimalToFloat(value) : value;
-//         }),
-//         {
-//             status: statusCode,
-//             headers: {
-//                 "Access-Control-Allow-Origin": "*",
-//                 "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-//                 "Access-Control-Allow-Headers": "Authorization,Content-Type,X-Amz-Date,X-Amz-Security-Token,X-Api-Key",
-//             },
-//         }
-//     );
-// };

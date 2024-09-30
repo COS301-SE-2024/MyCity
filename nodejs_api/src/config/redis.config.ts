@@ -134,3 +134,9 @@ export const clearRedisCache = async () => {
     const response = await client.flushAll();
     return response;
 };
+
+export const removeRedisCacheKeys = async (keys: string[]) => {
+    const client = await getRedisClient();
+    // clear the cache for the given keys
+    const response = await client.del(keys);
+};

@@ -1,4 +1,4 @@
-import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommand, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, PutCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
@@ -6,7 +6,7 @@ import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
-import { DB_GET, DB_QUERY, DB_SCAN } from "../config/redis.config";
+import { DB_GET, DB_PUT, DB_QUERY, DB_SCAN } from "../config/redis.config";
 
 interface Ticket {
     dateClosed: string;
@@ -112,13 +112,13 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
     };
 
     const jobData: JobData = {
-        type: "DB_PUT",
+        type: DB_PUT,
         params: putItemParams
     }
 
     // Put the ticket item into the tickets table
     const putItemJob = await addJobToWriteQueue(jobData, { priority: 1 });
-    const putItemResponse = await putItemJob.finished() as PutCommandInput;
+    const putItemResponse = await putItemJob.finished() as PutCommandOutput;
 
 
     // Put ticket on their watchlist
@@ -141,7 +141,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
     }
 
     const watchlistJob = await addJobToWriteQueue(watchlistJobData, { priority: 1 });
-    const watchlistResponse = await watchlistJob.finished() as PutCommandInput;
+    const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
 
     const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
     const ws = new WebSocket(WEB_SOCKET_URL);
