@@ -21,7 +21,94 @@ describe("Integration Tests - /tickets", () => {
     });
 
     describe("POST /tickets/create", () => {
-        test("should create a ticket", async () => {
+        test("should create a ticket successfully", async () => {
+            // Mock the service to return a successful ticket creation response
+            const mockResponse = {
+                message: "Ticket created successfully",
+                ticket_id: "ticket123",
+                watchlist_id: "watchlist123",
+            };
+
+            // Spy on the service method and mock its return value
+            jest.spyOn(ticketsService, "createTicket").mockResolvedValue(mockResponse);
+
+            // Sample form data for the ticket creation
+            const formData = {
+                username: "john_doe",
+                address: "123 Main St",
+                asset: "asset123",
+                description: "Leaking pipe on the street",
+                latitude: "37.7749",
+                longitude: "-122.4194",
+                state: "Open",
+            };
+
+            // Simulate a request with form data
+            const response = await request(app)
+                .post("/tickets/create")
+                .send(formData); // In case a file is uploaded, use `.attach()`
+
+            // Assert that the response status is 200
+            expect(response.statusCode).toBe(200);
+
+            // Assert that the response contains the correct data
+            expect(response.body).toEqual(mockResponse);
+
+            // Ensure the service method was called with the correct form data
+            expect(ticketsService.createTicket).toHaveBeenCalledWith(formData, undefined); // No file was uploaded in this case
+        });
+
+        test("should return 400 if any required fields are missing", async () => {
+            // Simulate a request with missing fields
+            const incompleteFormData = {
+                username: "john_doe",
+                address: "123 Main St",
+                // asset, description, latitude, longitude, state are missing
+            };
+
+            const response = await request(app)
+                .post("/tickets/create")
+                .send(incompleteFormData);
+
+            // Assert that the response status is 400
+            expect(response.statusCode).toBe(400);
+
+            // Assert that the error message contains missing fields
+            expect(response.body.Error).toBe(
+                "Missing parameter(s): asset, description, latitude, longitude, state"
+            );
+        });
+
+        test("should return 500 if there is a service error", async () => {
+            // Mock the service to throw an error
+            jest.spyOn(ticketsService, "createTicket").mockRejectedValue(new Error("Internal Server Error"));
+
+            // Sample valid form data for ticket creation
+            const validFormData = {
+                username: "john_doe",
+                address: "123 Main St",
+                asset: "asset123",
+                description: "Leaking pipe on the street",
+                latitude: "37.7749",
+                longitude: "-122.4194",
+                state: "Open",
+            };
+
+            // Simulate a request with valid form data
+            const response = await request(app)
+                .post("/tickets/create")
+                .send(validFormData);
+
+            // Assert that the response status is 500
+            expect(response.statusCode).toBe(500);
+
+            // Assert that the error message is correct
+            expect(response.body).toEqual({ Error: "Internal Server Error" });
+        });
+
+        afterEach(() => {
+            // Restore the original implementation after each test
+            jest.restoreAllMocks();
         });
     });
 
