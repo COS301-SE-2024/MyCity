@@ -248,7 +248,7 @@ export default function ServiceProviderSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Create Password <span className="text-blue-500">*</span>
                     </span>
                   }
@@ -280,7 +280,7 @@ export default function ServiceProviderSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Confirm Password <span className=" text-blue-500">*</span>
                     </span>
                   }
@@ -487,7 +487,7 @@ export default function ServiceProviderSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Create Password <span className="text-blue-500">*</span>
                     </span>
                   }
@@ -519,7 +519,7 @@ export default function ServiceProviderSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Confirm Password<span className="text-blue-500">*</span>
                     </span>
                   }

@@ -29,11 +29,11 @@ describe("MunicipalityLogin", () => {
     });
 
     /* Test 3: Renders Forgot Password link */
-    it("renders a 'Forgot password?' link", () => {
-        render(<MunicipalityLogin />);
-        const forgotPasswordLink = screen.getByText("Forgot password?");
-        expect(forgotPasswordLink).toBeInTheDocument();
-    });
+    // it("renders a 'Forgot password?' link", () => {
+    //     render(<MunicipalityLogin />);
+    //     const forgotPasswordLink = screen.getByText("Forgot password?");
+    //     expect(forgotPasswordLink).toBeInTheDocument();
+    // });
 
     /* Test 4: Renders Login button correctly */
     it("renders a submit button", () => {

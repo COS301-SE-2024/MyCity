@@ -183,9 +183,10 @@ export default function CitizenSignup() {
       const signedUp = await handleSignUp(form, UserRole.CITIZEN);
       if (signedUp.isSignedIn) {
         router.push("/dashboard/citizen");
-      }
-      else {
-        setError("Auto login failed. Please log in manually using your credentials.");
+      } else {
+        setError(
+          "Auto login failed. Please log in manually using your credentials."
+        );
         setIsLoading(false);
       }
     } catch (error: any) {
@@ -260,8 +261,9 @@ export default function CitizenSignup() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
-                  }`,
+                inputWrapper: `h-[3em] ${
+                  !isEmailValid ? "border-red-500" : ""
+                }`,
               }}
               type="email"
               name="email"
@@ -284,10 +286,11 @@ export default function CitizenSignup() {
                     <span className="font-semibold text-medium block mb-[0.20em]">
                       Municipality{" "}
                       <span
-                        className={`${selectedMunicipality
-                          ? "text-green-500"
-                          : "text-red-500"
-                          } *`}
+                        className={`${
+                          selectedMunicipality
+                            ? "text-green-500"
+                            : "text-red-500"
+                        } *`}
                       ></span>
                     </span>
                   }
@@ -324,7 +327,7 @@ export default function CitizenSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Create Password <span className="text-blue-500">*</span>
                     </span>
                   }
@@ -357,7 +360,7 @@ export default function CitizenSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Confirm Password <span className="text-blue-500">*</span>
                     </span>
                   }
@@ -422,10 +425,11 @@ export default function CitizenSignup() {
             <Button
               name="submit"
               data-testid="signup-submit-btn"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${
+                isFormValid
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
               type="submit"
               disabled={!isFormValid}
             >
@@ -450,16 +454,10 @@ export default function CitizenSignup() {
         </div>
       </div>
 
-
-
-
       {/* Mobile View */}
       <div className="block sm:hidden">
         <div className="px-2">
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-y-4 pt-2"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col gap-y-4 pt-2">
             {/* Input Fields */}
             <div className="flex justify-between gap-4">
               <Input
@@ -516,8 +514,9 @@ export default function CitizenSignup() {
               }
               labelPlacement={"outside"}
               classNames={{
-                inputWrapper: `h-[3em] ${!isEmailValid ? "border-red-500" : ""
-                  }`,
+                inputWrapper: `h-[3em] ${
+                  !isEmailValid ? "border-red-500" : ""
+                }`,
               }}
               type="email"
               name="email"
@@ -539,10 +538,11 @@ export default function CitizenSignup() {
                     <span className="font-semibold text-medium block mb-[0.20em]">
                       Municipality{" "}
                       <span
-                        className={`${selectedMunicipality
-                          ? "text-green-500"
-                          : "text-red-500"
-                          } *`}
+                        className={`${
+                          selectedMunicipality
+                            ? "text-green-500"
+                            : "text-red-500"
+                        } *`}
                       ></span>
                     </span>
                   }
@@ -579,7 +579,7 @@ export default function CitizenSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Create Password
                     </span>
                   }
@@ -611,7 +611,7 @@ export default function CitizenSignup() {
                 <Input
                   variant={"bordered"}
                   label={
-                    <span className="font-semibold text-medium block mb-[0.20em]">
+                    <span className="font-semibold text-xs block mb-[0.20em]">
                       Confirm Password
                     </span>
                   }
@@ -674,10 +674,11 @@ export default function CitizenSignup() {
             {/* Submit Button */}
             <Button
               name="submit"
-              className={`w-28 h-11 rounded-full m-auto font-semibold ${isFormValid
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+              className={`w-28 h-11 rounded-full m-auto font-semibold ${
+                isFormValid
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
               type="submit"
               disabled={!isFormValid}
             >

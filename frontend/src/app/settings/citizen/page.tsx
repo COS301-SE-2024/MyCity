@@ -226,7 +226,7 @@ export default function Settings() {
     switch (activeTab) {
       case "AccountInformation":
         return (
-          <div className="w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Account Information</h2>
             {renderSubPageContent(data)}
           </div>
@@ -234,7 +234,7 @@ export default function Settings() {
 
       case "Notifications":
         return (
-          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg  shadow-md p-6 mr-6 mt-4">
+<div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -290,7 +290,7 @@ export default function Settings() {
 
       case "SecurityPrivacy":
         return (
-          <div className=" w-full dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Security & Privacy</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -325,8 +325,7 @@ export default function Settings() {
 
       case "Accessibility":
         return (
-          <div className="w-full dark:bg-gray-700 dark:text-white bg-white  bg-opacity-70 sm:rounded-tr-lg sm:rounded-br-lg shadow-md p-6 mr-6 mt-4">
-            <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
                 <div className="flex items-center justify-between p-2 rounded">

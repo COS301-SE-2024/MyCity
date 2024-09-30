@@ -94,7 +94,7 @@ const CreateTicketComp: React.FC = () => {
         });
       },
       (error) => {
-        console.error("Error getting current location: ", error);
+        console.log("Error getting location: ", error);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );

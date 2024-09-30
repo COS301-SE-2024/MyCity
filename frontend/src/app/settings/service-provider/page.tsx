@@ -97,14 +97,14 @@ export default function Settings() {
     switch (activeTab) {
       case "CompanyInformation":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Company Information</h2>
             {renderSubPageContent()}
           </div>
         );
       case "Notifications":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
@@ -132,14 +132,14 @@ export default function Settings() {
         );
       case "CompanyCode":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Company Code</h2>
             <CompanyCode />
           </div>
         );
       case "Accessibility":
         return (
-          <div className="border-l border-gray-400 w-full bg-white bg-opacity-70 rounded-tr-lg rounded-br-lg shadow-md p-6 mr-6 mt-4">
+          <div className="w-full rounded-3xl sm:rounded-none sm:rounded-tr-lg sm:rounded-br-lg dark:bg-gray-700 dark:text-white bg-white bg-opacity-70 shadow-md p-6 mr-6 mt-4">
             <h2 className="text-2xl font-semibold mb-4">Accessibility</h2>
             <div className="space-y-4">
               <div className="w-full text-left hover:bg-gray-100 p-2 rounded">
