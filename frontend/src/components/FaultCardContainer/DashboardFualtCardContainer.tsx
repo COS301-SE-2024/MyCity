@@ -207,8 +207,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
             <button
               onClick={goToNextPage}
               className={`px-4 py-2 w-[25%] ${currentPageNum + itemsPerPage >= cardData.length
-                ? "bg-gray-500 text-white cursor-not-allowed"
-                : "bg-white text-black"
+                ? "text-opacity-50 text-white cursor-not-allowed"
+                : "text-white"
               }`}
               disabled={!lastEvaluatedKey}
             >
@@ -293,8 +293,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
           <button
             onClick={goToNextPage}
             className={`px-4 py-2 ${currentPageNum + itemsPerPage >= cardData.length
-              ? "bg-gray-500 text-white cursor-not-allowed"
-              : "bg-white text-black"
+              ? "text-opacity-50 text-white cursor-not-allowed"
+              : "text-white"
             }`}
             disabled={!lastEvaluatedKey}
           >
