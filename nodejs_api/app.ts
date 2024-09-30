@@ -21,15 +21,16 @@ const app: Express = express();
 
 //middleware
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
 
 app.use("/tickets", ticketsRouter);
+app.use("/users", usersRouter);
+
+app.use(bodyParser.json());
 app.use("/municipality", municipalitiesRouter);
 app.use("/notifications", notificationsRouter);
 app.use("/search", searchingRouter);
 app.use("/tenders", tendersRouter);
 app.use("/upvotes", upvotesRouter);
-app.use("/users", usersRouter);
 app.use("/watchlist", watchlistRouter);
 app.use("/analytics", analyticsRouter);
 
