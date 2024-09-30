@@ -113,12 +113,13 @@ export const getMyTickets = async (req: Request, res: Response) => {
 
 export const getInArea = async (req: Request, res: Response) => {
     const municipality = req.query["municipality"] as string;
+    const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     if (!municipality) {
         return res.status(400).json({ Error: "Missing parameter: municipality" });
     }
 
     try {
-        const response = await ticketsService.getInMyMunicipality(municipality, req.originalUrl);
+        const response = await ticketsService.getInMyMunicipality(municipality, req.originalUrl, lastEvaluatedKeyString);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -143,12 +144,13 @@ export const getOpenTicketsInMunicipality = async (req: Request, res: Response) 
 
 export const getMyWatchlist = async (req: Request, res: Response) => {
     const username = req.query["username"] as string;
+    const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     if (!username) {
         return res.status(400).json({ Error: "Missing parameter: username" });
     }
 
     try {
-        const response = await ticketsService.getWatchlist(username, req.originalUrl);
+        const response = await ticketsService.getWatchlist(username, req.originalUrl, lastEvaluatedKeyString);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

@@ -227,7 +227,7 @@ export const addWatchlist = async (ticketData: TicketData) => {
     };
 };
 
-export const getFaultTypes = async (cacheKey:string) => {
+export const getFaultTypes = async (cacheKey: string) => {
     const params: ScanCommandInput = {
         TableName: ASSETS_TABLE,
         ProjectionExpression: "asset_id, assetIcon, multiplier"
@@ -286,7 +286,7 @@ export const getMyTickets = async (username: string | null, cacheKey: string) =>
     }
 };
 
-export const getInMyMunicipality = async (municipality: string | null, cacheKey: string) => {
+export const getInMyMunicipality = async (municipality: string | null, cacheKey: string, lastEvaluatedKeyString: string) => {
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "municipality_id-updatedAt-index",
@@ -295,7 +295,12 @@ export const getInMyMunicipality = async (municipality: string | null, cacheKey:
             ":municipality_id": municipality
         },
         ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
+        Limit: 15
     };
+
+    if (lastEvaluatedKeyString) {
+        params.ExclusiveStartKey = JSON.parse(lastEvaluatedKeyString);
+    }
 
     const jobData: JobData = {
         type: DB_QUERY,
@@ -310,7 +315,10 @@ export const getInMyMunicipality = async (municipality: string | null, cacheKey:
     if (items && items.length > 0) {
         await updateCommentCounts(items);
         await getUserProfile(items);
-        return items;
+        return {
+            lastEvaluatedKey: response.LastEvaluatedKey,
+            items: items
+        };
     } else {
         const errorResponse = {
             Error: {
@@ -363,7 +371,7 @@ export const getOpenTicketsInMunicipality = async (municipality: string | null, 
     }
 };
 
-export const getWatchlist = async (userId: string, cacheKey: string) => {
+export const getWatchlist = async (userId: string, cacheKey: string, lastEvaluatedKeyString: string) => {
     const collective: any[] = [];
 
     const params: QueryCommandInput = {
@@ -371,8 +379,13 @@ export const getWatchlist = async (userId: string, cacheKey: string) => {
         KeyConditionExpression: "user_id = :user_id",
         ExpressionAttributeValues: {
             ":user_id": userId
-        }
+        },
+        Limit: 15
     };
+
+    if (lastEvaluatedKeyString) {
+        params.ExclusiveStartKey = JSON.parse(lastEvaluatedKeyString);
+    }
 
     const jobsData: JobData = {
         type: DB_QUERY,
@@ -412,7 +425,10 @@ export const getWatchlist = async (userId: string, cacheKey: string) => {
                 collective.push(...ticketsItems);
             }
         }
-        return collective;
+        return {
+            lastEvaluatedKey: response.LastEvaluatedKey,
+            items: collective
+        };
     } else {
         throw new Error("NoWatchlist: Doesn't have a watchlist");
     }
