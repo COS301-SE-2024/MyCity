@@ -1,17 +1,28 @@
-import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { dynamoDBDocumentClient, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
+import { JobData } from "../types/job.types";
+import { addJobToReadQueue } from "./jobs.service";
+import { DB_SCAN } from "../config/redis.config";
 
-export const searchWatchlist = async (searchTerm: string) => {
+export const searchWatchlist = async (searchTerm: string, cacheKey: string) => {
     searchTerm = validateSearchTerm(searchTerm);
     try {
-        const response = await dynamoDBDocumentClient.send(new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: WATCHLIST_TABLE,
             FilterExpression: "contains(user_id, :searchTerm)",
             ExpressionAttributeValues: {
                 ":searchTerm": searchTerm
             }
-        }));
+        };
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params,
+            cacheKey: `sub/1${cacheKey}`
+        }
+
+        const job = await addJobToReadQueue(jobData);
+        const response = await job.finished() as ScanCommandOutput;
         const items = response.Items || [];
         return items;
     } catch (e: any) {

@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 import * as watchlistService from "../services/watchlist.service";
 import { BadRequestError } from "../types/error.types";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const searchWatchlist = async (req: Request, res: Response) => {
     const searchTerm = req.query["q"] as string;
@@ -10,7 +11,8 @@ export const searchWatchlist = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await watchlistService.searchWatchlist(searchTerm);
+        const response = await watchlistService.searchWatchlist(searchTerm, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });

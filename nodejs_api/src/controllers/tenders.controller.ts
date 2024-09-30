@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as tendersService from "../services/tenders.service";
 import { BadRequestError, NotFoundError } from "../types/error.types";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const createTender = async (req: Request, res: Response) => {
     const requiredFields = ["company_name", "quote", "ticket_id", "duration"];
@@ -193,7 +194,8 @@ export const getCompanyTenders = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getCompanyTenders(companyName);
+        const response = await tendersService.getCompanyTenders(companyName, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -213,7 +215,8 @@ export const getMunicipalityTenders = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getMunicipalityTenders(municipality);
+        const response = await tendersService.getMunicipalityTenders(municipality, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -233,7 +236,8 @@ export const getTicketTender = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getTicketTender(ticketId);
+        const response = await tendersService.getTicketTender(ticketId, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -253,7 +257,8 @@ export const getContracts = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getContracts(tenderId);
+        const response = await tendersService.getContracts(tenderId, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -273,7 +278,8 @@ export const getMuniContract = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getMuniContract(ticketId);
+        const response = await tendersService.getMuniContract(ticketId, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -294,7 +300,8 @@ export const getCompanyContracts = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getCompanyContracts(tenderId, companyName);
+        const response = await tendersService.getCompanyContracts(tenderId, companyName, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -315,7 +322,8 @@ export const getCompanyContractByTicket = async (req: Request, res: Response) =>
     }
 
     try {
-        const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName);
+        const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {

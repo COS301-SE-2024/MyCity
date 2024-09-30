@@ -1,9 +1,12 @@
-import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { capitaliseString } from "../utils/searching.utils";
+import { addJobToReadQueue } from "./jobs.service";
+import { DB_SCAN } from "../config/redis.config";
+import { JobData } from "../types/job.types";
 
-export const searchTickets = async (userMunicipality: string, searchTerm: string) => {
+export const searchTickets = async (userMunicipality: string, searchTerm: string, cacheKey: string) => {
     // validateSearchTerm(searchTerm);
     // try {
     //     const scanCommand = new ScanCommand({
@@ -22,18 +25,26 @@ export const searchTickets = async (userMunicipality: string, searchTerm: string
     //     throw new BadRequestError(`Failed to search tickets for user area: ${e.message}`);
     // }
 
-    return await searchTicketsFuzzy(userMunicipality, searchTerm);
+    return await searchTicketsFuzzy(userMunicipality, searchTerm, cacheKey);
 };
 
-export const searchMunicipalities = async (searchTerm: string) => {
+export const searchMunicipalities = async (searchTerm: string, cacheKey: string) => {
     validateSearchTerm(searchTerm);
     try {
-        const scanCommand = new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: MUNICIPALITIES_TABLE
-        });
+        };
 
-        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params,
+            cacheKey: cacheKey
+        }
+
+        const readJob = await addJobToReadQueue(jobData);
+        const response = await readJob.finished() as ScanCommandOutput;
         const items = response.Items || [];
+
         const filteredItems = items.filter(item =>
             item.municipality_id.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -43,15 +54,23 @@ export const searchMunicipalities = async (searchTerm: string) => {
     }
 };
 
-export const searchAltMunicipalityTickets = async (municipalityName: string) => {
+export const searchAltMunicipalityTickets = async (municipalityName: string, cacheKey: string) => {
     validateSearchTerm(municipalityName); // ensuring that garbage is not passed to the function
     try {
-        const scanCommand = new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: TICKETS_TABLE
-        });
+        };
 
-        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params,
+            cacheKey: cacheKey
+        }
+
+        const readJob = await addJobToReadQueue(jobData);
+        const response = await readJob.finished() as ScanCommandOutput;
         const items = response.Items || [];
+
         const filteredItems = items.filter(item =>
             item.municipality_id.toLowerCase().includes(municipalityName.toLowerCase())
         );
@@ -61,15 +80,23 @@ export const searchAltMunicipalityTickets = async (municipalityName: string) => 
     }
 };
 
-export const searchServiceProviders = async (searchTerm: string) => {
+export const searchServiceProviders = async (searchTerm: string, cacheKey: string) => {
     validateSearchTerm(searchTerm);
     try {
-        const scanCommand = new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: COMPANIES_TABLE
-        });
+        };
 
-        const response = await dynamoDBDocumentClient.send(scanCommand);
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params,
+            cacheKey: cacheKey
+        }
+
+        const readJob = await addJobToReadQueue(jobData);
+        const response = await readJob.finished() as ScanCommandOutput;
         const items = response.Items || [];
+
         const filteredItems = items.filter(item =>
             item.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -88,15 +115,24 @@ const validateSearchTerm = (searchTerm: string) => {
     }
 };
 
-const searchTicketsFuzzy = async (userMunicipality: string, searchTerm: string) => {
+const searchTicketsFuzzy = async (userMunicipality: string, searchTerm: string, cacheKey: string) => {
     validateSearchTerm(searchTerm);
     try {
-        const scanCommand = new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: TICKETS_TABLE
-        });
+        };
 
-        const response = await dynamoDBDocumentClient.send(scanCommand);
+
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params,
+            cacheKey: cacheKey
+        }
+
+        const readJob = await addJobToReadQueue(jobData);
+        const response = await readJob.finished() as ScanCommandOutput;
         const items = response.Items || [];
+
         const filteredItems = items.filter(item =>
             item.municipality_id.toLowerCase().includes(userMunicipality.toLowerCase()) &&
             (item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||

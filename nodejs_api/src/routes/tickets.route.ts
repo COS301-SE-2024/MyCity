@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import multer from "multer";
 
 import * as ticketsController from "../controllers/tickets.controller";
+import { cacheMiddleware } from "../config/redis.config";
 
 const router: Router = express.Router();
 
@@ -18,37 +19,37 @@ router.post("/accept", ticketsController.acceptTicket);
 
 router.post("/close", ticketsController.closeTicket);
 
-router.get("/view", ticketsController.viewTicketData);
+router.get("/view", cacheMiddleware, ticketsController.viewTicketData);
 
-router.get("/fault-types", ticketsController.getFaultTypes);
+router.get("/fault-types", cacheMiddleware, ticketsController.getFaultTypes);
 
-router.get("/getmytickets", ticketsController.getMyTickets);
+router.get("/getmytickets", cacheMiddleware, ticketsController.getMyTickets);
 
 // get tickets within a given municipality
-router.get("/getinarea", ticketsController.getInArea);
+router.get("/getinarea", cacheMiddleware, ticketsController.getInArea);
 
-router.get("/getopeninarea", ticketsController.getOpenTicketsInMunicipality);
+router.get("/getopeninarea", cacheMiddleware, ticketsController.getOpenTicketsInMunicipality);
 
 //get a user's watchlisted tickets
-router.get("/getwatchlist", ticketsController.getMyWatchlist);
+router.get("/getwatchlist", cacheMiddleware, ticketsController.getMyWatchlist);
 
 router.post("/interact", ticketsController.interactTicket);
 
 // get most upvoted tickets
-router.get("/getUpvotes", ticketsController.getMostUpvoted);
+router.get("/getUpvotes", cacheMiddleware, ticketsController.getMostUpvoted);
 
-router.get("/getcompanytickets", ticketsController.getCompanyTickets);
+router.get("/getcompanytickets", cacheMiddleware, ticketsController.getCompanyTickets);
 
-router.get("/getopencompanytickets", ticketsController.getOpenCompanyTickets);
+router.get("/getopencompanytickets", cacheMiddleware, ticketsController.getOpenCompanyTickets);
 
 router.post("/add-comment-with-image", ticketsController.addCommentWithImage);
 
 router.post("/add-comment-without-image", ticketsController.addCommentWithoutImage);
 
-router.get("/comments", ticketsController.getTicketComments);
+router.get("/comments", cacheMiddleware, ticketsController.getTicketComments);
 
 // get geodata of all tickets
-router.get("/geodata/all", ticketsController.getGeoData);
+router.get("/geodata/all", cacheMiddleware, ticketsController.getGeoData);
 
 
 

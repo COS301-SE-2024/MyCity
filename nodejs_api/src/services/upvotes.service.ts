@@ -1,17 +1,28 @@
-import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { ScanCommand, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { dynamoDBDocumentClient, UPVOTES_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
+import { JobData } from "../types/job.types";
+import { DB_SCAN } from "../config/redis.config";
+import { addJobToReadQueue } from "./jobs.service";
 
-export const searchUpvotes = async (searchTerm: string) => {
+export const searchUpvotes = async (searchTerm: string, cacheKey: string) => {
     searchTerm = validateSearchTerm(searchTerm);
     try {
-        const response = await dynamoDBDocumentClient.send(new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: UPVOTES_TABLE,
             FilterExpression: "contains(user_id, :searchTerm)",
             ExpressionAttributeValues: {
                 ":searchTerm": searchTerm
             }
-        }));
+        };
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params,
+            cacheKey: `sub/1${cacheKey}`
+        }
+
+        const job = await addJobToReadQueue(jobData);
+        const response = await job.finished() as ScanCommandOutput;
         const items = response.Items || [];
         return items;
     } catch (e: any) {

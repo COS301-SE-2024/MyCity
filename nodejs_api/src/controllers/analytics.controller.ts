@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as analyticsService from "../services/analytics.service";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const getTicketsPerMunicipality = async (req: Request, res: Response) => {
     const municipalityId = req.query["municipality_id"] as string;
@@ -8,7 +9,8 @@ export const getTicketsPerMunicipality = async (req: Request, res: Response) => 
     }
 
     try {
-        const response = await analyticsService.getTicketsPerMunicipality(municipalityId);
+        const response = await analyticsService.getTicketsPerMunicipality(municipalityId, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -22,7 +24,8 @@ export const getContractsPerServiceProvider = async (req: Request, res: Response
     }
 
     try {
-        const response = await analyticsService.getContractsPerServiceProvider(serviceProvider);
+        const response = await analyticsService.getContractsPerServiceProvider(serviceProvider, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -36,7 +39,8 @@ export const getTendersPerServiceProvider = async (req: Request, res: Response) 
     }
 
     try {
-        const response = await analyticsService.getTendersPerServiceProvider(serviceProvider);
+        const response = await analyticsService.getTendersPerServiceProvider(serviceProvider, req.originalUrl);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
