@@ -4,15 +4,10 @@ interface UploadProfilePictureResponse {
 }
 
 export async function uploadProfilePicture(sessionToken: string | undefined, formData: FormData, revalidate?: boolean) {
-    //bypass caching route and make request directly to external API
-    const API_BASE_URL = process.env.API_BASE_URL;
-
-    if (!API_BASE_URL) {
-        throw new Error("missing api base url");
-    }
-
     try {
-        const response = await fetch(`${API_BASE_URL}/users/profile-picture/upload`, {
+        // const API_BASE_URL = process.env.API_BASE_URL;
+        const apiURL = `https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/users/profile-picture/upload`;
+        const response = await fetch(apiURL, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${sessionToken}`,

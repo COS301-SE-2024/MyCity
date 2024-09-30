@@ -3,6 +3,7 @@ import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
+import WebSocket from "ws";
 
 interface Ticket {
     dateClosed: string;
@@ -90,6 +91,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         upvotes: 0,
         viewcount: 0,
         ticketnumber: ticketNumber,
+        updatedAt: formattedDatetime,
     };
 
     // Put the ticket item into the tickets table
@@ -112,12 +114,22 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         Item: watchlistItem,
     }));
 
-    // After accepting
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    ws.on("open", () => {
+        console.log(municipalityId);
+        const message = JSON.stringify({ action: "createticket", body: municipalityId });
+        ws.send(message);
+    });
+
+    // after accepting
     const accResponse = {
         message: "Ticket created successfully",
         ticket_id: ticketId,
         watchlist_id: watchlistId,
     };
+
+    ws.close();
 
     return accResponse;
 };
@@ -125,8 +137,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
 export const addWatchlist = async (ticketData: TicketData) => {
     const userExistCommand = new QueryCommand({
         TableName: WATCHLIST_TABLE,
-        KeyConditionExpression: "user_id = :username",
-        FilterExpression: "ticket_id = :ticket_id",
+        KeyConditionExpression: "user_id = :username AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":username": ticketData.username,
             ":ticket_id": ticketData.ticket_id
@@ -159,7 +170,6 @@ export const addWatchlist = async (ticketData: TicketData) => {
     const watchlistId = generateId();
 
     const watchlistItem = {
-        watchlist_id: watchlistId,
         ticket_id: ticketData.ticket_id,
         user_id: ticketData.username
     };
@@ -309,18 +319,9 @@ export const getWatchlist = async (userId: string) => {
 
             if (ticketsItems && ticketsItems.length > 0) {
                 await updateCommentCounts(ticketsItems);
-            } else {
-                const errorResponse = {
-                    Error: {
-                        Code: "Inconsistency",
-                        Message: "Inconsistency in ticket_id",
-                    }
-                };
-                throw new Error(JSON.stringify(errorResponse));
+                await getUserProfile(ticketsItems);
+                collective.push(...ticketsItems);
             }
-
-            await getUserProfile(ticketsItems);
-            collective.push(...ticketsItems);
         }
         return collective;
     } else {
@@ -369,7 +370,6 @@ export const interactTicket = async (ticketData: any) => {
     const response = await dynamoDBDocumentClient.send(
         new QueryCommand({
             TableName: TICKETS_TABLE,
-            ProjectionExpression: "upvotes, viewcount",
             KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
                 ":ticket_id": ticketData.ticket_id
@@ -458,7 +458,7 @@ export const getMostUpvoted = async () => {
             ":state": "Opened"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 9 // limit result set to the top 9 items
     };
 
     const params2: QueryCommandInput = {
@@ -472,7 +472,7 @@ export const getMostUpvoted = async () => {
             ":state": "In Progress"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 5 // limit result set to the top 5 items
+        Limit: 8 // limit result set to the top 8 items
     };
 
     const params3: QueryCommandInput = {
@@ -486,21 +486,28 @@ export const getMostUpvoted = async () => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 5 // limit result set to the top 5 items
+        Limit: 8 // limit result set to the top 8 items
     };
 
-    const [result1, result2, result3] = await Promise.all([
+    const promises = [
         dynamoDBDocumentClient.send(new QueryCommand(params1)),
         dynamoDBDocumentClient.send(new QueryCommand(params2)),
         dynamoDBDocumentClient.send(new QueryCommand(params3)),
-    ]);
+    ];
 
-    const items1: Ticket[] = result1.Items as Ticket[];
-    const items2: Ticket[] = result2.Items as Ticket[];
-    const items3: Ticket[] = result3.Items as Ticket[];
+    const topItems: Ticket[] = [];
+    // combine the top items from each state to get a total of 25 items
+    const results = await Promise.allSettled(promises);
 
-    // combine the top items from each state to get a total of 16 items
-    const topItems: Ticket[] = [...items1, ...items2, ...items3];
+    results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+            const items = result.value.Items as Ticket[] || [];
+            topItems.push(...items);
+        }
+        else {
+            console.error(`Promise ${index} failed with error: ${result.reason}`);
+        }
+    });
 
     if (topItems.length > 0) {
         // get the count of comments for each ticket
@@ -656,7 +663,7 @@ export const getCompanyTickets = async (companyname: string) => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 16 // limit result set to the top 16 items
     }));
 
     const topItems = response.Items || [];
@@ -692,7 +699,7 @@ export const getOpenCompanyTickets = async (): Promise<any> => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 16 // limit result set to the top 16 items
     }));
 
     const topItems = response.Items || [];

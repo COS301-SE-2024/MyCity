@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import { uploadProfilePicture } from "@/services/users.service";
-import Image from "next/image";
+
 
 type ChangeAccountInfoProps = {
   onBack: () => void;
@@ -43,7 +43,6 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
           municipality: data?.municipality,
         };
 
-        localStorage.setItem("profileImage", imageUrl);
         setData(updatedUserData);
         setFirstname(updatedUserData.given_name);
         setSurname(updatedUserData.family_name);
@@ -61,12 +60,10 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
 
     if (firstname && firstname != data?.given_name) {
       updatedUserData.given_name = firstname;
-      localStorage.setItem("firstName", firstname);
     }
 
     if (surname && surname != data?.family_name) {
       updatedUserData.family_name = surname;
-      localStorage.setItem("surname", surname);
     }
 
     // upload profile picture
@@ -112,7 +109,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
 
       <div className="mb-4 flex flex-col items-center justify-center">
         {data?.picture ? (
-          <Image
+          <img
             src={data?.picture}
             alt="Profile"
             width={24}
@@ -153,32 +150,33 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
       </div>
 
       {/* First Name */}
-      <div className="mb-4 text-center">
-        <p className="text-gray-600">First Name(s)</p>
-        <div className="text-xl font-semibold flex items-center justify-center">
-          <input
-            type="text"
-            value={firstname}
-            name="given_name"
-            onChange={(event) => setFirstname(event.target.value)}
-            className="rounded-3xl focus:outline-none focus:border-blue-500"
-          />
-        </div>
-      </div>
+<div className="mb-4 text-center">
+  <p className="text-gray-600">First Name(s)</p>
+  <div className="text-xl font-semibold flex items-center justify-center">
+    <input
+      type="text"
+      value={firstname}
+      name="given_name"
+      onChange={(event) => setFirstname(event.target.value)}
+      className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
+    />
+  </div>
+</div>
 
-      {/* Surname */}
-      <div className="mb-4 text-center">
-        <p className="text-gray-600">Surname</p>
-        <div className="text-xl font-semibold flex items-center justify-center">
-          <input
-            type="text"
-            value={surname}
-            name="family_name"
-            onChange={(event) => setSurname(event.target.value)}
-            className="rounded-3xl focus:outline-none focus:border-blue-500"
-          />
-        </div>
-      </div>
+{/* Surname */}
+<div className="mb-4 text-center">
+  <p className="text-gray-600">Surname</p>
+  <div className="text-xl font-semibold flex items-center justify-center">
+    <input
+      type="text"
+      value={surname}
+      name="family_name"
+      onChange={(event) => setSurname(event.target.value)}
+      className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
+    />
+  </div>
+</div>
+
 
       {/* Municipality */}
       <div className="mb-4 text-center">

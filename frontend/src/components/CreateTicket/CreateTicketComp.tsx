@@ -25,7 +25,6 @@ import { PlaceKit, PlaceKitOptions } from "@placekit/autocomplete-react";
 import { PKResult } from "@placekit/client-js";
 import "@placekit/autocomplete-js/dist/placekit-autocomplete.css";
 import { Locate, Pin, PinOff, Info } from "lucide-react";
-import Image from "next/image";
 
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
@@ -95,7 +94,7 @@ const CreateTicketComp: React.FC = () => {
         });
       },
       (error) => {
-        toast.error("Error fetching location: " + error.message);
+        console.error("Error getting current location: ", error);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
@@ -246,14 +245,7 @@ const CreateTicketComp: React.FC = () => {
                       key={faultType.asset_id}
                       textValue={faultType.asset_id}
                     >
-                      <div className="flex gap-2 items-center">
-                        <Image
-                          src={faultType.assetIcon}
-                          alt={faultType.asset_id}
-                          width={24}
-                          height={24}
-                          className="w-6 h-6"
-                        />
+                      <div className="flex items-center">
                         <span>{faultType.asset_id}</span>
                       </div>
                     </AutocompleteItem>
@@ -262,6 +254,7 @@ const CreateTicketComp: React.FC = () => {
               ) : (
                 <p>Loading fault types...</p>
               )}
+
               <Textarea
                 label="Description"
                 name="fault-description"
@@ -289,7 +282,7 @@ const CreateTicketComp: React.FC = () => {
                 <span className="font-semibold text-sm mb-2">Attach Image</span>
                 <div className="flex border rounded-lg overflow-hidden">
                   <div className="flex justify-center p-2 w-1/5 bg-gray-100">
-                    <Image
+                    <img
                       src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                       alt="Camera Icon"
                       width={40}
@@ -315,7 +308,7 @@ const CreateTicketComp: React.FC = () => {
                         {selectedImage && (
                           <div>
                             <h2>Image Preview:</h2>
-                            <Image
+                            <img
                               src={String(selectedImage)}
                               alt="Uploaded"
                               width={200}

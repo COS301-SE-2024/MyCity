@@ -16,7 +16,7 @@ import Modal from "react-modal";
 import { Image as ImageIcon } from "lucide-react";
 import { User as UserIcon } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
-import Image from "next/image";
+
 
 interface TicketViewMuniProps {
   show: boolean;
@@ -264,10 +264,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         >
           {!showTenderMax && !showMuniTenders && (
             <div
-            className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col"
-            style={{ maxHeight: '75vh', height: 'auto', overflowY: 'auto' }}
-          >
-          
+              className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col"
+              style={{ maxHeight: '75vh', height: 'auto', overflowY: 'auto' }}
+            >
+
               <button
                 className="absolute top-2 right-2 text-gray-700 z-20"
                 onClick={handleCloseClick}
@@ -309,14 +309,13 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
 
                       {/* Conditionally render image only when successfully loaded */}
                       {!imageError && (
-                        <Image
+                        <img
                           src={getImageBucketUrl(imageURL)}
                           alt="Fault"
                           width={200}
                           height={200}
-                          className={`rounded-lg w-full h-full object-cover ${
-                            loadingImage ? "hidden" : "block"
-                          }`}
+                          className={`rounded-lg w-full h-full object-cover ${loadingImage ? "hidden" : "block"
+                            }`}
                           onLoad={() => setLoadingImage(false)} // Set loadingImage to false when image loads
                           onError={() => {
                             setImageError(true); // Set imageError to true if loading fails
@@ -383,7 +382,7 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       Created By
                     </h3>
                     {user_picture ? (
-                      <Image
+                      <img
                         src={user_picture}
                         alt="Created By"
                         width={50}

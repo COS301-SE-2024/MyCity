@@ -87,41 +87,42 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ data, onClick }) => {
   return (
     <div>
       {/* Desktop View */}
-      <div className="hidden sm:block">
-        <div
-          className="w-full h-[18vh] bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 flex flex-col"
-          onClick={onClick}
-        >
-          <div className="relative flex-grow-0 h-2/3 w-full bg-gray-200 flex items-center justify-center">
-            {/* Image */}
-            {imgSrc ? (
-              <Image
-                src={getImageBucketUrl(imgSrc)}
-                alt={title}
-                width={200}
-                height={200}
-                className="w-full h-full object-cover"
-                onError={handleImageError}
-              />
-            ) : (
-              <ImageIcon className="text-gray-500" size={48} /> // Placeholder icon
-            )}
+<div className="hidden sm:block">
+  <div
+    className="w-full h-[18vh] bg-white bg-opacity-70 cursor-pointer rounded-lg shadow-md overflow-hidden transform transition-transform duration-300 hover:scale-105 flex flex-col"
+    onClick={onClick}
+  >
+    <div className="relative flex-grow-0 h-2/3 w-full bg-gray-200 flex items-center justify-center">
+      {/* Image */}
+      {imgSrc ? (
+        <Image
+          src={getImageBucketUrl(imgSrc)}
+          alt={title}
+          width={300}
+          height={300}
+          className="w-full h-full object-cover"
+          onError={handleImageError}
+        />
+      ) : (
+        <ImageIcon className="text-gray-500" size={48} /> // Placeholder icon
+      )}
 
-            {/* Status */}
-            <div
-              className={`${color} bg-opacity-75 text-black font-bold sm:text-xs md:text-sm lg:text-md text-center rounded-lg px-3 py-1 mt-1 absolute top-0 right-0 m-2`}
-            >
-              {state}
-              {/* {"In Progress"} */}
-            </div>
-          </div>
-
-          <div className="flex-grow h-1/3 p-1 flex flex-col justify-center text-center">
-            <div className="font-bold sm:text-sm md:text-md lg:text-lg truncate">{title}</div>
-            <p className="text-black md:text-2xs lg:text-xs  truncate">{address}</p>
-          </div>
-        </div>
+      {/* Status */}
+      <div
+        className={`${color} bg-opacity-75 text-black font-bold sm:text-sm md:text-xs lg:text-xs text-center rounded-lg px-2 py-1 mt-1 absolute top-0 right-0 m-2`}
+      >
+        {state}
+        {/* {"In Progress"} */}
       </div>
+    </div>
+
+    <div className="flex-grow h-1/3 p-1 flex flex-col justify-center text-center">
+      <div className="font-bold sm:text-sm md:text-xs lg:text-sm truncate">{title}</div>
+      <p className="text-black sm:text-xs md:text-2xs lg:text-2xs truncate">{address}</p>
+    </div>
+  </div>
+</div>
+
 
 
       {/* Mobile View */}
@@ -135,8 +136,8 @@ const FaultCardUser: React.FC<FaultCardUserProps> = ({ data, onClick }) => {
               <Image
                 src={getImageBucketUrl(imgSrc)}
                 alt={title}
-                width={200}
-                height={200}
+                width={300}
+                height={300}
                 className="w-full h-full object-cover"
                 onError={handleImageError}
               />

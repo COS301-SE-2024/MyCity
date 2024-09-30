@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, PlusCircle, Bell, Search, ChartNoAxesCombined  } from "lucide-react";
+import { Home, PlusCircle, Bell, Search, ChartNoAxesCombined } from "lucide-react";
 import {
   Avatar,
   Dropdown,
@@ -14,7 +14,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { UserData } from "@/types/custom.types";
 import { usePathname } from "next/navigation";
 import { handleSignOut } from "@/services/auth.service"; // Import handleSignOut
-import Image from "next/image";
+
 
 export default function NavbarUser({ unreadNotifications = 0 }) {
   const pathname = usePathname(); // Get the current pathname
@@ -64,16 +64,15 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
   return (
     <div>
       {/* Desktop View */}
-      <div className="hidden sm:block">
-        <nav className="z-40 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center z-1 justify-between">
+      <div className="hidden sm:block z-5556">
+        <nav className="z-5556 fixed top-0 w-full bg-black bg-opacity-50 p-4 flex items-center justify-between">
           <Link href="/">
             <div className="text-white font-bold ms-2 transform hover:scale-105 transition-transform duration-200">
-              <Image
+              <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
                 alt="MyCity"
                 width={50}
                 height={50}
-                className="w-50 h-50"
               />
             </div>
           </Link>
@@ -92,7 +91,7 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
             <Link href="/statistics/citizen" passHref>
               <div className={getNavItemClass("/statistics/citizen")}>
                 <div className="flex flex-col gap-1 items-center">
-                  <ChartNoAxesCombined  size={25} />
+                  <ChartNoAxesCombined size={25} />
                   <span>Statistics</span>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaCircle, FaRegCircle, FaUserCircle } from "react-icons/fa";
 import TicketViewCompany from "../TicketViewCompany/TicketViewCompany";
-import Image from "next/image";
+
 
 interface TicketNotificationProps {
   ticketNumber: string;
@@ -78,7 +78,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
         <div className={`w-4 h-4 rounded-full ${circleStyle} mr-4`}></div>
         <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300 mr-4">
           {image ? (
-            <Image src={image} alt="Ticket" width={100} height={100} className="w-full h-full object-cover" />
+            <img src={image} alt="Ticket" width={100} height={100} className="w-full h-full object-cover" />
           ) : (
             <FaUserCircle size={32} color="#6B7280" />
           )}
@@ -90,7 +90,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           </div>
         </div>
       </div>
-  
+
       {/* Mobile View */}
       <div className="block sm:hidden flex flex-col text-black bg-white bg-opacity-70 rounded-3xl p-3 mb-2 mx-4 cursor-pointer hover:bg-opacity-80 transition-colors">
         <div className="flex flex-col items-center w-full" onClick={handleNotificationClick}>
@@ -99,14 +99,14 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
           </div>
           <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-200 border border-gray-300">
             {image ? (
-              <Image src={image} alt="Ticket" width={100} height={100} className="w-full h-full object-cover" />
+              <img src={image} alt="Ticket" width={100} height={100} className="w-full h-full object-cover" />
             ) : (
               <FaUserCircle size={32} color="#6B7280" />
             )}
           </div>
         </div>
       </div>
-  
+
       {showTicketView && ticketData && (
         <TicketViewCompany
           show={true}
@@ -132,7 +132,7 @@ const TicketNotification: React.FC<TicketNotificationProps> = ({
       )}
     </>
   );
-  
+
 };
 
 export default TicketNotification;

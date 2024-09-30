@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaCommentAlt, FaEye, FaTimes } from "react-icons/fa";
 import { AlertCircle } from 'lucide-react';
-import mapboxgl, {Map, Marker } from 'mapbox-gl';
-import { InteractTicket,addWatchlist } from "@/services/tickets.service";
+import mapboxgl, { Map, Marker } from 'mapbox-gl';
+import { InteractTicket, addWatchlist } from "@/services/tickets.service";
 import { useProfile } from "@/hooks/useProfile";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
 import Image from "next/image";
+
+
 
 mapboxgl.accessToken = String(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
 
@@ -25,9 +27,9 @@ interface FaultCardUserViewProps {
   status: string;
   municipalityImage: string;
   municipality_id: string;
-  longitude : string;
-  latitude : string;
-  user_picture : string;
+  longitude: string;
+  latitude: string;
+  user_picture: string;
   ticketId: string;
   urgency: 'high' | 'medium' | 'low'; // Added urgency field
 }
@@ -61,45 +63,45 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
 }) => {
 
 
-  const getUrgency = (votes : number) =>{
+  const getUrgency = (votes: number) => {
     if (votes < 10) {
       return "low";
-  } else if (votes >= 10 && votes < 20) {
+    } else if (votes >= 10 && votes < 20) {
       return "medium";
-  } else if (votes >= 20 && votes <= 40) {
+    } else if (votes >= 20 && votes <= 40) {
       return "high";
-  } else {
+    } else {
       return "low"; // Default case
+    }
   }
-}
 
   const getLocalStorageData = () => {
     const data = localStorage.getItem(`ticket-${ticketNumber}`);
     return data
       ? JSON.parse(data)
       : {
-          arrowCount: arrowCount * 1000,
-          commentCount,
-          viewCount: viewCount * 1000,
-          arrowColor: "black",
-          commentColor: "black",
-          eyeColor: "black",
-        };
+        arrowCount: arrowCount * 1000,
+        commentCount,
+        viewCount: viewCount * 1000,
+        arrowColor: "black",
+        commentColor: "black",
+        eyeColor: "black",
+      };
   };
 
-  useEffect(()=>{
-    const map =  new mapboxgl.Map({
-        container: "mapcontainer", // container ID
-        style: 'mapbox://styles/mapbox/streets-v12', // style URL
-        center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
-        zoom: 15 // starting zoom
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: "mapcontainer", // container ID
+      style: 'mapbox://styles/mapbox/streets-v12', // style URL
+      center: [Number(longitude), Number(latitude)], // starting position [lng, lat]
+      zoom: 15 // starting zoom
     });
 
     new mapboxgl.Marker()
       .setLngLat([Number(longitude), Number(latitude)])
       .addTo(map);
   })
-  
+
 
   const initialData = getLocalStorageData();
 
@@ -130,9 +132,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       console.log("Inside arrow")
       const user_data = await userProfile.getUserProfile();
       const userSession = String(user_data.current?.session_token);
-      const rspvotes = await InteractTicket(ticketId,"UPVOTE",userSession)
-      if(rspvotes !== -1)
-      {
+      const rspvotes = await InteractTicket(ticketId, "UPVOTE", userSession)
+      if (rspvotes !== -1) {
         setCurrentArrowCount(rspvotes);
       }
       else setCurrentArrowCount((prevCount: any) => prevCount + 1);
@@ -140,9 +141,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       setArrowColor("black");
       const user_data = await userProfile.getUserProfile();
       const userSession = String(user_data.current?.session_token);
-      const rspvotes = await InteractTicket(ticketId,"UNVOTE",userSession)
-      if(rspvotes !== -1)
-      {
+      const rspvotes = await InteractTicket(ticketId, "UNVOTE", userSession)
+      if (rspvotes !== -1) {
         setCurrentArrowCount(rspvotes);
       }
       else setCurrentArrowCount((prevCount: any) => prevCount - 1);
@@ -164,9 +164,8 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
       const user_data = await userProfile.getUserProfile();
       const username = String(user_data.current?.email);
       const userSession = String(user_data.current?.session_token);
-      const rspaddwatch = await addWatchlist(ticketId,username,userSession);
-      if(rspaddwatch == true)
-      {
+      const rspaddwatch = await addWatchlist(ticketId, username, userSession);
+      if (rspaddwatch == true) {
         setEyeColor("blue");
       }
       setCurrentViewCount((prevCount: any) => prevCount + 1);
@@ -279,7 +278,7 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
               <div className="flex flex-col items-center justify-center">
                 <h3 className="font-bold text-md">Created By</h3>
-                <Image src={user_picture} alt="Created By" width={48} height={48} className="rounded-full mb-1 object-cover w-12 h-12" />
+                <img src={user_picture} alt="Created By" width={128} height={128} className="rounded-full mb-1 object-cover w-12 h-12" />
                 <p className="text-gray-700 text-sm">{createdBy}</p>
               </div>
             </div>

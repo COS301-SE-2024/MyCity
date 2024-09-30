@@ -89,7 +89,7 @@ export default function Notifications() {
 
   useEffect(() => {
     // Mock the unread notifications count with a random number
-    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    const mockUnreadNotifications = 81; // Random number between 1 and 10
     setUnreadNotifications(mockUnreadNotifications);
   }, []);
 
@@ -188,7 +188,12 @@ export default function Notifications() {
   return (
     <div>
       {/* Desktop View */}
-      <div className="hidden sm:block">
+<div className="hidden sm:block">
+  {/* Adjusted z-index to ensure the navbar is on top */}
+  <div className="z-[1000] relative">
+    <NavbarUser unreadNotifications={unreadNotifications} />
+  </div>
+  
   <div
     style={{
       position: "relative",
@@ -196,8 +201,6 @@ export default function Notifications() {
       overflow: "hidden",
     }}
   >
-    <NavbarUser unreadNotifications={unreadNotifications} />
-
     {/* Background image */}
     <div
       style={{
@@ -211,7 +214,7 @@ export default function Notifications() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        zIndex: -1,
+        zIndex: -1, // Keep this behind the content
       }}
     />
 
@@ -220,25 +223,22 @@ export default function Notifications() {
       .custom-scrollbar::-webkit-scrollbar {
         width: 8px;
       }
-
       .custom-scrollbar::-webkit-scrollbar-track {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 4px;
       }
-
       .custom-scrollbar::-webkit-scrollbar-thumb {
         background-color: #6b7280;
         border-radius: 4px;
         border: 2px solid transparent;
       }
-
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
         background-color: #4b5563;
       }
     `}</style>
 
     {/* Content */}
-    <div className="fixed w-full h-full inset-0">
+    <div className="fixed w-full h-full inset-0 z-[5]"> {/* Added z-index */}
       <main className="flex w-full h-full">
         <div className="relative pt-8">
           <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
@@ -260,13 +260,13 @@ export default function Notifications() {
             />
           </div>
         ) : (
-          <div className="flex w-full h-full justify-center items-center overflow-hidden">
+          <div className="flex w-full justify-center items-center overflow-hidden">
             <div className="pt-4 rounded-3xl w-[80%] h-[75%] justify-center">
               <div
                 className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto custom-scrollbar"
                 style={{
-                  scrollbarWidth: 'thin', // For Firefox
-                  scrollbarColor: '#6b7280 rgba(255, 255, 255, 0.2)', // For Firefox
+                  scrollbarWidth: "thin", // For Firefox
+                  scrollbarColor: "#6b7280 rgba(255, 255, 255, 0.2)", // For Firefox
                 }}
               >
                 {visibleNotifications}
@@ -274,8 +274,6 @@ export default function Notifications() {
             </div>
           </div>
         )}
-
-        {/* Add other static TicketNoti components if needed */}
       </main>
     </div>
   </div>

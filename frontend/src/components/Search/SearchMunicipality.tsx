@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { UserCircle } from "lucide-react";
-import { Municipality } from "@/types/custom.types";
+import React, { useState } from "react";
 import { ThreeDots } from "react-loader-spinner"; // Import a small black loading spinner
-import Image from "next/image";
+
+// Custom types
+import { Municipality } from "@/types/custom.types";
 
 interface SearchMunicipalityProps {
   municipalities: Municipality[];
@@ -12,10 +12,23 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({
   municipalities,
 }) => {
   return (
-    <div>
+    <div
+      style={{
+        overflow: "auto",
+        scrollbarWidth: "thin",
+        scrollbarColor: "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
+      }}
+    >
       {/* Desktop View */}
       <div className="hidden lg:block">
-        <div className="space-y-1 px-6 rounded-3xl">
+        <div
+          className="space-y-1 px-6 rounded-3xl"
+          style={{
+            overflow: "auto",
+            scrollbarWidth: "thin",
+            scrollbarColor: "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
+          }}
+        >
           {municipalities.map((municipality: Municipality, index: number) => (
             <div
               key={index}
@@ -75,7 +88,14 @@ const SearchMunicipality: React.FC<SearchMunicipalityProps> = ({
 
       {/* Mobile View */}
       <div className="block lg:hidden">
-        <div className="space-y-2 px-4 rounded-3xl">
+        <div
+          className="space-y-2 px-4 rounded-3xl"
+          style={{
+            overflow: "auto",
+            scrollbarWidth: "thin",
+            scrollbarColor: "rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.1)",
+          }}
+        >
           {municipalities.map((municipality: Municipality, index: number) => (
             <div
               key={index}

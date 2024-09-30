@@ -1,8 +1,9 @@
 import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
-import { ClientError } from "../types/error.types";
+import { BadRequestError, NotFoundError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
+import WebSocket from "ws";
 
 interface TenderData {
     company_name: string;
@@ -24,13 +25,7 @@ interface AcceptOrRejectTenderData {
 export const createTender = async (senderData: TenderData) => {
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
-        const errorResponse = {
-            Error: {
-                Code: "CompanyDoesntExist",
-                Message: "Company Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "CompanyDoesntExist");
+        throw new BadRequestError("Company Does not Exist");
     }
 
     const companyId = companyPid;
@@ -46,13 +41,7 @@ export const createTender = async (senderData: TenderData) => {
     }));
 
     if (responseCheck.Items && responseCheck.Items.length > 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderExist",
-                Message: "Company already has a tender on this Ticket",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderExist");
+        throw new BadRequestError("Company already has a tender on this Ticket");
     }
 
     const currentTime = new Date();
@@ -88,13 +77,7 @@ export const createTender = async (senderData: TenderData) => {
 export const inReview = async (senderData: InReviewData) => {
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
-        const errorResponse = {
-            Error: {
-                Code: "CompanyDoesntExist",
-                Message: "Company Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "CompanyDoesntExist");
+        throw new BadRequestError("Company Does not Exist");
     }
 
     const companyId = companyPid;
@@ -111,13 +94,7 @@ export const inReview = async (senderData: InReviewData) => {
 
     const tenderItems = responseTender.Items;
     if (!tenderItems || tenderItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Tender Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+        throw new NotFoundError("Tender Does not Exist");
     }
 
     const tenderId = tenderItems[0].tender_id;
@@ -130,18 +107,12 @@ export const inReview = async (senderData: InReviewData) => {
         ":p": reviewedTime,
     };
 
-    const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
-
-    if (response.$metadata.httpStatusCode === 200) {
+    try {
+        const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
         return { Status: "Success", Message: "Tender updated successfully" };
-    } else {
-        const errorResponse = {
-            Error: {
-                Code: "UpdateError",
-                Message: "Error occurred trying to update",
-            },
-        };
-        throw new ClientError(errorResponse, "UpdateError");
+    }
+    catch (error: any) {
+        throw new Error("Error occurred trying to update");
     }
 };
 
@@ -159,13 +130,7 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
 
     const tenderItems = responseTender.Items;
     if (!tenderItems || tenderItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Tender Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+        throw new BadRequestError("Tender Does not Exist");
     }
 
     const tenderId = tenderItems[0].tender_id;
@@ -180,21 +145,13 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         TableName: TENDERS_TABLE,
         IndexName: "ticket_id-index",
         KeyConditionExpression: "ticket_id = :ticket_id",
-        FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":ticket_id": ticketId
         }
     }));
 
     const responseItems = responseTickets.Items;
-    if (responseItems && responseItems.length > 0) {
-        for (const data of responseItems) {
-            if (data.tender_id !== tenderId) {
-                const rejectExpattrValue = { ":r": "rejected" };
-                const responseReject = await updateTenderTable(data.tender_id, updateExp, expattrName, rejectExpattrValue);
-            }
-        }
-    }
+   
 
     const ticketDateOpened = await getTicketDateOpened(ticketId);
 
@@ -235,6 +192,14 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         Item: contractItem,
     }));
 
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    ws.on("open", () => {
+        const message = JSON.stringify({ action: "refreshcompany"});
+        ws.send(message);
+    });
+    ws.close();
+
     return {
         Status: "Success",
         Tender_id: tenderId,
@@ -256,13 +221,7 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
 
     const tenderItems = responseTender.Items;
     if (!tenderItems || tenderItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Tender Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+        throw new BadRequestError("Tender Does not Exist");
     }
 
     const tenderId = tenderItems[0].tender_id;
@@ -270,21 +229,23 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
     const expattrName = { "#status": "status" };
     const expattrValue = { ":r": "rejected" };
 
-    const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    ws.on("open", () => {
+        const message = JSON.stringify({ action: "refreshcompany"});
+        ws.send(message);
+    });
+    ws.close();
 
-    if (response.$metadata.httpStatusCode === 200) {
+    try {
+        const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
         return {
             Status: "Success",
             Tender_id: tenderId,
         };
-    } else {
-        const errorResponse = {
-            Error: {
-                Code: "UpdateError",
-                Message: "Error occurred trying to update",
-            },
-        };
-        throw new ClientError(errorResponse, "UpdateError");
+    }
+    catch (error: any) {
+        throw new Error("Error occurred trying to update");
     }
 };
 
@@ -298,13 +259,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
 
     const contractItem = responseContract.Item;
     if (!contractItem) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+        throw new BadRequestError("Contract Does not Exist");
     }
 
     const updateExp = "set #status = :r";
@@ -315,13 +270,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
         await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
     }
     catch (error: any) {
-        const errorResponse = {
-            Error: {
-                Code: "UpdateError",
-                Message: "Error occurred trying to update",
-            },
-        };
-        throw new ClientError(errorResponse, "UpdateError");
+        throw new Error("Error occurred trying to update");
     }
 
     // editing ticket to closed
@@ -342,13 +291,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
             await updateTenderTable(tenderItem.tender_id, updateExpT, expattrNameT, expattrValueT);
         }
         catch (error: any) {
-            const errorResponse = {
-                Error: {
-                    Code: "UpdateError",
-                    Message: "Error occurred trying to update",
-                },
-            };
-            throw new ClientError(errorResponse, "UpdateError");
+            throw new Error("Error occurred trying to update");
         }
     }
 
@@ -369,13 +312,7 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
 
     const contractItem = responseContract.Item;
     if (!contractItem) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+        throw new BadRequestError("Contract Does not Exist");
     }
 
     const updateExp = "set #status = :r";
@@ -386,13 +323,7 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
         await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
     }
     catch (error: any) {
-        const errorResponse = {
-            Error: {
-                Code: "UpdateError",
-                Message: "Error occurred trying to update",
-            },
-        };
-        throw new ClientError(errorResponse, "UpdateError");
+        throw new Error("Error occurred trying to update");
     }
 
     const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
@@ -412,13 +343,7 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
             await updateTenderTable(tenderItem.tender_id, updateExpTender, expattrNameTender, expattrValueTender);
         }
         catch (error: any) {
-            const errorResponse = {
-                Error: {
-                    Code: "UpdateError",
-                    Message: "Error occurred trying to update",
-                },
-            };
-            throw new ClientError(errorResponse, "UpdateError");
+            throw new Error("Error occurred trying to update");
         }
 
         const responseTicket = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -439,13 +364,7 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
                 await updateTicketTable(ticketChange.ticket_id, ticketChange.dateOpened, updateExpT, expattrNameT, expattrValueT);
             }
             catch (error: any) {
-                const errorResponse = {
-                    Error: {
-                        Code: "UpdateError",
-                        Message: "Error occurred trying to update",
-                    },
-                };
-                throw new ClientError(errorResponse, "UpdateError");
+                throw new Error("Error occurred trying to update");
             }
         }
     }
@@ -466,13 +385,7 @@ export const doneContract = async (senderData: { contract_id: string }) => {
 
     const contractItem = responseContract.Item;
     if (!contractItem) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract Does not Exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+        throw new BadRequestError("Contract Does not Exist");
     }
 
     const updateExp = "set #status = :r, #completedatetime = :c";
@@ -485,13 +398,7 @@ export const doneContract = async (senderData: { contract_id: string }) => {
         await updateContractTable(senderData.contract_id, updateExp, expattrName, expattrValue);
     }
     catch (error: any) {
-        const errorResponse = {
-            Error: {
-                Code: "UpdateError",
-                Message: "Error occurred trying to update",
-            },
-        };
-        throw new ClientError(errorResponse, "UpdateError");
+        throw new Error("Error occurred trying to update");
     }
 
     const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
@@ -521,13 +428,7 @@ export const doneContract = async (senderData: { contract_id: string }) => {
                 await updateTicketTable(ticketChange.ticket_id, ticketChange.dateOpened, updateExpT, expattrNameT, expattrValueT);
             }
             catch (error: any) {
-                const errorResponse = {
-                    Error: {
-                        Code: "UpdateError",
-                        Message: "Error occurred trying to update",
-                    },
-                };
-                throw new ClientError(errorResponse, "UpdateError");
+                throw new Error("Error occurred trying to update");
             }
         }
     }
@@ -578,13 +479,7 @@ export const getMunicipalityTenders = async (municipality: string) => {
     }));
 
     if (!responseTickets.Items || responseTickets.Items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TicketsDontExist",
-                Message: "There are no tickets in this municipality",
-            },
-        };
-        throw new ClientError(errorResponse, "TicketsDontExist");
+        throw new NotFoundError("There are no tickets in this municipality");
     }
 
     const collective: any[] = [];
@@ -614,13 +509,7 @@ export const getMunicipalityTenders = async (municipality: string) => {
 export const getCompanyTenders = async (company_name: string) => {
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
-        const errorResponse = {
-            Error: {
-                Code: "CompanyDoesntExist",
-                Message: "Company doesn't exist",
-            },
-        };
-        throw new ClientError(errorResponse, "CompanyDoesntExist");
+        throw new NotFoundError("Company doesn't exist");
     }
 
     const responseTenders = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -652,13 +541,7 @@ export const getTicketTender = async (ticket_id: string) => {
 
     const items = responseTender.Items || [];
     if (items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Tender does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+        throw new NotFoundError("Tender does not exist");
     }
 
     await assignCompanyName(items);
@@ -680,13 +563,7 @@ export const getContracts = async (tender_id: string) => {
 
     const contractItems = responseContracts.Items || [];
     if (contractItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+        throw new NotFoundError("Contract does not exist");
     }
 
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -699,13 +576,7 @@ export const getContracts = async (tender_id: string) => {
 
     const tenderItems = responseTender.Items || [];
     if (tenderItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Tender does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+        throw new NotFoundError("Tender does not exist");
     }
 
     const tenderItem = tenderItems[0];
@@ -722,7 +593,7 @@ export const getContracts = async (tender_id: string) => {
         contractItems[0].companyname = "Xero Industries";
     } else {
         const company = companyItems[0];
-        contractItems[0].companyname = company.name || "Unknown Company";
+        contractItems[0].companyname = company.name;
     }
 
     return contractItems[0];
@@ -746,13 +617,7 @@ export const getMuniContract = async (ticket_id: string) => {
     }));
 
     if (!responseTender.Items || responseTender.Items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TendersDontExist",
-                Message: "There's no tenders for this ticket",
-            },
-        };
-        throw new ClientError(errorResponse, "TendersDontExist");
+        throw new NotFoundError("There's no tenders for this ticket");
     }
 
     const tender = responseTender.Items[0];
@@ -767,13 +632,7 @@ export const getMuniContract = async (ticket_id: string) => {
     }));
 
     if (!responseContracts.Items || responseContracts.Items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+        throw new NotFoundError("Contract does not exist");
     }
 
     const contractItem = responseContracts.Items[0];
@@ -787,13 +646,7 @@ export const getMuniContract = async (ticket_id: string) => {
     }));
 
     if (!responseTenderDetails.Items || responseTenderDetails.Items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Tender does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+        throw new NotFoundError("Tender does not exist");
     }
 
     const tenderItem = responseTenderDetails.Items[0];
@@ -810,7 +663,7 @@ export const getMuniContract = async (ticket_id: string) => {
         contractItem.companyname = "Xero Industries";
     } else {
         const company = responseCompanyName.Items[0];
-        contractItem.companyname = company.name || "Unknown Company";
+        contractItem.companyname = company.name;
     }
 
     return contractItem;
@@ -819,13 +672,7 @@ export const getMuniContract = async (ticket_id: string) => {
 export const getCompanyContracts = async (tender_id: string, company_name: string) => {
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
-        const errorResponse = {
-            Error: {
-                Code: "CompanyDoesntExist",
-                Message: "Company doesn't exist",
-            },
-        };
-        throw new ClientError(errorResponse, "CompanyDoesntExist");
+        throw new NotFoundError("Company doesn't exist");
     }
 
     const responseContracts = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -839,13 +686,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 
     const contractItems = responseContracts.Items || [];
     if (contractItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+        throw new NotFoundError("Contract does not exist");
     }
 
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -860,13 +701,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 
     const tenderItems = responseTender.Items || [];
     if (tenderItems.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "CompanyDidntBid",
-                Message: "Company never bid on tender",
-            },
-        };
-        throw new ClientError(errorResponse, "CompanyDidntBid");
+        throw new NotFoundError("Company never bid on tender");
     }
 
     const tenderItem = tenderItems[0];
@@ -883,7 +718,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
         contractItems[0].companyname = "Xero Industries";
     } else {
         const company = companyItems[0];
-        contractItems[0].companyname = company.name || "Unknown Company";
+        contractItems[0].companyname = company.name;
     }
 
     return contractItems[0];
@@ -892,13 +727,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 export const getCompanyFromTicketContracts = async (ticket_id: string, company_name: string) => {
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
-        const errorResponse = {
-            Error: {
-                Code: "CompanyDoesntExist",
-                Message: "Company doesn't exist",
-            },
-        };
-        throw new ClientError(errorResponse, "CompanyDoesntExist");
+        throw new NotFoundError("Company doesn't exist");
     }
 
     const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
@@ -912,14 +741,8 @@ export const getCompanyFromTicketContracts = async (ticket_id: string, company_n
         },
     }));
 
-    if (!responseTender.Items || responseTender.Items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "TenderDoesntExist",
-                Message: "Company doesn't have a tender on this ticket",
-            },
-        };
-        throw new ClientError(errorResponse, "TenderDoesntExist");
+    if (!responseTender.Items || responseTender.Items.length <= 0) {
+        throw new NotFoundError("Company doesn't have a tender on this ticket");
     }
 
     const tender = responseTender.Items[0];
@@ -933,14 +756,8 @@ export const getCompanyFromTicketContracts = async (ticket_id: string, company_n
         },
     }));
 
-    if (!responseContracts.Items || responseContracts.Items.length === 0) {
-        const errorResponse = {
-            Error: {
-                Code: "ContractDoesntExist",
-                Message: "Contract does not exist",
-            },
-        };
-        throw new ClientError(errorResponse, "ContractDoesntExist");
+    if (!responseContracts.Items || responseContracts.Items.length <= 0) {
+        throw new NotFoundError("Contract does not exist");
     }
 
     const contract = responseContracts.Items[0];

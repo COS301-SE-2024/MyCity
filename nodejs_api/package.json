@@ -7,7 +7,8 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "dev": "nodemon app.ts",
-    "deploy": "npm run build && serverless deploy"
+    "deploy": "npm run build && serverless deploy",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -24,16 +25,23 @@
     "rimraf": "^6.0.1",
     "serverless": "^4.4.2",
     "serverless-http": "^3.2.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.13",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.5.5",
     "@types/redis": "^4.0.11",
+    "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.5.12",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.1",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

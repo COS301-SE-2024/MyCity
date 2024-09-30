@@ -54,9 +54,10 @@ export default function Record({ record, refresh }: { record: RecordType, refres
     setTicketstate(record.state);
   }, [record.state]);
 
-  const handleClick = () => {
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = () => {
     setShowTicketView(true);
   };
+  
   const handleClose = (data: number) => {
     setShowTicketView(false);
     if (data === 1) {
@@ -99,14 +100,17 @@ export default function Record({ record, refresh }: { record: RecordType, refres
 
   const truncateAddress = (address: string, maxLength: number) => {
     if (address.length <= maxLength) return address;
-    
+  
     // Truncate the string at the nearest word boundary within maxLength
     const truncated = address.slice(0, maxLength);
     const lastSpace = truncated.lastIndexOf(" ");
-    
+  
     // If a space was found, truncate at the last space, otherwise truncate at maxLength
-    return lastSpace > 0 ? truncated.slice(0, lastSpace) + "..." : truncated + "...";
+    return lastSpace > 0
+      ? address.slice(0, lastSpace) + "..." // Keep the beginning, truncate the end
+      : address.slice(0, maxLength) + "..."; // Truncate the end without cutting off the start
   };
+  
 
   const urgency = urgencyMapping[getUrgency(record.upvotes)] || urgencyMapping.low;
 

@@ -170,7 +170,7 @@ export default function Settings() {
     }
   };
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 74;
 
   return (
     <div>

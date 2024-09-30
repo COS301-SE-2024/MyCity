@@ -103,7 +103,7 @@ export default function CitizenStatisticsPage() {
 
   // Safely check if `data` exists before rendering the charts
   return (
-    <div className="h-screen w-screen overflow-hidden">
+    <div className="h-screen w-screen overflow-auto">
       <Navbar />
 
       <div

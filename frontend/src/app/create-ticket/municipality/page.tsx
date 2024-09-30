@@ -17,7 +17,7 @@ export default function CreateTicket() {
 
   useEffect(() => {
     // Mock the unread notifications count with a random number
-    const mockUnreadNotifications = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
+    const mockUnreadNotifications = 99; // Random number between 1 and 10
     setUnreadNotifications(mockUnreadNotifications);
   }, []);
 

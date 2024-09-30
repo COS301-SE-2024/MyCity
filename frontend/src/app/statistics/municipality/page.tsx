@@ -116,7 +116,7 @@ export default function MunicipalityStatisticsPage() {
   if (loading) {
     return (
       <div>
-        <div className="h-screen w-screen overflow-hidden">
+        <div className="h-screen w-screen overflow-auto">
           <Navbar />
           <div
             style={{

@@ -1,4 +1,4 @@
-import { invalidateCache } from "@/utils/apiUtils";
+import { invalidateCache } from "@/utils/api.utils";
 
 export async function searchIssue(sessionToken: string | undefined, param: string, userMunicipality: string, revalidate?: boolean) {
     if (revalidate) {
