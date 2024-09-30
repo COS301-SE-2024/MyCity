@@ -560,7 +560,9 @@ export const interactTicket = async (ticketData: any) => {
     }
 };
 
-export const getMostUpvoted = async (cacheKey: string) => {
+export const getMostUpvoted = async (cacheKey: string, lastEvaluatedKeyArrayString: string) => {
+    const lastEvaluatedKeyMap = JSON.parse(lastEvaluatedKeyArrayString) as Map<string, any>;
+
     const params1: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "state-upvotes-index",
@@ -603,6 +605,12 @@ export const getMostUpvoted = async (cacheKey: string) => {
         Limit: 5 // limit result set to the top 5 items
     };
 
+    if (lastEvaluatedKeyMap) {
+        params1.ExclusiveStartKey = lastEvaluatedKeyMap.get("1") || undefined;
+        params2.ExclusiveStartKey = lastEvaluatedKeyMap.get("2") || undefined;
+        params3.ExclusiveStartKey = lastEvaluatedKeyMap.get("3") || undefined;
+    }
+
     const jobData1: JobData = {
         type: DB_QUERY,
         params: params1,
@@ -633,6 +641,12 @@ export const getMostUpvoted = async (cacheKey: string) => {
     const items2: Ticket[] = result2.Items as Ticket[];
     const items3: Ticket[] = result3.Items as Ticket[];
 
+    const lastEvaluatedKeyMapOutput = new Map<string, any>([
+        ["1", result1.LastEvaluatedKey],
+        ["2", result2.LastEvaluatedKey],
+        ["3", result3.LastEvaluatedKey]
+    ]);
+
     // combine the top items from each state to get a total of 16 items
     const topItems: Ticket[] = [...items1, ...items2, ...items3];
 
@@ -640,7 +654,10 @@ export const getMostUpvoted = async (cacheKey: string) => {
         // get the count of comments for each ticket
         await updateCommentCounts(topItems);
         await getUserProfile(topItems);
-        return topItems;
+        return {
+            lastEvaluatedKey: lastEvaluatedKeyMapOutput,
+            items: topItems
+        };
     } else {
         throw new Error("TicketDontExist: Seems tickets don't exist");
     }

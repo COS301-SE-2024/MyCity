@@ -176,8 +176,9 @@ export const interactTicket = async (req: Request, res: Response) => {
 };
 
 export const getMostUpvoted = async (req: Request, res: Response) => {
+    const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     try {
-        const response = await ticketsService.getMostUpvoted(req.originalUrl);
+        const response = await ticketsService.getMostUpvoted(req.originalUrl, lastEvaluatedKeyString);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
