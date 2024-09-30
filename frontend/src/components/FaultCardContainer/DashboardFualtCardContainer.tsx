@@ -206,9 +206,9 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
   
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] ${currentPageNum + itemsPerPage >= cardData.length
-                ? "text-opacity-50 text-white cursor-not-allowed"
-                : "text-white"
+              className={`px-4 py-2 w-[25%] text-white transition-transform ${lastEvaluatedKey
+                ? "hover:scale-105"
+                : "text-gray-400 cursor-not-allowed"
               }`}
               disabled={!lastEvaluatedKey}
             >
@@ -292,9 +292,9 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
   
           <button
             onClick={goToNextPage}
-            className={`px-4 py-2 ${currentPageNum + itemsPerPage >= cardData.length
-              ? "text-opacity-50 text-white cursor-not-allowed"
-              : "text-white"
+            className={`px-4 py-2 text-white transition-transform ${lastEvaluatedKey
+              ? "hover:scale-105"
+              : "text-gray-400 cursor-not-allowed"
             }`}
             disabled={!lastEvaluatedKey}
           >
@@ -327,6 +327,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
       </div>
     </div>
   );
+  
   
 };
 
