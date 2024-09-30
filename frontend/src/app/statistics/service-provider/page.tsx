@@ -2,16 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
-import FaultCategoryPieChart from "@/components/Statistics/municipality/FaultCategoryPieChart";
-import ReportsOverTimeBarChart from "@/components/Statistics/municipality/ReportsOverTimeBarChart";
-import FaultStatesDoughnutChart from "@/components/Statistics/municipality/FaultStatesDoughnutChart";
-import TopAssetsProgress from "@/components/Statistics/municipality/TopAssetsProgress";
-import TopAssetsCost from "@/components/Statistics/municipality/TopAssetsCost";
-import MunicipalityRank from "@/components/Statistics/municipality/MunicipalityRank";
-import ServiceProvidersGrid from "@/components/Statistics/municipality/ServiceProvidersGrid";
-import AssetExpense from "@/components/Statistics/municipality/AssetExpense";
-import MunicipalityTicketsInfo from "@/components/Statistics/municipality/MunicipalityTicketsInfo";
-import InhouseVsExternalPieChart from "@/components/Statistics/municipality/InhouseVsExternalPieChart";
+import FaultCategoryPieChart from "@/components/Statistics/service-provider/FaultCategoryPieChart";
+import ReportsOverTimeBarChart from "@/components/Statistics/service-provider/ReportsOverTimeBarChart";
+import FaultStatesDoughnutChart from "@/components/Statistics/service-provider/FaultStatesDoughnutChart";
+import TopAssetsProgress from "@/components/Statistics/service-provider/TopAssetsProgress";
+import TopAssetsCost from "@/components/Statistics/service-provider/TopAssetsCost";
+import MunicipalityRank from "@/components/Statistics/service-provider/MunicipalityRank";
+import ServiceProvidersGrid from "@/components/Statistics/service-provider/ServiceProvidersGrid";
+import AssetExpense from "@/components/Statistics/service-provider/AssetExpense";
+import ServiceProvidersTicketsInfo from "@/components/Statistics/service-provider/ServiceProvidersTicketsInfo";
+import InhouseVsExternalPieChart from "@/components/Statistics/service-provider/InhouseVsExternalPieChart";
 import {
   getTicketsPerMunicipality,
   getContractsPerServiceProvider,
@@ -28,6 +28,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { user } from "@nextui-org/react";
 
 // Register the required components for Chart.js
 ChartJS.register(
@@ -43,65 +44,40 @@ ChartJS.register(
 
 export default function ServiceProviderStatisticsPage() {
   const userProfile = useProfile();
-  const [selectedMunicipality, setSelectedMunicipality] = useState<string>(""); // Start with empty state
+  const [selectedServiceProvider, setSelectedServiceProvider] =
+    useState<string>(""); // Start with empty state
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [defaultMunicipalitySet, setDefaultMunicipalitySet] = useState(false); // New flag for setting default municipality once
-  const [currentPage, setCurrentPage] = useState<number>(1); // State for pagination
-  const [inhouseContracts, setInhouseContracts] = useState<number>(0);
-  const [totalContracts, setTotalContracts] = useState<number>(0);
-  const [serviceProviders, setServiceProviders] = useState<string[]>([]); // State to store service providers
+  const [defaultServiceProviderSet, setDefaultServiceProviderSet] =
+    useState(false); // New flag for setting default municipality once
+  // const [serviceProviders, setServiceProviders] = useState<string[]>([]); // State to store service providers
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
         const userSession = user_data.current?.session_token;
-        const userMunicipality = user_data.current?.municipality; // Fetch user's municipality
-
+        const serviceprovider = user_data.current?.company_name;
         // Set the default municipality only if it hasn't been set yet
-        if (userMunicipality && !defaultMunicipalitySet) {
-          setSelectedMunicipality(userMunicipality); // Set the default municipality to the user's
-          setDefaultMunicipalitySet(true); // Mark default municipality as set
+        if (serviceprovider && !defaultServiceProviderSet) {
+          console.log("Setting default service provider:", serviceprovider);
+          setSelectedServiceProvider(serviceprovider); // Set the default municipality to the user's
+          setDefaultServiceProviderSet(true); // Mark default municipality as set
         }
 
         // Fetch data only if we have a selected municipality
-        if (userSession && selectedMunicipality) {
-          const result = await getTicketsPerMunicipality(
-            selectedMunicipality,
+        if (userSession && selectedServiceProvider) {
+          console.log(
+            "Fetching data for service provider:",
+            selectedServiceProvider
+          );
+          const result = await getContractsPerServiceProvider(
+            selectedServiceProvider,
             userSession
           );
+
           setData(result[0]); // Assuming result is an array and we need the first element
-
-          // Parse service_providers if it's compressed JSON
-          const compressedServiceProviders = result[0]?.service_providers;
-          if (typeof compressedServiceProviders === "string") {
-            try {
-              const parsedServiceProviders = JSON.parse(
-                compressedServiceProviders
-              );
-              if (Array.isArray(parsedServiceProviders)) {
-                setServiceProviders(parsedServiceProviders); // Set parsed providers
-              }
-            } catch (error) {
-              console.error("Failed to parse service providers JSON:", error);
-            }
-          }
-
-          // Fetch contracts per service provider
-          const contractsData = await getContractsPerServiceProvider(
-            `${selectedMunicipality} - Inhouse`,
-            userSession
-          );
-
-          const inhouse = contractsData.reduce(
-            (acc: number, contract: any) => acc + (contract.contracts || 0),
-            0
-          );
-
-          setInhouseContracts(inhouse);
-          setTotalContracts(result[0]?.tickets || 0); // Assuming total contracts equals total tickets
         }
       } catch (error: any) {
         setError(error.message);
@@ -111,7 +87,7 @@ export default function ServiceProviderStatisticsPage() {
     };
 
     fetchData();
-  }, [selectedMunicipality, userProfile]); // Fetch data only when selectedMunicipality or userProfile changes
+  }, [selectedServiceProvider, userProfile]); // Fetch data only when selectedMunicipality or userProfile changes
 
   if (loading) {
     return (
@@ -139,19 +115,11 @@ export default function ServiceProviderStatisticsPage() {
     );
   }
 
-  const handleNextPage = () => {
-    setCurrentPage(currentPage + 1);
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage(currentPage - 1);
-  };
-
   // Calculate external contracts
-  const externalContracts = totalContracts - inhouseContracts;
   const { by_asset, by_asset_by_avg_cost } = data || {};
 
-  // Safely check if `data` exists before rendering the charts
+  console.log("Data small:", data);
+
   return (
     <div className="h-screen w-screen overflow-hidden">
       <Navbar />
@@ -180,123 +148,55 @@ export default function ServiceProviderStatisticsPage() {
               Statistics Dashboard
             </h1>
           </div>
-          <div className="flex w-[50%] justify-center mt-4">
-            {currentPage > 1 && (
-              <button
-                className="px-4 py-2 bg-gray-500 text-white rounded-full"
-                onClick={handlePrevPage}
-              >
-                Previous Page
-              </button>
-            )}
-            {currentPage < 2 && (
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-full"
-                onClick={handleNextPage}
-              >
-                Next Page
-              </button>
-            )}
-          </div>
         </div>
 
         <div className="w-[80%] h-[80vh] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-            {currentPage === 1 && (
-              <>
-                {data && (
-                  <div className="w-full flex gap-4">
-                    {/* ==== Municipality Tickets Info ==== */}
-                    <div className="flex w-1/2">
-                      <MunicipalityTicketsInfo
-                        municipalityName={data.municipality_id}
-                        totalTickets={data.tickets}
-                        citizens={data.citizens}
-                      />
-                    </div>
-
-                    {/* ==== In-house vs External Contracts ==== */}
-                    <div className="flex w-1/2">
-                      <InhouseVsExternalPieChart
-                        inhouse={inhouseContracts}
-                        external={externalContracts}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Pass service providers to ServiceProvidersGrid */}
-                {data?.service_providers && (
-                  <ServiceProvidersGrid
-                    serviceProviders={data.service_providers}
-                  />
-                )}
-
-                <div className="w-full flex gap-4">
-                  <AssetExpense
-                    data={{
-                      by_asset: by_asset || null,
-                      by_asset_by_avg_cost: by_asset_by_avg_cost || null,
-                    }}
+            {data && (
+              <div className="w-full flex gap-4">
+                {/* ==== Municipality Tickets Info ==== */}
+                <div className="flex w-1/2">
+                  <ServiceProvidersTicketsInfo
+                    serviceProvider={data.service_provider}
+                    contracts={data.contracts}
                   />
                 </div>
 
-                <div className="w-full flex gap-4">
-                  {/* === Asset Resolution Time === */}
-                  <div className="w-1/2">
-                    <TopAssetsCost data={data} />
-                  </div>
-
-                  {/* === Top Assets Resolution Cost === */}
-                  <div className="w-1/2">
-                    <TopAssetsProgress data={data} />
-                  </div>
+                <div className="flex w-1/2">
+                  <FaultStatesDoughnutChart data={data.by_state} />
                 </div>
-              </>
+              </div>
             )}
 
-            {currentPage === 2 && (
-              <>
-                {/* Page 2 content */}
+            {data && (
+              <div className="w-full flex gap-4">
+                <ServiceProvidersGrid serviceProviders={data.by_municipality} />
+              </div>
+            )}
 
-                {data && (
-                  <div className="flex gap-4 w-full">
-                    <div className="flex w-1/2">
-                      {" "}
-                      <MunicipalityTicketsInfo
-                        municipalityName={data.municipality_id}
-                        totalTickets={data.tickets}
-                        citizens={data.citizens}
-                      />
-                    </div>
-                    <div className="flex w-1/2">
-                      {" "}
-                      <MunicipalityRank
-                        rank={data.rank}
-                        stateRank={data.state_rank}
-                        costRank={data.cost_rank}
-                        timeRank={data.time_rank}
-                      />
-                    </div>
-                  </div>
-                )}
-                {data?.by_date && (
-                  <ReportsOverTimeBarChart data={data.by_date} />
-                )}
-                {data?.by_asset && (
-                  <FaultCategoryPieChart data={data.by_asset} />
-                )}
-                <div className="w-full flex gap-4">
-                  <div className="w-1/2">
-                    {data?.by_state && (
-                      <FaultStatesDoughnutChart data={data.by_state} />
-                    )}
-                  </div>
-                  <div className="w-1/2">
-                    <TopAssetsProgress data={data} />
-                  </div>
+            {data && (
+              <div className="w-full flex gap-4">
+                <AssetExpense
+                  data={{
+                    by_asset: by_asset || null,
+                    by_asset_by_avg_cost: by_asset_by_avg_cost || null,
+                  }}
+                />
+              </div>
+            )}
+
+            {data && (
+              <div className="w-full flex gap-4">
+                {/* === Asset Resolution Time === */}
+                <div className="w-1/2">
+                  <TopAssetsCost data={data} />
                 </div>
-              </>
+
+                {/* === Top Assets Resolution Cost === */}
+                <div className="w-1/2">
+                  <TopAssetsProgress data={data} />
+                </div>
+              </div>
             )}
           </div>
         </div>
