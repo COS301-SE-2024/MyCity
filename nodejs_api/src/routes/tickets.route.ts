@@ -55,5 +55,4 @@ router.get("/comments", cacheMiddleware, ticketsController.getTicketComments);
 router.get("/geodata/all", cacheMiddleware, ticketsController.getGeoData);
 
 
-
 export default router;

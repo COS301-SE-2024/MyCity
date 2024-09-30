@@ -1,4 +1,4 @@
-import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getFromCache, getReadQueue, getWriteQueue } from "../config/redis.config";
+import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getFromCache, getReadQueue, getWriteQueue, removeRedisCacheKeys } from "../config/redis.config";
 import { dynamoDBDocumentClient } from "../config/dynamodb.config";
 import { GetCommand, PutCommand, QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { DoneCallback, Job, JobOptions } from "bull";
@@ -95,10 +95,14 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
     } catch (error: any) {
         done(error);
     }
-}
+};
 
-export const invalidateOnCreateTicket = async () => {
-    const invalidationList = [
+
+
+
+
+export const invalidateCacheOnTicketUpdate = async () => {
+    const ticketsInvalidationList = [
         "/tickets/view",
         "/tickets/getmytickets",
         "/tickets/getinarea",
@@ -109,6 +113,30 @@ export const invalidateOnCreateTicket = async () => {
         "/tickets/getopencompanytickets",
         "/tickets/comments"
     ];
+    const searchInvalidationList = [
+        "/search/issues",
+        "/search/municipality-tickets"
+    ];
+    await removeRedisCacheKeys([...ticketsInvalidationList, ...searchInvalidationList]);
 };
 
-// export invalidateOn
+
+export const invalidateCacheOnNotificationsUpdate = async () => {
+    const notificationInvalidationList = [
+        "/notifications/get-tokens"
+    ];
+    await removeRedisCacheKeys(notificationInvalidationList);
+};
+
+export const invalidateCacheOnTenderUpdate = async () => {
+    const tenderInvalidationList = [
+        "/tenders/getmytenders",
+        "/tenders/getmunitenders",
+        "/tenders/getmunicipalitytenders",
+        "/tenders/getcontracts",
+        "/tenders/getmunicontract",
+        "/tenders/getcompanycontracts",
+        "/tenders/getcompanycontractbyticket"
+    ];
+    await removeRedisCacheKeys(tenderInvalidationList);
+}

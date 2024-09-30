@@ -4,7 +4,7 @@ import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABL
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
-import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
+import { addJobToReadQueue, addJobToWriteQueue, invalidateCacheOnTicketUpdate } from "./jobs.service";
 import { JobData } from "../types/job.types";
 import { DB_GET, DB_PUT, DB_QUERY, DB_SCAN } from "../config/redis.config";
 
@@ -38,6 +38,8 @@ interface TicketData {
 
 
 export const createTicket = async (formData: any, file: Express.Multer.File | undefined, cacheKey: string) => {
+    invalidateCacheOnTicketUpdate();
+
     const username = formData["username"] as string;
     let imageLink = "";
     if (file) {
@@ -478,6 +480,8 @@ export const viewTicketData = async (ticketId: string, cacheKey: string) => {
 };
 
 export const interactTicket = async (ticketData: any) => {
+    invalidateCacheOnTicketUpdate();
+
     const interactType = String(ticketData.type).toUpperCase();
     const response = await dynamoDBDocumentClient.send(
         new QueryCommand({
@@ -572,7 +576,7 @@ export const getMostUpvoted = async (cacheKey: string, lastEvaluatedKeyArrayStri
             ":state": "Opened"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 6 // limit result set to the top 6 items
+        Limit: 5 // limit result set to the top 5 items
     };
 
     const params2: QueryCommandInput = {
@@ -668,6 +672,8 @@ export const getMostUpvoted = async (cacheKey: string, lastEvaluatedKeyArrayStri
 };
 
 export const closeTicket = async (ticketData: any) => {
+    invalidateCacheOnTicketUpdate();
+
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
     if (!ticketDateOpened) {
@@ -724,6 +730,8 @@ export const closeTicket = async (ticketData: any) => {
 };
 
 export const acceptTicket = async (ticketData: any) => {
+    invalidateCacheOnTicketUpdate();
+
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
     if (!ticketDateOpened) {
@@ -866,7 +874,7 @@ export const getOpenCompanyTickets = async (cacheKey: string) => {
 
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
-        IndexName: "state-upvotes-index",
+        IndexName: "state-updatedAt-index",
         KeyConditionExpression: "#state = :state",
         ExpressionAttributeNames: {
             "#state": "state"
@@ -904,6 +912,8 @@ export const getOpenCompanyTickets = async (cacheKey: string) => {
 };
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
+    invalidateCacheOnTicketUpdate();
+
     // Validate ticket_id
     validateTicketId(ticket_id);
 

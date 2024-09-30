@@ -114,11 +114,11 @@ export const getFromCache = async (cacheKey: string) => {
 };
 
 export const cacheResponse = async (cacheKey: string, duration: number, response: any) => {
-    if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
-        //cache response for duration amount of time 
-        const client = await getRedisClient();
-        client.setEx(cacheKey, duration, JSON.stringify(response));
-    }
+    // if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
+    //     //cache response for duration amount of time 
+    //     const client = await getRedisClient();
+    //     client.setEx(cacheKey, duration, JSON.stringify(response));
+    // }
 };
 
 export const removeRedisKey = async (key: string) => {
@@ -139,4 +139,5 @@ export const removeRedisCacheKeys = async (keys: string[]) => {
     const client = await getRedisClient();
     // clear the cache for the given keys
     const response = await client.del(keys);
+    return response === 1;
 };

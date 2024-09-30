@@ -1,7 +1,7 @@
 import { PutCommandInput, QueryCommandInput, QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { ClientError } from "../types/error.types";
 import { NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
-import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
+import { addJobToReadQueue, addJobToWriteQueue, invalidateCacheOnNotificationsUpdate } from "./jobs.service";
 import { DB_PUT, DB_QUERY } from "../config/redis.config";
 import { JobData } from "../types/job.types";
 
@@ -12,6 +12,8 @@ interface TokenData {
 }
 
 export const insertNotificationToken = async (tokenData: TokenData) => {
+    invalidateCacheOnNotificationsUpdate();
+
     const { username, deviceID, token } = tokenData;
     const currentDatetime = new Date().toISOString();
     const subscriptions = ["status", "upvotes", "comments"];
