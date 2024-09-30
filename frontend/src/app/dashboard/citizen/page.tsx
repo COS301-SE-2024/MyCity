@@ -205,9 +205,9 @@ export default function CitizenDashboard({
 
 
           {/* Notification Prompt */}
-          <div className="fixed top-24 left-0 w-full flex justify-center z-[500] pt-8">
+          {/* <div className="fixed top-24 left-0 w-full flex justify-center z-[500] pt-8">
             <NotificationPromt userEmail={userEmail} />
-          </div>
+          </div> */}
 
           {/* Help Button */}
           <div className="fixed bottom-4 left-4 z-[50]">
@@ -430,9 +430,9 @@ export default function CitizenDashboard({
             <NavbarMobile />
 
             {/* Notification Prompt */}
-            <div className="flex justify-center z-100 pt-8">
+            {/* <div className="flex justify-center z-100 pt-8">
               <NotificationPromt userEmail={userEmail} />
-            </div>
+            </div> */}
 
             {/* Dashboard Content */}
             <div className="h-full flex flex-col">
