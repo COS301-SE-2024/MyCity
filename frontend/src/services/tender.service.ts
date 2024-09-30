@@ -176,19 +176,13 @@ export async function DoneContract(contract_id: string, user_session: string) {
 }
 
 export async function DidBid(comp_name: string,ticket : string, user_session: string) {
-    const data = {
-        companyname: comp_name,
-        ticket_id : ticket
-    }
-
-    const apiURL = "/api/tenders/didbid";
+    const apiURL = `/api/tenders/didbid?companyname=${encodeURIComponent(comp_name)}&ticket_id=${encodeURIComponent(ticket)}`;
     const response = await fetch(apiURL, {
-        method: "POST",
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${user_session}`,
-        },
-        body: JSON.stringify(data),
+        }
     });
 
     if (!response.ok) {
