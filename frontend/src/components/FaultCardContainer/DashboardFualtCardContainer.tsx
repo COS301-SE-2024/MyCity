@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
+import { PaginatedResults } from "@/types/custom.types";
+import { Page } from "@playwright/test";
+import { getMostUpvote, getTicketsInMunicipality, getWatchlistTickets } from "@/services/tickets.service";
+import { useProfile } from "@/hooks/useProfile";
 
 interface CardData {
   dateClosed: string;
@@ -25,16 +29,21 @@ interface CardData {
 }
 
 interface CardComponentProps {
-  cardData: CardData[];
+  type: "watchlist" | "mostupvoted" | "nearest";
+  result: PaginatedResults;
   refreshwatch: () => void;
 }
 
-const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
-  cardData = [],
-  refreshwatch,
-}) => {
+const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, result, refreshwatch }) => {
+  const userProfile = useProfile();
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 15;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [cardData, setCardData] = useState<CardData[]>(result.items);
+  const [lastEvaluatedKey, setLastEvaluatedKey] = useState(result.lastEvaluatedKey);
+  let pageData = new Map<number, CardData[]>([
+    [currentPage, cardData]
+  ]);
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
@@ -49,23 +58,46 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(cardData.length / itemsPerPage);
+  // const totalPages = Math.ceil(cardData.length / itemsPerPage);
 
   // Get the current page items
-  const currentPageItems = cardData.slice(startIndex, startIndex + itemsPerPage);
+  // const currentPageItems = cardData.slice(startIndex, startIndex + itemsPerPage);
 
   // Function to go to the next page
-  const goToNextPage = () => {
-    if (startIndex + itemsPerPage < cardData.length) {
-      setStartIndex(startIndex + itemsPerPage);
+  const goToNextPage = async () => {
+    const newPageNumber = currentPage + 1;
+    setCurrentPage(newPageNumber);
+
+    if (type == "watchlist") {
+      const reso = await fetchWatchlistData();
+      if (reso) {
+        pageData.set(newPageNumber, reso.items);
+        setLastEvaluatedKey(reso.lastEvaluatedKey);
+        setCardData(reso.items);
+      }
+    } else if (type == "mostupvoted") {
+      const reso = await fetchMostUpvoteData();
+      if (reso) {
+        pageData.set(newPageNumber, reso.items);
+        setLastEvaluatedKey(reso.lastEvaluatedKey);
+        setCardData(reso.items);
+      }
+    }
+    else if (type == "nearest") {
+      const reso = await fetchTcketsInMunicipalityData();
+      if (reso) {
+        pageData.set(newPageNumber, reso.items);
+        setLastEvaluatedKey(reso.lastEvaluatedKey);
+        setCardData(reso.items);
+      }
     }
   };
 
   // Function to go to the previous page
   const goToPreviousPage = () => {
-    if (startIndex - itemsPerPage >= 0) {
-      setStartIndex(startIndex - itemsPerPage);
-    }
+    const newPageNumber = currentPage - 1;
+    setCurrentPage(newPageNumber);
+    setCardData(pageData.get(newPageNumber) ?? []);
   };
 
   const handleCloseModal = () => {
@@ -102,6 +134,48 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
       </div>
     ));
 
+  const fetchWatchlistData = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_id = user_data.current?.email ?? "";
+      const user_session = String(user_data.current?.session_token);
+      const user_email = String(user_id).toLowerCase();
+      const reso = await getWatchlistTickets(user_email, user_session, lastEvaluatedKey);
+
+      return reso;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
+  const fetchMostUpvoteData = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const reso = await getMostUpvote(user_session, lastEvaluatedKey);
+
+      return reso;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
+  const fetchTcketsInMunicipalityData = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const municipality = user_data.current?.municipality;
+      const reso = await getTicketsInMunicipality(municipality, user_session, lastEvaluatedKey);
+
+      return reso;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
   return (
     <div>
       {/* Desktop View */}
@@ -115,26 +189,24 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
           <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[25%] text-white ${
-                startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={startIndex === 0}
+              className={`px-4 py-2 w-[25%] text-white ${startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              disabled={currentPage === 0}
             >
               Previous
             </button>
 
             <span className="text-white text-opacity-80">
-              Page {startIndex / itemsPerPage + 1} of {totalPages}
+              {/* Page {startIndex / itemsPerPage + 1} of {totalPages} */}
             </span>
 
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] text-white ${
-                startIndex + itemsPerPage >= cardData.length
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-              disabled={startIndex + itemsPerPage >= cardData.length}
+              className={`px-4 py-2 w-[25%] text-white ${startIndex + itemsPerPage >= cardData.length
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+                }`}
+              disabled={!lastEvaluatedKey}
             >
               Next
             </button>
@@ -204,26 +276,24 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={goToPreviousPage}
-            className={`px-4 py-2 text-white ${
-              startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={startIndex === 0}
+            className={`px-4 py-2 text-white ${startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            disabled={currentPage === 0}
           >
             Previous
           </button>
 
           <span className="text-white text-opacity-80">
-            Page {startIndex / itemsPerPage + 1} of {totalPages}
+            {/* Page {startIndex / itemsPerPage + 1} of {totalPages} */}
           </span>
 
           <button
             onClick={goToNextPage}
-            className={`px-4 py-2 text-white ${
-              startIndex + itemsPerPage >= cardData.length
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-            disabled={startIndex + itemsPerPage >= cardData.length}
+            className={`px-4 py-2 text-white ${startIndex + itemsPerPage >= cardData.length
+              ? "opacity-50 cursor-not-allowed"
+              : ""
+              }`}
+            disabled={!lastEvaluatedKey}
           >
             Next
           </button>
