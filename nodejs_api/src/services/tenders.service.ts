@@ -159,9 +159,10 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     const ticketDateOpened = await getTicketDateOpened(ticketId);
 
     // Editing ticket as well to In Progress
-    const ticketUpdateExp = "set #state = :r";
-    const ticketExpattrName = { "#state": "state" };
-    const ticketExpattrValue = { ":r": "In Progress" };
+    const currentTimeTick = new Date().toISOString();
+    const ticketUpdateExp = "set #state = :r, #updatedAt = :u";
+    const ticketExpattrName = { "#state": "state", "#updatedAt": "updatedAt" };
+    const ticketExpattrValue = { ":r": "In Progress", ":u": currentTimeTick };
     await dynamoDBDocumentClient.send(new UpdateCommand({
         TableName: TICKETS_TABLE,
         Key: {
@@ -359,9 +360,10 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
 
         if (responseTicket.Items && responseTicket.Items.length > 0) {
             const ticketChange = responseTicket.Items[0];
-            const updateExpT = "set #state = :r";
-            const expattrNameT = { "#state": "state" };
-            const expattrValueT = { ":r": "Taking Tenders" };
+            const currentTime = new Date().toISOString();
+            const updateExpT = "set #state = :r, #updatedAt = :u";
+            const expattrNameT = { "#state": "state", "#updatedAt": "updatedAt" };
+            const expattrValueT = { ":r": "Taking Tenders", ":u": currentTime };
 
             try {
                 await updateTicketTable(ticketChange.ticket_id, ticketChange.dateOpened, updateExpT, expattrNameT, expattrValueT);
@@ -423,9 +425,10 @@ export const doneContract = async (senderData: { contract_id: string }) => {
 
         if (responseTicket.Items && responseTicket.Items.length > 0) {
             const ticketChange = responseTicket.Items[0];
-            const updateExpT = "set #state = :r";
-            const expattrNameT = { "#state": "state" };
-            const expattrValueT = { ":r": "Closed" };
+            const updateExpT = "set #state = :r, #updatedAt = :u";
+            const expattrNameT = { "#state": "state", "#updatedAt": "updatedAt" };
+            const currentTime = new Date().toISOString();
+            const expattrValueT = { ":r": "Closed", ":u": currentTime };
 
             try {
                 await updateTicketTable(ticketChange.ticket_id, ticketChange.dateOpened, updateExpT, expattrNameT, expattrValueT);

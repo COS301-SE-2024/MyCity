@@ -289,7 +289,7 @@ export const getMyTickets = async (username: string | null, cacheKey: string) =>
 export const getInMyMunicipality = async (municipality: string | null, cacheKey: string) => {
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
-        IndexName: "municipality_id-dateOpened-index",
+        IndexName: "municipality_id-updatedAt-index",
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
             ":municipality_id": municipality
@@ -479,6 +479,7 @@ export const interactTicket = async (ticketData: any) => {
         if (interactType === "UPVOTE") {
             for (const item of items) {
                 const votes = Number(item.upvotes) + 1;
+                const currentDatetime = new Date().toISOString();
                 await dynamoDBDocumentClient.send(
                     new UpdateCommand({
                         TableName: TICKETS_TABLE,
@@ -486,9 +487,10 @@ export const interactTicket = async (ticketData: any) => {
                             ticket_id: item.ticket_id,
                             dateOpened: item.dateOpened
                         },
-                        UpdateExpression: "SET upvotes = :votes",
+                        UpdateExpression: "SET upvotes = :votes, updatedAt = :updatedAt",
                         ExpressionAttributeValues: {
-                            ":votes": votes
+                            ":votes": votes,
+                            ":updatedAt": currentDatetime
                         }
                     })
                 );
@@ -698,9 +700,10 @@ export const acceptTicket = async (ticketData: any) => {
     }
 
     const ticketId = ticketData["ticket_id"];
-    const updateExpression = "set #state = :r";
+    const currentDatetime = new Date().toISOString();
+    const updateExpression = "set #state = :r, updatedAt = :updatedAt";
     const expressionAttributeNames = { "#state": "state" };
-    const expressionAttributeValues = { ":r": "Taking Tenders" };
+    const expressionAttributeValues = { ":r": "Taking Tenders", ":updatedAt": currentDatetime };
 
     const response = await updateTicketTable(
         ticketId,
