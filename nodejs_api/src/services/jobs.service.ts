@@ -96,3 +96,19 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
         done(error);
     }
 }
+
+export const invalidateOnCreateTicket = async () => {
+    const invalidationList = [
+        "/tickets/view",
+        "/tickets/getmytickets",
+        "/tickets/getinarea",
+        "/tickets/getopeninarea",
+        "/tickets/getwatchlist",
+        "/tickets/getUpvotes",
+        "/tickets/getcompanytickets",
+        "/tickets/getopencompanytickets",
+        "/tickets/comments"
+    ];
+};
+
+// export invalidateOn

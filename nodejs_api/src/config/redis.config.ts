@@ -113,14 +113,6 @@ export const getFromCache = async (cacheKey: string) => {
     }
 };
 
-// export const cacheResponse = async (req: Request, duration: number, response: any) => {
-//     const cacheKey = `${req.baseUrl}${req.url}`;
-
-//     //cache response for duration amount of time 
-//     const client = await getRedisClient();
-//     client.setEx(cacheKey, duration, JSON.stringify(response));
-// };
-
 export const cacheResponse = async (cacheKey: string, duration: number, response: any) => {
     if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
         //cache response for duration amount of time 
@@ -128,7 +120,6 @@ export const cacheResponse = async (cacheKey: string, duration: number, response
         client.setEx(cacheKey, duration, JSON.stringify(response));
     }
 };
-
 
 export const removeRedisKey = async (key: string) => {
     const client = await getRedisClient();

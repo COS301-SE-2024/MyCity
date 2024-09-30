@@ -234,7 +234,7 @@ export const getFaultTypes = async (cacheKey: string) => {
     };
 
     const jobData: JobData = {
-        type: DB_GET,
+        type: DB_SCAN,
         params: params,
         cacheKey: `sub/1${cacheKey}`
     };
