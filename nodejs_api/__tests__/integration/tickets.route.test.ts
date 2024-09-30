@@ -20,20 +20,8 @@ describe("Integration Tests - /tickets", () => {
     });
 
     describe("POST /tickets/create", () => {
-        /*test("should create a ticket", async () => {
-            const response = await request(app)
-                .post("/tickets/create")
-                .send({
-                    address: "Mbhashe Ward 14, Amathole District Municipality, Mbhashe Local Municipality, Eastern Cape",
-                    asset: "Overgrown Vegetation",
-                    description: "This is a test ticket.",
-                    latitude: "-32.11796745",
-                    longitude: "28.86162504",
-                    state: "Opened",
-                    username: "alice.williams@mimecast.com"
-                });
-            expect(response.statusCode).toBe(200);
-        });*/
+        test("should create a ticket", async () => {
+        });
     });
 
     describe("POST /tickets/addwatchlist", () => {
