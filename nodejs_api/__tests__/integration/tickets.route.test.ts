@@ -655,7 +655,62 @@ describe("Integration Tests - /tickets", () => {
 
     describe("GET /tickets/getwatchlist", () => {
         test("should return watchlisted tickets", async () => {
+            // Mock the service to return a list of watchlisted tickets
+            const mockResponse = [
+                { ticket_id: "ticket123", title: "Broken street light", state: "Opened" },
+                { ticket_id: "ticket456", title: "Pothole repair", state: "Opened" },
+            ];
 
+            // Spy on the service method and mock its return value
+            jest.spyOn(ticketsService, "getWatchlist").mockResolvedValue(mockResponse);
+
+            // Simulate a request with valid query parameters
+            const response = await request(app)
+                .get("/tickets/getwatchlist")
+                .query({ username: "user_1" });
+
+            // Assert that the response status is 200
+            expect(response.statusCode).toBe(200);
+
+            // Assert that the response contains the correct data
+            expect(response.body).toEqual(mockResponse);
+
+            // Ensure the service method was called with the correct username
+            expect(ticketsService.getWatchlist).toHaveBeenCalledWith("user_1");
+        });
+
+        test("should return 400 if username is missing", async () => {
+            // Simulate a request without the required username parameter
+            const response = await request(app)
+                .get("/tickets/getwatchlist")
+                .query({}); // No username in the query
+
+            // Assert that the response status is 400
+            expect(response.statusCode).toBe(400);
+
+            // Assert that the error message is correct
+            expect(response.body.Error).toBe("Missing parameter: username");
+        });
+
+        test("should return error if no tickets are found in the watchlist", async () => {
+            // Mock the service to throw an error indicating no tickets are found in the watchlist
+            jest.spyOn(ticketsService, "getWatchlist").mockRejectedValue(new Error("NoWatchlist: Doesn't have a watchlist"));
+
+            // Simulate a request with valid query parameters
+            const response = await request(app)
+                .get("/tickets/getwatchlist")
+                .query({ username: "user_2" });
+
+            // Assert that the response status is 500
+            expect(response.statusCode).toBe(500);
+
+            // Assert that the response contains the correct error message
+            expect(response.body).toEqual({ Error: "NoWatchlist: Doesn't have a watchlist" });
+        });
+
+        afterEach(() => {
+            // Restore the original implementation after each test
+            jest.restoreAllMocks();
         });
     });
 
