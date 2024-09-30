@@ -33,9 +33,9 @@ export default function CitizenDashboard({
 }: CitizenDashboardProps) {
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<PaginatedResults>();
-  const [dashMuniResults, setDashMuniResults] = useState<PaginatedResults>();
-  const [dashWatchResults, setDashWatchResults] = useState<PaginatedResults>();
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
+  const [dashMuniResults, setDashMuniResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
+  const [dashWatchResults, setDashWatchResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
