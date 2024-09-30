@@ -707,16 +707,4 @@ describe("Integration Tests - /tickets", () => {
             jest.restoreAllMocks();
         });
     });
-
-    describe("GET /tickets/comments", () => {
-        test("should get ticket comments", async () => {
-
-        });
-    });
-
-    describe("GET /tickets/geodata/all", () => {
-        test("should get geodata of all tickets", async () => {
-
-        });
-    });
 });
