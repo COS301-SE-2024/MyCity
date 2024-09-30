@@ -315,8 +315,100 @@ describe("Integration Tests - /tickets", () => {
     });
 
     describe("POST /tickets/close", () => {
-        test("should close a ticket", async () => {
-
+        describe("POST /tickets/close", () => {
+            test("should close a ticket successfully", async () => {
+                // Mock the service to return a successful ticket close response
+                const mockResponse = {
+                    Status: "Success",
+                    Ticket_id: "ticket123",
+                };
+    
+                // Spy on the service method and mock its return value
+                jest.spyOn(ticketsService, "closeTicket").mockResolvedValue(mockResponse);
+    
+                // Sample form data for closing a ticket
+                const formData = {
+                    ticket_id: "ticket123",
+                };
+    
+                // Simulate a request with valid form data
+                const response = await request(app)
+                    .post("/tickets/close")
+                    .send(formData);
+    
+                // Assert that the response status is 200
+                expect(response.statusCode).toBe(200);
+    
+                // Assert that the response contains the correct data
+                expect(response.body).toEqual(mockResponse);
+    
+                // Ensure the service method was called with the correct form data
+                expect(ticketsService.closeTicket).toHaveBeenCalledWith(formData);
+            });
+    
+            test("should return 400 if required fields are missing", async () => {
+                // Simulate a request with missing fields
+                const incompleteFormData = {
+                    // ticket_id is missing
+                };
+    
+                const response = await request(app)
+                    .post("/tickets/close")
+                    .send(incompleteFormData);
+    
+                // Assert that the response status is 400
+                expect(response.statusCode).toBe(400);
+    
+                // Assert that the error message contains missing fields
+                expect(response.body.Error).toBe("Missing parameter(s): ticket_id");
+            });
+    
+            test("should return error if ticket does not exist", async () => {
+                // Mock the service to throw an error indicating the ticket doesn't exist
+                jest.spyOn(ticketsService, "closeTicket").mockRejectedValue(new Error("Ticket doesn't exist"));
+    
+                // Sample form data for closing a ticket
+                const formData = {
+                    ticket_id: "nonexistent_ticket",
+                };
+    
+                // Simulate a request with valid form data
+                const response = await request(app)
+                    .post("/tickets/close")
+                    .send(formData);
+    
+                // Assert that the response status is 500
+                expect(response.statusCode).toBe(500);
+    
+                // Assert that the response contains the correct error message
+                expect(response.body).toEqual({ Error: "Ticket doesn't exist" });
+            });
+    
+            test("should return error if there is an issue updating the ticket state", async () => {
+                // Mock the service to throw an error indicating there was an update issue
+                jest.spyOn(ticketsService, "closeTicket").mockRejectedValue(new Error("Error occurred while trying to update"));
+    
+                // Sample form data for closing a ticket
+                const formData = {
+                    ticket_id: "ticket123",
+                };
+    
+                // Simulate a request with valid form data
+                const response = await request(app)
+                    .post("/tickets/close")
+                    .send(formData);
+    
+                // Assert that the response status is 500
+                expect(response.statusCode).toBe(500);
+    
+                // Assert that the response contains the correct error message
+                expect(response.body).toEqual({ Error: "Error occurred while trying to update" });
+            });
+    
+            afterEach(() => {
+                // Restore the original implementation after each test
+                jest.restoreAllMocks();
+            });
         });
     });
 
