@@ -70,6 +70,25 @@ export const createTender = async (senderData: TenderData) => {
         Item: tenderItem,
     }));
 
+    console.log("Just before websocket")
+
+    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
+    const ws = new WebSocket(WEB_SOCKET_URL);
+    console.log("WebSocket URL:", WEB_SOCKET_URL);
+    ws.on("open", () => {
+        console.log("Connection opened")
+        const message = JSON.stringify({ action : "refreshcompany" });
+        console.log(message)
+        ws.send(message);
+        ws.close();
+    });
+
+    ws.on("error", (err) => {
+        console.error("WebSocket error:", err);
+        ws.close();  // Ensure the connection is closed on error as well
+    });
+
+
     return {
         Status: "Success",
         message: "Tender created successfully",
