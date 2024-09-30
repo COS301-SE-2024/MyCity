@@ -1,6 +1,6 @@
 import { QueryCommandInput, QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { CONTRACTS_PER_SERVICE_PROVIDER_TABLE, TENDERS_PER_SERVICE_PROVIDER_TABLE, TICKETS_PER_MUNICIPALITY_TABLE } from "../config/dynamodb.config";
-import { DB_QUERY, DEFAULT_CACHE_DURATION } from "../config/redis.config";
+import { DB_QUERY } from "../config/redis.config";
 import { addJobToReadQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
 

@@ -1,11 +1,11 @@
-import { GetCommand, GetCommandInput, GetCommandOutput, PutCommand, QueryCommand, QueryCommandInput, QueryCommandOutput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput, GetCommandOutput, PutCommand, PutCommandInput, QueryCommand, QueryCommandInput, QueryCommandOutput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError, NotFoundError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 import WebSocket from "ws";
-import { DB_GET, DB_QUERY } from "../config/redis.config";
-import { addJobToReadQueue } from "./jobs.service";
+import { DB_GET, DB_PUT, DB_QUERY, DB_UPDATE } from "../config/redis.config";
+import { addJobToReadQueue, addJobToWriteQueue, invalidateCacheOnTenderAndTicketUpdate, invalidateCacheOnTenderUpdateOnly } from "./jobs.service";
 import { JobData } from "../types/job.types";
 
 interface TenderData {
@@ -32,7 +32,7 @@ export const createTender = async (senderData: TenderData) => {
     }
 
     const companyId = companyPid;
-    const responseCheck = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
         KeyConditionExpression: "company_id = :company_id",
@@ -41,7 +41,15 @@ export const createTender = async (senderData: TenderData) => {
             ":company_id": companyId,
             ":ticket_id": senderData.ticket_id
         }
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const responseCheck = await readJob.finished() as QueryCommandOutput;
 
     if (responseCheck.Items && responseCheck.Items.length > 0) {
         throw new BadRequestError("Company already has a tender on this Ticket");
@@ -65,10 +73,18 @@ export const createTender = async (senderData: TenderData) => {
         ticket_id: senderData.ticket_id
     };
 
-    await dynamoDBDocumentClient.send(new PutCommand({
+    const putParams: PutCommandInput = {
         TableName: TENDERS_TABLE,
-        Item: tenderItem,
-    }));
+        Item: tenderItem
+    };
+
+    const putJobData: JobData = {
+        type: DB_PUT,
+        params: putParams
+    }
+
+    const writeJob = await addJobToWriteQueue(putJobData);
+    await writeJob.finished();
 
     return {
         Status: "Success",
@@ -84,7 +100,7 @@ export const inReview = async (senderData: InReviewData) => {
     }
 
     const companyId = companyPid;
-    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
         KeyConditionExpression: "company_id = :company_id",
@@ -93,7 +109,15 @@ export const inReview = async (senderData: InReviewData) => {
             ":company_id": companyId,
             ":ticket_id": senderData.ticket_id
         },
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData);
+    const responseTender = await readJob.finished() as QueryCommandOutput;
 
     const tenderItems = responseTender.Items;
     if (!tenderItems || tenderItems.length === 0) {
@@ -120,7 +144,9 @@ export const inReview = async (senderData: InReviewData) => {
 };
 
 export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
-    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+    invalidateCacheOnTenderAndTicketUpdate();
+
+    const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
         KeyConditionExpression: "company_id = :company_id",
@@ -129,7 +155,15 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
             ":company_id": senderData.company_id,
             ":ticket_id": senderData.ticket_id
         },
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const responseTender = await readJob.finished() as QueryCommandOutput;
 
     const tenderItems = responseTender.Items;
     if (!tenderItems || tenderItems.length === 0) {
@@ -144,18 +178,6 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
 
     const response = await updateTenderTable(tenderId, updateExp, expattrName, expattrValue);
 
-    const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
-        TableName: TENDERS_TABLE,
-        IndexName: "ticket_id-index",
-        KeyConditionExpression: "ticket_id = :ticket_id",
-        ExpressionAttributeValues: {
-            ":ticket_id": ticketId
-        }
-    }));
-
-    const responseItems = responseTickets.Items;
-
-
     const ticketDateOpened = await getTicketDateOpened(ticketId);
 
     // Editing ticket as well to In Progress
@@ -163,7 +185,8 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     const ticketUpdateExp = "set #state = :r, #updatedAt = :u";
     const ticketExpattrName = { "#state": "state", "#updatedAt": "updatedAt" };
     const ticketExpattrValue = { ":r": "In Progress", ":u": currentTimeTick };
-    await dynamoDBDocumentClient.send(new UpdateCommand({
+
+    const updateParams: UpdateCommandInput = {
         TableName: TICKETS_TABLE,
         Key: {
             ticket_id: ticketId,
@@ -172,7 +195,16 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         UpdateExpression: ticketUpdateExp,
         ExpressionAttributeNames: ticketExpattrName,
         ExpressionAttributeValues: ticketExpattrValue,
-    }));
+    };
+
+
+    const jobDataUpdate: JobData = {
+        type: DB_UPDATE,
+        params: updateParams
+    }
+
+    const writeJob = await addJobToWriteQueue(jobDataUpdate);
+    await writeJob.finished();
 
     // Creating contract once tender is accepted
     const currentTime = new Date();
@@ -191,10 +223,18 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         tender_id: tenderId
     };
 
-    await dynamoDBDocumentClient.send(new PutCommand({
+    const putParams: PutCommandInput = {
         TableName: CONTRACT_TABLE,
-        Item: contractItem,
-    }));
+        Item: contractItem
+    };
+
+    const putJobData: JobData = {
+        type: DB_PUT,
+        params: putParams
+    }
+
+    const writeJobContract = await addJobToWriteQueue(putJobData);
+    await writeJobContract.finished();
 
     const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
     const ws = new WebSocket(WEB_SOCKET_URL);
@@ -212,7 +252,9 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
 };
 
 export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
-    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+    invalidateCacheOnTenderUpdateOnly();
+
+    const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
         KeyConditionExpression: "company_id = :company_id",
@@ -221,7 +263,15 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
             ":company_id": senderData.company_id,
             ":ticket_id": senderData.ticket_id
         },
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData);
+    const responseTender = await readJob.finished() as QueryCommandOutput;
 
     const tenderItems = responseTender.Items;
     if (!tenderItems || tenderItems.length === 0) {
@@ -254,13 +304,22 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
 };
 
 export const completeContract = async (senderData: { contract_id: string }) => {
-    const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
+    invalidateCacheOnTenderUpdateOnly();
+
+    const params: GetCommandInput = {
         TableName: CONTRACT_TABLE,
         Key: {
             contract_id: senderData.contract_id
         }
-    }));
+    };
 
+    const jobData: JobData = {
+        type: DB_GET,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData);
+    const responseContract = await readJob.finished() as GetCommandOutput;
     const contractItem = responseContract.Item;
     if (!contractItem) {
         throw new BadRequestError("Contract Does not Exist");
@@ -278,12 +337,20 @@ export const completeContract = async (senderData: { contract_id: string }) => {
     }
 
     // editing ticket to closed
-    const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+    const getTenderParams: GetCommandInput = {
         TableName: TENDERS_TABLE,
         Key: {
             tender_id: contractItem.tender_id
         }
-    }));
+    };
+
+    const jobDataTender: JobData = {
+        type: DB_GET,
+        params: getTenderParams
+    }
+
+    const readJobTender = await addJobToReadQueue(jobDataTender);
+    const responseTender = await readJobTender.finished() as GetCommandOutput;
 
     const tenderItem = responseTender.Item;
     if (tenderItem) {
@@ -307,12 +374,22 @@ export const completeContract = async (senderData: { contract_id: string }) => {
 };
 
 export const terminateContract = async (senderData: { contract_id: string }) => {
-    const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
+    invalidateCacheOnTenderAndTicketUpdate();
+
+    const params: GetCommandInput = {
         TableName: CONTRACT_TABLE,
         Key: {
             contract_id: senderData.contract_id
         }
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_GET,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData);
+    const responseContract = await readJob.finished() as GetCommandOutput;
 
     const contractItem = responseContract.Item;
     if (!contractItem) {
@@ -330,12 +407,20 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
         throw new Error("Error occurred trying to update");
     }
 
-    const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+    const getTenderParams: GetCommandInput = {
         TableName: TENDERS_TABLE,
         Key: {
             tender_id: contractItem.tender_id
         }
-    }));
+    };
+
+    const jobDataTender: JobData = {
+        type: DB_GET,
+        params: getTenderParams
+    }
+
+    const readJobTender = await addJobToReadQueue(jobDataTender);
+    const responseTender = await readJobTender.finished() as GetCommandOutput;
 
     const tenderItem = responseTender.Item;
     if (tenderItem) {
@@ -350,13 +435,21 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
             throw new Error("Error occurred trying to update");
         }
 
-        const responseTicket = await dynamoDBDocumentClient.send(new QueryCommand({
+        const queryTicketParams: QueryCommandInput = {
             TableName: TICKETS_TABLE,
             KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
                 ":ticket_id": tenderItem.ticket_id
             }
-        }));
+        };
+
+        const jobDataTicket: JobData = {
+            type: DB_QUERY,
+            params: queryTicketParams
+        }
+
+        const readJobTicket = await addJobToReadQueue(jobDataTicket);
+        const responseTicket = await readJobTicket.finished() as QueryCommandOutput;
 
         if (responseTicket.Items && responseTicket.Items.length > 0) {
             const ticketChange = responseTicket.Items[0];
@@ -381,12 +474,22 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
 };
 
 export const doneContract = async (senderData: { contract_id: string }) => {
-    const responseContract = await dynamoDBDocumentClient.send(new GetCommand({
+    invalidateCacheOnTenderAndTicketUpdate();
+
+    const params: GetCommandInput = {
         TableName: CONTRACT_TABLE,
         Key: {
             contract_id: senderData.contract_id
         }
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_GET,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData);
+    const responseContract = await readJob.finished() as GetCommandOutput;
 
     const contractItem = responseContract.Item;
     if (!contractItem) {
@@ -406,22 +509,38 @@ export const doneContract = async (senderData: { contract_id: string }) => {
         throw new Error("Error occurred trying to update");
     }
 
-    const responseTender = await dynamoDBDocumentClient.send(new GetCommand({
+    const getTenderParams: GetCommandInput = {
         TableName: TENDERS_TABLE,
         Key: {
             tender_id: contractItem.tender_id
         }
-    }));
+    };
+
+    const jobDataTender: JobData = {
+        type: DB_GET,
+        params: getTenderParams
+    }
+
+    const readJobTender = await addJobToReadQueue(jobDataTender);
+    const responseTender = await readJobTender.finished() as GetCommandOutput;
 
     const tender = responseTender.Item;
     if (tender) {
-        const responseTicket = await dynamoDBDocumentClient.send(new QueryCommand({
+        const queryTicketParams: QueryCommandInput = {
             TableName: TICKETS_TABLE,
             KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
                 ":ticket_id": tender.ticket_id
             }
-        }));
+        };
+
+        const jobDataTicket: JobData = {
+            type: DB_QUERY,
+            params: queryTicketParams
+        }
+
+        const readJobTicket = await addJobToReadQueue(jobDataTicket);
+        const responseTicket = await readJobTicket.finished() as QueryCommandOutput
 
         if (responseTicket.Items && responseTicket.Items.length > 0) {
             const ticketChange = responseTicket.Items[0];
@@ -445,19 +564,27 @@ export const doneContract = async (senderData: { contract_id: string }) => {
     };
 };
 
-export const didMakeTender = async (senderData: { companyname: string, ticket_id: string }) => {
-    const companyId = await getCompanyIDFromName(senderData.companyname);
+export const didMakeTender = async (companyname: string, ticketId: string) => {
+    const companyId = await getCompanyIDFromName(companyname);
 
-    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
         KeyConditionExpression: "company_id = :company_id",
         FilterExpression: "ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":company_id": companyId,
-            ":ticket_id": senderData.ticket_id
-        },
-    }));
+            ":ticket_id": ticketId
+        }
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    }
+
+    const readJob = await addJobToReadQueue(jobData);
+    const responseTender = await readJob.finished() as QueryCommandOutput;
 
     if (responseTender.Items && responseTender.Items.length > 0) {
         const tender = responseTender.Items[0];
@@ -486,8 +613,7 @@ export const getMunicipalityTenders = async (municipality: string, cacheKey: str
 
     const ticketsJobData: JobData = {
         type: DB_QUERY,
-        params: paramsTickets,
-        cacheKey: `sub/1${cacheKey}`
+        params: paramsTickets
     }
 
     const ticketsReadJob = await addJobToReadQueue(ticketsJobData);
@@ -512,8 +638,7 @@ export const getMunicipalityTenders = async (municipality: string, cacheKey: str
 
         const tendersJobData: JobData = {
             type: DB_QUERY,
-            params: paramsTender,
-            cacheKey: `sub/2${cacheKey}`
+            params: paramsTender
         }
 
         const readJobTender = await addJobToReadQueue(tendersJobData);
@@ -547,8 +672,7 @@ export const getCompanyTenders = async (company_name: string, cacheKey: string) 
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: `sub/1${cacheKey}`
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -573,8 +697,7 @@ export const getTicketTender = async (ticket_id: string, cacheKey: string) => {
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: `sub/1${cacheKey}`
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -604,8 +727,7 @@ export const getContracts = async (tender_id: string, cacheKey: string) => {
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: `sub/1${cacheKey}`
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -615,7 +737,7 @@ export const getContracts = async (tender_id: string, cacheKey: string) => {
         throw new NotFoundError("Contract does not exist");
     }
 
-    const paramsTender = {
+    const paramsTender: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         KeyConditionExpression: "tender_id = :tender_id",
         ExpressionAttributeValues: {
@@ -625,8 +747,7 @@ export const getContracts = async (tender_id: string, cacheKey: string) => {
 
     const jobDataTender: JobData = {
         type: DB_QUERY,
-        params: paramsTender,
-        cacheKey: `sub/2${cacheKey}`
+        params: paramsTender
     }
 
     const readJobTender = await addJobToReadQueue(jobDataTender);
@@ -649,8 +770,7 @@ export const getContracts = async (tender_id: string, cacheKey: string) => {
 
     const jobDataName: JobData = {
         type: DB_QUERY,
-        params: paramsName,
-        cacheKey: `sub/3${cacheKey}`
+        params: paramsName
     }
 
     const readJobName = await addJobToReadQueue(jobDataName);
@@ -686,8 +806,7 @@ export const getMuniContract = async (ticket_id: string, cacheKey: string) => {
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: `sub/1${cacheKey}`
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -710,8 +829,7 @@ export const getMuniContract = async (ticket_id: string, cacheKey: string) => {
 
     const jobDataContracts: JobData = {
         type: DB_QUERY,
-        params: paramsContracts,
-        cacheKey: `sub/2${cacheKey}`
+        params: paramsContracts
     }
 
     const readJobContracts = await addJobToReadQueue(jobDataContracts);
@@ -733,8 +851,7 @@ export const getMuniContract = async (ticket_id: string, cacheKey: string) => {
 
     const jobDataTenderDetails: JobData = {
         type: DB_QUERY,
-        params: paramsTenderDetails,
-        cacheKey: `sub/3${cacheKey}`
+        params: paramsTenderDetails
     }
 
     const readJobTenderDetails = await addJobToReadQueue(jobDataTenderDetails);
@@ -756,8 +873,7 @@ export const getMuniContract = async (ticket_id: string, cacheKey: string) => {
 
     const jobDataCompanyName: JobData = {
         type: DB_QUERY,
-        params: paramsCompanyName,
-        cacheKey: `sub/4${cacheKey}`
+        params: paramsCompanyName
     }
 
     const readJobCompanyName = await addJobToReadQueue(jobDataCompanyName);
@@ -790,8 +906,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 
     const jobDataContracts: JobData = {
         type: DB_QUERY,
-        params: paramsContracts,
-        cacheKey: `sub/1${cacheKey}`
+        params: paramsContracts
     }
 
     const readJobContracts = await addJobToReadQueue(jobDataContracts);
@@ -813,8 +928,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 
     const jobDataTender: JobData = {
         type: DB_QUERY,
-        params: paramsTender,
-        cacheKey: `sub/2${cacheKey}`
+        params: paramsTender
     }
 
     const readJobTender = await addJobToReadQueue(jobDataTender);
@@ -836,8 +950,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
 
     const jobDataName: JobData = {
         type: DB_QUERY,
-        params: paramsName,
-        cacheKey: `sub/3${cacheKey}`
+        params: paramsName
     }
 
     const readJobName = await addJobToReadQueue(jobDataName);
@@ -872,8 +985,7 @@ export const getCompanyFromTicketContracts = async (ticket_id: string, company_n
 
     const jobDataTender: JobData = {
         type: DB_QUERY,
-        params: paramsTender,
-        cacheKey: `sub/1${cacheKey}`
+        params: paramsTender
     }
 
     const readJobTender = await addJobToReadQueue(jobDataTender);
@@ -895,8 +1007,7 @@ export const getCompanyFromTicketContracts = async (ticket_id: string, company_n
 
     const jobDataContracts: JobData = {
         type: DB_QUERY,
-        params: paramsContracts,
-        cacheKey: `sub/2${cacheKey}`
+        params: paramsContracts
     }
 
     const readJobContracts = await addJobToReadQueue(jobDataContracts);
@@ -916,8 +1027,7 @@ export const getCompanyFromTicketContracts = async (ticket_id: string, company_n
 
     const jobDataName: JobData = {
         type: DB_GET,
-        params: paramsName,
-        cacheKey: `sub/3${cacheKey}`
+        params: paramsName
     }
 
     const readJobName = await addJobToReadQueue(jobDataName);
