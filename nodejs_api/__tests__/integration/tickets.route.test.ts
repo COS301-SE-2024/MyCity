@@ -471,8 +471,63 @@ describe("Integration Tests - /tickets", () => {
     });
 
     describe("GET /tickets/getmytickets", () => {
-        test("should return my tickets", async () => {
+        test("should return my tickets successfully", async () => {
+            // Mock the service to return a list of tickets
+            const mockResponse = [
+                { ticket_id: "ticket123", username: "john_doe", state: "Open" },
+                { ticket_id: "ticket456", username: "john_doe", state: "Closed" },
+            ];
 
+            // Spy on the service method and mock its return value
+            jest.spyOn(ticketsService, "getMyTickets").mockResolvedValue(mockResponse);
+
+            // Simulate a request with valid query parameters
+            const response = await request(app)
+                .get("/tickets/getmytickets")
+                .query({ username: "john_doe" });
+
+            // Assert that the response status is 200
+            expect(response.statusCode).toBe(200);
+
+            // Assert that the response contains the correct data
+            expect(response.body).toEqual(mockResponse);
+
+            // Ensure the service method was called with the correct username
+            expect(ticketsService.getMyTickets).toHaveBeenCalledWith("john_doe");
+        });
+
+        test("should return 400 if username is missing", async () => {
+            // Simulate a request without the required username parameter
+            const response = await request(app)
+                .get("/tickets/getmytickets")
+                .query({}); // No username in the query
+
+            // Assert that the response status is 400
+            expect(response.statusCode).toBe(400);
+
+            // Assert that the error message is correct
+            expect(response.body.Error).toBe("Missing parameter: username");
+        });
+
+        test("should return error if no tickets are found", async () => {
+            // Mock the service to throw an error indicating no tickets are found
+            jest.spyOn(ticketsService, "getMyTickets").mockRejectedValue(new Error("Doesn't have ticket"));
+
+            // Simulate a request with valid query parameters
+            const response = await request(app)
+                .get("/tickets/getmytickets")
+                .query({ username: "nonexistent_user" });
+
+            // Assert that the response status is 500
+            expect(response.statusCode).toBe(500);
+
+            // Assert that the response contains the correct error message
+            expect(response.body).toEqual({ Error: "Doesn't have ticket" });
+        });
+
+        afterEach(() => {
+            // Restore the original implementation after each test
+            jest.restoreAllMocks();
         });
     });
 
