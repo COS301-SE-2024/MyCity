@@ -125,10 +125,10 @@ export default function ServiceProviderLogin() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-            <Button
+            {/* <Button
               className="min-w-fit h-fit p-2 bg-white"
             // onClick={f}
-            >Forgot password?</Button>
+            >Forgot password?</Button> */}
 
             <Button
               name="submit"
