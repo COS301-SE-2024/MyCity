@@ -9,7 +9,6 @@ import uuid
 from dotenv import load_dotenv
 import os
 from chalicelib.multipart_handler import upload_file, parse_data
-from websocket import create_connection
 
 from math import radians, cos, sin, asin, sqrt, atan2
 from datetime import datetime
@@ -208,18 +207,13 @@ def create_ticket(request):
         }
         watchlist_table.put_item(Item=watchlist_item)
 
-        ws = create_connection(websocket_url)
-        print(municipality_id)
-        message = json.dumps({"action": "createticket", "body": municipality_id})
-        ws.send(message)
-
+      
         # after accepting
         accresponse = {
             "message": "Ticket created successfully",
             "ticket_id": ticket_id,
             "watchlist_id": watchlist_id,
         }
-        ws.close()
         return format_response(float(200), accresponse)
 
     except ClientError as e:
