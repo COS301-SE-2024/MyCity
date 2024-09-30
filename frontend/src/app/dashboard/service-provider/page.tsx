@@ -10,6 +10,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle, Image as ImageIcon } from "lucide-react"; // Import ImageIcon from Lucide
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
+import { UserRole } from "@/types/custom.types";
 
 export default function Dashboard() {
   const userProfile = useProfile();
@@ -39,6 +40,24 @@ export default function Dashboard() {
 
     fetchData();
   }, []);
+
+
+  const CheckRightUser = async ()=>{
+    const user_data = await userProfile.getUserProfile();
+    const user_role = user_data.current?.user_role;
+    if(user_role == UserRole.MUNICIPALITY)
+    {
+      window.location.href = "/dashboard/municipality";
+    }
+    else if (user_role == UserRole.CITIZEN)
+    {
+      window.location.href = "/dashboard/citizen";
+    }
+  }
+
+  useEffect(()=>{
+    CheckRightUser();
+  })
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
