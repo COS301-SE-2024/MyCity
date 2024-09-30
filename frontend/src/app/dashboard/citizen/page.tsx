@@ -407,7 +407,7 @@ export default function CitizenDashboard({
 
 
       {/* Mobile View */}
-      <div className="block sm:hidden ">
+      <div className="block sm:hidden">
         <div className="flex flex-col h-full">
           {/* Background */}
           <div
@@ -435,7 +435,7 @@ export default function CitizenDashboard({
             </div> */}
 
             {/* Dashboard Content */}
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col mt-8">
               <div className="flex justify-center">
                 <h1 className="text-4xl font-bold text-white text-opacity-80">
                   Dashboard
