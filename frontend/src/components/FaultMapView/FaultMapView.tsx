@@ -17,7 +17,6 @@ export default function FaultMapView() {
   const [loading, setLoading] = useState(true);
   const { addFaultMarkers, mapInstance } = useMapbox();
   const [faultGeoData, setFaultGeoData] = useState<FaultGeoData[]>([]);
-  
 
   useEffect(() => {
     const getFaultData = async () => {
@@ -33,8 +32,7 @@ export default function FaultMapView() {
         } else {
           setFaultCount(0); // if no faults
         }
-      }
-      catch (error: any) {
+      } catch (error: any) {
         setFaultCount(0); // if an error occurs
       }
       setLoading(false);
@@ -52,7 +50,6 @@ export default function FaultMapView() {
 
     attachFaultMarkers();
   }, [mapInstance.current, faultGeoData]);
-
 
   return (
     <div>
@@ -117,16 +114,25 @@ export default function FaultMapView() {
             {/* Key Section */}
             <div className="w-full md:w-1/6 p-2 bg-white flex flex-col justify-center">
               <h2 className="text-lg font-bold text-center">Key</h2>
-              <div className="flex items-center ">
-                <div className="w-4 h-4 rounded-full bg-red-700 mr-2"></div>
+              <div className="flex items-center mb-1">
+                <div
+                  className="w-6 h-6 rounded-full mr-4"
+                  style={{ backgroundColor: "#FF69B4" }} // Pink (Urgent)
+                ></div>
                 <span className="text-sm">Urgent</span>
               </div>
-              <div className="flex items-center ">
-                <div className="w-4 h-4 rounded-full bg-yellow-600 mr-2"></div>
+              <div className="flex items-center mb-1">
+                <div
+                  className="w-6 h-6 rounded-full mr-4"
+                  style={{ backgroundColor: "#FFD700" }} // Yellow (Semi-urgent)
+                ></div>
                 <span className="text-sm">Semi-urgent</span>
               </div>
-              <div className="flex items-center ">
-                <div className="w-4 h-4 rounded-full bg-green-700 mr-2"></div>
+              <div className="flex items-center">
+                <div
+                  className="w-6 h-6 rounded-full mr-4"
+                  style={{ backgroundColor: "#00CED1" }} // Blue (Non-urgent)
+                ></div>
                 <span className="text-sm">Non-urgent</span>
               </div>
               <div className=" text-center">

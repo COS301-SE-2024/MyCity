@@ -134,8 +134,8 @@
         </td>
         <td>
           <div align="center">        
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing"/><br/>
-            <a href="https://docs.google.com/document/d/1So1miYtpRi2oXD-ppN_88OSerpaqc9ZDIo_c8woEl3o/edit?usp=sharing">User Manual</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href="https://drive.google.com/file/d/1lCT7bK04YeFGAl_Bc-wk_HV96ELHbUoN/view?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/file/d/1lCT7bK04YeFGAl_Bc-wk_HV96ELHbUoN/view?usp=drive_link">User Manual</a>
           </div>
         </td>
       </tr>
