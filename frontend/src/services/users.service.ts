@@ -5,8 +5,8 @@ interface UploadProfilePictureResponse {
 
 export async function uploadProfilePicture(sessionToken: string | undefined, formData: FormData, revalidate?: boolean) {
     try {
-        // const API_BASE_URL = process.env.API_BASE_URL;
-        const apiURL = `https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/users/profile-picture/upload`;
+        const API_BASE_URL = process.env.API_BASE_URL;
+        const apiURL = `${API_BASE_URL}/users/profile-picture/upload`;
         const response = await fetch(apiURL, {
             method: "POST",
             headers: {

@@ -396,8 +396,8 @@ export async function getFaultTypes(revalidate?: boolean) {
 }
 
 export async function CreatTicket(sessiont: string, formData: FormData): Promise<boolean> {
-    // const API_BASE_URL = process.env.API_BASE_URL;
-    const apiURL = `https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create`;
+    const API_BASE_URL = process.env.API_BASE_URL;
+    const apiURL = `${API_BASE_URL}/tickets/create`;
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
