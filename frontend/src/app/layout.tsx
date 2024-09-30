@@ -59,6 +59,7 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
+        <meta name="mobile-web-app-capable" content="yes" /> {/* Directly adding meta tag here */}
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className={inter.className}>
@@ -66,7 +67,8 @@ export default function RootLayout({
           <ConfigureAmplifyClientSide />
           <UserProfileProvider>
             <MapboxProvider>
-              <div className="relative z-10"> {/* Ensure the navbar will be above other content */}
+              <div className="relative z-10">
+                {/* Ensure the navbar will be above other content */}
                 {children}
               </div>
             </MapboxProvider>
