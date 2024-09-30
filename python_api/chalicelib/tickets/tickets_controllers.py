@@ -9,6 +9,7 @@ import uuid
 from dotenv import load_dotenv
 import os
 from chalicelib.multipart_handler import upload_file, parse_data
+from websocket import create_connection
 
 from math import radians, cos, sin, asin, sqrt, atan2
 from datetime import datetime
