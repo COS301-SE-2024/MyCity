@@ -189,35 +189,33 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
           <div className="flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-2 w-full h-[60%]">
             {visibleItems}
           </div>
-
+  
           {/* Desktop Pagination Controls */}
           <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[25%] text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+              className={`px-4 py-2 w-[25%] text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={currentPageNum === 0}
             >
               Previous
             </button>
-
+  
             <span className="text-white text-opacity-80">
-              {/* Page {startIndex / itemsPerPage + 1} of {totalPages} */}
               Page {currentPageNum + 1}
             </span>
-
+  
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] text-white ${currentPageNum + itemsPerPage >= cardData.length
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-                }`}
+              className={`px-4 py-2 w-[25%] ${currentPageNum + itemsPerPage >= cardData.length
+                ? "bg-gray-500 text-white cursor-not-allowed"
+                : "bg-white text-black"
+              }`}
               disabled={!lastEvaluatedKey}
             >
               Next
             </button>
           </div>
-
+  
           {showModal && selectedCard && (
             <FaultCardUserView
               show={showModal}
@@ -242,7 +240,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
           )}
         </div>
       </div>
-
+  
       {/* Mobile View */}
       <div className="block sm:hidden overflow-hidden">
         <div className="flex h-[60%] w-full rounded-3xl shadow-md overflow-hidden">
@@ -277,35 +275,33 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
             </div>
           </div>
         </div>
-
+  
         {/* Mobile Pagination Controls */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={goToPreviousPage}
-            className={`px-4 py-2 text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+            className={`px-4 py-2 text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
             disabled={currentPageNum === 0}
           >
             Previous
           </button>
-
+  
           <span className="text-white text-opacity-80">
-            {/* Page {startIndex / itemsPerPage + 1} of {totalPages} */}
             Page {currentPageNum + 1}
           </span>
-
+  
           <button
             onClick={goToNextPage}
-            className={`px-4 py-2 text-white ${currentPageNum + itemsPerPage >= cardData.length
-              ? "opacity-50 cursor-not-allowed"
-              : ""
-              }`}
+            className={`px-4 py-2 ${currentPageNum + itemsPerPage >= cardData.length
+              ? "bg-gray-500 text-white cursor-not-allowed"
+              : "bg-white text-black"
+            }`}
             disabled={!lastEvaluatedKey}
           >
             Next
           </button>
         </div>
-
+  
         {showModal && selectedCard && (
           <FaultCardUserView
             show={showModal}
@@ -331,6 +327,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, resul
       </div>
     </div>
   );
+  
 };
 
 export default DashboardFaultCardContainer;
