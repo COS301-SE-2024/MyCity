@@ -109,3 +109,9 @@ export interface DashboardTicket {
     ticketID: string;
     urgency: "high" | "medium" | "low";
 }
+
+
+export interface PaginatedResults{
+    items: any[];
+    lastEvaluatedKey: any;
+}

@@ -119,6 +119,7 @@ describe("tickets service - getTicketDetails", () => {
     });
 
     test("should return ticket details for a valid ticket ID", async () => {
+        
     });
 
     test("should throw an error if ticket does not exist", async () => {

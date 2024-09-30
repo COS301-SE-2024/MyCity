@@ -94,7 +94,7 @@ const CreateTicketComp: React.FC = () => {
         });
       },
       (error) => {
-        console.error("Error getting current location: ", error);
+        // console.log("Error getting location: ", error);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
@@ -104,7 +104,7 @@ const CreateTicketComp: React.FC = () => {
         const data = await getFaultTypes();
         setFaultTypes(data || []);
       } catch (error: any) {
-        toast.error("Error fetching fault types: " + error.message);
+        // toast.error("Error fetching fault types: " + error.message);
         setFaultTypes([]);
       }
     }

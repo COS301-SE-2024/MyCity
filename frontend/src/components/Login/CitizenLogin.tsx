@@ -142,10 +142,10 @@ export default function CitizenLogin() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-            <Button
+            {/* <Button
               className="min-w-fit h-fit p-2 dark:bg-gray-800 dark:text-white bg-gray-100"
             // onClick={f}
-            >Forgot password?</Button>
+            >Forgot password?</Button> */}
 
             <Button
               name="submit"

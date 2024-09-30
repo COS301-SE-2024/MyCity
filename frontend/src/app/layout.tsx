@@ -26,6 +26,10 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
+    startupImage: [
+      
+    ],
+    
   },
   formatDetection: {
     telephone: false,

@@ -34,6 +34,7 @@ import {
   getMostUpvote,
   getWatchlistTickets,
 } from "@/services/tickets.service";
+import { PaginatedResults } from "@/types/custom.types";
 
 interface ScrollablePanelProps {
   title: string;
@@ -55,9 +56,9 @@ const ScrollablePanel: React.FC<ScrollablePanelProps> = ({
 export default function Notifications() {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const userProfile = useProfile();
-  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<any[]>([]);
-  const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
-  const [dashWatchResults, setDashWatchResults] = useState<any[]>([]);
+  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
+  const [dashMuniResults, setDashMuniResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
+  const [dashWatchResults, setDashWatchResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
   const [startIndex, setStartIndex] = useState(0);
   const itemsPerPage = 20;
   const [showModal, setShowModal] = useState(false);
@@ -74,7 +75,7 @@ export default function Notifications() {
         user_session,
         true
       );
-      setDashWatchResults(rspwatchlist.length > 0 ? rspwatchlist : []);
+      setDashWatchResults(rspwatchlist);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -97,29 +98,35 @@ export default function Notifications() {
     const fetchData = async () => {
       try {
         const user_data = await userProfile.getUserProfile();
-        const user_id = user_data.current?.email;
+        const user_id = user_data.current?.email ?? "";
         const user_session = String(user_data.current?.session_token);
-
-        const rspmostupvotes = await getMostUpvote(user_session);
-        const rspwatchlist = await getWatchlistTickets(
-          String(user_id),
-          user_session
-        );
+        const user_email = String(user_id).toLowerCase();
         const municipality = user_data.current?.municipality;
-        const rspmunicipality = await getTicketsInMunicipality(
-          municipality,
-          user_session
-        );
 
-        setMostUpvoteResults(rspmostupvotes);
-        setDashMuniResults(
-          Array.isArray(rspmunicipality) ? rspmunicipality : []
-        );
-        setDashWatchResults(Array.isArray(rspwatchlist) ? rspwatchlist : []);
+        const promises = [
+          getWatchlistTickets(user_email, user_session),
+          getMostUpvote(user_session),
+          getTicketsInMunicipality(municipality, user_session),
+        ];
+
+        const results = await Promise.allSettled(promises);
+
+        results.forEach((result, index) => {
+          if (result.status === "fulfilled") {
+            if (index === 0) {
+              setDashWatchResults(result.value);
+            } else if (index === 1) {
+              setMostUpvoteResults(result.value);
+            } else if (index === 2) {
+              setDashMuniResults(result.value);
+            }
+          }
+        });
+
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false); // Set loading to false after data is fetched
+        setIsLoading(false);
       }
     };
 
@@ -137,24 +144,24 @@ export default function Notifications() {
   };
 
   const allTickets = [
-    ...dashMostUpvoteResults.map((ticket) => ({
+    ...dashMostUpvoteResults.items.map((ticket) => ({
       ...ticket,
       action: "upvoted",
     })),
-    ...dashMuniResults.map((ticket) => ({ ...ticket, action: "commented on" })),
-    ...dashWatchResults.map((ticket) => ({ ...ticket, action: "watchlisted" })),
+    ...dashMuniResults.items.map((ticket) => ({ ...ticket, action: "commented on" })),
+    ...dashWatchResults.items.map((ticket) => ({ ...ticket, action: "watchlisted" })),
   ];
 
   const visibleNotifications = allTickets
     .slice(startIndex, Math.min(startIndex + itemsPerPage, allTickets.length))
     .map((item, index) => {
-      const action = dashMostUpvoteResults.includes(item)
+      const action = dashMostUpvoteResults.items.includes(item)
         ? "upvoted"
-        : dashWatchResults.includes(item)
-        ? "watchlisted"
-        : dashMuniResults.includes(item)
-        ? "updated"
-        : "commented on";
+        : dashWatchResults.items.includes(item)
+          ? "watchlisted"
+          : dashMuniResults.items.includes(item)
+            ? "updated"
+            : "commented on";
 
       return (
         <div
@@ -188,38 +195,38 @@ export default function Notifications() {
   return (
     <div>
       {/* Desktop View */}
-<div className="hidden sm:block">
-  {/* Adjusted z-index to ensure the navbar is on top */}
-  <div className="z-[1000] relative">
-    <NavbarUser unreadNotifications={unreadNotifications} />
-  </div>
-  
-  <div
-    style={{
-      position: "relative",
-      height: "100vh",
-      overflow: "hidden",
-    }}
-  >
-    {/* Background image */}
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundImage:
-          'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        zIndex: -1, // Keep this behind the content
-      }}
-    />
+      <div className="hidden sm:block">
+        {/* Adjusted z-index to ensure the navbar is on top */}
+        <div className="z-[1000] relative">
+          <NavbarUser unreadNotifications={unreadNotifications} />
+        </div>
 
-    {/* Inline scrollbar styles */}
-    <style jsx>{`
+        <div
+          style={{
+            position: "relative",
+            height: "100vh",
+            overflow: "hidden",
+          }}
+        >
+          {/* Background image */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundImage:
+                'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              zIndex: -1, // Keep this behind the content
+            }}
+          />
+
+          {/* Inline scrollbar styles */}
+          <style jsx>{`
       .custom-scrollbar::-webkit-scrollbar {
         width: 8px;
       }
@@ -237,47 +244,47 @@ export default function Notifications() {
       }
     `}</style>
 
-    {/* Content */}
-    <div className="fixed w-full h-full inset-0 z-[5]"> {/* Added z-index */}
-      <main className="flex w-full h-full">
-        <div className="relative pt-8">
-          <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
-            Notifications
-          </h1>
-        </div>
-
-        {isLoading ? (
-          <div className="flex justify-center items-center fixed inset-0">
-            <ThreeDots
-              height="80"
-              width="80"
-              radius="9"
-              color="#ADD8E6"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-          </div>
-        ) : (
-          <div className="flex w-full justify-center items-center overflow-hidden">
-            <div className="pt-4 rounded-3xl w-[80%] h-[75%] justify-center">
-              <div
-                className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto custom-scrollbar"
-                style={{
-                  scrollbarWidth: "thin", // For Firefox
-                  scrollbarColor: "#6b7280 rgba(255, 255, 255, 0.2)", // For Firefox
-                }}
-              >
-                {visibleNotifications}
+          {/* Content */}
+          <div className="fixed w-full h-full inset-0 z-[5]"> {/* Added z-index */}
+            <main className="flex w-full h-full">
+              <div className="relative pt-8">
+                <h1 className="text-4xl font-bold text-white text-opacity-80 absolute top-13 transform translate-x-1/4">
+                  Notifications
+                </h1>
               </div>
-            </div>
+
+              {isLoading ? (
+                <div className="flex justify-center items-center fixed inset-0">
+                  <ThreeDots
+                    height="80"
+                    width="80"
+                    radius="9"
+                    color="#ADD8E6"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                </div>
+              ) : (
+                <div className="flex w-full justify-center items-center overflow-hidden">
+                  <div className="pt-4 rounded-3xl w-[80%] h-[75%] justify-center">
+                    <div
+                      className="px-6 rounded-3xl justify-center items-center w-full h-full overflow-y-auto custom-scrollbar"
+                      style={{
+                        scrollbarWidth: "thin", // For Firefox
+                        scrollbarColor: "#6b7280 rgba(255, 255, 255, 0.2)", // For Firefox
+                      }}
+                    >
+                      {visibleNotifications}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </main>
           </div>
-        )}
-      </main>
-    </div>
-  </div>
-</div>
+        </div>
+      </div>
 
 
       {/* Mobile View */}

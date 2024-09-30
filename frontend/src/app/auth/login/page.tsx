@@ -6,7 +6,6 @@ import MunicipalityLogin from "@/components/Login/MunicipalityLogin";
 import ServiceProviderLogin from "@/components/Login/ServiceProviderLogin";
 import NavbarGuest from "@/components/Navbar/NavbarGuest";
 
-
 export default function Login() {
   const formHeader: string = "Log In.";
 
@@ -44,7 +43,9 @@ export default function Login() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-[2.5em] flex justify-center font-bold">{formHeader}</span>
+                <span className="text-[2.5em] flex justify-center font-bold">
+                  {formHeader}
+                </span>
                 <Tabs
                   aria-label="Login Options"
                   defaultSelectedKey={0}
@@ -88,21 +89,20 @@ export default function Login() {
         <div
           style={{
             position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            minHeight: "100vh", // Ensures the full viewport height
           }}
-          className="px-2"
+          className="px-2 pb-20 overflow-auto" // Allow scrolling and add bottom padding
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-3 ml-3 transition-transform duration-200">
+          {/* Logo */}
+          <div className="flex justify-center items-center text-white font-bold transform hover:scale-105 mt-3 ml-3 transition-transform duration-200">
             <img
               src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
               alt="MyCity"
-              width={128}
-              height={128}
+              className="w-16 h-16" // Responsive sizing
             />
           </div>
 
-          {/* Background image */}
+          {/* Background Image */}
           <div
             style={{
               position: "absolute",
@@ -114,58 +114,61 @@ export default function Login() {
                 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              backgroundRepeat: "repeat", // Repeat to fill space
+              zIndex: -1,
             }}
           ></div>
 
           {/* Content */}
-          <div className="mt-5 ">
-            <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
-              <span className="text-[2.5em] font-bold">{formHeader}</span>
-              <div className="overflow-auto h-[65vh] rounded-lg">
-                <div className="flex justify-center">
-                  <img
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
-                    alt="MyCity"
-                    width={128}
-                    height={128}
-                  />
-                </div>
-                <Tabs
-                  aria-label="Signup Options"
-                  defaultSelectedKey={0}
-                  className="mt-2 flex justify-center w-full"
-                  classNames={{
-                    tab: " min-h-10",
-                    panel: "w-full",
-                    cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
-                    tabContent:
-                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
-                  }}
+          <div className="mt-5 flex flex-col bg-white items-center rounded-lg shadow-lg shadow-blue-800/15 p-4 mx-2 space-y-4">
+            {/* Form Header */}
+            <span className="text-xl font-bold">{formHeader}</span>
+
+            {/* Login Options Image */}
+            <div className="flex justify-center">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
+                alt="MyCity"
+                className="w-32 h-32" // Responsive image size
+              />
+            </div>
+
+            {/* Tabs Component */}
+            <div className="w-full overflow-auto h-[65vh]">
+              <Tabs
+                aria-label="Signup Options"
+                defaultSelectedKey={0}
+                className="mt-2 flex justify-center w-full"
+                classNames={{
+                  tab: "min-h-10 text-sm", // Smaller text size for tabs
+                  panel: "w-full",
+                  cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
+                  tabContent:
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
+                }}
+              >
+                <Tab key={0} title="Citizen" data-testid="mobile-citizen-tab">
+                  <CitizenLogin />
+                </Tab>
+                <Tab
+                  key={1}
+                  title="Municipality"
+                  data-testid="mobile-municipality-tab"
                 >
-                  <Tab key={0} title="Citizen" data-testid="mobile-citizen-tab">
-                    <CitizenLogin />
-                  </Tab>
-                  <Tab
-                    key={1}
-                    title="Municipality"
-                    data-testid="mobile-municipality-tab"
-                  >
-                    <MunicipalityLogin />
-                  </Tab>
-                  <Tab
-                    key={2}
-                    title="Service Provider"
-                    data-testid="mobile-service-provider-tab"
-                  >
-                    <ServiceProviderLogin />
-                  </Tab>
-                </Tabs>
-              </div>
+                  <MunicipalityLogin />
+                </Tab>
+                <Tab
+                  key={2}
+                  title="Service Provider"
+                  data-testid="mobile-service-provider-tab"
+                >
+                  <ServiceProviderLogin />
+                </Tab>
+              </Tabs>
             </div>
           </div>
         </div>
+
         {/* Navbar */}
         <NavbarGuest />
       </div>

@@ -6,7 +6,6 @@ import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import { uploadProfilePicture } from "@/services/users.service";
 
-
 type ChangeAccountInfoProps = {
   onBack: () => void;
   profileData: UserData | null;
@@ -150,33 +149,32 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
       </div>
 
       {/* First Name */}
-<div className="mb-4 text-center">
-  <p className="text-gray-600">First Name(s)</p>
-  <div className="text-xl font-semibold flex items-center justify-center">
-    <input
-      type="text"
-      value={firstname}
-      name="given_name"
-      onChange={(event) => setFirstname(event.target.value)}
-      className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
-    />
-  </div>
-</div>
+      <div className="mb-4 text-center">
+        <p className="text-gray-600">First Name(s)</p>
+        <div className="text-xl font-semibold flex items-center justify-center">
+          <input
+            type="text"
+            value={firstname}
+            name="given_name"
+            onChange={(event) => setFirstname(event.target.value)}
+            className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
+          />
+        </div>
+      </div>
 
-{/* Surname */}
-<div className="mb-4 text-center">
-  <p className="text-gray-600">Surname</p>
-  <div className="text-xl font-semibold flex items-center justify-center">
-    <input
-      type="text"
-      value={surname}
-      name="family_name"
-      onChange={(event) => setSurname(event.target.value)}
-      className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
-    />
-  </div>
-</div>
-
+      {/* Surname */}
+      <div className="mb-4 text-center">
+        <p className="text-gray-600">Surname</p>
+        <div className="text-xl font-semibold flex items-center justify-center">
+          <input
+            type="text"
+            value={surname}
+            name="family_name"
+            onChange={(event) => setSurname(event.target.value)}
+            className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
+          />
+        </div>
+      </div>
 
       {/* Municipality */}
       <div className="mb-4 text-center">

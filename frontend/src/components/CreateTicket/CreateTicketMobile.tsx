@@ -110,7 +110,7 @@ const CreateTicketMobile: React.FC = () => {
         }
       );
     } else {
-      toast.error("Geolocation is not supported by this browser.");
+      
     }
 
     async function fetchFaultTypes() {
@@ -118,7 +118,7 @@ const CreateTicketMobile: React.FC = () => {
         const data = await getFaultTypes();
         setFaultTypes(data || []);
       } catch (error) {
-        console.error("Error fetching fault types:", error);
+        
         setFaultTypes([]);
       }
     }
