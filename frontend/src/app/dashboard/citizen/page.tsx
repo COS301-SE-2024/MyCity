@@ -23,6 +23,7 @@ import { DashboardTicket, PaginatedResults } from "@/types/custom.types";
 
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import LocationPermissionModal from "@/components/Location/LocationPermissionModal";
+import { UserRole } from "@/types/custom.types";
 
 interface CitizenDashboardProps {
   searchParams: any;
@@ -130,6 +131,25 @@ export default function CitizenDashboard({
     getDeeplinkTicket();
     fetchData();
   }, []);
+
+
+  const CheckRightUser = async ()=>{
+    const user_data = await userProfile.getUserProfile();
+    const user_role = user_data.current?.user_role;
+    if(user_role == UserRole.MUNICIPALITY)
+    {
+      window.location.href = "/dashboard/municipality";
+    }
+    else if (user_role == UserRole.PRIVATE_COMPANY)
+    {
+      window.location.href = "/dashboard/service-provider";
+    }
+  }
+
+  useEffect(()=>{
+    CheckRightUser();
+  })
+
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
