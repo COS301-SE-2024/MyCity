@@ -533,7 +533,62 @@ describe("Integration Tests - /tickets", () => {
 
     describe("GET /tickets/getinarea", () => {
         test("should get tickets within a given municipality", async () => {
+            // Mock the service to return a list of tickets for a given municipality
+            const mockResponse = [
+                { ticket_id: "ticket123", municipality_id: "municipality_1", state: "Open" },
+                { ticket_id: "ticket456", municipality_id: "municipality_1", state: "Closed" },
+            ];
 
+            // Spy on the service method and mock its return value
+            jest.spyOn(ticketsService, "getInMyMunicipality").mockResolvedValue(mockResponse);
+
+            // Simulate a request with valid query parameters
+            const response = await request(app)
+                .get("/tickets/getinarea")
+                .query({ municipality: "municipality_1" });
+
+            // Assert that the response status is 200
+            expect(response.statusCode).toBe(200);
+
+            // Assert that the response contains the correct data
+            expect(response.body).toEqual(mockResponse);
+
+            // Ensure the service method was called with the correct municipality
+            expect(ticketsService.getInMyMunicipality).toHaveBeenCalledWith("municipality_1");
+        });
+
+        test("should return 400 if municipality is missing", async () => {
+            // Simulate a request without the required municipality parameter
+            const response = await request(app)
+                .get("/tickets/getinarea")
+                .query({}); // No municipality in the query
+
+            // Assert that the response status is 400
+            expect(response.statusCode).toBe(400);
+
+            // Assert that the error message is correct
+            expect(response.body.Error).toBe("Missing parameter: municipality");
+        });
+
+        test("should return error if no tickets are found in the municipality", async () => {
+            // Mock the service to throw an error indicating no tickets are found
+            jest.spyOn(ticketsService, "getInMyMunicipality").mockRejectedValue(new Error("Doesn't have a ticket in municipality"));
+
+            // Simulate a request with valid query parameters
+            const response = await request(app)
+                .get("/tickets/getinarea")
+                .query({ municipality: "municipality_2" });
+
+            // Assert that the response status is 500
+            expect(response.statusCode).toBe(500);
+
+            // Assert that the response contains the correct error message
+            expect(response.body).toEqual({ Error: "Doesn't have a ticket in municipality" });
+        });
+
+        afterEach(() => {
+            // Restore the original implementation after each test
+            jest.restoreAllMocks();
         });
     });
 
