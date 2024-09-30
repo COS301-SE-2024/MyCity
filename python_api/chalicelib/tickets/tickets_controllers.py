@@ -207,7 +207,6 @@ def create_ticket(request):
         }
         watchlist_table.put_item(Item=watchlist_item)
 
-      
         # after accepting
         accresponse = {
             "message": "Ticket created successfully",
