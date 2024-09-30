@@ -49,7 +49,7 @@ setuptools==70.3.0
 six==1.16.0
 urllib3==2.2.2
 wcwidth==0.2.13
-websocket==0.2.1
+websocket-client==1.8.0
 Werkzeug==3.0.3
 wheel==0.43.0
 zope.event==5.0
