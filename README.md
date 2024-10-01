@@ -122,40 +122,40 @@
       <tr>
         <td>
           <div align="center">
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_system-requirements.png" alt="System Requirements" href=" "/><br/>
-            <a href=" ">System Requirements</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_system-requirements.png" alt="System Requirements" href="https://drive.google.com/file/d/1adW8zDMTIf1mEz1AqJQ6nGflos-FjPeJ/view?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/file/d/1adW8zDMTIf1mEz1AqJQ6nGflos-FjPeJ/view?usp=drive_link">System Requirements</a>
           </div>
         </td>
         <td>
           <div align="center"> 
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_System-Architectural-Design.png" alt="System Architectural Design" href=" "/><br/>
-            <a href=" ">System Architectural</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_System-Architectural-Design.png" alt="System Architectural Design" href="https://drive.google.com/file/d/1udwp5E4rlpN1y8wddnWuj-4g6xksYlTs/view?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/file/d/1udwp5E4rlpN1y8wddnWuj-4g6xksYlTs/view?usp=drive_link">System Architectural</a>
           </div>
         </td>
         <td>
           <div align="center">        
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href=" "/><br/>
-            <a href=" ">User Manual</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_User-Manual.png" alt="User Manual" href="https://drive.google.com/file/d/1lCT7bK04YeFGAl_Bc-wk_HV96ELHbUoN/view?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/file/d/1lCT7bK04YeFGAl_Bc-wk_HV96ELHbUoN/view?usp=drive_link">User Manual</a>
           </div>
         </td>
       </tr>
       <tr>
         <td>
           <div align="center">
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Testing-Guidelines.png" alt="Testing Guidelines" href=" "/><br/>
-            <a href=" ">Testing Guidelines</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Testing-Guidelines.png" alt="Testing Guidelines" href="https://drive.google.com/file/d/10g6Bk6Ala2RAuQVuMeTn3UCCnguG0kzG/view?usp=drive_link"/><br/>
+            <a href="https://drive.google.com/file/d/10g6Bk6Ala2RAuQVuMeTn3UCCnguG0kzG/view?usp=drive_link">Testing Guidelines</a>
           </div>
         </td>
         <td>
           <div align="center"> 
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_GitHub-Strategy.png" alt="GitHub Strategy" href=" "/><br/>   
-            <a href=" ">GitHub Strategy</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_GitHub-Strategy.png" alt="Technical Installation" href="https://drive.google.com/file/d/1TCoE_IyIHJTPzCxwGjBVH8ghCVsRBbDo/view?usp=drive_link"/><br/>   
+            <a href="https://drive.google.com/file/d/1TCoE_IyIHJTPzCxwGjBVH8ghCVsRBbDo/view?usp=drive_link">Technical Installation</a>
           </div>
         </td>
         <td>
           <div align="center"> 
-            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Coding-Guidelines.png" alt="Coding Guidelines" href=" "/><br/>     
-            <a href=" ">Coding Guidelines</a>
+            <img width="100" height="auto" href="https://www.mycity.net.za" src="/images/icon_Coding-Guidelines.png" alt="Coding Guidelines" href="https://drive.google.com/file/d/1_okKpCCE1zVSFlA6blcqRsJBhoOA9R3p/view?usp=drive_link"/><br/>     
+            <a href="https://drive.google.com/file/d/1_okKpCCE1zVSFlA6blcqRsJBhoOA9R3p/view?usp=drive_link">Coding Guidelines</a>
           </div>
         </td>
       </tr>
