@@ -19,19 +19,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.x'
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci
 
       - name: Run All Frontend Unit & Integration tests
         working-directory: frontend
         run: npm test
 
 
-  backend_tests:
-    name: Run Backend Tests
+  python_backend_tests:
+    name: Run Python Backend Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -59,3 +59,25 @@ jobs:
       - name: Run All Backend Unit & Integration tests
         working-directory: python_api
         run: pytest --disable-warnings -q
+
+  
+  nodejs_backend_tests:
+    name: Run Nodejs Backend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        working-directory: nodejs_api
+        run: npm ci
+
+      - name: Run All Nodejs Backend Unit & Integration tests
+        working-directory: nodejs_api
+        run: npm test
