@@ -2,7 +2,7 @@ import { GetCommand, GetCommandInput, GetCommandOutput, PutCommand, PutCommandIn
 import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError, NotFoundError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
-import { assignCompanyName, assignLongLat, assignMuni, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
+import { assignCompanyName, assignLongLat, assignMuni, sendWebSocketMessage, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 import WebSocket from "ws";
 import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_UPDATE } from "../config/redis.config";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
@@ -87,24 +87,8 @@ export const createTender = async (senderData: TenderData) => {
     const writeJob = await addJobToWriteQueue(putJobData);
     await writeJob.finished();
 
-    console.log("Just before websocket")
-
-    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
-    const ws = new WebSocket(WEB_SOCKET_URL);
-    console.log("WebSocket URL:", WEB_SOCKET_URL);
-    ws.on("open", () => {
-        console.log("Connection opened")
-        const message = JSON.stringify({ action: "refreshcompany" });
-        console.log(message)
-        ws.send(message);
-        ws.close();
-    });
-
-    ws.on("error", (err) => {
-        console.error("WebSocket error:", err);
-        ws.close();  // Ensure the connection is closed on error as well
-    });
-
+    const message = JSON.stringify({ action: "refreshcompany" })
+    await sendWebSocketMessage(message);
 
     return {
         Status: "Success",
@@ -688,7 +672,7 @@ export const getCompanyTenders = async (company_name: string, cacheKey: string) 
         ExpressionAttributeValues: {
             ":company_id": companyId
         },
-        ScanIndexForward : false,
+        ScanIndexForward: false,
     };
 
     const jobData: JobData = {
