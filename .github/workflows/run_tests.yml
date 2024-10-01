@@ -19,19 +19,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '20'
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Run All Frontend Unit & Integration tests
         working-directory: frontend
         run: npm test
 
 
-  python_backend_tests:
-    name: Run Python Backend Tests
+  backend_tests:
+    name: Run Backend Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -59,38 +59,3 @@ jobs:
       - name: Run All Backend Unit & Integration tests
         working-directory: python_api
         run: pytest --disable-warnings -q
-
-  
-  nodejs_backend_tests:
-    name: Run Nodejs Backend Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-
-      - name: Set Up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Install dependencies
-        working-directory: nodejs_api
-        run: npm ci
-
-      - name: Run All Nodejs Backend Unit & Integration tests
-        env:
-          USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
-        working-directory: nodejs_api
-        run: npm test
