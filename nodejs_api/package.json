@@ -7,6 +7,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "dev": "nodemon app.ts",
+    "test": "jest",
     "deploy": "npm run build && serverless deploy"
   },
   "keywords": [],
