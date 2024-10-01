@@ -7,6 +7,7 @@ import WebSocket from "ws";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
 import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
+import { sendWebSocketMessage } from "../utils/tenders.utils";
 
 interface Ticket {
     dateClosed: string;
@@ -144,13 +145,8 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
     const watchlistJob = await addJobToWriteQueue(watchlistJobData);
     const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
 
-    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
-    const ws = new WebSocket(WEB_SOCKET_URL);
-    ws.on("open", () => {
-        console.log(municipalityId);
-        const message = JSON.stringify({ action: "createticket", body: municipalityId });
-        ws.send(message);
-    });
+    const message = JSON.stringify({ action: "createticket", body : municipalityId })
+    await sendWebSocketMessage(message);
 
     // after accepting
     const accResponse = {
@@ -159,7 +155,6 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         watchlist_id: watchlistId,
     };
 
-    ws.close();
 
     return accResponse;
 };
