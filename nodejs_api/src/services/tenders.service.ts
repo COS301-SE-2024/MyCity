@@ -26,6 +26,7 @@ interface AcceptOrRejectTenderData {
 }
 
 export const createTender = async (senderData: TenderData) => {
+    await clearRedisCache();
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
         throw new BadRequestError("Company Does not Exist");
@@ -682,11 +683,12 @@ export const getCompanyTenders = async (company_name: string, cacheKey: string) 
 
     const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
-        IndexName: "company_id-index",
+        IndexName: "company_id-datetimesubmitted-index",
         KeyConditionExpression: "company_id = :company_id",
         ExpressionAttributeValues: {
             ":company_id": companyId
         },
+        ScanIndexForward : false,
     };
 
     const jobData: JobData = {
