@@ -4,9 +4,9 @@ import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABL
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
-import { addJobToReadQueue, addJobToWriteQueue, invalidateCacheOnTicketUpdateOnly } from "./jobs.service";
+import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
-import { DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
+import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
 
 interface Ticket {
     dateClosed: string;
@@ -38,7 +38,7 @@ interface TicketData {
 
 
 export const createTicket = async (formData: any, file: Express.Multer.File | undefined, cacheKey: string) => {
-    invalidateCacheOnTicketUpdateOnly();
+    await clearRedisCache();
 
     const username = formData["username"] as string;
     let imageLink = "";
@@ -473,7 +473,7 @@ export const viewTicketData = async (ticketId: string, cacheKey: string) => {
 };
 
 export const interactTicket = async (ticketData: any) => {
-    invalidateCacheOnTicketUpdateOnly();
+      await clearRedisCache();
 
     const interactType = String(ticketData.type).toUpperCase();
     const params: QueryCommandInput = {
@@ -685,7 +685,7 @@ export const getMostUpvoted = async (cacheKey: string, lastEvaluatedKeyArrayStri
 };
 
 export const closeTicket = async (ticketData: any) => {
-    invalidateCacheOnTicketUpdateOnly();
+      await clearRedisCache();
 
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
@@ -743,7 +743,7 @@ export const closeTicket = async (ticketData: any) => {
 };
 
 export const acceptTicket = async (ticketData: any) => {
-    invalidateCacheOnTicketUpdateOnly();
+      await clearRedisCache();
 
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
@@ -921,7 +921,7 @@ export const getOpenCompanyTickets = async (cacheKey: string) => {
 };
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
-    invalidateCacheOnTicketUpdateOnly();
+      await clearRedisCache();
 
     // Validate ticket_id
     validateTicketId(ticket_id);
