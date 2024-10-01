@@ -61,14 +61,14 @@ export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
   );
 
   return (
-    <div className="bg-white bg-opacity-80 rounded-lg p-2 shadow-lg h-[38vh] w-full overflow-hidden">
+    <div className="bg-white bg-opacity-90 rounded-lg p-2 shadow-lg h-[38vh] w-full overflow-hidden">
       <h2 className="text-2xl font-bold mb-2 text-center">
-        Asset Resolution Times   
+        Asset Resolution Times
       </h2>
       <div className="space-y-2 h-[75%]">
         {paginatedAssets.map(([asset]) => {
-          const avgTime = avgTimes[asset];
-          const estimatedTime = estimatedTimes[asset];
+          const avgTime = avgTimes[asset].toFixed(0);
+          const estimatedTime = estimatedTimes[asset].toFixed(0);
           const avgTimePercentage =
             (avgTime / Math.max(avgTime, estimatedTime)) * 100;
           const estimatedTimePercentage =
@@ -118,15 +118,17 @@ export default function TopAssetsProgress({ data }: TopAssetsProgressProps) {
 
       {/* Pagination Controls */}
       <div className="flex justify-between my-2 w-full">
-        <button
-          className="bg-gray-300 py-2 w-1/4 rounded-full disabled:opacity-50"
+      <button
+          className="bg-gray-600 text-white font-bold py-2 w-1/4 rounded-full disabled:opacity-50"
           onClick={handlePrevPage}
           disabled={currentPage === 1}
         >
           Previous
         </button>
+
+        <span className="text-lg font-bold ">{`Page ${currentPage} of ${totalPages}`}</span>
         <button
-          className="bg-gray-300 py-2 w-1/4 rounded-full disabled:opacity-50"
+          className="bg-blue-300 font-bold py-2 w-1/4 rounded-full disabled:opacity-50"
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
         >

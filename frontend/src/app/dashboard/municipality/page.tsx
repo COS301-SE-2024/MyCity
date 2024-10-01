@@ -11,6 +11,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle } from "lucide-react";
 import { Image as ImageIcon } from "lucide-react"; // Import the Image icon from Lucide
+import { UserRole } from "@/types/custom.types";
 
 export default function Dashboard() {
   const [city, setCity] = useState<string | null>(null);
@@ -99,9 +100,9 @@ export default function Dashboard() {
     const rspmunicipality = await getTicketsInMunicipality(
       user_municipality,
       user_session,
-      true
     );
-    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    console.log(rspmunicipality)
+    setDashMuniResults(rspmunicipality.items);
     setTableLoading(false);
   };
 
@@ -117,13 +118,31 @@ export default function Dashboard() {
       user_municipality,
       user_session
     );
-    setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+    console.log(rspmunicipality.items)
+    setDashMuniResults(rspmunicipality.items);
     setTableLoading(false);
   }, [userProfile]);
 
   useEffect(() => {
     fetchDataWithoutCache();
   }, [fetchDataWithoutCache]);
+
+  const CheckRightUser = async ()=>{
+    const user_data = await userProfile.getUserProfile();
+    const user_role = user_data.current?.user_role;
+    if(user_role == UserRole.CITIZEN)
+    {
+      window.location.href = "/dashboard/citizen";
+    }
+    else if (user_role == UserRole.PRIVATE_COMPANY)
+    {
+      window.location.href = "/dashboard/service-provider";
+    }
+  }
+
+  useEffect(()=>{
+    CheckRightUser();
+  })
 
   const unreadNotifications = 99;
 

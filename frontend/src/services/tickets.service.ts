@@ -1,5 +1,4 @@
-import { DashboardTicket, FaultGeoData, FaultType, UnprocessedFaultGeoData } from "@/types/custom.types";
-import { invalidateCache } from "@/utils/api.utils";
+import { DashboardTicket, FaultGeoData, FaultType, PaginatedResults, UnprocessedFaultGeoData } from "@/types/custom.types";
 import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 interface UserAttributes {
@@ -8,13 +7,10 @@ interface UserAttributes {
     picture?: string; // Profile picture URL
 }
 
-export async function getMostUpvote(user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-getUpvotes"); //invalidate the cache
-    }
-
+export async function getMostUpvote(user_session: string, lastEvaluatedKey?: any) {
     try {
-        const apiUrl = "/api/tickets/getUpvotes";
+        const lastEvaluatedKeyString = lastEvaluatedKey ? `?lastEvaluatedKey=${encodeURIComponent(JSON.stringify(lastEvaluatedKey))}` : "";
+        const apiUrl = `/api/tickets/getUpvotes${lastEvaluatedKeyString}`;
         const response = await fetch(apiUrl,
             {
                 headers: {
@@ -28,23 +24,19 @@ export async function getMostUpvote(user_session: string, revalidate?: boolean) 
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
-        const result = await response.json();
+        const result = await response.json() as PaginatedResults;
 
-        const data = result as any[];
-        formatAddress(data)
-        ChangeState(data)
-        return data;
+        formatAddress(result.items)
+        ChangeState(result.items)
 
+        return result;
     } catch (error) {
         console.error(error);
         throw error;
     }
 }
 
-export async function getOpenCompanyTickets(user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-getopencompanytickets"); //invalidate the cache
-    }
+export async function getOpenCompanyTickets(user_session: string) {
     try {
         const apiUrl = "/api/tickets/getopencompanytickets";
         const response = await fetch(apiUrl,
@@ -73,10 +65,7 @@ export async function getOpenCompanyTickets(user_session: string, revalidate?: b
     }
 }
 
-export async function getCompanyTickets(companyname: string, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-getcompanytickets"); //invalidate the cache
-    }
+export async function getCompanyTickets(companyname: string, user_session: string) {
 
     try {
         const apiUrl = "/api/tickets/getcompanytickets";
@@ -111,14 +100,11 @@ export async function getCompanyTickets(companyname: string, user_session: strin
     }
 }
 
-export async function getWatchlistTickets(username: string, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-getwatchlist"); //invalidate the cache
-    }
-
+export async function getWatchlistTickets(username: string, user_session: string, lastEvaluatedKey?: any) {
     try {
+        const lastEvaluatedKeyString = lastEvaluatedKey ? `&lastEvaluatedKey=${encodeURIComponent(JSON.stringify(lastEvaluatedKey))}` : "";
         const apiUrl = "/api/tickets/getwatchlist";
-        const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}`;
+        const urlWithParams = `${apiUrl}?username=${encodeURIComponent(username)}${lastEvaluatedKeyString}`;
         const response = await fetch(urlWithParams,
             {
                 headers: {
@@ -132,16 +118,11 @@ export async function getWatchlistTickets(username: string, user_session: string
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
-        const result = await response.json();
+        const result = await response.json() as PaginatedResults;
 
-        if (!Array.isArray(result)) {
-            return [];
-        }
-
-        const data = result as any[];
-        formatAddress(data)
-        ChangeState(data)
-        return data;
+        formatAddress(result.items)
+        ChangeState(result.items)
+        return result;
 
     } catch (error) {
         console.error("Error: " + error);
@@ -149,10 +130,7 @@ export async function getWatchlistTickets(username: string, user_session: string
     }
 }
 
-export async function getTicket(ticketId: string, user_session: string, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-view"); //invalidate the cache
-    }
+export async function getTicket(ticketId: string, user_session: string) {
 
     try {
         const response = await fetch(`/api/tickets/view?ticket_id=${encodeURIComponent(ticketId)}`,
@@ -190,19 +168,15 @@ export async function getTicket(ticketId: string, user_session: string, revalida
     }
 }
 
-export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
+export async function getTicketsInMunicipality(municipality: string | undefined, user_session: string, lastEvaluatedKey?: any) {
     if (!municipality) {
         throw new Error("Missing municipality");
     }
 
-    if (revalidate) {
-        invalidateCache("tickets-getinarea"); //invalidate the cache
-    }
-
     try {
-
+        const lastEvaluatedKeyString = lastEvaluatedKey ? `&lastEvaluatedKey=${encodeURIComponent(JSON.stringify(lastEvaluatedKey))}` : "";
         const apiUrl = "/api/tickets/getinarea";
-        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}`;
+        const urlWithParams = `${apiUrl}?municipality=${encodeURIComponent(municipality)}${lastEvaluatedKeyString}`;
         const response = await fetch(urlWithParams,
             {
                 headers: {
@@ -216,18 +190,11 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
             throw new Error(`Error fetching: ${response.statusText}`);
         }
 
+        const result = await response.json() as PaginatedResults;
 
-        const result = await response.json();
-
-        if (!Array.isArray(result)) {
-            return [];
-        }
-
-        const data = result as any[];
-
-        formatAddress(data)
-        ChangeState(data)
-        return data;
+        formatAddress(result.items)
+        ChangeState(result.items)
+        return result;
 
     } catch (error) {
         console.error("Error: " + error);
@@ -235,14 +202,11 @@ export async function getTicketsInMunicipality(municipality: string | undefined,
     }
 }
 
-export async function getOpenTicketsInMunicipality(municipality: string | undefined, user_session: string, revalidate?: boolean) {
+export async function getOpenTicketsInMunicipality(municipality: string | undefined, user_session: string) {
     if (!municipality) {
         throw new Error("Missing municipality");
     }
 
-    if (revalidate) {
-        invalidateCache("tickets-getinarea"); //invalidate the cache
-    }
 
     try {
 
@@ -364,10 +328,7 @@ export async function CloseTicket(ticket: string, user_session: string) {
     }
 }
 
-export async function getFaultTypes(revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-fault-types"); //invalidate the cache
-    }
+export async function getFaultTypes() {
 
     try {
         const apiURL = "/api/tickets/fault-types";
@@ -396,8 +357,8 @@ export async function getFaultTypes(revalidate?: boolean) {
 }
 
 export async function CreatTicket(sessiont: string, formData: FormData): Promise<boolean> {
-    // const API_BASE_URL = process.env.API_BASE_URL;
-    const apiURL = `https://sqtiboblx8.execute-api.eu-west-1.amazonaws.com/dev/tickets/create`;
+    const API_BASE_URL = process.env.API_BASE_URL;
+    const apiURL = `${API_BASE_URL}/tickets/create`;
     const response = await fetch(apiURL, {
         method: "POST",
         headers: {
@@ -602,10 +563,7 @@ function formatAddress(data: any[]) {
     });
 }
 
-export async function getTicketsGeoData(sessionToken: string | undefined, revalidate?: boolean) {
-    if (revalidate) {
-        invalidateCache("tickets-geodata-all"); //invalidate the cache
-    }
+export async function getTicketsGeoData(sessionToken: string | undefined) {
 
     try {
 

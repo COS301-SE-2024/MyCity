@@ -60,7 +60,7 @@ export default function FaultCategoryBarChart({
   };
 
   return (
-    <div className="bg-white bg-opacity-80 rounded-lg p-4 shadow-lg h-[38vh] overflow-hidden">
+    <div className="bg-white bg-opacity-90  rounded-lg p-4 shadow-lg h-[38vh] overflow-hidden">
       <h2 className="text-2xl font-bold mb-4 text-center">
         Fault Reports by Category
       </h2>
