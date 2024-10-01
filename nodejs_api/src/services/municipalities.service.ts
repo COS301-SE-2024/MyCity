@@ -4,7 +4,7 @@ import { addJobToReadQueue } from "./jobs.service";
 import { DB_GET, DB_SCAN } from "../config/redis.config";
 import { JobData } from "../types/job.types";
 
-export const getAllMunicipalities = async (cacheKey: string) => {
+export const getAllMunicipalities = async () => {
     const params: ScanCommandInput = {
         TableName: MUNICIPALITIES_TABLE,
         ProjectionExpression: "municipality_id"
@@ -12,8 +12,7 @@ export const getAllMunicipalities = async (cacheKey: string) => {
 
     const jobData: JobData = {
         type: DB_SCAN,
-        params: params,
-        cacheKey: cacheKey
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -26,7 +25,7 @@ export const getAllMunicipalities = async (cacheKey: string) => {
     return municipalitiesList;
 };
 
-export const getMunicipalityCoordinates = async (municipality: string, cacheKey: string) => {
+export const getMunicipalityCoordinates = async (municipality: string) => {
     const params: GetCommandInput = { 
         TableName: MUNICIPALITIES_TABLE,
         Key: {
@@ -37,8 +36,7 @@ export const getMunicipalityCoordinates = async (municipality: string, cacheKey:
 
     const jobData: JobData = {
         type: DB_GET,
-        params: params,
-        cacheKey: cacheKey
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);

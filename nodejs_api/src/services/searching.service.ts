@@ -5,7 +5,7 @@ import { addJobToReadQueue } from "./jobs.service";
 import { DB_SCAN } from "../config/redis.config";
 import { JobData } from "../types/job.types";
 
-export const searchTickets = async (userMunicipality: string, searchTerm: string, cacheKey: string) => {
+export const searchTickets = async (userMunicipality: string, searchTerm: string) => {
     validateSearchTerm(searchTerm);
     try {
         const params: ScanCommandInput = {
@@ -15,8 +15,7 @@ export const searchTickets = async (userMunicipality: string, searchTerm: string
 
         const jobData: JobData = {
             type: DB_SCAN,
-            params: params,
-            cacheKey: cacheKey
+            params: params
         }
 
         const readJob = await addJobToReadQueue(jobData);
@@ -34,7 +33,7 @@ export const searchTickets = async (userMunicipality: string, searchTerm: string
     }
 };
 
-export const searchMunicipalities = async (searchTerm: string, cacheKey: string) => {
+export const searchMunicipalities = async (searchTerm: string) => {
     validateSearchTerm(searchTerm);
     try {
         const params: ScanCommandInput = {
@@ -43,8 +42,7 @@ export const searchMunicipalities = async (searchTerm: string, cacheKey: string)
 
         const jobData: JobData = {
             type: DB_SCAN,
-            params: params,
-            cacheKey: cacheKey
+            params: params
         }
 
         const readJob = await addJobToReadQueue(jobData);
@@ -60,7 +58,7 @@ export const searchMunicipalities = async (searchTerm: string, cacheKey: string)
     }
 };
 
-export const searchAltMunicipalityTickets = async (municipalityName: string, cacheKey: string) => {
+export const searchAltMunicipalityTickets = async (municipalityName: string) => {
     validateSearchTerm(municipalityName); // ensuring that garbage is not passed to the function
     try {
         const params: ScanCommandInput = {
@@ -69,8 +67,7 @@ export const searchAltMunicipalityTickets = async (municipalityName: string, cac
 
         const jobData: JobData = {
             type: DB_SCAN,
-            params: params,
-            cacheKey: cacheKey
+            params: params
         }
 
         const readJob = await addJobToReadQueue(jobData);
@@ -86,7 +83,7 @@ export const searchAltMunicipalityTickets = async (municipalityName: string, cac
     }
 };
 
-export const searchServiceProviders = async (searchTerm: string, cacheKey: string) => {
+export const searchServiceProviders = async (searchTerm: string) => {
     validateSearchTerm(searchTerm);
     try {
         const params: ScanCommandInput = {
@@ -95,9 +92,7 @@ export const searchServiceProviders = async (searchTerm: string, cacheKey: strin
 
         const jobData: JobData = {
             type: DB_SCAN,
-            params: params,
-            cacheKey: cacheKey
-        }
+            params: params        }
 
         const readJob = await addJobToReadQueue(jobData);
         const response = await readJob.finished() as ScanCommandOutput;

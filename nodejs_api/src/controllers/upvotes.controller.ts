@@ -8,7 +8,7 @@ export const searchUpvotes = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await upvotesService.searchUpvotes(searchTerm, req.originalUrl);
+        const response = await upvotesService.searchUpvotes(searchTerm);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });

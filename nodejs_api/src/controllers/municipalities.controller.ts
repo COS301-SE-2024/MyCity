@@ -4,7 +4,7 @@ import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const getAllMunicipalitiesList = async (req: Request, res: Response) => {
     try {
-        const response = await municipalitiesService.getAllMunicipalities(req.originalUrl);
+        const response = await municipalitiesService.getAllMunicipalities();
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -19,7 +19,7 @@ export const getMunicipalityCoordinates = async (req: Request, res: Response) =>
     }
 
     try {
-        const response = await municipalitiesService.getMunicipalityCoordinates(municipality, req.originalUrl);
+        const response = await municipalitiesService.getMunicipalityCoordinates(municipality);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

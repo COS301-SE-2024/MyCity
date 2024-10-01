@@ -1,6 +1,6 @@
-import { QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, PutCommandOutput, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { QueryCommandInput, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, PutCommandOutput, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
-import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
+import { ASSETS_TABLE, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
@@ -37,7 +37,7 @@ interface TicketData {
 }
 
 
-export const createTicket = async (formData: any, file: Express.Multer.File | undefined, cacheKey: string) => {
+export const createTicket = async (formData: any, file: Express.Multer.File | undefined) => {
     await clearRedisCache();
 
     const username = formData["username"] as string;
@@ -55,8 +55,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
 
     const assetJobdata: JobData = {
         type: DB_GET,
-        params: assetParams,
-        cacheKey: `sub/1${cacheKey}`
+        params: assetParams
     }
 
     const assetReadJob = await addJobToReadQueue(assetJobdata, { priority: 1 });
@@ -229,7 +228,7 @@ export const addWatchlist = async (ticketData: TicketData) => {
     };
 };
 
-export const getFaultTypes = async (cacheKey: string) => {
+export const getFaultTypes = async () => {
     const params: ScanCommandInput = {
         TableName: ASSETS_TABLE,
         ProjectionExpression: "asset_id, assetIcon, multiplier"
@@ -253,7 +252,7 @@ export const getFaultTypes = async (cacheKey: string) => {
 };
 
 
-export const getMyTickets = async (username: string | null, cacheKey: string) => {
+export const getMyTickets = async (username: string | null) => {
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "username-dateOpened-index",
@@ -286,7 +285,7 @@ export const getMyTickets = async (username: string | null, cacheKey: string) =>
     }
 };
 
-export const getInMyMunicipality = async (municipality: string | null, cacheKey: string, lastEvaluatedKeyString: string) => {
+export const getInMyMunicipality = async (municipality: string | null, lastEvaluatedKeyString: string) => {
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "municipality_id-updatedAt-index",
@@ -329,7 +328,7 @@ export const getInMyMunicipality = async (municipality: string | null, cacheKey:
     }
 };
 
-export const getOpenTicketsInMunicipality = async (municipality: string | null, cacheKey: string) => {
+export const getOpenTicketsInMunicipality = async (municipality: string | null) => {
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "municipality_id-dateOpened-index",
@@ -369,7 +368,7 @@ export const getOpenTicketsInMunicipality = async (municipality: string | null, 
     }
 };
 
-export const getWatchlist = async (userId: string, cacheKey: string, lastEvaluatedKeyString: string) => {
+export const getWatchlist = async (userId: string, lastEvaluatedKeyString: string) => {
     const collective: any[] = [];
 
     const params: QueryCommandInput = {
@@ -430,7 +429,7 @@ export const getWatchlist = async (userId: string, cacheKey: string, lastEvaluat
     }
 };
 
-export const viewTicketData = async (ticketId: string, cacheKey: string) => {
+export const viewTicketData = async (ticketId: string) => {
     try {
         validateTicketId(ticketId);
         const params: QueryCommandInput = {
@@ -580,7 +579,7 @@ export const interactTicket = async (ticketData: any) => {
     }
 };
 
-export const getMostUpvoted = async (cacheKey: string, lastEvaluatedKeyArrayString: string) => {
+export const getMostUpvoted = async (lastEvaluatedKeyArrayString: string) => {
     const params1: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "state-upvotes-index",
@@ -787,7 +786,7 @@ export const acceptTicket = async (ticketData: any) => {
     }
 };
 
-export const getCompanyTickets = async (companyname: string, cacheKey: string) => {
+export const getCompanyTickets = async (companyname: string) => {
     const collective: any[] = [];
     const company_id = await getCompanyIDFromName(companyname);
 
@@ -879,7 +878,7 @@ export const getCompanyTickets = async (companyname: string, cacheKey: string) =
 };
 
 
-export const getOpenCompanyTickets = async (cacheKey: string) => {
+export const getOpenCompanyTickets = async () => {
     const collective: any[] = [];
 
     const params: QueryCommandInput = {
@@ -1007,7 +1006,7 @@ export const addTicketCommentWithoutImage = async (comment: string, ticket_id: s
     return response;
 };
 
-export const getTicketComments = async (currTicketId: string, cacheKey: string) => {
+export const getTicketComments = async (currTicketId: string) => {
     validateTicketId(currTicketId);
     try {
         const params: QueryCommandInput = {
@@ -1036,7 +1035,7 @@ export const getTicketComments = async (currTicketId: string, cacheKey: string) 
     }
 };
 
-export const getGeodataAll = async (cacheKey: string) => {
+export const getGeodataAll = async () => {
     try {
         const params: ScanCommandInput = {
             TableName: TICKETS_TABLE,

@@ -13,7 +13,7 @@ export const createTicket = async (req: Request, res: Response) => {
     try {
         const formData = req.body;
         const file = req.file;
-        const response = await ticketsService.createTicket(formData, file, req.originalUrl);
+        const response = await ticketsService.createTicket(formData, file);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -78,7 +78,7 @@ export const viewTicketData = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await ticketsService.viewTicketData(ticketId, req.originalUrl);
+        const response = await ticketsService.viewTicketData(ticketId);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -88,7 +88,7 @@ export const viewTicketData = async (req: Request, res: Response) => {
 
 export const getFaultTypes = async (req: Request, res: Response) => {
     try {
-        const response = await ticketsService.getFaultTypes(req.originalUrl);
+        const response = await ticketsService.getFaultTypes();
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -103,7 +103,7 @@ export const getMyTickets = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await ticketsService.getMyTickets(username, req.originalUrl);
+        const response = await ticketsService.getMyTickets(username);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -119,7 +119,7 @@ export const getInArea = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await ticketsService.getInMyMunicipality(municipality, req.originalUrl, lastEvaluatedKeyString);
+        const response = await ticketsService.getInMyMunicipality(municipality, lastEvaluatedKeyString);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -134,7 +134,7 @@ export const getOpenTicketsInMunicipality = async (req: Request, res: Response) 
     }
 
     try {
-        const response = await ticketsService.getOpenTicketsInMunicipality(municipality, req.originalUrl);
+        const response = await ticketsService.getOpenTicketsInMunicipality(municipality);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -150,7 +150,7 @@ export const getMyWatchlist = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await ticketsService.getWatchlist(username, req.originalUrl, lastEvaluatedKeyString);
+        const response = await ticketsService.getWatchlist(username, lastEvaluatedKeyString);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -178,7 +178,7 @@ export const interactTicket = async (req: Request, res: Response) => {
 export const getMostUpvoted = async (req: Request, res: Response) => {
     const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     try {
-        const response = await ticketsService.getMostUpvoted(req.originalUrl, lastEvaluatedKeyString);
+        const response = await ticketsService.getMostUpvoted(lastEvaluatedKeyString);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -193,7 +193,7 @@ export const getCompanyTickets = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await ticketsService.getCompanyTickets(companyName, req.originalUrl);
+        const response = await ticketsService.getCompanyTickets(companyName);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -203,7 +203,7 @@ export const getCompanyTickets = async (req: Request, res: Response) => {
 
 export const getOpenCompanyTickets = async (req: Request, res: Response) => {
     try {
-        const response = await ticketsService.getOpenCompanyTickets(req.originalUrl);
+        const response = await ticketsService.getOpenCompanyTickets();
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -251,7 +251,7 @@ export const getTicketComments = async (req: Request, res: Response) => {
         return res.status(400).json({ Error: "Missing request header: X-Ticket-ID" });
     }
     try {
-        const response = await ticketsService.getTicketComments(ticketId, req.originalUrl);
+        const response = await ticketsService.getTicketComments(ticketId);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -261,7 +261,7 @@ export const getTicketComments = async (req: Request, res: Response) => {
 
 export const getGeoData = async (req: Request, res: Response) => {
     try {
-        const response = await ticketsService.getGeodataAll(req.originalUrl);
+        const response = await ticketsService.getGeodataAll();
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

@@ -5,7 +5,7 @@ import { JobData } from "../types/job.types";
 import { DB_SCAN } from "../config/redis.config";
 import { addJobToReadQueue } from "./jobs.service";
 
-export const searchUpvotes = async (searchTerm: string, cacheKey: string) => {
+export const searchUpvotes = async (searchTerm: string) => {
     searchTerm = validateSearchTerm(searchTerm);
     try {
         const params: ScanCommandInput = {
@@ -17,8 +17,7 @@ export const searchUpvotes = async (searchTerm: string, cacheKey: string) => {
         };
         const jobData: JobData = {
             type: DB_SCAN,
-            params: params,
-            cacheKey: `sub/1${cacheKey}`
+            params: params
         }
 
         const job = await addJobToReadQueue(jobData);

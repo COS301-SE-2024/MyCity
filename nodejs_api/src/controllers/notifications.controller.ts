@@ -25,7 +25,7 @@ export const getNotificationTokens = async (req: Request, res: Response) => {
         return res.status(400).json({ Error: "Missing parameter: username" });
     }
     try {
-        const response = await notificationsService.getNotificationTokens(username, req.originalUrl);
+        const response = await notificationsService.getNotificationTokens(username);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

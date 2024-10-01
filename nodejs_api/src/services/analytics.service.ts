@@ -4,7 +4,7 @@ import { DB_QUERY } from "../config/redis.config";
 import { addJobToReadQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
 
-export const getTicketsPerMunicipality = async (municipalityId: string, cacheKey: string) => {
+export const getTicketsPerMunicipality = async (municipalityId: string) => {
     const params: QueryCommandInput = {
         TableName: TICKETS_PER_MUNICIPALITY_TABLE,
         KeyConditionExpression: "municipality_id = :municipality_id",
@@ -15,8 +15,7 @@ export const getTicketsPerMunicipality = async (municipalityId: string, cacheKey
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: cacheKey
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -24,7 +23,7 @@ export const getTicketsPerMunicipality = async (municipalityId: string, cacheKey
     const statistics = response.Items || [];
     return statistics;
 };
-export const getContractsPerServiceProvider = async (serviceProvider: string, cacheKey: string) => {
+export const getContractsPerServiceProvider = async (serviceProvider: string) => {
     const params: QueryCommandInput = {
         TableName: CONTRACTS_PER_SERVICE_PROVIDER_TABLE,
         KeyConditionExpression: "service_provider = :service_provider",
@@ -35,8 +34,7 @@ export const getContractsPerServiceProvider = async (serviceProvider: string, ca
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: cacheKey
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);
@@ -45,7 +43,7 @@ export const getContractsPerServiceProvider = async (serviceProvider: string, ca
     return statistics;
 };
 
-export const getTendersPerServiceProvider = async (serviceProvider: string, cacheKey: string) => {
+export const getTendersPerServiceProvider = async (serviceProvider: string) => {
     const params: QueryCommandInput = {
         TableName: TENDERS_PER_SERVICE_PROVIDER_TABLE,
         KeyConditionExpression: "service_provider = :service_provider",
@@ -56,8 +54,7 @@ export const getTendersPerServiceProvider = async (serviceProvider: string, cach
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: cacheKey
+        params: params
     }
 
     const readJob = await addJobToReadQueue(jobData);

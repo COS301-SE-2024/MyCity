@@ -11,7 +11,7 @@ export const searchTickets = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await searchingService.searchTickets(userMunicipality, searchTerm, req.originalUrl);
+        const response = await searchingService.searchTickets(userMunicipality, searchTerm);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -27,7 +27,7 @@ export const searchMunicipalities = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await searchingService.searchMunicipalities(searchTerm, req.originalUrl);
+        const response = await searchingService.searchMunicipalities(searchTerm);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -43,7 +43,7 @@ export const searchMunicipalityTickets = async (req: Request, res: Response) => 
     }
 
     try {
-        const response = await searchingService.searchAltMunicipalityTickets(municipalityName, req.originalUrl);
+        const response = await searchingService.searchAltMunicipalityTickets(municipalityName);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -59,7 +59,7 @@ export const searchServiceProviders = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await searchingService.searchServiceProviders(searchTerm, req.originalUrl);
+        const response = await searchingService.searchServiceProviders(searchTerm);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

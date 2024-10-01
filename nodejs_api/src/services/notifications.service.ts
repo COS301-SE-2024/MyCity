@@ -47,7 +47,7 @@ export const insertNotificationToken = async (tokenData: TokenData) => {
     }
 };
 
-export const getNotificationTokens = async (username: string, cacheKey: string) => {
+export const getNotificationTokens = async (username: string) => {
     const params: QueryCommandInput = {
         TableName: NOTIFICATIONS_TABLE,
         KeyConditionExpression: "username = :username",
@@ -58,8 +58,7 @@ export const getNotificationTokens = async (username: string, cacheKey: string) 
 
     const jobData: JobData = {
         type: DB_QUERY,
-        params: params,
-        cacheKey: cacheKey
+        params: params
     }
 
 

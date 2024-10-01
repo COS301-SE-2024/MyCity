@@ -9,7 +9,7 @@ export const getTicketsPerMunicipality = async (req: Request, res: Response) => 
     }
 
     try {
-        const response = await analyticsService.getTicketsPerMunicipality(municipalityId, req.originalUrl);
+        const response = await analyticsService.getTicketsPerMunicipality(municipalityId);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -24,7 +24,7 @@ export const getContractsPerServiceProvider = async (req: Request, res: Response
     }
 
     try {
-        const response = await analyticsService.getContractsPerServiceProvider(serviceProvider, req.originalUrl);
+        const response = await analyticsService.getContractsPerServiceProvider(serviceProvider);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -39,7 +39,7 @@ export const getTendersPerServiceProvider = async (req: Request, res: Response) 
     }
 
     try {
-        const response = await analyticsService.getTendersPerServiceProvider(serviceProvider, req.originalUrl);
+        const response = await analyticsService.getTendersPerServiceProvider(serviceProvider);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

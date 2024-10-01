@@ -193,7 +193,7 @@ export const getCompanyTenders = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getCompanyTenders(companyName, req.originalUrl);
+        const response = await tendersService.getCompanyTenders(companyName);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -214,7 +214,7 @@ export const getMunicipalityTenders = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getMunicipalityTenders(municipality, req.originalUrl);
+        const response = await tendersService.getMunicipalityTenders(municipality);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -235,7 +235,7 @@ export const getTicketTender = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getTicketTender(ticketId, req.originalUrl);
+        const response = await tendersService.getTicketTender(ticketId);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -256,7 +256,7 @@ export const getContracts = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getContracts(tenderId, req.originalUrl);
+        const response = await tendersService.getContracts(tenderId);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -277,7 +277,7 @@ export const getMuniContract = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getMuniContract(ticketId, req.originalUrl);
+        const response = await tendersService.getMuniContract(ticketId);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -299,7 +299,7 @@ export const getCompanyContracts = async (req: Request, res: Response) => {
     }
 
     try {
-        const response = await tendersService.getCompanyContracts(tenderId, companyName, req.originalUrl);
+        const response = await tendersService.getCompanyContracts(tenderId, companyName);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
@@ -321,7 +321,7 @@ export const getCompanyContractByTicket = async (req: Request, res: Response) =>
     }
 
     try {
-        const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName, req.originalUrl);
+        const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName);
         cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {

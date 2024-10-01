@@ -604,7 +604,7 @@ export const didMakeTender = async (companyname: string, ticketId: string) => {
     }
 };
 
-export const getMunicipalityTenders = async (municipality: string, cacheKey: string) => {
+export const getMunicipalityTenders = async (municipality: string) => {
     const paramsTickets: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "municipality_id-dateOpened-index",
@@ -659,7 +659,7 @@ export const getMunicipalityTenders = async (municipality: string, cacheKey: str
     return collective;
 };
 
-export const getCompanyTenders = async (company_name: string, cacheKey: string) => {
+export const getCompanyTenders = async (company_name: string) => {
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
         throw new NotFoundError("Company doesn't exist");
@@ -690,7 +690,7 @@ export const getCompanyTenders = async (company_name: string, cacheKey: string) 
     return items;
 };
 
-export const getTicketTender = async (ticket_id: string, cacheKey: string) => {
+export const getTicketTender = async (ticket_id: string) => {
     const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "ticket_id-index",
@@ -720,7 +720,7 @@ export const getTicketTender = async (ticket_id: string, cacheKey: string) => {
     return items;
 };
 
-export const getContracts = async (tender_id: string, cacheKey: string) => {
+export const getContracts = async (tender_id: string) => {
     const params: QueryCommandInput = {
         TableName: CONTRACT_TABLE,
         IndexName: "tender_id-index",
@@ -792,7 +792,7 @@ export const getContracts = async (tender_id: string, cacheKey: string) => {
     return contractItems[0];
 };
 
-export const getMuniContract = async (ticket_id: string, cacheKey: string) => {
+export const getMuniContract = async (ticket_id: string) => {
     const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "ticket_id-index",
@@ -894,7 +894,7 @@ export const getMuniContract = async (ticket_id: string, cacheKey: string) => {
     return contractItem;
 };
 
-export const getCompanyContracts = async (tender_id: string, company_name: string, cacheKey: string) => {
+export const getCompanyContracts = async (tender_id: string, company_name: string) => {
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
         throw new NotFoundError("Company doesn't exist");
@@ -971,7 +971,7 @@ export const getCompanyContracts = async (tender_id: string, company_name: strin
     return contractItems[0];
 };
 
-export const getCompanyFromTicketContracts = async (ticket_id: string, company_name: string, cacheKey: string) => {
+export const getCompanyFromTicketContracts = async (ticket_id: string, company_name: string) => {
     const companyId = await getCompanyIDFromName(company_name);
     if (!companyId) {
         throw new NotFoundError("Company doesn't exist");

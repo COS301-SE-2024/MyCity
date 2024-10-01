@@ -1,4 +1,4 @@
-import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getFromCache, getReadQueue, getWriteQueue, removeRedisCacheKeys, DB_UPDATE } from "../config/redis.config";
+import { DB_GET, DB_QUERY, DB_SCAN, DB_PUT, getReadQueue, getWriteQueue, DB_UPDATE } from "../config/redis.config";
 import { dynamoDBDocumentClient } from "../config/dynamodb.config";
 import { GetCommand, PutCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { DoneCallback, Job, JobOptions } from "bull";
@@ -24,8 +24,7 @@ export const addJobToReadQueue = async (jobData: JobData, options?: JobOptions) 
     const readQueue = await getReadQueue();
     const job = await readQueue.add({
         type: jobData.type,
-        params: jobData.params,
-        cacheKey: jobData.cacheKey
+        params: jobData.params
     }, options);
 
     return job;
@@ -43,17 +42,9 @@ export const addJobToWriteQueue = async (jobData: JobData, options?: JobOptions)
 
 // job processor to handle read operations
 export const readQueueProcessor = async (job: Job, done: DoneCallback) => {
-    const { type, params, cacheKey } = job.data as JobData;
+    const { type, params } = job.data as JobData;
 
     try {
-        // if (cacheKey) {
-        //     const cachedResponse = await getFromCache(cacheKey);
-        //     if (cachedResponse) {
-        //         done(null, cachedResponse);    // finish the job and return the cached response
-        //         return;
-        //     }
-        // }
-
         if (type === DB_SCAN) {
             const command = new ScanCommand(params);
             const response = await dynamoDBDocumentClient.send(command);
@@ -101,76 +92,3 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
         done(error);
     }
 };
-
-
-
-
-
-export const invalidateCacheOnTicketUpdateOnly = async () => {
-    const ticketsInvalidationList = [
-        "/tickets/view",
-        "/tickets/getmytickets",
-        "/tickets/getinarea",
-        "/tickets/getopeninarea",
-        "/tickets/getwatchlist",
-        "/tickets/getUpvotes",
-        "/tickets/getcompanytickets",
-        "/tickets/getopencompanytickets",
-        "/tickets/comments"
-    ];
-    const searchInvalidationList = [
-        "/search/issues",
-        "/search/municipality-tickets"
-    ];
-    await removeRedisCacheKeys([...ticketsInvalidationList, ...searchInvalidationList]);
-};
-
-
-export const invalidateCacheOnNotificationsUpdateOnly = async () => {
-    const notificationInvalidationList = [
-        "/notifications/get-tokens"
-    ];
-    await removeRedisCacheKeys(notificationInvalidationList);
-};
-
-export const invalidateCacheOnTenderUpdateOnly = async () => {
-    const tenderInvalidationList = [
-        "/tenders/didbid",
-        "/tenders/getmytenders",
-        "/tenders/getmunitenders",
-        "/tenders/getmunicipalitytenders",
-        "/tenders/getcontracts",
-        "/tenders/getmunicontract",
-        "/tenders/getcompanycontracts",
-        "/tenders/getcompanycontractbyticket"
-    ];
-
-    await removeRedisCacheKeys(tenderInvalidationList);
-}
-
-export const invalidateCacheOnTenderAndTicketUpdate = async () => {
-    const tenderInvalidationList = [
-        "/tenders/didbid",
-        "/tenders/getmytenders",
-        "/tenders/getmunitenders",
-        "/tenders/getmunicipalitytenders",
-        "/tenders/getcontracts",
-        "/tenders/getmunicontract",
-        "/tenders/getcompanycontracts",
-        "/tenders/getcompanycontractbyticket"
-    ];
-
-    const ticketsInvalidationList = [
-        "/tickets/view",
-        "/tickets/getmytickets",
-        "/tickets/getinarea",
-        "/tickets/getopeninarea",
-        "/tickets/getwatchlist",
-        "/tickets/getUpvotes",
-        "/tickets/getcompanytickets",
-        "/tickets/getopencompanytickets",
-        "/tickets/comments"
-    ];
-
-    await removeRedisCacheKeys([...tenderInvalidationList, ...ticketsInvalidationList]);
-}
