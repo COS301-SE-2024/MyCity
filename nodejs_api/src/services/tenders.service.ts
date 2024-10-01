@@ -240,13 +240,8 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
     const writeJobContract = await addJobToWriteQueue(putJobData);
     await writeJobContract.finished();
 
-    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
-    const ws = new WebSocket(WEB_SOCKET_URL);
-    ws.on("open", () => {
-        const message = JSON.stringify({ action: "refreshcompany" });
-        ws.send(message);
-    });
-    ws.close();
+    const message = JSON.stringify({ action: "refreshcompany" })
+    await sendWebSocketMessage(message);
 
     return {
         Status: "Success",
