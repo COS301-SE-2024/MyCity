@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as ticketsService from "../services/tickets.service";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const createTicket = async (req: Request, res: Response) => {
     const requiredFields = ["address", "asset", "description", "latitude", "longitude", "state", "username"];
@@ -77,8 +78,9 @@ export const viewTicketData = async (req: Request, res: Response) => {
     }
 
     try {
-        const result = await ticketsService.viewTicketData(ticketId);
-        return res.status(200).json(result);
+        const response = await ticketsService.viewTicketData(ticketId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }
@@ -86,8 +88,9 @@ export const viewTicketData = async (req: Request, res: Response) => {
 
 export const getFaultTypes = async (req: Request, res: Response) => {
     try {
-        const faultTypes = await ticketsService.getFaultTypes();
-        return res.status(200).json(faultTypes);
+        const response = await ticketsService.getFaultTypes();
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }
@@ -101,6 +104,7 @@ export const getMyTickets = async (req: Request, res: Response) => {
 
     try {
         const response = await ticketsService.getMyTickets(username);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -109,16 +113,14 @@ export const getMyTickets = async (req: Request, res: Response) => {
 
 export const getInArea = async (req: Request, res: Response) => {
     const municipality = req.query["municipality"] as string;
+    const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     if (!municipality) {
         return res.status(400).json({ Error: "Missing parameter: municipality" });
     }
 
     try {
-        const response = await ticketsService.getInMyMunicipality(municipality);
-
-        // if (response && response.length > 0) {
-        //     cacheResponse(req, 3600, response); //cache response for 1 hour
-        // }
+        const response = await ticketsService.getInMyMunicipality(municipality, lastEvaluatedKeyString);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -133,6 +135,7 @@ export const getOpenTicketsInMunicipality = async (req: Request, res: Response) 
 
     try {
         const response = await ticketsService.getOpenTicketsInMunicipality(municipality);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -141,15 +144,14 @@ export const getOpenTicketsInMunicipality = async (req: Request, res: Response) 
 
 export const getMyWatchlist = async (req: Request, res: Response) => {
     const username = req.query["username"] as string;
+    const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     if (!username) {
         return res.status(400).json({ Error: "Missing parameter: username" });
     }
 
     try {
-        const response = await ticketsService.getWatchlist(username);
-        // if (response && response.length > 0) {
-        //     cacheResponse(req, 3600, response); //cache response for 1 hour
-        // }
+        const response = await ticketsService.getWatchlist(username, lastEvaluatedKeyString);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -174,11 +176,10 @@ export const interactTicket = async (req: Request, res: Response) => {
 };
 
 export const getMostUpvoted = async (req: Request, res: Response) => {
+    const lastEvaluatedKeyString = req.query["lastEvaluatedKey"] as string;
     try {
-        const response = await ticketsService.getMostUpvoted();
-        // if (response && response.length > 0) {
-        //     cacheResponse(req, 3600, response); //cache response for 1 hour
-        // }
+        const response = await ticketsService.getMostUpvoted(lastEvaluatedKeyString);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -193,6 +194,7 @@ export const getCompanyTickets = async (req: Request, res: Response) => {
 
     try {
         const response = await ticketsService.getCompanyTickets(companyName);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -202,6 +204,7 @@ export const getCompanyTickets = async (req: Request, res: Response) => {
 export const getOpenCompanyTickets = async (req: Request, res: Response) => {
     try {
         const response = await ticketsService.getOpenCompanyTickets();
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -249,6 +252,7 @@ export const getTicketComments = async (req: Request, res: Response) => {
     }
     try {
         const response = await ticketsService.getTicketComments(ticketId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -258,6 +262,7 @@ export const getTicketComments = async (req: Request, res: Response) => {
 export const getGeoData = async (req: Request, res: Response) => {
     try {
         const response = await ticketsService.getGeodataAll();
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });

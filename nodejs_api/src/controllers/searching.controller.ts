@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as searchingService from "../services/searching.service";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const searchTickets = async (req: Request, res: Response) => {
     const searchTerm = req.query["q"] as string;
@@ -10,8 +11,9 @@ export const searchTickets = async (req: Request, res: Response) => {
     }
 
     try {
-        const result = await searchingService.searchTickets(userMunicipality, searchTerm);
-        return res.status(200).json(result);
+        const response = await searchingService.searchTickets(userMunicipality, searchTerm);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }
@@ -25,8 +27,9 @@ export const searchMunicipalities = async (req: Request, res: Response) => {
     }
 
     try {
-        const result = await searchingService.searchMunicipalities(searchTerm);
-        return res.status(200).json(result);
+        const response = await searchingService.searchMunicipalities(searchTerm);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }
@@ -40,8 +43,9 @@ export const searchMunicipalityTickets = async (req: Request, res: Response) => 
     }
 
     try {
-        const result = await searchingService.searchAltMunicipalityTickets(municipalityName);
-        return res.status(200).json(result);
+        const response = await searchingService.searchAltMunicipalityTickets(municipalityName);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }
@@ -55,8 +59,9 @@ export const searchServiceProviders = async (req: Request, res: Response) => {
     }
 
     try {
-        const result = await searchingService.searchServiceProviders(searchTerm);
-        return res.status(200).json(result);
+        const response = await searchingService.searchServiceProviders(searchTerm);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
     }

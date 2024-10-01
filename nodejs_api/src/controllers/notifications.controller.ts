@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as notificationsService from "../services/notifications.service";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const insertNotificationToken = async (req: Request, res: Response) => {
     const requiredFields = ["username", "deviceID", "token"];
@@ -25,6 +26,7 @@ export const getNotificationTokens = async (req: Request, res: Response) => {
     }
     try {
         const response = await notificationsService.getNotificationTokens(username);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });

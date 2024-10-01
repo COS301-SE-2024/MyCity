@@ -13,6 +13,7 @@ import upvotesRouter from "./src/routes/upvotes.route";
 import usersRouter from "./src/routes/users.route";
 import watchlistRouter from "./src/routes/watchlist.route";
 import analyticsRouter from "./src/routes/analytics.route";
+import jobsRouter from "./src/routes/jobs.route";
 import { corsOptions } from "./src/config/cors";
 
 dotenv.config();
@@ -33,7 +34,7 @@ app.use("/tenders", tendersRouter);
 app.use("/upvotes", upvotesRouter);
 app.use("/watchlist", watchlistRouter);
 app.use("/analytics", analyticsRouter);
-
+app.use("/jobs", jobsRouter);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     return res.status(404).json({
@@ -47,6 +48,4 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-const handler = serverless(app);
-
-export { app, handler };
+export const handler = serverless(app);

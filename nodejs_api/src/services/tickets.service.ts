@@ -1,9 +1,13 @@
-import { ScanCommand, QueryCommand, UpdateCommand, QueryCommandInput, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommandInput, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, PutCommandOutput, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
-import { ASSETS_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
+import { ASSETS_TABLE, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
+import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
+import { JobData } from "../types/job.types";
+import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
+import { sendWebSocketMessage } from "../utils/tenders.utils";
 
 interface Ticket {
     dateClosed: string;
@@ -35,6 +39,8 @@ interface TicketData {
 
 
 export const createTicket = async (formData: any, file: Express.Multer.File | undefined) => {
+    await clearRedisCache();
+
     const username = formData["username"] as string;
     let imageLink = "";
     if (file) {
@@ -43,10 +49,18 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
 
     // Ensure asset exists
     const assetId = String(formData.asset);
-    const assetResponse = await dynamoDBDocumentClient.send(new GetCommand({
+    const assetParams: GetCommandInput = {
         TableName: ASSETS_TABLE,
         Key: { asset_id: assetId },
-    }));
+    };
+
+    const assetJobdata: JobData = {
+        type: DB_GET,
+        params: assetParams
+    }
+
+    const assetReadJob = await addJobToReadQueue(assetJobdata, { priority: 1 });
+    const assetResponse = await assetReadJob.finished() as GetCommandOutput;
 
     if (!assetResponse.Item) {
         const errorResponse = {
@@ -94,11 +108,20 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         updatedAt: formattedDatetime,
     };
 
-    // Put the ticket item into the tickets table
-    await dynamoDBDocumentClient.send(new PutCommand({
+    const putItemParams: PutCommandInput = {
         TableName: TICKETS_TABLE,
         Item: ticketItem,
-    }));
+    };
+
+    const jobData: JobData = {
+        type: DB_PUT,
+        params: putItemParams
+    }
+
+    // Put the ticket item into the tickets table
+    const putItemJob = await addJobToWriteQueue(jobData);
+    const putItemResponse = await putItemJob.finished() as PutCommandOutput;
+
 
     // Put ticket on their watchlist
     const watchlistId = generateId();
@@ -109,18 +132,21 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         user_id: formData.username,
     };
 
-    await dynamoDBDocumentClient.send(new PutCommand({
+    const putWatchlistParams: PutCommandInput = {
         TableName: WATCHLIST_TABLE,
         Item: watchlistItem,
-    }));
+    };
 
-    const WEB_SOCKET_URL = String(process.env.WEB_SOCKET_URL);
-    const ws = new WebSocket(WEB_SOCKET_URL);
-    ws.on("open", () => {
-        console.log(municipalityId);
-        const message = JSON.stringify({ action: "createticket", body: municipalityId });
-        ws.send(message);
-    });
+    const watchlistJobData: JobData = {
+        type: DB_PUT,
+        params: putWatchlistParams
+    }
+
+    const watchlistJob = await addJobToWriteQueue(watchlistJobData);
+    const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
+
+    const message = JSON.stringify({ action: "createticket", body : municipalityId })
+    await sendWebSocketMessage(message);
 
     // after accepting
     const accResponse = {
@@ -129,22 +155,28 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         watchlist_id: watchlistId,
     };
 
-    ws.close();
 
     return accResponse;
 };
 
 export const addWatchlist = async (ticketData: TicketData) => {
-    const userExistCommand = new QueryCommand({
+    const userExistsParams: QueryCommandInput = {
         TableName: WATCHLIST_TABLE,
         KeyConditionExpression: "user_id = :username AND ticket_id = :ticket_id",
         ExpressionAttributeValues: {
             ":username": ticketData.username,
             ":ticket_id": ticketData.ticket_id
-        },
-    });
+        }
+    };
 
-    const userExist = await dynamoDBDocumentClient.send(userExistCommand);
+    const jobData: JobData = {
+        type: DB_GET,
+        params: userExistsParams
+    };
+
+    const userExistJob = await addJobToReadQueue(jobData);
+    const userExist = await userExistJob.finished() as QueryCommandOutput;
+
     if (userExist.Items && userExist.Items.length > 0) {
         const errorResponse = {
             Error: {
@@ -174,12 +206,16 @@ export const addWatchlist = async (ticketData: TicketData) => {
         user_id: ticketData.username
     };
 
-    const putItemCommand = new PutCommand({
+    const putItemParams: PutCommandInput = {
         TableName: WATCHLIST_TABLE,
-        Item: watchlistItem,
-    });
-
-    await dynamoDBDocumentClient.send(putItemCommand);
+        Item: watchlistItem
+    };
+    const jobDataPut: JobData = {
+        type: DB_PUT,
+        params: putItemParams
+    };
+    const putItemJob = await addJobToWriteQueue(jobDataPut);
+    await putItemJob.finished();
 
     return {
         Status: "Success",
@@ -188,7 +224,17 @@ export const addWatchlist = async (ticketData: TicketData) => {
 };
 
 export const getFaultTypes = async () => {
-    const response = await dynamoDBDocumentClient.send(new ScanCommand({ TableName: ASSETS_TABLE }));
+    const params: ScanCommandInput = {
+        TableName: ASSETS_TABLE,
+        ProjectionExpression: "asset_id, assetIcon, multiplier"
+    };
+
+    const jobData: JobData = {
+        type: DB_SCAN,
+        params: params
+    };
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as ScanCommandOutput;
     const assets = response.Items || [];
 
     const faultTypes = assets.map((asset: any) => ({
@@ -202,7 +248,7 @@ export const getFaultTypes = async () => {
 
 
 export const getMyTickets = async (username: string | null) => {
-    const queryCommand = new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "username-dateOpened-index",
         KeyConditionExpression: "username = :username",
@@ -210,9 +256,15 @@ export const getMyTickets = async (username: string | null) => {
             ":username": username
         },
         ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-    });
+    };
 
-    const response = await dynamoDBDocumentClient.send(queryCommand);
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as QueryCommandOutput;
     const items = response.Items || [];
 
     if (items && items.length > 0) {
@@ -228,24 +280,38 @@ export const getMyTickets = async (username: string | null) => {
     }
 };
 
-export const getInMyMunicipality = async (municipality: string | null) => {
-    const queryCommand = new QueryCommand({
+export const getInMyMunicipality = async (municipality: string | null, lastEvaluatedKeyString: string) => {
+    const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
-        IndexName: "municipality_id-dateOpened-index",
+        IndexName: "municipality_id-updatedAt-index",
         KeyConditionExpression: "municipality_id = :municipality_id",
         ExpressionAttributeValues: {
             ":municipality_id": municipality
         },
         ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-    });
+        Limit: 15
+    };
 
-    const response = await dynamoDBDocumentClient.send(queryCommand);
+    if (lastEvaluatedKeyString) {
+        params.ExclusiveStartKey = JSON.parse(lastEvaluatedKeyString);
+    }
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as QueryCommandOutput;
     const items = response.Items || [];
 
     if (items && items.length > 0) {
         await updateCommentCounts(items);
         await getUserProfile(items);
-        return items;
+        return {
+            lastEvaluatedKey: response.LastEvaluatedKey,
+            items: items
+        };
     } else {
         const errorResponse = {
             Error: {
@@ -258,22 +324,28 @@ export const getInMyMunicipality = async (municipality: string | null) => {
 };
 
 export const getOpenTicketsInMunicipality = async (municipality: string | null) => {
-    const response = await dynamoDBDocumentClient.send(
-        new QueryCommand({
-            TableName: TICKETS_TABLE,
-            IndexName: "municipality_id-dateOpened-index",
-            KeyConditionExpression: "municipality_id = :municipality_id",
-            FilterExpression: "#state = :state",
-            ExpressionAttributeNames: {
-                "#state": "state"
-            },
-            ExpressionAttributeValues: {
-                ":municipality_id": municipality,
-                ":state": "Opened"
-            },
-            ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-        })
-    );
+    const params: QueryCommandInput = {
+        TableName: TICKETS_TABLE,
+        IndexName: "municipality_id-dateOpened-index",
+        KeyConditionExpression: "municipality_id = :municipality_id",
+        FilterExpression: "#state = :state",
+        ExpressionAttributeNames: {
+            "#state": "state"
+        },
+        ExpressionAttributeValues: {
+            ":municipality_id": municipality,
+            ":state": "Opened"
+        },
+        ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as QueryCommandOutput;
     const items = response.Items;
 
     if (items && items.length > 0) {
@@ -291,30 +363,50 @@ export const getOpenTicketsInMunicipality = async (municipality: string | null) 
     }
 };
 
-export const getWatchlist = async (userId: string) => {
+export const getWatchlist = async (userId: string, lastEvaluatedKeyString: string) => {
     const collective: any[] = [];
 
-    const response = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: WATCHLIST_TABLE,
         KeyConditionExpression: "user_id = :user_id",
         ExpressionAttributeValues: {
             ":user_id": userId
-        }
-    }));
+        },
+        Limit: 15
+    };
+
+    if (lastEvaluatedKeyString) {
+        params.ExclusiveStartKey = JSON.parse(lastEvaluatedKeyString);
+    }
+
+    const jobsData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobsData);
+    const response = await job.finished() as QueryCommandOutput;
 
     const items = response.Items;
 
     if (items && items.length > 0) {
         for (const item of items) {
-            const queryCommand = new QueryCommand({
+            const params2: QueryCommandInput = {
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": item.ticket_id
                 },
                 ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-            });
-            const respItem = await dynamoDBDocumentClient.send(queryCommand);
+            };
+
+            const jobData2: JobData = {
+                type: DB_QUERY,
+                params: params2
+            };
+
+            const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+            const respItem = await job2.finished() as QueryCommandOutput;
             const ticketsItems = respItem.Items;
 
             if (ticketsItems && ticketsItems.length > 0) {
@@ -323,7 +415,10 @@ export const getWatchlist = async (userId: string) => {
                 collective.push(...ticketsItems);
             }
         }
-        return collective;
+        return {
+            lastEvaluatedKey: response.LastEvaluatedKey,
+            items: collective
+        };
     } else {
         throw new Error("NoWatchlist: Doesn't have a watchlist");
     }
@@ -332,16 +427,22 @@ export const getWatchlist = async (userId: string) => {
 export const viewTicketData = async (ticketId: string) => {
     try {
         validateTicketId(ticketId);
-        const response = await dynamoDBDocumentClient.send(
-            new QueryCommand({
-                TableName: TICKETS_TABLE,
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": ticketId
-                },
-                ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-            })
-        );
+        const params: QueryCommandInput = {
+            TableName: TICKETS_TABLE,
+            KeyConditionExpression: "ticket_id = :ticket_id",
+            ExpressionAttributeValues: {
+                ":ticket_id": ticketId
+            },
+            ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
+        };
+
+        const jobData: JobData = {
+            type: DB_QUERY,
+            params: params
+        };
+
+        const job = await addJobToReadQueue(jobData);
+        const response = await job.finished() as QueryCommandOutput;
         const items = response.Items || [];
 
         if (items.length > 0) {
@@ -366,72 +467,99 @@ export const viewTicketData = async (ticketId: string) => {
 };
 
 export const interactTicket = async (ticketData: any) => {
+      await clearRedisCache();
+
     const interactType = String(ticketData.type).toUpperCase();
-    const response = await dynamoDBDocumentClient.send(
-        new QueryCommand({
-            TableName: TICKETS_TABLE,
-            KeyConditionExpression: "ticket_id = :ticket_id",
-            ExpressionAttributeValues: {
-                ":ticket_id": ticketData.ticket_id
-            },
-            ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-        })
-    );
+    const params: QueryCommandInput = {
+        TableName: TICKETS_TABLE,
+        KeyConditionExpression: "ticket_id = :ticket_id",
+        ExpressionAttributeValues: {
+            ":ticket_id": ticketData.ticket_id
+        },
+        ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
+    };
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as QueryCommandOutput;
     const items = response.Items || [];
 
     if (items.length > 0) {
         if (interactType === "UPVOTE") {
             for (const item of items) {
                 const votes = Number(item.upvotes) + 1;
-                await dynamoDBDocumentClient.send(
-                    new UpdateCommand({
-                        TableName: TICKETS_TABLE,
-                        Key: {
-                            ticket_id: item.ticket_id,
-                            dateOpened: item.dateOpened
-                        },
-                        UpdateExpression: "SET upvotes = :votes",
-                        ExpressionAttributeValues: {
-                            ":votes": votes
-                        }
-                    })
-                );
+                const currentDatetime = new Date().toISOString();
+                const updateParams: UpdateCommandInput = {
+                    TableName: TICKETS_TABLE,
+                    Key: {
+                        ticket_id: item.ticket_id,
+                        dateOpened: item.dateOpened
+                    },
+                    UpdateExpression: "SET upvotes = :votes, updatedAt = :updatedAt",
+                    ExpressionAttributeValues: {
+                        ":votes": votes,
+                        ":updatedAt": currentDatetime
+                    }
+                };
+
+                const updateJobData: JobData = {
+                    type: DB_UPDATE,
+                    params: updateParams
+                };
+
+                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                await updateJob.finished();
                 return { Status: "SUCCESSFUL", vote: votes };
             }
         } else if (interactType === "VIEWED") {
             for (const item of items) {
                 const views = Number(item.viewcount) + 1;
-                await dynamoDBDocumentClient.send(
-                    new UpdateCommand({
-                        TableName: TICKETS_TABLE,
-                        Key: {
-                            ticket_id: item.ticket_id,
-                            dateOpened: item.dateOpened
-                        },
-                        UpdateExpression: "SET viewcount = :views",
-                        ExpressionAttributeValues: {
-                            ":views": views
-                        }
-                    })
-                );
+                const updateParams: UpdateCommandInput = {
+                    TableName: TICKETS_TABLE,
+                    Key: {
+                        ticket_id: item.ticket_id,
+                        dateOpened: item.dateOpened
+                    },
+                    UpdateExpression: "SET viewcount = :views",
+                    ExpressionAttributeValues: {
+                        ":views": views
+                    }
+                };
+
+                const updateJobData: JobData = {
+                    type: DB_UPDATE,
+                    params: updateParams
+                };
+
+                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                await updateJob.finished();
                 return { Status: "SUCCESSFUL", views: views };
             }
         } else if (interactType === "UNVOTE") {
             for (const item of items) {
                 const votes = Number(item.upvotes) - 1;
-                await dynamoDBDocumentClient.send(
-                    new UpdateCommand({
-                        TableName: TICKETS_TABLE,
-                        Key: {
-                            ticket_id: item.ticket_id,
-                            dateOpened: item.dateOpened
-                        },
-                        UpdateExpression: "SET upvotes = :votes",
-                        ExpressionAttributeValues: {
-                            ":votes": votes
-                        }
-                    })
-                );
+                const updateParams: UpdateCommandInput = {
+                    TableName: TICKETS_TABLE,
+                    Key: {
+                        ticket_id: item.ticket_id,
+                        dateOpened: item.dateOpened
+                    },
+                    UpdateExpression: "SET upvotes = :votes",
+                    ExpressionAttributeValues: {
+                        ":votes": votes
+                    }
+                };
+                const updateJobData: JobData = {
+                    type: DB_UPDATE,
+                    params: updateParams
+                };
+
+                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                await updateJob.finished();
                 return { Status: "SUCCESSFUL", vote: votes };
             }
         }
@@ -446,7 +574,7 @@ export const interactTicket = async (ticketData: any) => {
     }
 };
 
-export const getMostUpvoted = async () => {
+export const getMostUpvoted = async (lastEvaluatedKeyArrayString: string) => {
     const params1: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "state-upvotes-index",
@@ -458,7 +586,7 @@ export const getMostUpvoted = async () => {
             ":state": "Opened"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 9 // limit result set to the top 9 items
+        Limit: 5 // limit result set to the top 5 items
     };
 
     const params2: QueryCommandInput = {
@@ -472,7 +600,7 @@ export const getMostUpvoted = async () => {
             ":state": "In Progress"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 8 // limit result set to the top 8 items
+        Limit: 5 // limit result set to the top 5 items
     };
 
     const params3: QueryCommandInput = {
@@ -486,40 +614,73 @@ export const getMostUpvoted = async () => {
             ":state": "Taking Tenders"
         },
         ScanIndexForward: false, // sort in descending order
-        Limit: 8 // limit result set to the top 8 items
+        Limit: 5 // limit result set to the top 5 items
     };
 
-    const promises = [
-        dynamoDBDocumentClient.send(new QueryCommand(params1)),
-        dynamoDBDocumentClient.send(new QueryCommand(params2)),
-        dynamoDBDocumentClient.send(new QueryCommand(params3)),
-    ];
+    if (lastEvaluatedKeyArrayString) {
+        const lastEvaluatedKeyMap = JSON.parse(lastEvaluatedKeyArrayString) as {
+            one: Record<string, any> | undefined,
+            two: Record<string, any> | undefined,
+            three: Record<string, any> | undefined
+        };
 
-    const topItems: Ticket[] = [];
-    // combine the top items from each state to get a total of 25 items
-    const results = await Promise.allSettled(promises);
+        params1.ExclusiveStartKey = lastEvaluatedKeyMap.one;
+        params2.ExclusiveStartKey = lastEvaluatedKeyMap.two;
+        params3.ExclusiveStartKey = lastEvaluatedKeyMap.three;
+    }
 
-    results.forEach((result, index) => {
-        if (result.status === "fulfilled") {
-            const items = result.value.Items as Ticket[] || [];
-            topItems.push(...items);
-        }
-        else {
-            console.error(`Promise ${index} failed with error: ${result.reason}`);
-        }
-    });
+    const jobData1: JobData = {
+        type: DB_QUERY,
+        params: params1
+    };
+
+    const jobData2: JobData = {
+        type: DB_QUERY,
+        params: params2
+    };
+
+    const jobData3: JobData = {
+        type: DB_QUERY,
+        params: params3
+    };
+
+    const job1 = await addJobToReadQueue(jobData1, { priority: 1 });
+    const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+    const job3 = await addJobToReadQueue(jobData3, { priority: 1 });
+
+    const result1 = await job1.finished() as QueryCommandOutput;
+    const result2 = await job2.finished() as QueryCommandOutput;
+    const result3 = await job3.finished() as QueryCommandOutput;
+
+    const items1: Ticket[] = result1.Items as Ticket[];
+    const items2: Ticket[] = result2.Items as Ticket[];
+    const items3: Ticket[] = result3.Items as Ticket[];
+
+    const lastEvaluatedKeyMapOutput = {
+        one: result1.LastEvaluatedKey,
+        two: result2.LastEvaluatedKey,
+        three: result3.LastEvaluatedKey
+    };
+
+    // combine the top items from each state to get a total of 16 items
+    const topItems: Ticket[] = [...items1, ...items2, ...items3];
 
     if (topItems.length > 0) {
         // get the count of comments for each ticket
         await updateCommentCounts(topItems);
         await getUserProfile(topItems);
-        return topItems;
+        return {
+            lastEvaluatedKey: lastEvaluatedKeyMapOutput,
+            items: topItems
+        };
     } else {
         throw new Error("TicketDontExist: Seems tickets don't exist");
     }
 };
 
 export const closeTicket = async (ticketData: any) => {
+      await clearRedisCache();
+
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
     if (!ticketDateOpened) {
@@ -576,6 +737,8 @@ export const closeTicket = async (ticketData: any) => {
 };
 
 export const acceptTicket = async (ticketData: any) => {
+      await clearRedisCache();
+
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
     if (!ticketDateOpened) {
@@ -589,9 +752,10 @@ export const acceptTicket = async (ticketData: any) => {
     }
 
     const ticketId = ticketData["ticket_id"];
-    const updateExpression = "set #state = :r";
+    const currentDatetime = new Date().toISOString();
+    const updateExpression = "set #state = :r, updatedAt = :updatedAt";
     const expressionAttributeNames = { "#state": "state" };
-    const expressionAttributeValues = { ":r": "Taking Tenders" };
+    const expressionAttributeValues = { ":r": "Taking Tenders", ":updatedAt": currentDatetime };
 
     const response = await updateTicketTable(
         ticketId,
@@ -621,28 +785,45 @@ export const getCompanyTickets = async (companyname: string) => {
     const collective: any[] = [];
     const company_id = await getCompanyIDFromName(companyname);
 
-    const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+
+    const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
         IndexName: "company_id-index",
         KeyConditionExpression: "company_id = :company_id",
         ExpressionAttributeValues: {
             ":company_id": company_id
         },
-    }));
+    };
+
+
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobData, { priority: 1 });
+    const responseTender = await job.finished() as QueryCommandOutput
 
     const tenderItems = responseTender.Items;
 
     if (tenderItems && tenderItems.length > 0) {
         for (const item of tenderItems) {
-            const responseCompanyTickets = await dynamoDBDocumentClient.send(new QueryCommand({
+            const params2: QueryCommandInput = {
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": item["ticket_id"]
                 },
                 ScanIndexForward: false, // sort in descending order (from most recent ticket to oldest)
-            }));
+            };
 
+            const jobData2: JobData = {
+                type: DB_QUERY,
+                params: params2
+            };
+
+            const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+            const responseCompanyTickets = await job2.finished() as QueryCommandOutput;
             const companyTickets = responseCompanyTickets.Items;
 
             if (companyTickets && companyTickets.length > 0) {
@@ -652,7 +833,7 @@ export const getCompanyTickets = async (companyname: string) => {
         }
     }
 
-    const response = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params3: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "state-upvotes-index",
         KeyConditionExpression: "#state = :state",
@@ -664,8 +845,15 @@ export const getCompanyTickets = async (companyname: string) => {
         },
         ScanIndexForward: false, // sort in descending order
         Limit: 16 // limit result set to the top 16 items
-    }));
+    };
 
+    const jobData3: JobData = {
+        type: DB_QUERY,
+        params: params3
+    };
+
+    const job3 = await addJobToReadQueue(jobData3, { priority: 1 });
+    const response = await job3.finished() as QueryCommandOutput;
     const topItems = response.Items || [];
 
     if (topItems.length > 0) {
@@ -685,12 +873,12 @@ export const getCompanyTickets = async (companyname: string) => {
 };
 
 
-export const getOpenCompanyTickets = async (): Promise<any> => {
+export const getOpenCompanyTickets = async () => {
     const collective: any[] = [];
 
-    const response = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
-        IndexName: "state-upvotes-index",
+        IndexName: "state-updatedAt-index",
         KeyConditionExpression: "#state = :state",
         ExpressionAttributeNames: {
             "#state": "state"
@@ -700,8 +888,15 @@ export const getOpenCompanyTickets = async (): Promise<any> => {
         },
         ScanIndexForward: false, // sort in descending order
         Limit: 16 // limit result set to the top 16 items
-    }));
+    };
 
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as QueryCommandOutput;
     const topItems = response.Items || [];
 
     if (topItems.length > 0) {
@@ -720,6 +915,8 @@ export const getOpenCompanyTickets = async (): Promise<any> => {
 };
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
+      await clearRedisCache();
+
     // Validate ticket_id
     validateTicketId(ticket_id);
 
@@ -741,12 +938,18 @@ export const addTicketCommentWithImage = async (comment: string, ticket_id: stri
     };
 
     // Insert comment into ticket_updates table
-    const putItemCommand = new PutCommand({
+    const params: PutCommandInput = {
         TableName: TICKET_UPDATE_TABLE,
         Item: commentItem,
-    });
+    };
 
-    await dynamoDBDocumentClient.send(putItemCommand);
+    const jobData: JobData = {
+        type: DB_PUT,
+        params: params
+    };
+
+    const job = await addJobToWriteQueue(jobData);
+    await job.finished();
 
     const response = {
         message: "Comment added successfully",
@@ -777,12 +980,18 @@ export const addTicketCommentWithoutImage = async (comment: string, ticket_id: s
     };
 
     // Insert comment into ticket_updates table
-    const putItemCommand = new PutCommand({
+    const params: PutCommandInput = {
         TableName: TICKET_UPDATE_TABLE,
         Item: commentItem,
-    });
+    };
 
-    await dynamoDBDocumentClient.send(putItemCommand);
+    const jobData: JobData = {
+        type: DB_PUT,
+        params: params
+    };
+
+    const job = await addJobToWriteQueue(jobData);
+    await job.finished();
 
     const response = {
         message: "Comment added successfully",
@@ -795,15 +1004,22 @@ export const addTicketCommentWithoutImage = async (comment: string, ticket_id: s
 export const getTicketComments = async (currTicketId: string) => {
     validateTicketId(currTicketId);
     try {
-        const response = await dynamoDBDocumentClient.send(new QueryCommand({
+        const params: QueryCommandInput = {
             TableName: TICKET_UPDATE_TABLE,
             IndexName: "ticket_id-index",
             KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
                 ":ticket_id": currTicketId
             }
-        }));
+        };
 
+        const jobData: JobData = {
+            type: DB_QUERY,
+            params: params
+        };
+
+        const job = await addJobToReadQueue(jobData);
+        const response = await job.finished() as QueryCommandOutput;
         const items = response.Items || [];
         return items;
     } catch (e: any) {
@@ -816,10 +1032,17 @@ export const getTicketComments = async (currTicketId: string) => {
 
 export const getGeodataAll = async () => {
     try {
-        const response = await dynamoDBDocumentClient.send(new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: TICKETS_TABLE,
             ProjectionExpression: "asset_id, latitude, longitude, upvotes"
-        }));
+        };
+
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params
+        };
+        const job = await addJobToReadQueue(jobData);
+        const response = await job.finished() as ScanCommandOutput;
         const faultData = response.Items || [];
 
         for (const fault of faultData) {

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as tendersService from "../services/tenders.service";
 import { BadRequestError, NotFoundError } from "../types/error.types";
+import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
 
 export const createTender = async (req: Request, res: Response) => {
     const requiredFields = ["company_name", "quote", "ticket_id", "duration"];
@@ -164,16 +165,15 @@ export const doneContract = async (req: Request, res: Response) => {
 };
 
 export const didMakeTender = async (req: Request, res: Response) => {
-    const requiredFields = ["companyname", "ticket_id"];
-    const missingFields = requiredFields.filter(field => !req.body[field]);
-
-    if (missingFields.length > 0) {
-        return res.status(400).json({ Error: `Missing parameter(s): ${missingFields.join(", ")}` });
+    const companyName = req.query["companyname"] as string;
+    const ticketId = req.query["ticket_id"] as string;
+    if (!ticketId || !companyName) {
+        return res.status(400).json({ Error: "Missing parameter(s): ticket_id and/or companyname" });
     }
 
     try {
-        const senderData = req.body;
-        const response = await tendersService.didMakeTender(senderData);
+        const response = await tendersService.didMakeTender(companyName, ticketId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -194,6 +194,7 @@ export const getCompanyTenders = async (req: Request, res: Response) => {
 
     try {
         const response = await tendersService.getCompanyTenders(companyName);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -214,6 +215,7 @@ export const getMunicipalityTenders = async (req: Request, res: Response) => {
 
     try {
         const response = await tendersService.getMunicipalityTenders(municipality);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -234,6 +236,7 @@ export const getTicketTender = async (req: Request, res: Response) => {
 
     try {
         const response = await tendersService.getTicketTender(ticketId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -254,6 +257,7 @@ export const getContracts = async (req: Request, res: Response) => {
 
     try {
         const response = await tendersService.getContracts(tenderId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -274,6 +278,7 @@ export const getMuniContract = async (req: Request, res: Response) => {
 
     try {
         const response = await tendersService.getMuniContract(ticketId);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -295,6 +300,7 @@ export const getCompanyContracts = async (req: Request, res: Response) => {
 
     try {
         const response = await tendersService.getCompanyContracts(tenderId, companyName);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {
@@ -316,6 +322,7 @@ export const getCompanyContractByTicket = async (req: Request, res: Response) =>
 
     try {
         const response = await tendersService.getCompanyFromTicketContracts(ticketId, companyName);
+        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
         return res.status(200).json(response);
     } catch (error: any) {
         if (error instanceof NotFoundError) {

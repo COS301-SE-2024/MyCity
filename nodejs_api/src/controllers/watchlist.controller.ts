@@ -1,7 +1,6 @@
 
 import { Request, Response } from "express";
 import * as watchlistService from "../services/watchlist.service";
-import { BadRequestError } from "../types/error.types";
 
 export const searchWatchlist = async (req: Request, res: Response) => {
     const searchTerm = req.query["q"] as string;
