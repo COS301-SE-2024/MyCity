@@ -1,9 +1,8 @@
 // analytics.service.ts
-const baseUrl = process.env.NEXT_PUBLIC_NODEAPI_URL; // Base URL for the API
 
 // Function to fetch tickets per municipality
 export const getTicketsPerMunicipality = async (municipalityId: string, userSession: string) => {
-  const url = `${baseUrl}/analytics/tickets_per_municipality?municipality_id=${municipalityId}`;
+  const url = `/api/analytics/tickets_per_municipality?municipality_id=${municipalityId}`;
 
   // Set up the headers, including the session token for authorization
   const headers = {
@@ -34,7 +33,7 @@ export const getContractsPerServiceProvider = async (serviceProviderId: string, 
   // Encode the serviceProviderId to handle spaces and special characters
   const encodedServiceProviderId = encodeURIComponent(serviceProviderId);
 
-  const url = `${baseUrl}/analytics/contracts_per_service_provider?service_provider=${encodedServiceProviderId}`;
+  const url = `/api/analytics/contracts_per_service_provider?service_provider=${encodedServiceProviderId}`;
 
   // Set up the headers, including the session token for authorization
   const headers = {
@@ -62,7 +61,7 @@ export const getContractsPerServiceProvider = async (serviceProviderId: string, 
 
 // Function to fetch tenders per service provider
 export const getTendersPerServiceProvider = async (serviceProviderId: string, userSession: string) => {
-  const url = `${baseUrl}/analytics/tenders_per_service_provider?service_provider_id=${serviceProviderId}`;
+  const url = `/api/analytics/tenders_per_service_provider?service_provider_id=${serviceProviderId}`;
 
   // Set up the headers, including the session token for authorization
   const headers = {

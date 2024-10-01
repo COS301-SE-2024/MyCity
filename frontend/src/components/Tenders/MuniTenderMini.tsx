@@ -23,8 +23,8 @@ interface TenderType {
 
 function statusStyles(status: String) {
   switch (status) {
-    case "rejected":
-      return "bg-red-200 text-red-500 border-red-200";
+    case "completed":
+      return "bg-purple-200 text-purple-500 border-purple-200";
     case "approved":
       return "bg-green-200 text-green-500 ";
     case "accepted":
@@ -103,7 +103,7 @@ export default function Tender({
         </div>
         <div className="col-span-1 flex justify-center">{datesubmitted}</div>
         <div className="col-span-1 flex justify-center">
-          R{tender.quote.toFixed(2)}
+          R{tender.quote}
         </div>
         <div className="col-span-1 flex justify-center">
           {getDays(tender.estimatedTimeHours)} days

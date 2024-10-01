@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import ToggleTheme from '@/components/Theme/ToggleTheme';
 
+
 export default function Promt_Popup() {
   const [userResponded, setUserResponded] = useState(false);
   const closePopup = () => setUserResponded(true);
@@ -15,7 +16,7 @@ export default function Promt_Popup() {
       <div className="hidden sm:block">
         <div
           className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-          // onClick={closePopup}
+        // onClick={closePopup}
         >
           <div
             className="dark:bg-gray-700 dark:text-white bg-gray-100 w-1/3 rounded-lg p-4 relative"
@@ -32,6 +33,7 @@ export default function Promt_Popup() {
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/location_icon.webp"
                 alt="Location Logo"
                 width={100}
+                height={100}
                 className="p-2"
               />
             </div>
@@ -65,7 +67,7 @@ export default function Promt_Popup() {
       <div className="block sm:hidden">
         <div
           className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
-          // onClick={closePopup}
+        // onClick={closePopup}
         >
           <div
             className="bg-white w-5/6 border rounded-lg p-2 relative"
@@ -78,10 +80,11 @@ export default function Promt_Popup() {
               <X size={24} />
             </button>
             <div className="flex justify-center">
-            <img
+              <img
                 src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/location_icon.webp"
                 alt="Location Logo"
                 width={100}
+                height={100}
                 className="p-2"
               />
             </div>

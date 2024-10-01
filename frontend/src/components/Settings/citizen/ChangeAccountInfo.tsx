@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, FormEvent } from "react";
 import { ArrowLeft, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Image from "next/image";
 import { UserData } from "@/types/custom.types";
 import { useProfile } from "@/hooks/useProfile";
 import { uploadProfilePicture } from "@/services/users.service";
@@ -43,7 +42,6 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
           municipality: data?.municipality,
         };
 
-        localStorage.setItem("profileImage", imageUrl);
         setData(updatedUserData);
         setFirstname(updatedUserData.given_name);
         setSurname(updatedUserData.family_name);
@@ -61,12 +59,10 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
 
     if (firstname && firstname != data?.given_name) {
       updatedUserData.given_name = firstname;
-      localStorage.setItem("firstName", firstname);
     }
 
     if (surname && surname != data?.family_name) {
       updatedUserData.family_name = surname;
-      localStorage.setItem("surname", surname);
     }
 
     // upload profile picture
@@ -161,7 +157,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
             value={firstname}
             name="given_name"
             onChange={(event) => setFirstname(event.target.value)}
-            className="rounded-3xl focus:outline-none focus:border-blue-500"
+            className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
           />
         </div>
       </div>
@@ -175,7 +171,7 @@ const ChangeAccountInfo: React.FC<ChangeAccountInfoProps> = ({
             value={surname}
             name="family_name"
             onChange={(event) => setSurname(event.target.value)}
-            className="rounded-3xl focus:outline-none focus:border-blue-500"
+            className="rounded-3xl focus:outline-none focus:border-blue-500 px-4" // Added padding
           />
         </div>
       </div>

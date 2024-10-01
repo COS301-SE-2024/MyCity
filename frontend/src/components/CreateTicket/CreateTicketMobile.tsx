@@ -110,7 +110,7 @@ const CreateTicketMobile: React.FC = () => {
         }
       );
     } else {
-      toast.error("Geolocation is not supported by this browser.");
+      
     }
 
     async function fetchFaultTypes() {
@@ -118,7 +118,7 @@ const CreateTicketMobile: React.FC = () => {
         const data = await getFaultTypes();
         setFaultTypes(data || []);
       } catch (error) {
-        console.error("Error fetching fault types:", error);
+        
         setFaultTypes([]);
       }
     }
@@ -247,44 +247,27 @@ const CreateTicketMobile: React.FC = () => {
         >
           {/* Fault Type */}
           {faultTypes.length > 0 ? (
-            <Autocomplete
-              label={
-                <span className="font-semibold text-sm">
-                  Fault type <sup className="text-blue-500">*</sup>
-                </span>
-              }
-              labelPlacement="outside"
-              name="fault-type"
-              placeholder="Fault Type"
-              fullWidth
-              defaultItems={faultTypes}
-              disableSelectorIconRotation
-              isClearable={false}
-              menuTrigger={"input"}
-              size={"lg"}
-              type="text"
-              autoComplete="new-fault"
-              onSelectionChange={(key) => setSelectedFault(key as string)}
-            >
-              {(faultType) => (
-                <AutocompleteItem
-                  key={faultType.asset_id}
-                  textValue={faultType.asset_id}
+                <Autocomplete
+                  label="Fault type"
+                  name="fault-type"
+                  placeholder="Fault Type"
+                  fullWidth
+                  onSelectionChange={(key) => setSelectedFault(key as string)}
                 >
-                  <div className="flex gap-2 items-center">
-                    <img
-                      src={faultType.assetIcon}
-                      alt={faultType.asset_id}
-                      className="flex-shrink-0 w-6 h-6"
-                    />
-                    <span className="text-small">{faultType.asset_id}</span>
-                  </div>
-                </AutocompleteItem>
+                  {faultTypes.map((faultType) => (
+                    <AutocompleteItem
+                      key={faultType.asset_id}
+                      textValue={faultType.asset_id}
+                    >
+                      <div className="flex items-center">
+                        <span>{faultType.asset_id}</span>
+                      </div>
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+              ) : (
+                <p>Loading fault types...</p>
               )}
-            </Autocomplete>
-          ) : (
-            <p>Loading fault types...</p>
-          )}
 
           {/* Description */}
           <Textarea
@@ -323,6 +306,8 @@ const CreateTicketMobile: React.FC = () => {
                 <img
                   src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                   alt="Camera Icon"
+                  width={40}
+                  height={40}
                   className="h-10 w-10"
                 />
               </div>
@@ -347,6 +332,8 @@ const CreateTicketMobile: React.FC = () => {
                         <img
                           src={String(selectedImage)}
                           alt="Uploaded"
+                          width={100}
+                          height={100}
                           style={{ maxWidth: "50%", height: "auto" }}
                         />
                       </div>

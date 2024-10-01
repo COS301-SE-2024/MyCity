@@ -6,6 +6,7 @@ import { CompleteContract } from "@/services/tender.service";
 import { useProfile } from "@/hooks/useProfile";
 import dynamic from "next/dynamic";
 
+
 const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
   ssr: false,
 });
@@ -13,35 +14,35 @@ const MapboxMap = dynamic(() => import("../MapboxMap/MapboxMap"), {
 type Status = "Unassigned" | "Active" | "Rejected" | "Closed";
 
 interface TenderType {
-  contract_id : string;
-  status : string;
-  companyname : string;
-  contractdatetime : string;
-  finalCost : number;
-  finalDuration : number;
-  ticketnumber : string;
-  longitude : string;
-  latitude : string;
-  completedatetime : string;
-  contractnumber : string;
-  municipality : string;
+  contract_id: string;
+  status: string;
+  companyname: string;
+  contractdatetime: string;
+  finalCost: number;
+  finalDuration: number;
+  ticketnumber: string;
+  longitude: string;
+  latitude: string;
+  completedatetime: string;
+  contractnumber: string;
+  municipality: string;
   upload: File | null;
   hasReportedCompletion: boolean | false;
-  onClose : (data: number)=> void;
+  onClose: (data: number) => void;
 }
 
 const statusStyles = {
   in_progress: "text-blue-500 border-blue-500 rounded-full",
   completed: "text-green-500 bg-green-300 rounded-full",
   closed: "text-red-500 bg-red-300 rounded-full",
-  done : "text-purple-500 bg-purple-300 rounded-full"
+  done: "text-purple-500 bg-purple-300 rounded-full"
 };
 
-const TenderMax : React.FC<TenderType> = ({
+const TenderMax: React.FC<TenderType> = ({
   contract_id,
-  status ,
+  status,
   companyname,
-  contractdatetime, 
+  contractdatetime,
   finalCost,
   finalDuration,
   ticketnumber,
@@ -50,7 +51,7 @@ const TenderMax : React.FC<TenderType> = ({
   completedatetime,
   contractnumber,
   municipality,
-  upload ,
+  upload,
   onClose,
   hasReportedCompletion,
 }) => {
@@ -58,7 +59,7 @@ const TenderMax : React.FC<TenderType> = ({
   const userProfile = useProfile();
   const [contractstatus, setContractstatus] = useState<string>("");
   // Map "Fix in progress" to "Active" for the tender's status
-  
+
   useEffect(() => {
     setContractstatus(status)
     console.log(status)
@@ -78,9 +79,8 @@ const TenderMax : React.FC<TenderType> = ({
         {
           const user_data = await userProfile.getUserProfile();
           const user_session = String(user_data.current?.session_token);
-          const rspcompleted = await CompleteContract(contract_id,user_session)
-          if(rspcompleted == true)
-          {
+          const rspcompleted = await CompleteContract(contract_id, user_session)
+          if (rspcompleted == true) {
             setContractstatus("completed")
             toast.success(`${dialog.action} action confirmed.`);
             onClose(-1);
@@ -89,14 +89,14 @@ const TenderMax : React.FC<TenderType> = ({
             toast.error(`${dialog.action} couldnt go through`)
           }
         }
-        
+
         break;
-      case "Terminate Contract" :
+      case "Terminate Contract":
         {
           toast.success(`${dialog.action} action confirmed.`);
           onClose(0);
         }
-    
+
       default:
         onClose(0);
         break;
@@ -123,7 +123,7 @@ const TenderMax : React.FC<TenderType> = ({
     }
   };
 
-  function getStatus(){
+  function getStatus() {
     switch (status) {
       case "in progress":
         return "in_progress"
@@ -158,12 +158,12 @@ const TenderMax : React.FC<TenderType> = ({
             {/* Left Section */}
             <div className="relative w-full lg:w-1/3 p-2 flex flex-col items-center">
               {/* <div className="absolute top-7 left-2">
-                <img src="https://via.placeholder.com/50" alt={municipality} className="w-10 h-10 rounded-full mb-2" />
+                <img src="https://via.placeholder.com/50" width={40} height={40} alt={municipality} className="w-10 h-10 rounded-full mb-2" />
               </div> */}
               <div className="text-center text-black text-2xl font-bold mb-2">Contract </div>
               <div className={`px-2 py-1 rounded-full text-sm text-black border-2 mb-2 ${statusStyles[getStatus()]}`}>
-  {status.charAt(0).toUpperCase() + status.slice(1)}
-</div>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </div>
 
 
               <div className="text-gray-700 mb-2">
@@ -207,14 +207,14 @@ const TenderMax : React.FC<TenderType> = ({
                       Report Completion
                     </button>
                   </>
-                
+
                 )}
               </div>
             </div>
             {/* Right Section */}
             <div className="w-full lg:w-2/3 bg-gray-200 flex items-center justify-center p-4">
               <div className="w-full h-full flex items-center justify-center text-gray-500" id="map">
-              <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
+                <MapboxMap centerLng={Number(longitude)} centerLat={Number(latitude)} dropMarker={true} zoom={14} />
               </div>
             </div>
           </div>

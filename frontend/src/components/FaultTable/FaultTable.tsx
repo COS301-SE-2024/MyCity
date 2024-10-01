@@ -10,6 +10,7 @@ import { ThreeDots } from "react-loader-spinner";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import { AlertCircle } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
+import Image from "next/image";
 
 interface Incident {
   ticket_id: string;
@@ -183,10 +184,10 @@ const IncidentTable: React.FC<IncidentProps> = ({
           <div className="hidden sm:block w-full h-[80%] overflow-hidden">
             {currentPageItems.map((incident, index) => {
               const formattedStateKey = formatState(incident.state);
-  
+
               let color = "bg-gray-200";
               let text = "Default";
-  
+
               if (formattedStateKey in notificationStates) {
                 color =
                   notificationStates[
@@ -197,7 +198,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
                     formattedStateKey as keyof typeof notificationStates
                   ].text;
               }
-  
+
               return (
                 <div
                   key={index}
@@ -208,43 +209,45 @@ const IncidentTable: React.FC<IncidentProps> = ({
                   <div className="w-[3%] flex justify-center">
                     {urgencyMapping[getUrgency(incident.upvotes)].icon}
                   </div>
-  
+
                   {/* Ticket Number */}
                   <div className="w-[12%] lg:text-md md:text-sm font-bold">
                     {incident.ticketnumber}
                   </div>
-  
+
                   {/* Fault Type */}
                   <div className="w-[20%] font-bold">{incident.asset_id}</div>
-  
+
                   {/* Status */}
                   <div
                     className={`${color} w-[15%] bg-opacity-75 text-black font-bold text-center rounded-lg px-3 py-2 mt-1`}
                   >
                     {incident.state}
                   </div>
-  
+
                   {/* Fault Image */}
                   <div className="flex w-[7%] items-center">
                     <div className="h-[80%] rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
-                      <img src={getImageBucketUrl(incident.imageURL)} alt="" />
+                      <Image src={getImageBucketUrl(incident.imageURL)} alt="" width={200} height={200} />
                     </div>
                   </div>
-  
+
                   {/* Municipality */}
                   <div className="w-[15%] flex items-center">
-                    <img
+                    <Image
                       src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
                         incident.municipality_id
                       )}.png`}
                       alt="Ticket"
+                      width={50}
+                      height={50}
                       className="w-[22%] h-full object-cover rounded-full"
                     />
                     <div className="ml-2 font-bold">
                       {incident.municipality_id}
                     </div>
                   </div>
-  
+
                   {/* Upvotes */}
                   <div className="w-[3%] flex justify-center">
                     <div className="flex flex-col items-center">
@@ -252,7 +255,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
                       <div>{formatNumber(incident.upvotes)}</div>
                     </div>
                   </div>
-  
+
                   {/* Comments */}
                   <div className="w-[3%] flex justify-center">
                     <div className="flex flex-col items-center">
@@ -260,7 +263,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
                       <div>{formatNumber(incident.commentcount)}</div>
                     </div>
                   </div>
-  
+
                   {/* Address */}
                   <div
                     className="w-[17%] flex justify-start overflow-hidden whitespace-nowrap"
@@ -275,37 +278,35 @@ const IncidentTable: React.FC<IncidentProps> = ({
                 </div>
               );
             })}
-  
+
             {/* Desktop Pagination Controls */}
             <div className="flex justify-between items-center mt-4">
               <button
                 onClick={goToPreviousPage}
-                className={`px-4 py-2 text-white ${
-                  startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`px-4 py-2 text-white ${startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 disabled={startIndex === 0}
               >
                 Previous
               </button>
-  
+
               <span className="text-white text-opacity-80">
                 Page {startIndex / itemsPerPage + 1} of {totalPages}
               </span>
-  
+
               <button
                 onClick={goToNextPage}
-                className={`px-4 py-2 text-white ${
-                  startIndex + itemsPerPage >= tableitems.length
+                className={`px-4 py-2 text-white ${startIndex + itemsPerPage >= tableitems.length
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                }`}
+                  }`}
                 disabled={startIndex + itemsPerPage >= tableitems.length}
               >
                 Next
               </button>
             </div>
           </div>
-  
+
           {/* Mobile View */}
           <div className="block sm:hidden h-[80vh] overflow-y-auto pb-16">
             {currentPageItems.map((incident, index) => (
@@ -335,30 +336,28 @@ const IncidentTable: React.FC<IncidentProps> = ({
                 </div>
               </div>
             ))}
-  
+
             {/* Mobile Pagination Controls */}
             <div className="flex justify-between items-center mt-4">
               <button
                 onClick={goToPreviousPage}
-                className={`px-4 py-2 text-white ${
-                  startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`px-4 py-2 text-white ${startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 disabled={startIndex === 0}
               >
                 Previous
               </button>
-  
+
               <span className="text-white text-opacity-80">
                 Page {startIndex / itemsPerPage + 1} of {totalPages}
               </span>
-  
+
               <button
                 onClick={goToNextPage}
-                className={`px-4 py-2 text-white ${
-                  startIndex + itemsPerPage >= tableitems.length
+                className={`px-4 py-2 text-white ${startIndex + itemsPerPage >= tableitems.length
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                }`}
+                  }`}
                 disabled={startIndex + itemsPerPage >= tableitems.length}
               >
                 Next
@@ -367,7 +366,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
           </div>
         </>
       )}
-  
+
       {selectedIncident && (
         <FaultCardUserView
           show={!!selectedIncident}
@@ -392,7 +391,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
       )}
     </div>
   );
-  
+
 };
 
 

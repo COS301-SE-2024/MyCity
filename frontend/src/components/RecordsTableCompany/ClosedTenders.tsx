@@ -95,7 +95,7 @@ export default function ClosedTenders() {
                   {tender.issueDate}
                 </div>
                 <div className="col-span-1 flex justify-center">
-                  R{tender.price.toFixed(2)}
+                  R{tender.price}
                 </div>
               </div>
             ))}
@@ -157,7 +157,7 @@ export default function ClosedTenders() {
                     <span className="font-bold">Issue Date: </span>{tender.issueDate}
                   </div>
                   <div>
-                    <span className="font-bold">Price: </span>R{tender.price.toFixed(2)}
+                    <span className="font-bold">Price: </span>R{tender.price}
                   </div>
                 </div>
               </div>

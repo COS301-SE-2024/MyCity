@@ -11,7 +11,6 @@ Amplify.configure({},
 const API_BASE_URL = process.env.API_BASE_URL;
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string[] } }) {
-
   //the request is for invalidating the cache
   if (params.slug[0] === "invalidate-cache") {
     if (params.slug.length < 2) {
@@ -42,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   const res = await fetch(endpointUrl, {
     headers: req.headers,
     next: { tags: [etag] },
-    cache: "force-cache"
+    // cache: "force-cache"
   });
 
   return res;
@@ -50,7 +49,6 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string[] } }) {
-
   if (!API_BASE_URL) {
     throw new Error("missing api base url");
   }
@@ -63,14 +61,23 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   }
 
   const endpointUrl = req.url.replace(`${protocol}://localhost:3000/api`, API_BASE_URL);
-
   const requestBody = await req.json();
 
-  const res = await fetch(endpointUrl, {
-    method: "POST",
-    headers: req.headers,
-    body: JSON.stringify(requestBody)
-  });
+  if (req.headers.get("content-type") === "multipart/form-data") {
+    const res = await fetch(endpointUrl, {
+      method: "POST",
+      headers: req.headers,
+      body: requestBody
+    });
+    return res;
+  }
+  else {
+    const res = await fetch(endpointUrl, {
+      method: "POST",
+      headers: req.headers,
+      body: JSON.stringify(requestBody)
+    });
+    return res;
+  }
 
-  return res;
 }

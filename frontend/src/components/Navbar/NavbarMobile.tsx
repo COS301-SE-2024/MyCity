@@ -15,6 +15,7 @@ import { UserData } from "@/types/custom.types";
 import { usePathname } from "next/navigation";
 import { handleSignOut } from "@/services/auth.service"; // Import handleSignOut
 
+
 export default function NavbarMobile({ unreadNotifications = 0 }) {
   const pathname = usePathname(); // Get the current pathname
   const [data, setData] = useState<UserData | null>(null);
@@ -64,7 +65,7 @@ export default function NavbarMobile({ unreadNotifications = 0 }) {
     <div>
       {/* Desktop View */}
       <div className="hidden sm:block">
-        
+
       </div>
       {/* Mobile View */}
 

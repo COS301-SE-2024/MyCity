@@ -1,8 +1,11 @@
-import { GetCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
+import { JobData } from "../types/job.types";
+import { addJobToReadQueue, addJobToWriteQueue } from "../services/jobs.service";
+import { DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
 
 interface Company {
     name: string;
@@ -71,26 +74,6 @@ export const getUserProfile = async (ticketData: any[]) => {
     }
 };
 
-export const doesTicketExist = async (ticket_id: string) => {
-    try {
-        const checking_ticket = await dynamoDBDocumentClient.send(
-            new QueryCommand({
-                TableName: TICKETS_TABLE,
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": ticket_id
-                }
-            })
-        );
-
-        return checking_ticket.Items && checking_ticket.Items.length > 0;
-
-    } catch (error: any) {
-        console.error("An error occurred:", error);
-        return false;
-    }
-};
-
 export const convertDecimalToFloat = (obj: any) => {
     if (obj instanceof Number) {
         return parseFloat(obj.toString());
@@ -107,20 +90,26 @@ export const validateTicketId = (ticketId: string): string => {
     return ticketId;
 };
 
-export const updateTicketTable = async (ticket_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
+export const updateTicketTable = async (ticket_id: string, ticketDateOpened: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
-        const response = await dynamoDBDocumentClient.send(
-            new UpdateCommand({
-                TableName: TICKETS_TABLE,
-                Key: {
-                    ticket_id: ticket_id
-                },
-                UpdateExpression: update_expression,
-                ExpressionAttributeNames: expression_attribute_names,
-                ExpressionAttributeValues: expression_attribute_values
-            })
-        );
+        const params: UpdateCommandInput = {
+            TableName: TICKETS_TABLE,
+            Key: {
+                ticket_id: ticket_id,
+                dateOpened: ticketDateOpened
+            },
+            UpdateExpression: update_expression,
+            ExpressionAttributeNames: expression_attribute_names,
+            ExpressionAttributeValues: expression_attribute_values
+        };
 
+        const jobData: JobData = {
+            type: DB_UPDATE,
+            params: params
+        };
+
+        const writeJob = await addJobToWriteQueue(jobData);
+        const response = await writeJob.finished() as UpdateCommandOutput;
         return response;
     } catch (error: any) {
         throw new BadRequestError(`Failed to update ticket: ${error.message}`);
@@ -129,7 +118,7 @@ export const updateTicketTable = async (ticket_id: string, update_expression: st
 
 export const getCompanyIDFromName = async (companyName: string) => {
     try {
-        const response = await dynamoDBDocumentClient.send(new QueryCommand({
+        const params: QueryCommandInput = {
             TableName: COMPANIES_TABLE,
             IndexName: "name-index",
             KeyConditionExpression: "#name = :name",
@@ -140,8 +129,15 @@ export const getCompanyIDFromName = async (companyName: string) => {
                 ":name": companyName
             },
             ProjectionExpression: "pid"
-        }
-        ));
+        };
+
+        const jobData: JobData = {
+            type: "DB_QUERY",
+            params: params
+        };
+
+        const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+        const response = await readJob.finished() as QueryCommandOutput;
         const items = response.Items as Company[] || [];
 
         const company = items.length > 0 ? items[0] : null;
@@ -186,7 +182,7 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 7) =
         const batch = items.slice(i, i + batchSize);
 
         const queryPromises = batch.map(async (item) => {
-            const updateCommand = new QueryCommand({
+            const params: QueryCommandInput = {
                 TableName: TICKET_UPDATE_TABLE,
                 IndexName: "ticket_id-index",
                 KeyConditionExpression: "ticket_id = :ticket_id",
@@ -194,14 +190,26 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 7) =
                     ":ticket_id": item.ticket_id
                 },
                 Select: "COUNT"
-            });
+            };
 
-            const queryResponse = await dynamoDBDocumentClient.send(updateCommand);
+            const jobData: JobData = {
+                type: "DB_QUERY",
+                params: params
+            };
+
+            const readJob = await addJobToReadQueue(jobData, { priority: 2 });
+            const queryResponse = await readJob.finished() as QueryCommandOutput;
             item.commentcount = queryResponse.Count || 0;
         });
 
         // wait for this batch of queries to complete before continuing
-        await Promise.all(queryPromises);
+        const resultspromises = await Promise.allSettled(queryPromises);
+
+        resultspromises.forEach((result, index) => {
+            if (result.status === "rejected") {
+                console.error(`Promise ${index} failed with error: ${result.reason}`);
+            }
+        });
     }
 };
 
@@ -232,11 +240,18 @@ export const getMunicipality = async (latitude: number, longitude: number): Prom
     let lastEvaluatedKey;
 
     do {
-        responseMuni = await dynamoDBDocumentClient.send(new ScanCommand({
+        const params: ScanCommandInput = {
             TableName: MUNICIPALITIES_TABLE,
             ProjectionExpression: "longitude, latitude, municipality_id",
             ExclusiveStartKey: lastEvaluatedKey
-        }));
+        };
+        const jobData: JobData = {
+            type: DB_SCAN,
+            params: params
+        };
+
+        const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+        const responseMuni = await readJob.finished() as ScanCommandOutput;
 
         if (responseMuni.Items) {
             items = items.concat(responseMuni.Items);
@@ -272,18 +287,29 @@ export const capitaliseUserEmail = (email: string): string => {
     return result;
 };
 
-// export const formatResponse = (statusCode: number, body: any) => {
-//     return new Response(
-//         JSON.stringify(body, (key, value) => {
-//             return typeof value === 'object' && value !== null ? convertDecimalToFloat(value) : value;
-//         }),
-//         {
-//             status: statusCode,
-//             headers: {
-//                 "Access-Control-Allow-Origin": "*",
-//                 "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-//                 "Access-Control-Allow-Headers": "Authorization,Content-Type,X-Amz-Date,X-Amz-Security-Token,X-Api-Key",
-//             },
-//         }
-//     );
-// };
+export const getTicketDateOpened = async (ticketId: string) => {
+    // get dateOpened attribute from tickets table
+    const params: QueryCommandInput = {
+        TableName: TICKETS_TABLE,
+        KeyConditionExpression: "ticket_id = :ticket_id",
+        ExpressionAttributeValues: {
+            ":ticket_id": ticketId
+        },
+        ProjectionExpression: "dateOpened"
+    };
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    };
+    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const queryResult = await readJob.finished() as ScanCommandOutput;
+
+    const queryResultItems = queryResult.Items;
+
+    if (!queryResultItems || queryResultItems.length === 0) {
+        return null;
+    }
+
+    const dateOpened = queryResultItems[0].dateOpened as string;
+    return dateOpened;
+};

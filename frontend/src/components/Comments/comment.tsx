@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 
 interface CommentProps {
   userName: string;
@@ -12,7 +13,7 @@ const Comment: React.FC<CommentProps> = ({ userName, userImage, time, commentTex
   return (
     <div className="flex items-start mb-4">
       <div className="flex-shrink-0">
-        <img src={userImage} alt={userName} className="w-12 h-12 rounded-full" />
+        <img src={userImage} alt={userName} width={100} height={100} className="w-12 h-12 rounded-full" />
       </div>
       <div className="ml-4 flex-1">
         <div className="font-bold">{userName}</div>

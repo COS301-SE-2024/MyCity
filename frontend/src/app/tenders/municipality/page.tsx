@@ -47,22 +47,39 @@ export default function MuniTenders() {
       const user_data = await userProfile.getUserProfile();
       const user_session = String(user_data.current?.session_token);
       const user_municipality = String(user_data.current?.municipality);
-      const rspmunicipality = await getTicketsInMunicipality(
-        user_municipality,
-        user_session
-      );
-      const rspmunitenders = await getMunicipalityTenders(
-        user_municipality,
-        user_session
-      );
-      setMuniTenders(rspmunitenders);
-      setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+      const promises = [
+        getTicketsInMunicipality(user_municipality, user_session),
+        getMunicipalityTenders(user_municipality, user_session)
+      ];
+
+      const results = await Promise.allSettled(promises);
+
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          if (index === 0) {
+            const rspmunicipality = result.value;
+            setDashMuniResults(Array.isArray(rspmunicipality) ? rspmunicipality : []);
+          }
+          else if (index === 1) {
+            const rspmunitenders = result.value;
+            setMuniTenders(rspmunitenders);
+          }
+          else if (index === 2) {
+            const rspmunicipality = result.value;
+            setDashMuniResults(
+              Array.isArray(rspmunicipality) ? rspmunicipality : []
+            );
+          }
+        }
+      });
+
       setLoadingOpenTickets(false);
     };
+
     fetchData();
   }, [userProfile]);
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 99;
 
   return (
     <div>

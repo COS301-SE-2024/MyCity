@@ -3,6 +3,7 @@ import { ArrowLeft, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 type ChangeMuniInfoProps = {
   onBack: () => void;
 };
@@ -97,7 +98,7 @@ const ChangeMuniInfo: React.FC<ChangeMuniInfoProps> = ({ onBack }) => {
             value={firstname}
             name="given_name"
             onChange={(event) => setFirstname(event.target.value)}
-            className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-3xl"
+            className="border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 rounded-3xl px-4"
           />
         </div>
       </div>
@@ -111,7 +112,7 @@ const ChangeMuniInfo: React.FC<ChangeMuniInfoProps> = ({ onBack }) => {
             value={surname}
             name="family_name"
             onChange={(event) => setSurname(event.target.value)}
-            className="border-b-2 rounded-3xl border-gray-300 focus:outline-none focus:border-blue-500"
+            className="border-b-2 rounded-3xl border-gray-300 focus:outline-none focus:border-blue-500 px-4"
           />
         </div>
       </div>

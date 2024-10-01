@@ -4,6 +4,7 @@ import { User, ArrowBigUp } from "lucide-react";
 import { Default } from "node_modules/react-toastify/dist/utils";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
 
+
 interface CardData {
   title: string;
   address: string;
@@ -128,6 +129,8 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
                     municipality_id
                   )}.png`}
                   alt=""
+                  width={50}
+                  height={50}
                 />
               </div>
               <div className="ml-2 border">{municipality_id}</div>
@@ -138,6 +141,7 @@ const StatusCardUser: React.FC<StatusCardUserProps> = ({
               src={getImageBucketUrl(image)}
               alt="Fault image"
               width={200}
+              height={200}
               className="rounded-md"
             />
           </div>

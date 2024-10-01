@@ -1,6 +1,9 @@
-import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommandInput, QueryCommandInput, QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { ClientError } from "../types/error.types";
-import { dynamoDBDocumentClient, NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
+import { NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
+import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
+import { clearRedisCache, DB_PUT, DB_QUERY } from "../config/redis.config";
+import { JobData } from "../types/job.types";
 
 interface TokenData {
     username: string;
@@ -9,13 +12,7 @@ interface TokenData {
 }
 
 export const insertNotificationToken = async (tokenData: TokenData) => {
-    const requiredFields = ["username", "deviceID", "token"];
-
-    for (const field of requiredFields) {
-        if (!(field in tokenData)) {
-            throw new ClientError({ Error: { Code: "BadRequest", Message: `${field} is required` } }, "BadRequestError");
-        }
-    }
+    await clearRedisCache();
 
     const { username, deviceID, token } = tokenData;
     const currentDatetime = new Date().toISOString();
@@ -29,29 +26,46 @@ export const insertNotificationToken = async (tokenData: TokenData) => {
         date: currentDatetime
     };
 
-    const response = await dynamoDBDocumentClient.send(new PutCommand({
+    const params: PutCommandInput = {
         TableName: NOTIFICATIONS_TABLE,
-        Item: notificationItem,
-    }));
+        Item: notificationItem
+    };
 
-    const accresponse = { message: "Notification Token Saved", token };
-    return accresponse;
+    const jobData: JobData = {
+        type: DB_PUT,
+        params: params
+    }
+
+    const writeJob = await addJobToWriteQueue(jobData);
+    try {
+        await writeJob.finished();
+        const accresponse = { message: "Notification Token Saved", token };
+        return accresponse;
+    }
+    catch (error: any) {
+        throw error;
+    }
 };
 
 export const getNotificationTokens = async (username: string) => {
-    if (!username) {
-        throw new ClientError({ Error: { Code: "IncorrectFields", Message: "Missing required field: username" } }, "InvalidFields");
-    }
-
-    const response = await dynamoDBDocumentClient.send(new QueryCommand({
+    const params: QueryCommandInput = {
         TableName: NOTIFICATIONS_TABLE,
         KeyConditionExpression: "username = :username",
         ExpressionAttributeValues: {
             ":username": username
         }
-    }));
+    };
 
+    const jobData: JobData = {
+        type: DB_QUERY,
+        params: params
+    }
+
+
+    const readJob = await addJobToReadQueue(jobData);
+    const response = await readJob.finished() as QueryCommandOutput;
     const items = response.Items || [];
+
     if (items.length > 0) {
         return items;
     } else {

@@ -6,7 +6,7 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
     const file = req.file;
 
     if (!file || !username) {
-        return res.status(400).json({ Error: "File or username missing" });
+        return res.status(400).json({ Error: "Missing parameter: username and/or file" });
     }
 
     try {

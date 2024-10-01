@@ -50,6 +50,26 @@ const withPWA = nextPWA({
 });
 
 const nextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "mycity-storage-bucket.s3.eu-west-1.amazonaws.com",
+            },
+            {
+                protocol: "https",
+                hostname: "github.com",
+            },
+            {
+                protocol: "https",
+                hostname: "i.imgur.com",
+            },
+            {
+                protocol: "https",
+                hostname: "via.placeholder.com",
+            },
+        ],
+    },
     env: {
         USER_POOL_ID: process.env.NEXT_PUBLIC_USER_POOL_ID,
         USER_POOL_CLIENT_ID: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
@@ -60,7 +80,6 @@ const nextConfig = {
         AWS_ACCESS_KEY_ID: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
         AWS_SECRET_ACCESS_KEY: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
 
-
         FIREBASE_VAPID_KEY: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
         FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -69,10 +88,9 @@ const nextConfig = {
         FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
         FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
         FIREBASE_MEASUREMENT_ID: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-        
-        NODEAPI_URL: process.env.NEXT_PUBLIC_NODEAPI_URL,
-        S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME
-    
+
+        S3_BUCKET_NAME: process.env.NEXT_PUBLIC_S3_BUCKET_NAME,
+        WEBSOCKET_URL : process.env.NEXT_PUBLIC_WEBSOCKET_URL,
     },
     webpack(config) {
         // SVG handling configuration

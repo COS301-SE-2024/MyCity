@@ -94,7 +94,7 @@ const CreateTicketComp: React.FC = () => {
         });
       },
       (error) => {
-        toast.error("Error fetching location: " + error.message);
+        // console.log("Error getting location: ", error);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
@@ -104,7 +104,7 @@ const CreateTicketComp: React.FC = () => {
         const data = await getFaultTypes();
         setFaultTypes(data || []);
       } catch (error: any) {
-        toast.error("Error fetching fault types: " + error.message);
+        // toast.error("Error fetching fault types: " + error.message);
         setFaultTypes([]);
       }
     }
@@ -245,12 +245,7 @@ const CreateTicketComp: React.FC = () => {
                       key={faultType.asset_id}
                       textValue={faultType.asset_id}
                     >
-                      <div className="flex gap-2 items-center">
-                        <img
-                          src={faultType.assetIcon}
-                          alt={faultType.asset_id}
-                          className="w-6 h-6"
-                        />
+                      <div className="flex items-center">
                         <span>{faultType.asset_id}</span>
                       </div>
                     </AutocompleteItem>
@@ -259,6 +254,7 @@ const CreateTicketComp: React.FC = () => {
               ) : (
                 <p>Loading fault types...</p>
               )}
+
               <Textarea
                 label="Description"
                 name="fault-description"
@@ -289,6 +285,8 @@ const CreateTicketComp: React.FC = () => {
                     <img
                       src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/camera_icon.webp"
                       alt="Camera Icon"
+                      width={40}
+                      height={40}
                       className="h-10 w-10"
                     />
                   </div>
@@ -313,6 +311,8 @@ const CreateTicketComp: React.FC = () => {
                             <img
                               src={String(selectedImage)}
                               alt="Uploaded"
+                              width={200}
+                              height={200}
                               style={{ maxWidth: "50%", height: "auto" }}
                             />
                           </div>

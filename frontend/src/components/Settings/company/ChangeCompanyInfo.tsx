@@ -3,6 +3,7 @@ import { ArrowLeft, Lock, User } from "lucide-react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 type ChangeCompanyInfoProps = {
   onBack: () => void;
 };
@@ -94,7 +95,7 @@ const ChangeCompanyInfo: React.FC<ChangeCompanyInfoProps> = ({ onBack }) => {
             value={company}
             name="company"
             onChange={(event) => setCompany(event.target.value)}
-            className="border-b-2 border-gray-300 focus:outline-none rounded-3xl focus:border-blue-500"
+            className="border-b-2 border-gray-300 focus:outline-none rounded-3xl focus:border-blue-500 px-4"
           />
         </div>
       </div>

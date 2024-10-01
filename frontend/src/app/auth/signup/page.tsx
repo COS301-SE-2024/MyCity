@@ -46,9 +46,9 @@ export default function Signup() {
           ></div>
           <main className="flex justify-center mb-8">
             <div className="flex flex dark:bg-gray-700 dark:text-white bg-gray-100 items-center justify-center rounded-lg shadow-lg shadow-blue-800/15 w-1/2 h-fit py-12 mt-12">
-              <div>
+            <div>
                 <img
-                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Signup.gif"
+                  src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/login_icon.webp"
                   alt="MyCity"
                   width={512}
                   height={512}
@@ -100,21 +100,22 @@ export default function Signup() {
         <div
           style={{
             position: "relative",
-            height: "100vh",
-            overflow: "hidden", // Prevents content overflow
+            minHeight: "100vh", // Use minHeight to ensure full viewport coverage
           }}
-          className="px-2"
+          className="px-4 pb-20 overflow-auto" // Padding bottom to ensure content is above the navbar
         >
-          <div className="text-white font-bold ms-2 transform hover:scale-105 mt-3 ml-3 transition-transform duration-200">
-            <img
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
-              alt="MyCity"
-              width={75}
-              height={75}
-            />
+          {/* Centered Logo */}
+          <div className="flex justify-center items-center mt-4">
+            <div className="text-white text-center font-bold transform hover:scale-105 transition-transform duration-200">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-128.webp"
+                alt="MyCity"
+                className="w-16 h-16"
+              />
+            </div>
           </div>
 
-          {/* Background image */}
+          {/* Background Image */}
           <div
             style={{
               position: "absolute",
@@ -126,61 +127,62 @@ export default function Signup() {
                 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              zIndex: -1, // Ensures the background is behind other content
+              backgroundRepeat: "repeat", // Ensure image repeats to cover all space
+              zIndex: -1,
             }}
           ></div>
 
           {/* Content */}
-          <div className=" ">
-            <div className="flex flex-col bg-white items-center rounded-lg  shadow-lg shadow-blue-800/15">
-              <span className="text-[2.5em] font-bold">
-                {currentFormHeader}
-              </span>
-              <div className="overflow-auto h-[74vh] rounded-lg">
-                <div className="flex justify-center">
-                  <img
-                    src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Signup.gif"
-                    alt="MyCity"
-                    width={128}
-                    height={128}
-                  />
-                </div>
-                <Tabs
-                  aria-label="Signup Options"
-                  defaultSelectedKey={0}
-                  className="mt-2 flex justify-center w-full"
-                  classNames={{
-                    tab: " min-h-10",
-                    panel: "w-full",
-                    cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
-                    tabContent:
-                      "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
-                  }}
-                  onSelectionChange={handleTabChange}
+          <div className="flex flex-col items-center bg-white rounded-lg shadow-lg shadow-blue-800/15 p-4 mt-4 mx-2 space-y-4">
+            {/* Form Header */}
+            <span className="text-xl font-bold">{currentFormHeader}</span>
+
+            {/* Signup Options Image */}
+            <div className="flex justify-center">
+              <img
+                src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Login.gif"
+                alt="MyCity"
+                className="w-32 h-32" // Responsive image size
+              />
+            </div>
+
+            {/* Tabs Component */}
+            <div className="w-full overflow-auto">
+              <Tabs
+                aria-label="Signup Options"
+                defaultSelectedKey={0}
+                className="mt-2 flex justify-center w-full"
+                classNames={{
+                  tab: "min-h-10 text-sm", // Apply smaller text size to tabs
+                  panel: "w-full",
+                  cursor: "w-full bg-blue-200/20 border-3 border-blue-700/40",
+                  tabContent:
+                    "group-data-[selected=true]:font-bold group-data-[selected=true]:dop-shadow-md",
+                }}
+                onSelectionChange={handleTabChange}
+              >
+                <Tab key={0} title="Citizen" data-testid="mobile-citizen-tab">
+                  <CitizenSignup />
+                </Tab>
+                <Tab
+                  key={1}
+                  title="Municipality"
+                  data-testid="mobile-municipality-tab"
                 >
-                  <Tab key={0} title="Citizen" data-testid="mobile-citizen-tab">
-                    <CitizenSignup />
-                  </Tab>
-                  <Tab
-                    key={1}
-                    title="Municipality"
-                    data-testid="mobile-municipality-tab"
-                  >
-                    <MunicipalitySignup />
-                  </Tab>
-                  <Tab
-                    key={2}
-                    title="Service Provider"
-                    data-testid="mobile-service-provider-tab"
-                  >
-                    <ServiceProviderTabs />
-                  </Tab>
-                </Tabs>
-              </div>
+                  <MunicipalitySignup />
+                </Tab>
+                <Tab
+                  key={2}
+                  title="Service Provider"
+                  data-testid="mobile-service-provider-tab"
+                >
+                  <ServiceProviderTabs />
+                </Tab>
+              </Tabs>
             </div>
           </div>
         </div>
+
         {/* Navbar */}
         <NavbarGuest />
       </div>

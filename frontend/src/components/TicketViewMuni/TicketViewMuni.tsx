@@ -17,6 +17,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { User as UserIcon } from "lucide-react";
 import { getImageBucketUrl } from "@/config/s3bucket.config";
 
+
 interface TicketViewMuniProps {
   show: boolean;
   onClose: (data: number) => void;
@@ -263,10 +264,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
         >
           {!showTenderMax && !showMuniTenders && (
             <div
-            className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col"
-            style={{ maxHeight: '75vh', height: 'auto', overflowY: 'auto' }}
-          >
-          
+              className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-4 flex flex-col"
+              style={{ maxHeight: '75vh', height: 'auto', overflowY: 'auto' }}
+            >
+
               <button
                 className="absolute top-2 right-2 text-gray-700 z-20"
                 onClick={handleCloseClick}
@@ -311,9 +312,10 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                         <img
                           src={getImageBucketUrl(imageURL)}
                           alt="Fault"
-                          className={`rounded-lg w-full h-full object-cover ${
-                            loadingImage ? "hidden" : "block"
-                          }`}
+                          width={200}
+                          height={200}
+                          className={`rounded-lg w-full h-full object-cover ${loadingImage ? "hidden" : "block"
+                            }`}
                           onLoad={() => setLoadingImage(false)} // Set loadingImage to false when image loads
                           onError={() => {
                             setImageError(true); // Set imageError to true if loading fails
@@ -383,6 +385,8 @@ const TicketViewMuni: React.FC<TicketViewMuniProps> = ({
                       <img
                         src={user_picture}
                         alt="Created By"
+                        width={50}
+                        height={50}
                         className="rounded-full mb-1 object-cover w-10 h-10"
                         onError={(e) => {
                           e.currentTarget.src =

@@ -32,6 +32,7 @@ companies_table = dynamodb.Table("private_companies")
 cognito_cient = boto3.client("cognito-idp")
 load_dotenv()
 user_poolid = os.getenv("USER_POOL_ID")
+websocket_url = os.getenv("WEBSOCKET_API_URL")
 # users_response = cognito_cient.list_users(
 #     UserPoolId=user_poolid
 # )
@@ -190,6 +191,7 @@ def create_ticket(request):
             "upvotes": 0,
             "viewcount": 0,
             "ticketnumber": ticketnumber,
+            "updatedAt": formatted_datetime,
         }
 
         # Put the ticket item into the tickets table
@@ -465,12 +467,14 @@ def get_watchlist(tickets_data):
             KeyConditionExpression=Key("user_id").eq(tickets_data)
         )
         items = response["Items"]
+        # print(items)
         if len(items) > 0:
             for item in items:
                 respitem = tickets_table.query(
                     KeyConditionExpression=Key("ticket_id").eq(item["ticket_id"])
                 )
                 ticketsItems = respitem["Items"]
+                print(ticketsItems)
                 if len(ticketsItems) > 0:
                     for tckitem in ticketsItems:
                         response_item = ticketupdate_table.query(
@@ -480,16 +484,18 @@ def get_watchlist(tickets_data):
                             ),
                         )
                         tckitem["commentcount"] = len(response_item["Items"])
-                else:
-                    error_response = {
-                        "Error": {
-                            "Code": "Inconsistency",
-                            "Message": "Inconsistency in ticket_id",
-                        }
+
+                    getUserprofile(ticketsItems)
+                    collective.extend(ticketsItems)
+
+            if len(collective) <= 0:
+                error_response = {
+                    "Error": {
+                        "Code": "Theres no tickets in watchlist",
+                        "Message": "Doesnt have a tickets in watchlist",
                     }
-                    raise ClientError(error_response, "Inconsistencies")
-                getUserprofile(ticketsItems)
-                collective.extend(ticketsItems)
+                }
+                raise ClientError(error_response, "NoTicketsInWatchlist")
             return collective
 
         else:

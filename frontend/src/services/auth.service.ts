@@ -1,5 +1,5 @@
 import { UserRole } from '@/types/custom.types';
-import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/authActions';
+import { setUserPathSuffix, removeUserPathSuffix } from '@/utils/auth-actions.utils';
 import { SignUpInput, SignUpOutput, UpdatePasswordInput, autoSignIn, fetchAuthSession, signIn, signInWithRedirect, signOut, signUp, updatePassword } from 'aws-amplify/auth';
 
 export async function handleSignIn(form: FormData, userRole: UserRole) {
@@ -14,12 +14,7 @@ export async function handleSignIn(form: FormData, userRole: UserRole) {
         return { isSignedIn };
     }
     catch (error: any) {
-        if (userRole == UserRole.CITIZEN) {
-            throw new Error("Incorrect email or password. Please try again");
-        }
-        else {
-            throw new Error("Incorrect credentials. Please try again");
-        }
+        throw error;
     }
 }
 

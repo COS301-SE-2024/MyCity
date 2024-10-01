@@ -2,6 +2,7 @@
 
 import React from "react";
 
+
 interface MunicipalityTicketsInfoProps {
   municipalityName: string;
   totalTickets: number;
@@ -29,6 +30,8 @@ const MunicipalityTicketsInfo: React.FC<MunicipalityTicketsInfoProps> = ({
           municipalityName
         )}.png`}
         alt={`${municipalityName} logo`}
+        width={128}
+        height={128}
         className="w-32 h-32 mb-4 object-contain rounded-full"
       />
 

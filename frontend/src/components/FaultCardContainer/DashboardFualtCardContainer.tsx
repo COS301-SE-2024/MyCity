@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
 import FaultCardUser from "@/components/FaultCardUser/FaultCardUser";
+import { PaginatedResults } from "@/types/custom.types";
+import { Page } from "@playwright/test";
+import { getMostUpvote, getTicketsInMunicipality, getWatchlistTickets } from "@/services/tickets.service";
+import { useProfile } from "@/hooks/useProfile";
 
 interface CardData {
   dateClosed: string;
@@ -25,16 +29,18 @@ interface CardData {
 }
 
 interface CardComponentProps {
-  cardData: CardData[];
+  type: "watchlist" | "mostupvoted" | "nearest";
+  result: PaginatedResults;
   refreshwatch: () => void;
 }
 
-const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
-  cardData = [],
-  refreshwatch,
-}) => {
-  const [startIndex, setStartIndex] = useState(0);
+const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({ type, result, refreshwatch }) => {
+  const userProfile = useProfile();
   const itemsPerPage = 15;
+  const [currentPageNum, setCurrentPageNum] = useState(0);
+  const [cardData, setCardData] = useState<CardData[]>(result.items);
+  const [lastEvaluatedKey, setLastEvaluatedKey] = useState(result.lastEvaluatedKey);
+  const [dataHistory, setDataHistory] = useState<CardData[][]>([cardData]);
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
@@ -49,22 +55,55 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(cardData.length / itemsPerPage);
+  // const totalPages = Math.ceil(cardData.length / itemsPerPage);
 
   // Get the current page items
-  const currentPageItems = cardData.slice(startIndex, startIndex + itemsPerPage);
+  // const currentPageNumItems = cardData.slice(startIndex, startIndex + itemsPerPage);
 
   // Function to go to the next page
-  const goToNextPage = () => {
-    if (startIndex + itemsPerPage < cardData.length) {
-      setStartIndex(startIndex + itemsPerPage);
+  const goToNextPage = async () => {
+    const newPageNumber = currentPageNum + 1;
+    if (dataHistory[newPageNumber]) {
+      setCardData(dataHistory[newPageNumber]);
+      setCurrentPageNum(newPageNumber);
+      return;
+    }
+
+    let reso: PaginatedResults | null;
+
+    if (type == "watchlist") {
+      reso = await fetchWatchlistData();
+    } else if (type == "mostupvoted") {
+      reso = await fetchMostUpvoteData();
+    }
+    else if (type == "nearest") {
+      reso = await fetchTcketsInMunicipalityData();
+    }
+    else {
+      console.log("No data to fetch");
+      return;
+    }
+
+    if (reso) {
+      setCardData(reso.items);
+      setCurrentPageNum(newPageNumber);
+      setLastEvaluatedKey(reso.lastEvaluatedKey);
+      const newHistory = [...dataHistory];  // create a new array (copy the old one)
+      newHistory[newPageNumber] = reso.items as CardData[];  // add the new data to the new array
+      setDataHistory(newHistory);
     }
   };
 
   // Function to go to the previous page
   const goToPreviousPage = () => {
-    if (startIndex - itemsPerPage >= 0) {
-      setStartIndex(startIndex - itemsPerPage);
+    if (currentPageNum === 0) {
+      return;
+    }
+
+    const newPageNumber = currentPageNum - 1;
+    if (dataHistory[newPageNumber]) {
+      setCardData(dataHistory[newPageNumber]);
+      setCurrentPageNum(newPageNumber);
     }
   };
 
@@ -78,29 +117,69 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
     setSelectedCard(null);
   };
 
-  const visibleItems = cardData
-    .slice(startIndex, Math.min(startIndex + itemsPerPage, cardData.length))
-    .map((item) => (
-      <div key={item.ticket_id}>
-        <FaultCardUser
-          data={{
-            title: item.asset_id,
-            address: item.address,
-            arrowCount: item.upvotes,
-            commentCount: item.commentcount,
-            viewCount: item.viewcount,
-            description: item.description,
-            image: item.imageURL,
-            createdBy: item.dateOpened,
-            ticketNumber: item.ticketnumber,
-            ticketId: item.ticket_id,
-            municipality_id: item.municipality_id,
-            state: item.state,
-          }}
-          onClick={() => handleCardClick(item)}
-        />
-      </div>
-    ));
+  const visibleItems = cardData.map((item) => (
+    <div key={item.ticket_id}>
+      <FaultCardUser
+        data={{
+          title: item.asset_id,
+          address: item.address,
+          arrowCount: item.upvotes,
+          commentCount: item.commentcount,
+          viewCount: item.viewcount,
+          description: item.description,
+          image: item.imageURL,
+          createdBy: item.dateOpened,
+          ticketNumber: item.ticketnumber,
+          ticketId: item.ticket_id,
+          municipality_id: item.municipality_id,
+          state: item.state,
+        }}
+        onClick={() => handleCardClick(item)}
+      />
+    </div>
+  ));
+
+  const fetchWatchlistData = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_id = user_data.current?.email ?? "";
+      const user_session = String(user_data.current?.session_token);
+      const user_email = String(user_id).toLowerCase();
+      const reso = await getWatchlistTickets(user_email, user_session, lastEvaluatedKey);
+
+      return reso;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
+  const fetchMostUpvoteData = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const reso = await getMostUpvote(user_session, lastEvaluatedKey);
+
+      return reso;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
+  const fetchTcketsInMunicipalityData = async () => {
+    try {
+      const user_data = await userProfile.getUserProfile();
+      const user_session = String(user_data.current?.session_token);
+      const municipality = user_data.current?.municipality;
+      const reso = await getTicketsInMunicipality(municipality, user_session, lastEvaluatedKey);
+
+      return reso;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
 
   return (
     <div>
@@ -110,36 +189,33 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
           <div className="flex justify-center grid grid-cols-5 grid-rows-3 gap-4 mx-2 mb-2 w-full h-[60%]">
             {visibleItems}
           </div>
-
+  
           {/* Desktop Pagination Controls */}
           <div className="flex w-[50%] h-[10%] justify-between items-center mx-2">
             <button
               onClick={goToPreviousPage}
-              className={`px-4 py-2 w-[25%] text-white ${
-                startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={startIndex === 0}
+              className={`px-4 py-2 w-[25%] text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={currentPageNum === 0}
             >
               Previous
             </button>
-
+  
             <span className="text-white text-opacity-80">
-              Page {startIndex / itemsPerPage + 1} of {totalPages}
+              Page {currentPageNum + 1}
             </span>
-
+  
             <button
               onClick={goToNextPage}
-              className={`px-4 py-2 w-[25%] text-white ${
-                startIndex + itemsPerPage >= cardData.length
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
+              className={`px-4 py-2 w-[25%] text-white transition-transform ${lastEvaluatedKey
+                ? "hover:scale-105"
+                : "text-gray-400 cursor-not-allowed"
               }`}
-              disabled={startIndex + itemsPerPage >= cardData.length}
+              disabled={!lastEvaluatedKey}
             >
               Next
             </button>
           </div>
-
+  
           {showModal && selectedCard && (
             <FaultCardUserView
               show={showModal}
@@ -164,7 +240,7 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
           )}
         </div>
       </div>
-
+  
       {/* Mobile View */}
       <div className="block sm:hidden overflow-hidden">
         <div className="flex h-[60%] w-full rounded-3xl shadow-md overflow-hidden">
@@ -199,36 +275,33 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
             </div>
           </div>
         </div>
-
+  
         {/* Mobile Pagination Controls */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={goToPreviousPage}
-            className={`px-4 py-2 text-white ${
-              startIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={startIndex === 0}
+            className={`px-4 py-2 text-white ${currentPageNum === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+            disabled={currentPageNum === 0}
           >
             Previous
           </button>
-
+  
           <span className="text-white text-opacity-80">
-            Page {startIndex / itemsPerPage + 1} of {totalPages}
+            Page {currentPageNum + 1}
           </span>
-
+  
           <button
             onClick={goToNextPage}
-            className={`px-4 py-2 text-white ${
-              startIndex + itemsPerPage >= cardData.length
-                ? "opacity-50 cursor-not-allowed"
-                : ""
+            className={`px-4 py-2 text-white transition-transform ${lastEvaluatedKey
+              ? "hover:scale-105"
+              : "text-gray-400 cursor-not-allowed"
             }`}
-            disabled={startIndex + itemsPerPage >= cardData.length}
+            disabled={!lastEvaluatedKey}
           >
             Next
           </button>
         </div>
-
+  
         {showModal && selectedCard && (
           <FaultCardUserView
             show={showModal}
@@ -254,6 +327,8 @@ const DashboardFaultCardContainer: React.FC<CardComponentProps> = ({
       </div>
     </div>
   );
+  
+  
 };
 
 export default DashboardFaultCardContainer;

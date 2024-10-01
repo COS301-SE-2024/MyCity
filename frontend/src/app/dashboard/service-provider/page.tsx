@@ -10,6 +10,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { FaTimes } from "react-icons/fa";
 import { HelpCircle, Image as ImageIcon } from "lucide-react"; // Import ImageIcon from Lucide
 import NavbarMobile from "@/components/Navbar/NavbarMobile";
+import { UserRole } from "@/types/custom.types";
 
 export default function Dashboard() {
   const userProfile = useProfile();
@@ -40,6 +41,24 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
+
+  const CheckRightUser = async ()=>{
+    const user_data = await userProfile.getUserProfile();
+    const user_role = user_data.current?.user_role;
+    if(user_role == UserRole.MUNICIPALITY)
+    {
+      window.location.href = "/dashboard/municipality";
+    }
+    else if (user_role == UserRole.CITIZEN)
+    {
+      window.location.href = "/dashboard/citizen";
+    }
+  }
+
+  useEffect(()=>{
+    CheckRightUser();
+  })
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -48,7 +67,7 @@ export default function Dashboard() {
     setIsHelpOpen(!isHelpOpen);
   };
 
-  const unreadNotifications = Math.floor(Math.random() * 10) + 1;
+  const unreadNotifications = 74;
 
   return (
     <div>
@@ -61,7 +80,7 @@ export default function Dashboard() {
           onClick={toggleHelpMenu}
         />
       </div>
-  
+
       {isHelpOpen && (
         <div
           data-testid="help"
@@ -78,15 +97,26 @@ export default function Dashboard() {
             <h2 className="text-xl font-bold mb-4">Help Menu</h2>
             <p>This dashboard allows you to:</p>
             <ul className="list-disc list-inside">
-              <li>View all tickets in your company&apos;s region that urgently need to be addressed.</li>
-              <li>Sort tickets by various criteria such as urgency, status, or fault type.</li>
-              <li>Keep track of tickets that are upvoted or have high importance.</li>
+              <li>
+                View all tickets in your company&apos;s region that urgently
+                need to be addressed.
+              </li>
+              <li>
+                Sort tickets by various criteria such as urgency, status, or
+                fault type.
+              </li>
+              <li>
+                Keep track of tickets that are upvoted or have high importance.
+              </li>
             </ul>
-            <p>Use the dropdown menu to sort tickets, and click on any ticket to view more details or take action.</p>
+            <p>
+              Use the dropdown menu to sort tickets, and click on any ticket to
+              view more details or take action.
+            </p>
           </div>
         </div>
       )}
-  
+
       {/* Desktop View */}
       <div className="hidden sm:block">
         <div
@@ -108,18 +138,11 @@ export default function Dashboard() {
         <NavbarCompany unreadNotifications={unreadNotifications} />
         <main className="p-8 relative">
           <div className="flex items-center mb-2 mt-2 ml-2">
-            <h1 className="text-4xl font-bold text-white text-opacity-80">Dashboard</h1>
+            <h1 className="text-4xl font-bold text-white text-opacity-80">
+              Dashboard
+            </h1>
           </div>
           <div className="flex flex-col items-center justify-center text-white text-opacity-80">
-            <div className="w-12 h-12 mb-2 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
-              <img
-                src={companypicture}
-                alt="Description of image"
-                width={20}
-                height={20}
-                className="w-full h-full object-cover"
-              />
-            </div>
             {isLoading ? (
               <ThreeDots
                 height="40"
@@ -130,7 +153,19 @@ export default function Dashboard() {
                 visible={true}
               />
             ) : (
-              <span className="text-xl">{company}</span>
+              <div className="flex flex-col items-center">
+                {/* Circular Image Section */}
+                <div className="w-12 h-12 mb-1 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+                  <img
+                    src={companypicture}
+                    alt="Description of image"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Company Name Section */}
+                <span className="text-xl text-center">{company}</span>
+              </div>
             )}
           </div>
           <div className="flex items-center justify-between mt-8">
@@ -146,7 +181,14 @@ export default function Dashboard() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
-                    {["Urgency", "Ticket Number", "Fault Type", "Status", "Created By", "Address"].map((field) => (
+                    {[
+                      "Urgency",
+                      "Ticket Number",
+                      "Fault Type",
+                      "Status",
+                      "Created By",
+                      "Address",
+                    ].map((field) => (
                       <a
                         key={field}
                         href="#"
@@ -178,13 +220,12 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
-  
+
       {/* Mobile View */}
       <div className="block sm:hidden">
         <NavbarCompany unreadNotifications={unreadNotifications} />
         <NavbarMobile />
-        
-  
+
         {/* Background Image */}
         <div
           style={{
@@ -201,18 +242,14 @@ export default function Dashboard() {
             zIndex: -1,
           }}
         ></div>
-  
+
         <main className="relative z-10 p-4 pb-16">
-        <h1 className="text-4xl font-bold text-center mb-4 text-white text-opacity-80">Dashboard</h1>
+          <h1 className="text-4xl font-bold text-center mb-4 text-white text-opacity-80">
+            Dashboard
+          </h1>
           {/* Company Logo and Info */}
           <div className="flex flex-col items-center justify-center text-white text-opacity-80 mb-6">
-            <div className="w-12 h-12 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden mb-4">
-              <img
-                src={companypicture}
-                alt="Company Logo"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            
             {isLoading ? (
               <ThreeDots
                 height="40"
@@ -223,10 +260,22 @@ export default function Dashboard() {
                 visible={true}
               />
             ) : (
-              <span className="text-xl font-bold">{company}</span>
+              <div className="flex flex-col items-center">
+                {/* Circular Image Section */}
+                <div className="w-12 h-12 mb-1 bg-gray-300 flex items-center justify-center rounded-full overflow-hidden">
+                  <img
+                    src={companypicture}
+                    alt="Description of image"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Company Name Section */}
+                <span className="text-xl text-center">{company}</span>
+              </div>
             )}
           </div>
-  
+
           {/* Dropdown and Report Fault Button */}
           <div className="flex items-center justify-between mt-6">
             <div className="relative inline-block text-center items-center justify-center">
@@ -241,7 +290,14 @@ export default function Dashboard() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
-                    {["Urgency", "Ticket Number", "Fault Type", "Status", "Created By", "Address"].map((field) => (
+                    {[
+                      "Urgency",
+                      "Ticket Number",
+                      "Fault Type",
+                      "Status",
+                      "Created By",
+                      "Address",
+                    ].map((field) => (
                       <a
                         key={field}
                         href="#"
@@ -255,7 +311,7 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-  
+
           {/* Records Table */}
           <div className="mt-8 mb-4">
             {isLoading ? (
@@ -277,5 +333,4 @@ export default function Dashboard() {
       </div>
     </div>
   );
-  
 }
