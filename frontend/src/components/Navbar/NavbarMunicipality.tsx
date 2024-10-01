@@ -109,11 +109,11 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
               <div className={getNavItemClass("/notifications/municipality")}>
                 <div className="relative flex flex-col gap-1 items-center">
                   <Bell size={25} />
-                  {unreadNotifications > 0 && (
+                  {/* {unreadNotifications > 0 && (
                     <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
                       {unreadNotifications}
                     </div>
-                  )}
+                  )} */}
                   <span>Notifications</span>
                 </div>
               </div>
@@ -186,11 +186,11 @@ export default function NavbarMunicipality({ unreadNotifications = 0 }) {
                 <div className={getNavItemClass("/notifications/municipality")}>
                   <div className="relative flex flex-col gap-1 items-center">
                     <Bell size={50} />
-                    {unreadNotifications > 0 && (
+                    {/* {unreadNotifications > 0 && (
                       <div className="absolute top-0 right-0 h-5 w-5 bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full z-100">
                         {unreadNotifications}
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </Link>
