@@ -136,7 +136,7 @@ export const getCompanyIDFromName = async (companyName: string) => {
             params: params
         };
 
-        const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+        const readJob = await addJobToReadQueue(jobData);
         const response = await readJob.finished() as QueryCommandOutput;
         const items = response.Items as Company[] || [];
 
@@ -197,7 +197,7 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 7) =
                 params: params
             };
 
-            const readJob = await addJobToReadQueue(jobData, { priority: 2 });
+            const readJob = await addJobToReadQueue(jobData);
             const queryResponse = await readJob.finished() as QueryCommandOutput;
             item.commentcount = queryResponse.Count || 0;
         });
@@ -250,7 +250,7 @@ export const getMunicipality = async (latitude: number, longitude: number): Prom
             params: params
         };
 
-        const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+        const readJob = await addJobToReadQueue(jobData);
         const responseMuni = await readJob.finished() as ScanCommandOutput;
 
         if (responseMuni.Items) {
@@ -301,7 +301,7 @@ export const getTicketDateOpened = async (ticketId: string) => {
         type: DB_QUERY,
         params: params
     };
-    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const readJob = await addJobToReadQueue(jobData);
     const queryResult = await readJob.finished() as ScanCommandOutput;
 
     const queryResultItems = queryResult.Items;

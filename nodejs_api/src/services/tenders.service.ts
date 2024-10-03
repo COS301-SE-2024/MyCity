@@ -49,7 +49,7 @@ export const createTender = async (senderData: TenderData) => {
         params: params
     }
 
-    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const readJob = await addJobToReadQueue(jobData);
     const responseCheck = await readJob.finished() as QueryCommandOutput;
 
     if (responseCheck.Items && responseCheck.Items.length > 0) {
@@ -166,7 +166,7 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         params: params
     }
 
-    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const readJob = await addJobToReadQueue(jobData);
     const responseTender = await readJob.finished() as QueryCommandOutput;
 
     const tenderItems = responseTender.Items;
