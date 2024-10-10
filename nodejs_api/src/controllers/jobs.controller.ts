@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as jobsService from "../services/jobs.service";
-import { clearRedisCache, removeRedisKey } from "../config/redis.config";
+import { deleteAllCache, deleteCacheKey } from "../config/redis.config";
+import { CustomError } from "../errors/CustomError";
 
-export const getJobStatus = async (req: Request, res: Response) => {
+export const getJobStatus = async (req: Request, res: Response, next: NextFunction) => {
     const jobType = req.params["type"];
     const jobId = req.params["id"];
 
@@ -10,7 +11,7 @@ export const getJobStatus = async (req: Request, res: Response) => {
         const job = await jobsService.getJob(jobId, jobType);
 
         if (!job) {
-            return res.status(404).json({ Error: "job not found" });
+            throw new CustomError("Job not found", 404);
         }
 
         // Check job status
@@ -18,41 +19,36 @@ export const getJobStatus = async (req: Request, res: Response) => {
             const response = await job.returnvalue;
             return res.status(200).json({ status: "completed", result: response });
         } else if (await job.isFailed()) {
-            return res.status(500).json({ status: "failed", error: job.failedReason });
+            throw new CustomError(job.failedReason || "Job failed", 500);
         }
 
         // If job is still in progress, return its status
         return res.status(200).json({ status: "job in progress" });
     } catch (error: any) {
-        return res.status(500).json({ status: "failed", error: error.message });
+        next(error);
     }
 };
 
-export const removeKey = async (req: Request, res: Response) => {
+export const removeCacheKey = async (req: Request, res: Response, next: NextFunction) => {
     const cacheKey = req.params["key"];
+
     try {
-        const response = await removeRedisKey(cacheKey);
-        if (response) {
-            return res.status(200).json({ status: `cache cleared for key ${cacheKey}` });
+        if (!cacheKey) {
+            throw new CustomError("Missing parameter: key", 400);
         }
-        else {
-            return res.status(500).json({ status: "failed", error: "cache not cleared" });
-        }
+
+        await deleteCacheKey(cacheKey);
+        return res.status(200).json({ status: `cache cleared for key ${cacheKey}` });
     } catch (error: any) {
-        return res.status(500).json({ status: "failed", error: error.message });
+        next(error);
     }
 };
 
-export const clearCache = async (req: Request, res: Response) => {
+export const removeAllCache = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const response = await clearRedisCache();
-        if (response) {
-            return res.status(200).json({ status: "all cache cleared" });
-        }
-        else {
-            return res.status(500).json({ status: "failed", error: "cache not cleared" });
-        }
+        await deleteAllCache();
+        return res.status(200).json({ status: "all cache cleared" });
     } catch (error: any) {
-        return res.status(500).json({ status: "failed", error: error.message });
+        next(error);
     }
 };

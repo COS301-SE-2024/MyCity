@@ -1,12 +1,12 @@
 import JobQueue, { Queue, QueueOptions } from "bull";
 import { NextFunction, Request, Response } from "express";
-import { createClient, RedisClientType } from "redis";
+import Redis from "ioredis";
 import { readQueueProcessor, writeQueueProcessor } from "../services/jobs.service";
 
 const REDIS_HOST = String(process.env.REDIS_HOST);
 const REDIS_PORT = Number(process.env.REDIS_PORT);
 
-let redisClient: RedisClientType | null = null;
+let redisClient: Redis | null = null;
 let readQueue: Queue | null = null;
 let writeQueue: Queue | null = null;
 
@@ -26,85 +26,78 @@ export {
     DEFAULT_CACHE_DURATION
 }
 
-const getRedisClient = async () => {
+const getRedisClient = () => {
     if (!redisClient) {
-        redisClient = createClient({
-            socket: {
-                host: REDIS_HOST,
-                port: REDIS_PORT
-            }
+        redisClient = new Redis({
+            host: REDIS_HOST,
+            port: REDIS_PORT
         });
 
         redisClient.on("error", (err) => {
             console.error("Redis error:", err);
         });
-
-        // connect to Redis
-        try {
-            await redisClient.connect();
-        } catch (err) {
-            console.error("Error connecting to Redis:", err);
-        }
     }
 
     return redisClient;
 };
 
-export const getReadQueue = async () => {
+export const getReadQueue = () => {
     if (!readQueue) {
         const queueOptions: QueueOptions = {
             redis: {
                 host: REDIS_HOST,
-                port: REDIS_PORT
+                port: REDIS_PORT,
+                enableReadyCheck: false,
+                maxRetriesPerRequest: null,
             }
         };
 
         readQueue = new JobQueue("readQueue", queueOptions);
-        readQueue.process(readQueueProcessor);
     }
 
     return readQueue;
 };
 
-export const getWriteQueue = async () => {
+export const getWriteQueue = () => {
     if (!writeQueue) {
         const queueOptions: QueueOptions = {
             redis: {
                 host: REDIS_HOST,
-                port: REDIS_PORT
+                port: REDIS_PORT,
+                enableReadyCheck: false,
+                maxRetriesPerRequest: null,
             }
         };
 
         writeQueue = new JobQueue("writeQueue", queueOptions);
-        writeQueue.process(writeQueueProcessor);
     }
 
     return writeQueue;
 };
 
 // middleware to cache responses
-export const cacheMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const cacheKey = `${req.baseUrl}${req.url}`;
+export const checkCache = async (req: Request, res: Response, next: NextFunction) => {
+    const client = getRedisClient();
+    const cacheKey = req.originalUrl;
 
     try {
-        const client = await getRedisClient();
         const cachedData = await client.get(cacheKey);
-        if (cachedData !== null) {
-            return res.json(JSON.parse(cachedData)); // cache hit
-        } else {
-            next(); // cache miss, go to the next handler
+        if (cachedData) {
+            return res.status(200).json(JSON.parse(cachedData)); // cache hit
         }
+
+        next(); // cache miss, go to the next handler
     } catch (err) {
         console.error("Error fetching from Redis:", err);
-        next();
+        next(err);
     }
 };
 
 export const getFromCache = async (cacheKey: string) => {
     try {
-        const client = await getRedisClient();
+        const client = getRedisClient();
         const cachedData = await client.get(cacheKey);
-        if (cachedData !== null) {
+        if (cachedData) {
             return JSON.parse(cachedData); // cache hit
         } else {
             return null; // cache miss
@@ -118,27 +111,47 @@ export const getFromCache = async (cacheKey: string) => {
 export const cacheResponse = async (cacheKey: string, duration: number, response: any) => {
     if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
         //cache response for duration amount of time 
-        const client = await getRedisClient();
-        client.setEx(cacheKey, duration, JSON.stringify(response));
+        const client = getRedisClient();
+        client.setex(cacheKey, duration, JSON.stringify(response));
     }
 };
 
-export const removeRedisKey = async (key: string) => {
-    const client = await getRedisClient();
-    const response = await client.del(key);
-    return response === 1;
+export const deleteCacheKey = async (key: string) => {
+    try {
+        const client = getRedisClient();
+        await client.del(key);
+    }
+    catch (error) {
+        console.error("Error deleting cache key:", error);
+    }
 };
 
-export const clearRedisCache = async () => {
-    const client = await getRedisClient();
-    //clear all the cache
-    const response = await client.flushAll();
-    return response;
+export const deleteCacheKeys = async (keys: string[]) => {
+    try {
+        const client = getRedisClient();
+        // delete cache for the given keys
+        await client.del(...keys);
+    } catch (error) {
+        console.error("Error deleting cache keys:", error);
+    }
 };
 
-export const removeRedisCacheKeys = async (keys: string[]) => {
-    const client = await getRedisClient();
-    // clear the cache for the given keys
-    const response = await client.del(keys);
-    return response === 1;
+export const deleteAllCache = async () => {
+    try {
+        const client = getRedisClient();
+        //clear all the cache
+        await client.flushall();
+    } catch (error) {
+        console.error("Error deleting cache:", error);
+    }
+};
+
+export const processReadQueue = () => {
+    const queue = getReadQueue();
+    queue.process(readQueueProcessor);
+};
+
+export const processWriteQueue = () => {
+    const queue = getWriteQueue();
+    queue.process(writeQueueProcessor);
 };
