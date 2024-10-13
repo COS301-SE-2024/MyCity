@@ -145,6 +145,8 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
     const watchlistJob = await addJobToWriteQueue(watchlistJobData);
     const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
 
+    // ----------------- update items in cache -----------------
+
     const message = JSON.stringify({ action: "createticket", body: municipalityId })
     await sendWebSocketMessage(message);
 
