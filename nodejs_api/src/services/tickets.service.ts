@@ -6,7 +6,7 @@ import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
-import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
+import { deleteAllCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
 import { sendWebSocketMessage } from "../utils/tenders.utils";
 
 interface Ticket {
@@ -39,7 +39,7 @@ interface TicketData {
 
 
 export const createTicket = async (formData: any, file: Express.Multer.File | undefined) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const username = formData["username"] as string;
     let imageLink = "";
@@ -59,7 +59,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         params: assetParams
     }
 
-    const assetReadJob = await addJobToReadQueue(assetJobdata, { priority: 1 });
+    const assetReadJob = await addJobToReadQueue(assetJobdata);
     const assetResponse = await assetReadJob.finished() as GetCommandOutput;
 
     if (!assetResponse.Item) {
@@ -145,7 +145,9 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
     const watchlistJob = await addJobToWriteQueue(watchlistJobData);
     const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
 
-    const message = JSON.stringify({ action: "createticket", body : municipalityId })
+    // ----------------- update items in cache -----------------
+
+    const message = JSON.stringify({ action: "createticket", body: municipalityId })
     await sendWebSocketMessage(message);
 
     // after accepting
@@ -405,7 +407,7 @@ export const getWatchlist = async (userId: string, lastEvaluatedKeyString: strin
                 params: params2
             };
 
-            const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+            const job2 = await addJobToReadQueue(jobData2);
             const respItem = await job2.finished() as QueryCommandOutput;
             const ticketsItems = respItem.Items;
 
@@ -467,7 +469,7 @@ export const viewTicketData = async (ticketId: string) => {
 };
 
 export const interactTicket = async (ticketData: any) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     const interactType = String(ticketData.type).toUpperCase();
     const params: QueryCommandInput = {
@@ -511,7 +513,7 @@ export const interactTicket = async (ticketData: any) => {
                     params: updateParams
                 };
 
-                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                const updateJob = await addJobToWriteQueue(updateJobData);
                 await updateJob.finished();
                 return { Status: "SUCCESSFUL", vote: votes };
             }
@@ -535,7 +537,7 @@ export const interactTicket = async (ticketData: any) => {
                     params: updateParams
                 };
 
-                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                const updateJob = await addJobToWriteQueue(updateJobData);
                 await updateJob.finished();
                 return { Status: "SUCCESSFUL", views: views };
             }
@@ -558,7 +560,7 @@ export const interactTicket = async (ticketData: any) => {
                     params: updateParams
                 };
 
-                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                const updateJob = await addJobToWriteQueue(updateJobData);
                 await updateJob.finished();
                 return { Status: "SUCCESSFUL", vote: votes };
             }
@@ -644,9 +646,9 @@ export const getMostUpvoted = async (lastEvaluatedKeyArrayString: string) => {
         params: params3
     };
 
-    const job1 = await addJobToReadQueue(jobData1, { priority: 1 });
-    const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
-    const job3 = await addJobToReadQueue(jobData3, { priority: 1 });
+    const job1 = await addJobToReadQueue(jobData1);
+    const job2 = await addJobToReadQueue(jobData2);
+    const job3 = await addJobToReadQueue(jobData3);
 
     const result1 = await job1.finished() as QueryCommandOutput;
     const result2 = await job2.finished() as QueryCommandOutput;
@@ -679,7 +681,7 @@ export const getMostUpvoted = async (lastEvaluatedKeyArrayString: string) => {
 };
 
 export const closeTicket = async (ticketData: any) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
@@ -737,7 +739,7 @@ export const closeTicket = async (ticketData: any) => {
 };
 
 export const acceptTicket = async (ticketData: any) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
@@ -801,7 +803,7 @@ export const getCompanyTickets = async (companyname: string) => {
         params: params
     };
 
-    const job = await addJobToReadQueue(jobData, { priority: 1 });
+    const job = await addJobToReadQueue(jobData);
     const responseTender = await job.finished() as QueryCommandOutput
 
     const tenderItems = responseTender.Items;
@@ -822,7 +824,7 @@ export const getCompanyTickets = async (companyname: string) => {
                 params: params2
             };
 
-            const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+            const job2 = await addJobToReadQueue(jobData2);
             const responseCompanyTickets = await job2.finished() as QueryCommandOutput;
             const companyTickets = responseCompanyTickets.Items;
 
@@ -852,7 +854,7 @@ export const getCompanyTickets = async (companyname: string) => {
         params: params3
     };
 
-    const job3 = await addJobToReadQueue(jobData3, { priority: 1 });
+    const job3 = await addJobToReadQueue(jobData3);
     const response = await job3.finished() as QueryCommandOutput;
     const topItems = response.Items || [];
 
@@ -915,7 +917,7 @@ export const getOpenCompanyTickets = async () => {
 };
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     // Validate ticket_id
     validateTicketId(ticket_id);

@@ -3,14 +3,15 @@ import { dynamoDBDocumentClient } from "../config/dynamodb.config";
 import { GetCommand, PutCommand, QueryCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { DoneCallback, Job, JobOptions } from "bull";
 import { JobData } from "../types/job.types";
+import { CustomError } from "../errors/CustomError";
 
 export const getJob = async (jobId: string, jobType: string) => {
     if (jobType === "read") {
-        const readQueue = await getReadQueue();
+        const readQueue = getReadQueue();
         const job = await readQueue.getJob(jobId);
         return job;
     } else if (jobType === "write") {
-        const writeQueue = await getWriteQueue();
+        const writeQueue = getWriteQueue();
         const job = await writeQueue.getJob(jobId);
         return job;
     }
@@ -19,9 +20,8 @@ export const getJob = async (jobId: string, jobType: string) => {
     }
 };
 
-
 export const addJobToReadQueue = async (jobData: JobData, options?: JobOptions) => {
-    const readQueue = await getReadQueue();
+    const readQueue = getReadQueue();
     const job = await readQueue.add({
         type: jobData.type,
         params: jobData.params
@@ -31,7 +31,7 @@ export const addJobToReadQueue = async (jobData: JobData, options?: JobOptions) 
 };
 
 export const addJobToWriteQueue = async (jobData: JobData, options?: JobOptions) => {
-    const writeQueue = await getWriteQueue();
+    const writeQueue = getWriteQueue();
     const job = await writeQueue.add({
         type: jobData.type,
         params: jobData.params
@@ -64,7 +64,7 @@ export const readQueueProcessor = async (job: Job, done: DoneCallback) => {
             return;
         }
         else {
-            done(new Error("Unsupported read job type, cannot process job"));
+            done(new CustomError("Unsupported read job type, cannot process job", 500));
         }
     } catch (error: any) {
         done(error);
@@ -86,7 +86,7 @@ export const writeQueueProcessor = async (job: Job, done: DoneCallback) => {
             done();    // finish the job
         }
         else {
-            done(new Error("Unsupported write job type, cannot process job"));
+            done(new CustomError("Unsupported write job type, cannot process job", 500));
         }
     } catch (error: any) {
         done(error);

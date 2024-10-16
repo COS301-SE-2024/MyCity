@@ -2,7 +2,7 @@ import { PutCommandInput, QueryCommandInput, QueryCommandOutput } from "@aws-sdk
 import { ClientError } from "../types/error.types";
 import { NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
-import { clearRedisCache, DB_PUT, DB_QUERY } from "../config/redis.config";
+import { deleteAllCache, DB_PUT, DB_QUERY } from "../config/redis.config";
 import { JobData } from "../types/job.types";
 
 interface TokenData {
@@ -12,7 +12,7 @@ interface TokenData {
 }
 
 export const insertNotificationToken = async (tokenData: TokenData) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const { username, deviceID, token } = tokenData;
     const currentDatetime = new Date().toISOString();

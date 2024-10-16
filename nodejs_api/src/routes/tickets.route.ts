@@ -1,9 +1,8 @@
 import express, { Router } from "express";
 import multer from "multer";
-import bodyParser from "body-parser";
 
 import * as ticketsController from "../controllers/tickets.controller";
-import { cacheMiddleware } from "../config/redis.config";
+import { checkCache } from "../config/redis.config";
 
 const router: Router = express.Router();
 
@@ -13,19 +12,19 @@ const upload = multer({ storage });
 // create a ticket
 router.post("/create", upload.single("file"), ticketsController.createTicket);
 
-router.use(bodyParser.json());
+router.use(express.json());
 
-router.get("/getUpvotes", cacheMiddleware, ticketsController.getMostUpvoted);
-router.get("/getinarea", cacheMiddleware, ticketsController.getInArea);
-router.get("/getwatchlist", cacheMiddleware, ticketsController.getMyWatchlist);
-router.get("/view", cacheMiddleware, ticketsController.viewTicketData);
-router.get("/fault-types", cacheMiddleware, ticketsController.getFaultTypes);
-router.get("/getmytickets", cacheMiddleware, ticketsController.getMyTickets);
-router.get("/getopeninarea", cacheMiddleware, ticketsController.getOpenTicketsInMunicipality);
-router.get("/getcompanytickets", cacheMiddleware, ticketsController.getCompanyTickets);
-router.get("/getopencompanytickets", cacheMiddleware, ticketsController.getOpenCompanyTickets);
-router.get("/comments", cacheMiddleware, ticketsController.getTicketComments);
-router.get("/geodata/all", cacheMiddleware, ticketsController.getGeoData);
+router.get("/getUpvotes", checkCache, ticketsController.getMostUpvoted);
+router.get("/getinarea", checkCache, ticketsController.getInArea);
+router.get("/getwatchlist", checkCache, ticketsController.getMyWatchlist);
+router.get("/view", checkCache, ticketsController.viewTicketData);
+router.get("/fault-types", checkCache, ticketsController.getFaultTypes);
+router.get("/getmytickets", checkCache, ticketsController.getMyTickets);
+router.get("/getopeninarea", checkCache, ticketsController.getOpenTicketsInMunicipality);
+router.get("/getcompanytickets", checkCache, ticketsController.getCompanyTickets);
+router.get("/getopencompanytickets", checkCache, ticketsController.getOpenCompanyTickets);
+router.get("/comments", checkCache, ticketsController.getTicketComments);
+router.get("/geodata/all", checkCache, ticketsController.getGeoData);
 router.post("/addwatchlist", ticketsController.addWatchlist);
 router.post("/accept", ticketsController.acceptTicket);
 router.post("/close", ticketsController.closeTicket);
