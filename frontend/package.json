@@ -16,7 +16,7 @@
     "fast-xml-parser": "4.4.1"
   },
   "dependencies": {
-    "@aws-amplify/adapter-nextjs": "^1.2.10",
+    "@aws-amplify/adapter-nextjs": "^1.2.22",
     "@aws-sdk/client-cognito-identity-provider": "^3.628.0",
     "@chakra-ui/react": "^2.8.2",
     "@ducanh2912/next-pwa": "^10.2.8",
