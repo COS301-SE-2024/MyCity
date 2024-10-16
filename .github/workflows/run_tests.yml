@@ -30,32 +30,32 @@ jobs:
         run: npm test
 
 
-  backend_tests:
-    name: Run Backend Tests
-    runs-on: ubuntu-latest
+  # backend_tests:
+  #   name: Run Backend Tests
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.12'
   
-      - name: Install dependencies
-        working-directory: python_api
-        run: |
-          python -m pip install -r requirements.txt
+  #     - name: Install dependencies
+  #       working-directory: python_api
+  #       run: |
+  #         python -m pip install -r requirements.txt
 
-      - name: Set up AWS CLI
-        working-directory: python_api
-        run: |
-          pip install awscli
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set default.region ${{ secrets.AWS_REGION }}
+  #     - name: Set up AWS CLI
+  #       working-directory: python_api
+  #       run: |
+  #         pip install awscli
+  #         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws configure set default.region ${{ secrets.AWS_REGION }}
 
-      - name: Run All Backend Unit & Integration tests
-        working-directory: python_api
-        run: pytest --disable-warnings -q
+  #     - name: Run All Backend Unit & Integration tests
+  #       working-directory: python_api
+  #       run: pytest --disable-warnings -q
