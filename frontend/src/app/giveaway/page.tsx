@@ -6,9 +6,13 @@ import Navbar from "@/components/Navbar/Navbar";
 import { getGiveawayEntries } from "@/services/giveaway.service"; // Import the getGiveawayEntries function from the giveaway service
 import { useProfile } from "@/hooks/useProfile";
 
+interface EntriesType {
+  count: number;
+}
+
 export default function Giveaway() {
   const userProfile = useProfile();
-  const [entries, setEntries] = useState<number | string | null>(null);
+  const [entries, setEntries] = useState<EntriesType | null>(null);
   const [formData, setFormData] = useState({
     ticketNumber: "",
     name: "",
@@ -42,15 +46,12 @@ export default function Giveaway() {
           try {
             const response = await getGiveawayEntries(userSession); // Your API endpoint
             console.log("Response:", response);
-            const data = await response.json();
-            setEntries(data.entries);
+            setEntries(response);
           } catch (error) {
             console.error("Error fetching entries:", error);
-            setEntries("Error fetching data");
           }
         } else {
           console.error("User session is undefined");
-          setEntries("No session token available");
         }
       }
 
@@ -172,11 +173,15 @@ export default function Giveaway() {
             </h2>
             <div className="text-lg bg-gray-800 bg-opacity-70 p-6 rounded-lg shadow-md text-center">
               {entries !== null ? (
-                <p className="text-blue-300 font-semibold text-4xl">
-                  {entries}
-                </p>
+                typeof entries === "object" && "count" in entries ? (
+                  <p className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 text-center py-2 animate-pulse">
+                    {entries.count}
+                  </p>
+                ) : (
+                  <p className="">Invalid data format</p>
+                )
               ) : (
-                <p className="text-red-500">Loading...</p>
+                <p className="">Loading...</p>
               )}
             </div>
 
