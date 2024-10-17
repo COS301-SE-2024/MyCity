@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Home, PlusCircle, Bell, Search, ChartNoAxesCombined } from "lucide-react";
+import { Home, PlusCircle, Bell, Search,PartyPopper,  ChartNoAxesCombined } from "lucide-react";
 import {
   Avatar,
   Dropdown,
@@ -125,6 +125,15 @@ export default function NavbarUser({ unreadNotifications = 0 }) {
                 <div className="flex flex-col gap-1 items-center">
                   <Search size={25} />
                   <span>Search</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link href="/giveaway" passHref>
+              <div className={getNavItemClass("/giveaway")}>
+                <div className="flex flex-col gap-1 items-center">
+                  <PartyPopper size={25} />
+                  <span>Giveaway</span>
                 </div>
               </div>
             </Link>
