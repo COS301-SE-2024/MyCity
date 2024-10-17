@@ -1,19 +1,26 @@
-import { PutCommandInput, PutCommandOutput, QueryCommandInput, QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { DescribeTableCommand } from "@aws-sdk/client-dynamodb";
-import { dynamoDBDocumentClient, GIVEAWAY_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { PutCommandInput, PutCommandOutput, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { GIVEAWAY_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
-import { DB_PUT, DB_QUERY } from "../config/redis.config";
+import { DB_PUT, DB_QUERY, DB_SCAN } from "../config/redis.config";
 import { CustomError } from "../errors/CustomError";
 
 export const getParticipantCount = async () => {
-    const command = new DescribeTableCommand({
-        TableName: GIVEAWAY_TABLE
-    });
+    const params: ScanCommandInput = {
+        TableName: GIVEAWAY_TABLE,
+        Select: "COUNT"
+    };
 
-    const response = await dynamoDBDocumentClient.send(command);
+    const jobData: JobData = {
+        type: DB_SCAN,
+        params
+    }
+
+    const job = await addJobToReadQueue(jobData);
+    const response = await job.finished() as ScanCommandOutput;
+
     return {
-        count: response.Table?.ItemCount || 0
+        count: response.Count || 0
     };
 };
 
