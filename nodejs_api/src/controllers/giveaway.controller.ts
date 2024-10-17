@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import * as giveawayService from "../services/giveaway.service";
-import { cacheResponse, DEFAULT_CACHE_DURATION } from "../config/redis.config";
+import { cacheResponse } from "../config/redis.config";
 
 export const getParticipantCount = async (req: Request, res: Response, next:NextFunction) => {
     try {
         const response = await giveawayService.getParticipantCount();
-        cacheResponse(req.originalUrl, DEFAULT_CACHE_DURATION, response);
+        cacheResponse(req.originalUrl, 30, response); // cache for 30 seconds
         return res.status(200).json(response);
     } catch (error: any) {
         next(error);

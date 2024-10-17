@@ -57,7 +57,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 
     // default to 500 if no status code is provided
     res.status(error.status || 500).json({
-        message: "Something bad happened and the server could not process your request",
+        message: error.message,
     });
 });
 

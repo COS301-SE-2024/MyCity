@@ -24,7 +24,7 @@ export const getParticipantCount = async () => {
     };
 };
 
-export const addParticipant = async ({ formData }: any) => {
+export const addParticipant = async (formData: any) => {
     // verify that provided ticketNumber exists
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
@@ -37,7 +37,7 @@ export const addParticipant = async ({ formData }: any) => {
 
     const queryTicketJobData: JobData = {
         type: DB_QUERY,
-        params
+        params: params
     }
 
     const queryJob = await addJobToReadQueue(queryTicketJobData);
@@ -49,6 +49,10 @@ export const addParticipant = async ({ formData }: any) => {
 
     // generate a unique entry id
     const entryId = await generateEntryId();
+
+    if (!entryId) {
+        throw new CustomError("There are no more free slots for participants", 500);
+    }
 
     const participantDetails = {
         entryid: entryId,
@@ -100,7 +104,7 @@ const generateEntryId = async () => {
             params: queryParticipantParams
         }
 
-        const queryParticipantJob = await addJobToWriteQueue(jobData);
+        const queryParticipantJob = await addJobToReadQueue(jobData);
         const queryParticipantResponse = await queryParticipantJob.finished() as QueryCommandOutput;
 
         if (queryParticipantResponse.Items?.length === 0) {
@@ -112,4 +116,6 @@ const generateEntryId = async () => {
 
         attempts++;
     }
+
+    return null;
 };
