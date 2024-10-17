@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image"; // Import Image from next/image
 import Navbar from "@/components/Navbar/Navbar";
+import { getGiveawayEntries } from "@/services/giveaway.service"; // Import the getGiveawayEntries function from the giveaway service
+import { useProfile } from "@/hooks/useProfile";
 
 export default function Giveaway() {
+  const userProfile = useProfile();
   const [entries, setEntries] = useState<number | string | null>(null);
   const [formData, setFormData] = useState({
     ticketNumber: "",
@@ -29,19 +32,32 @@ export default function Giveaway() {
 
   // Fetch the number of giveaway entries
   useEffect(() => {
-    async function fetchEntries() {
-      try {
-        const response = await fetch("/api/giveaway/participant/count"); // Your API endpoint
-        console.log("Response:", response);
-        const data = await response.json();
-        setEntries(data.entries);
-      } catch (error) {
-        console.error("Error fetching entries:", error);
-        setEntries("Error fetching data");
-      }
-    }
+    const fetchData = async () => {
+      const user_data = await userProfile.getUserProfile();
+      const userSession = user_data.current?.session_token;
 
-    fetchEntries();
+      async function fetchEntries() {
+        if (userSession) {
+          // Check if userSession is defined
+          try {
+            const response = await getGiveawayEntries(userSession); // Your API endpoint
+            console.log("Response:", response);
+            const data = await response.json();
+            setEntries(data.entries);
+          } catch (error) {
+            console.error("Error fetching entries:", error);
+            setEntries("Error fetching data");
+          }
+        } else {
+          console.error("User session is undefined");
+          setEntries("No session token available");
+        }
+      }
+
+      fetchEntries();
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -136,7 +152,7 @@ export default function Giveaway() {
                 />
                 <h3 className="text-xl font-bold mb-1">MyCity Logo Sticker</h3>
                 <h3 className="text-lg font-bold mb-3">
-                  (The first 100 valid entries will receive a sticker) 
+                  (The first 100 valid entries will receive a sticker)
                 </h3>
                 <ul className="list-disc ml-6 text-sm space-y-2">
                   <li>Step 1: Enter the Giveaway.</li>
@@ -295,7 +311,6 @@ export default function Giveaway() {
                     />
                   </div>
                 </div>
-              
 
                 <h2 className="text-2xl font-bold mb-4 text-center">
                   Submit Your Entry
