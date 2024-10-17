@@ -31,7 +31,8 @@ export default function Giveaway() {
   useEffect(() => {
     async function fetchEntries() {
       try {
-        const response = await fetch("/api/giveaway/entries"); // Your API endpoint
+        const response = await fetch("/api/giveaway/participant/count"); // Your API endpoint
+        console.log("Response:", response);
         const data = await response.json();
         setEntries(data.entries);
       } catch (error) {
