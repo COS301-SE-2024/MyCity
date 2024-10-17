@@ -135,7 +135,7 @@ export default function Giveaway() {
                 />
                 <h3 className="text-xl font-bold mb-1">MyCity Logo Sticker</h3>
                 <h3 className="text-lg font-bold mb-3">
-                  (Each valid entry receives one)
+                  (The first 100 valid entries will receive a sticker) 
                 </h3>
                 <ul className="list-disc ml-6 text-sm space-y-2">
                   <li>Step 1: Enter the Giveaway.</li>
