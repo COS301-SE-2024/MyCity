@@ -425,7 +425,7 @@ export default function Giveaway() {
                     {/* Countdown timer until the start of the competition */}
                     <Countdown date={startDateTime} renderer={renderer} />
                     <h2 className="text-2xl font-bold mb-4 text-center">
-                      The competition hasn't started yet! Stay tuned for more
+                      The competition hasn&apos;t started yet! Stay tuned for more
                       details.
                     </h2>
                   </div>
