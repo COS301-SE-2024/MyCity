@@ -25,4 +25,35 @@ export const getGiveawayEntries = async (userSession: string) => {
       throw error;
     }
   };
+
+  export async function AddEntry(ticketNumber: string, name: string, email: string, phoneNumber: string, user_session: string) {
+    const data = {
+        ticketNumber: ticketNumber,
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+    }
+
+    const apiURL = "/api/giveaway/participant/add";
+    const response = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_session}`,
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const result = await response.json();
+    if (result.Status == "Success") {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
   

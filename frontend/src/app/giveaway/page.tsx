@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image"; // Import Image from next/image
 import Navbar from "@/components/Navbar/Navbar";
-import { getGiveawayEntries } from "@/services/giveaway.service"; // Import the getGiveawayEntries function from the giveaway service
+import { getGiveawayEntries, AddEntry } from "@/services/giveaway.service"; // Import the getGiveawayEntries function from the giveaway service
 import { useProfile } from "@/hooks/useProfile";
 
 interface EntriesType {
@@ -60,6 +60,37 @@ export default function Giveaway() {
 
     fetchData();
   }, []);
+
+  const setEntry = async (
+    ticketNumber: string,
+    name: string,
+    email: string,
+    phoneNumber: string
+  ) => {
+    const user_data = await userProfile.getUserProfile();
+    const userSession = user_data.current?.session_token;
+
+    async function addEntries(
+      ticketNumber: string,
+      name: string,
+      email: string,
+      phoneNumber: string
+    ) {
+      if (userSession) {
+        // Check if userSession is defined
+        try {
+          const response = await AddEntry(ticketNumber, name, email, phoneNumber, userSession); // Your API endpoint
+          console.log("Response:", response);
+        } catch (error) {
+          console.error("Error adding entry:", error);
+        }
+      } else {
+        console.error("User session is undefined");
+      }
+    }
+
+    addEntries(ticketNumber, name, email, phoneNumber);
+  };
 
   return (
     <div>
@@ -401,6 +432,7 @@ export default function Giveaway() {
                   <button
                     type="submit"
                     className="w-full p-3 bg-blue-500 text-gray-900 font-semibold rounded-lg hover:bg-blue-600 transition-colors"
+                    onClick={() => setEntry(formData.ticketNumber, formData.name, formData.email, formData.phoneNumber)}
                   >
                     Submit Entry
                   </button>
