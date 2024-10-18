@@ -5,6 +5,7 @@ import {
   FaEye,
   FaExclamationTriangle,
   FaTimes,
+  FaFilter,
 } from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
 import FaultCardUserView from "@/components/FaultCardUserView/FaultCardUserView";
@@ -105,6 +106,9 @@ const IncidentTable: React.FC<IncidentProps> = ({
   const itemsPerPage = 10;
   const totalPages = Math.ceil(tableitems.length / itemsPerPage);
 
+  // State for filtering by state
+  const [selectedState, setSelectedState] = useState<string>("all");
+
   // Functions to navigate pages
   const goToNextPage = () => {
     if (startIndex + itemsPerPage < tableitems.length) {
@@ -118,10 +122,9 @@ const IncidentTable: React.FC<IncidentProps> = ({
     }
   };
 
-  const currentPageItems = tableitems.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  const currentPageItems = tableitems
+    .filter((item) => selectedState === "all" || item.state === selectedState)
+    .slice(startIndex, startIndex + itemsPerPage);
 
   useEffect(() => {
     const overflowState: { [key: number]: boolean } = {};
@@ -131,7 +134,7 @@ const IncidentTable: React.FC<IncidentProps> = ({
       }
     });
     setIsOverflowing(overflowState);
-  }, [addressRefs]);
+  }, [addressRefs, currentPageItems]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -180,6 +183,33 @@ const IncidentTable: React.FC<IncidentProps> = ({
         </div>
       ) : (
         <>
+          {/* Filter Section */}
+          <div className="flex justify-center items-center mb-4">
+            <FaFilter className="text-white text-opacity-70 mr-2" size={18} />
+            <select
+              className="p-2 rounded-lg border border-transparent text-white text-opacity-70 bg-transparent"
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+              style={{ colorScheme: "dark" }} // Keeps the select element white but options black
+            >
+              <option value="all" className="text-black">
+                All States
+              </option>
+              <option value="Opened" className="text-black">
+                Opened
+              </option>
+              <option value="Taking Tenders" className="text-black">
+                Taking Tenders
+              </option>
+              <option value="In Progress" className="text-black">
+                In Progress
+              </option>
+              <option value="Closed" className="text-black">
+                Closed
+              </option>
+            </select>
+          </div>
+
           {/* Desktop View */}
           <div className="hidden sm:block w-full h-[80%] overflow-hidden">
             {currentPageItems.map((incident, index) => {
@@ -228,7 +258,12 @@ const IncidentTable: React.FC<IncidentProps> = ({
                   {/* Fault Image */}
                   <div className="flex w-[7%] items-center">
                     <div className="h-[80%] rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
-                      <Image src={getImageBucketUrl(incident.imageURL)} alt="" width={200} height={200} />
+                      <Image
+                        src={getImageBucketUrl(incident.imageURL)}
+                        alt=""
+                        width={200}
+                        height={200}
+                      />
                     </div>
                   </div>
 
@@ -391,8 +426,6 @@ const IncidentTable: React.FC<IncidentProps> = ({
       )}
     </div>
   );
-
 };
-
 
 export default IncidentTable;

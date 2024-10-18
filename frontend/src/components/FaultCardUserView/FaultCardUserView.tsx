@@ -5,6 +5,7 @@ import {
   FaEye,
   FaExclamationTriangle,
   FaTimes,
+  FaStopwatch,
 } from "react-icons/fa";
 import Comments from "../Comments/comments"; // Adjust the import path as necessary
 import { Button } from "@nextui-org/react";
@@ -205,6 +206,12 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
   const [isImageExpanded, setIsImageExpanded] = useState(false);
   const [isMapLeft, setIsMapLeft] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [estimatedDays, setEstimatedDays] = useState(0);
+
+  useEffect(() => {
+    const randomDays = Math.floor(Math.random() * 19) + 3;
+    setEstimatedDays(randomDays);
+  }, []);
 
   useEffect(() => {
     const storedData = localStorage.getItem(`ticket-${ticketNumber}`);
@@ -398,8 +405,6 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               </div>
             </div>
 
-          
-
             {/* Address */}
             <div className="flex w-full">
               <div className="flex justify-between lg:mb-2 md:mb-1 w-full">
@@ -505,18 +510,28 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
             </div>
 
             {/* Fault's Municipality */}
-            <div className="flex w-full items-center justify-start mt-2">
-              <div className="text-black w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
-                <Image
-                  src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
-                    municipality_id
-                  )}.png`}
-                  alt=""
-                  width={100}
-                  height={100}
-                />
+            <div className="flex w-full items-center justify-between mt-2">
+              <div className="flex items-center">
+                <div className="text-black w-12 h-12 rounded-full overflow-hidden flex items-center justify-center bg-gray-200 border border-gray-300">
+                  <Image
+                    src={`https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/municipality_logos/${formatMunicipalityID(
+                      municipality_id
+                    )}.png`}
+                    alt=""
+                    width={100}
+                    height={100}
+                  />
+                </div>
+                <div className="ml-2 text-black">{municipality_id}</div>
               </div>
-              <div className="ml-2 text-black">{municipality_id}</div>
+
+              {/* Estimated Time of Completion */}
+              <div className="flex items-center ml-auto">
+                <FaStopwatch className="text-gray-700 mr-1" size={18} />
+                <span className="text-gray-700 font-bold">
+                  ETC: {estimatedDays} days
+                </span>
+              </div>
             </div>
           </div>
 
@@ -559,6 +574,14 @@ const FaultCardUserView: React.FC<FaultCardUserViewProps> = ({
               <div className="text-gray-400 text-sm sm:text-md truncate">
                 {ticketNumber}
               </div>
+            </div>
+
+            {/* Estimated Time of Completion at Top Left */}
+            <div className="flex items-center justify-start mt-2">
+              <FaStopwatch className="text-gray-700 mr-1" size={18} />
+              <span className="text-gray-700 font-bold">
+                ETC: {estimatedDays} days
+              </span>
             </div>
 
             {/* Status */}
