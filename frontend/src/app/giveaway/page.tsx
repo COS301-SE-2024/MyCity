@@ -20,6 +20,8 @@ export default function Giveaway() {
     phoneNumber: "",
   });
 
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null); // To handle success or failure state
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -30,8 +32,13 @@ export default function Giveaway() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted", formData);
+    // Submit the entry
+    setEntry(
+      formData.ticketNumber,
+      formData.name,
+      formData.email,
+      formData.phoneNumber
+    );
   };
 
   // Fetch the number of giveaway entries
@@ -79,13 +86,32 @@ export default function Giveaway() {
       if (userSession) {
         // Check if userSession is defined
         try {
-          const response = await AddEntry(ticketNumber, name, email, phoneNumber, userSession); // Your API endpoint
+          const response = await AddEntry(
+            ticketNumber,
+            name,
+            email,
+            phoneNumber,
+            userSession
+          ); // Your API endpoint
           console.log("Response:", response);
+          if (response) {
+            setIsSuccess(true); // Mark success
+            setFormData({
+              ticketNumber: "",
+              name: "",
+              email: "",
+              phoneNumber: "",
+            }); // Clear form
+          } else {
+            setIsSuccess(false); // Mark failure
+          }
         } catch (error) {
           console.error("Error adding entry:", error);
+          setIsSuccess(false);
         }
       } else {
         console.error("User session is undefined");
+        setIsSuccess(false);
       }
     }
 
@@ -186,7 +212,7 @@ export default function Giveaway() {
                 <h3 className="text-lg font-bold mb-3">
                   (The first 100 valid entries will receive a sticker)
                 </h3>
-                <ul className="list-disc ml-6 text-sm space-y-2">
+                <ul className="list-disc ml-6 space-y-2 text-sm">
                   <li>Step 1: Enter the Giveaway.</li>
                   <li>Step 2: Show a MyCity team member your valid entry.</li>
                   <li>
@@ -323,32 +349,6 @@ export default function Giveaway() {
               {/* Right Column: How to Enter */}
               <div className="bg-gray-700 bg-opacity-70 p-6 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold mb-4 text-center">
-                  How to Enter
-                </h2>
-                <div className="flex justify-center items-center">
-                  <div className="mb-4 w-full ">
-                    <ol className="list-decimal ml-6 space-y-4">
-                      <li>Create an account on MyCity.</li>
-                      <li>Report a fault using MyCity.</li>
-                      <li>Go to this page and enter your ticket number.</li>
-                      <li>Provide your contact information.</li>
-                    </ol>
-                    <p className="my-4 text-center text-blue-300 font-semibold">
-                      * One entry per person.
-                    </p>
-                  </div>
-                  <div className="mb-4 w-full flex justify-center items-center">
-                    <Image
-                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/giveaway.webp"
-                      alt="Giveaway"
-                      width={246}
-                      height={246}
-                      className="object-fill rounded-md mb-4"
-                    />
-                  </div>
-                </div>
-
-                <h2 className="text-2xl font-bold mb-4 text-center">
                   Submit Your Entry
                 </h2>
                 <form onSubmit={handleSubmit}>
@@ -432,7 +432,6 @@ export default function Giveaway() {
                   <button
                     type="submit"
                     className="w-full p-3 bg-blue-500 text-gray-900 font-semibold rounded-lg hover:bg-blue-600 transition-colors"
-                    onClick={() => setEntry(formData.ticketNumber, formData.name, formData.email, formData.phoneNumber)}
                   >
                     Submit Entry
                   </button>
@@ -440,45 +439,37 @@ export default function Giveaway() {
               </div>
             </div>
           </div>
-        </main>
-      </div>
 
-      {/* Mobile View */}
-      <div className="block sm:hidden">
-        <Navbar showLogin={true} />
+          {/* Success/Failure Popup */}
+          {isSuccess === true && (
+            <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                <h2 className="text-lg font-bold mb-4">Success!</h2>
+                <p>Your entry has been added successfully.</p>
+                <button
+                  onClick={() => setIsSuccess(null)}
+                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
 
-        {/* Background Image */}
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundImage:
-              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundAttachment: "fixed",
-            zIndex: -11,
-          }}
-        ></div>
-
-        <main className="relative z-[-10] p-4">
-          <div className="text-white text-opacity-80 font-bold transform hover:scale-110 transition-transform duration-300 flex justify-center">
-            <Image
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
-              alt="MyCity"
-              width={256}
-              height={256}
-            />
-          </div>
-
-          {/* Page Title */}
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 text-center mt-10 mb-8">
-            Giveaway!
-          </h1>
+          {isSuccess === false && (
+            <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                <h2 className="text-lg font-bold mb-4">Error</h2>
+                <p>There was a problem adding your entry. Please try again.</p>
+                <button
+                  onClick={() => setIsSuccess(null)}
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>

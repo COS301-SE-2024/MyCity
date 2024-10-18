@@ -32,7 +32,7 @@ export const getGiveawayEntries = async (userSession: string) => {
         name: name,
         email: email,
         phoneNumber: phoneNumber,
-    }
+    };
 
     const apiURL = "/api/giveaway/participant/add";
     const response = await fetch(apiURL, {
@@ -44,16 +44,22 @@ export const getGiveawayEntries = async (userSession: string) => {
         body: JSON.stringify(data),
     });
 
+    // If response is not OK, return false
     if (!response.ok) {
         return false;
     }
 
-    const result = await response.json();
-    if (result.Status == "Success") {
-        return true;
-    }
-    else {
+    // Try parsing the response as JSON
+    try {
+        const result = await response.json();
+        // Check the 'message' field in the response
+        if (result.message && result.message.toLowerCase() === "participant added successfully") {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error parsing response:", error);
         return false;
     }
 }
-  
