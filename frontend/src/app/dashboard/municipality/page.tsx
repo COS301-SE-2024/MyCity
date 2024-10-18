@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [initialdashMuniResults, setInitialDashMuniResults] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -101,8 +102,8 @@ export default function Dashboard() {
       user_municipality,
       user_session,
     );
-    console.log(rspmunicipality)
     setDashMuniResults(rspmunicipality.items);
+    setInitialDashMuniResults(rspmunicipality.items)
     setTableLoading(false);
   };
 
@@ -120,6 +121,7 @@ export default function Dashboard() {
     );
     console.log(rspmunicipality.items)
     setDashMuniResults(rspmunicipality.items);
+    setInitialDashMuniResults(rspmunicipality.items)
     setTableLoading(false);
   }, [userProfile]);
 
@@ -145,39 +147,36 @@ export default function Dashboard() {
   })
 
   const handleClick = (field : String) => {
-   
-    if(dashMuniResults != null)
+    if(initialdashMuniResults != null)
     {
       switch (field) {
-        case "Ticket Number":
+        case "Closed Tickets":
           {
-            const sortedData = [... dashMuniResults].sort((a, b) => a.ticketnumber.localeCompare(b.ticketnumber))
-            setDashMuniResults(sortedData);
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "Closed")
+            setDashMuniResults(filteredData);
             break;
           }
 
-        case "Fault Type":
+        case "Opened Tickets":
           {
-            const sortedData = [... dashMuniResults].sort((a, b) => a.asset_id.localeCompare(b.asset_id))
-            setDashMuniResults(sortedData);
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "Opened")
+            setDashMuniResults(filteredData);
             break;
           }
-        case "Status":
+        case "In Progress Tickets":
           {
-            const sortedData = [... dashMuniResults].sort((a, b) => a.state.localeCompare(b.state))
-            setDashMuniResults(sortedData);
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "In Progress")
+            setDashMuniResults(filteredData);
             break;
           }
-        case "Address":
+        case "Taking Tenders Tickets":
           {
-            const sortedData = [... dashMuniResults].sort((a, b) => a.address.localeCompare(b.address))
-            setDashMuniResults(sortedData);
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "Taking Tenders")
+            setDashMuniResults(filteredData);
             break;
           }
-        case "Created By":
+        case "Fault type":
           {
-            const sortedData = [... dashMuniResults].sort((a, b) => a.createdby.localeCompare(b.createdby))
-            setDashMuniResults(sortedData);
             break;
           }
         
@@ -296,18 +295,18 @@ export default function Dashboard() {
                   onClick={toggleDropdown}
                   style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
                 >
-                  <span>Issues ordered by:</span>
+                  <span>Issues filtered by:</span>
                   <ChevronDown className="ml-2" size={16} />
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
                       {[
-                        "Ticket Number",
-                        "Fault Type",
-                        "Status",
-                        "Created By",
-                        "Address",
+                        "Closed Tickets",
+                        "Opened Tickets",
+                        "In Progress Tickets",
+                        "Taking Tenders Tickets",
+                        "Fault type",
                       ].map((field) => (
                         <a
                           key={field}
