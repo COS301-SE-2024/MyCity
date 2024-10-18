@@ -34,9 +34,16 @@ export default function CitizenDashboard({
 }: CitizenDashboardProps) {
   const userProfile = useProfile();
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [dashMostUpvoteResults, setMostUpvoteResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
-  const [dashMuniResults, setDashMuniResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
-  const [dashWatchResults, setDashWatchResults] = useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
+  const [dashMostUpvoteResults, setMostUpvoteResults] =
+    useState<PaginatedResults>({ lastEvaluatedKey: null, items: [] });
+  const [dashMuniResults, setDashMuniResults] = useState<PaginatedResults>({
+    lastEvaluatedKey: null,
+    items: [],
+  });
+  const [dashWatchResults, setDashWatchResults] = useState<PaginatedResults>({
+    lastEvaluatedKey: null,
+    items: [],
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
@@ -55,10 +62,7 @@ export default function CitizenDashboard({
       const user_email = String(user_id).toLowerCase();
       const user_session = String(user_data.current?.session_token);
       console.log("User Session", user_session);
-      const rspwatchlist = await getWatchlistTickets(
-        user_email,
-        user_session
-      );
+      const rspwatchlist = await getWatchlistTickets(user_email, user_session);
       setDashWatchResults(rspwatchlist);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -119,7 +123,6 @@ export default function CitizenDashboard({
             }
           }
         });
-
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -132,24 +135,19 @@ export default function CitizenDashboard({
     fetchData();
   }, []);
 
-
-  const CheckRightUser = async ()=>{
+  const CheckRightUser = async () => {
     const user_data = await userProfile.getUserProfile();
     const user_role = user_data.current?.user_role;
-    if(user_role == UserRole.MUNICIPALITY)
-    {
+    if (user_role == UserRole.MUNICIPALITY) {
       window.location.href = "/dashboard/municipality";
-    }
-    else if (user_role == UserRole.PRIVATE_COMPANY)
-    {
+    } else if (user_role == UserRole.PRIVATE_COMPANY) {
       window.location.href = "/dashboard/service-provider";
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     CheckRightUser();
-  })
-
+  });
 
   const handleTabChange = (key: Key) => {
     const index = Number(key);
@@ -220,9 +218,10 @@ export default function CitizenDashboard({
         <main className="relative flex flex-col items-center w-full h-full">
           {/* Page Title */}
           <div className="fixed top-12 left-8 pt-12">
-            <h1 className="text-4xl font-bold text-white text-opacity-80">Dashboard</h1>
+            <h1 className="text-4xl font-bold text-white text-opacity-80">
+              Dashboard
+            </h1>
           </div>
-
 
           {/* Notification Prompt */}
           {/* <div className="fixed top-24 left-0 w-full flex justify-center z-[500] pt-8">
@@ -261,7 +260,10 @@ export default function CitizenDashboard({
                   <li>Track issues you have added to your watchlist.</li>
                   <li>Switch between different views: Cards, List, and Map.</li>
                 </ul>
-                <p>Use the tabs to navigate between different sections of the dashboard.</p>
+                <p>
+                  Use the tabs to navigate between different sections of the
+                  dashboard.
+                </p>
               </div>
             </div>
           )}
@@ -298,41 +300,6 @@ export default function CitizenDashboard({
                     onSelectionChange={handleTabChange}
                   >
                     {/* Watchlist */}
-                    <Tab key={0} title="Watchlist" className="h-full">
-                      <div className="h-full">
-                        <h1 className="text-lg text-opacity-80 text-white text-center">
-                          All of the issues you have in your watchlist.
-                        </h1>
-                        {isLoading ? (
-                          <div className="flex justify-center items-center">
-                            <ThreeDots
-                              height="40"
-                              width="80"
-                              radius="9"
-                              color="#ADD8E6"
-                              ariaLabel="three-dots-loading"
-                              visible={true}
-                            />
-                          </div>
-                        ) : dashWatchResults && dashWatchResults.items.length > 0 ? (
-                          <div className="h-[60%]">
-                            <DashboardFaultCardContainer
-                              type="watchlist"
-                              result={dashWatchResults}
-                              refreshwatch={refreshwatchlist}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className="flex items-center justify-center text-center text-white text-opacity-60 text-sm"
-                            style={{ transform: "translateY(2vh)" }}
-                          >
-                            There are no faults to display.
-                          </div>
-                        )}
-                      </div>
-                    </Tab>
-
                     {/* Most Upvoted */}
                     <Tab key={1} title="Most Upvoted">
                       <div className="w-full text-center">
@@ -351,7 +318,8 @@ export default function CitizenDashboard({
                             visible={true}
                           />
                         </div>
-                      ) : dashMostUpvoteResults && dashMostUpvoteResults.items.length > 0 ? (
+                      ) : dashMostUpvoteResults &&
+                        dashMostUpvoteResults.items.length > 0 ? (
                         <DashboardFaultCardContainer
                           type="mostupvoted"
                           result={dashMostUpvoteResults}
@@ -383,7 +351,8 @@ export default function CitizenDashboard({
                             visible={true}
                           />
                         </div>
-                      ) : dashMuniResults && dashMuniResults.items.length > 0 ? (
+                      ) : dashMuniResults &&
+                        dashMuniResults.items.length > 0 ? (
                         <DashboardFaultCardContainer
                           type="nearest"
                           result={dashMuniResults}
@@ -398,13 +367,52 @@ export default function CitizenDashboard({
                         </div>
                       )}
                     </Tab>
+
+                    {/* Watchlist */}
+                    <Tab key={0} title="Watchlist" className="h-full">
+                      <div className="h-full">
+                        <h1 className="text-lg text-opacity-80 text-white text-center">
+                          All of the issues you have in your watchlist.
+                        </h1>
+                        {isLoading ? (
+                          <div className="flex justify-center items-center">
+                            <ThreeDots
+                              height="40"
+                              width="80"
+                              radius="9"
+                              color="#ADD8E6"
+                              ariaLabel="three-dots-loading"
+                              visible={true}
+                            />
+                          </div>
+                        ) : dashWatchResults &&
+                          dashWatchResults.items.length > 0 ? (
+                          <div className="h-[60%]">
+                            <DashboardFaultCardContainer
+                              type="watchlist"
+                              result={dashWatchResults}
+                              refreshwatch={refreshwatchlist}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className="flex items-center justify-center text-center text-white text-opacity-60 text-sm"
+                            style={{ transform: "translateY(2vh)" }}
+                          >
+                            There are no faults to display.
+                          </div>
+                        )}
+                      </div>
+                    </Tab>
                   </Tabs>
                 </Tab>
 
                 {/* List Tab */}
                 <Tab key={1} title="List">
                   <FaultTable
-                    tableitems={dashMostUpvoteResults ? dashMostUpvoteResults.items : []}
+                    tableitems={
+                      dashMostUpvoteResults ? dashMostUpvoteResults.items : []
+                    }
                     refreshwatch={refreshwatchlist}
                   />
                 </Tab>
@@ -424,7 +432,6 @@ export default function CitizenDashboard({
           </div>
         </main>
       </div>
-
 
       {/* Mobile View */}
       <div className="block sm:hidden">
@@ -491,6 +498,78 @@ export default function CitizenDashboard({
                       }}
                       onSelectionChange={handleTabChange}
                     >
+                      <Tab key={1} title="Most Upvoted">
+                        <div className="h-[calc(100vh-160px)] overflow-y-auto pb-32">
+                          <h1 className="text-l text-white text-center text-opacity-80 mb-4">
+                            Based on votes from the community in your area.
+                          </h1>
+
+                          {isLoading ? (
+                            <div className="flex justify-center items-center">
+                              <ThreeDots
+                                height="40"
+                                width="80"
+                                radius="9"
+                                color="#ADD8E6"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                visible={true}
+                              />
+                            </div>
+                          ) : dashMostUpvoteResults &&
+                            dashMostUpvoteResults.items.length > 0 ? (
+                            <div className="flex justify-center items-center">
+                              <DashboardFaultCardContainer
+                                type="mostupvoted"
+                                result={dashMostUpvoteResults}
+                                refreshwatch={refreshwatchlist}
+                              />
+                            </div>
+                          ) : (
+                            <p className="text-center text-white text-opacity-60 text-sm">
+                              There are no faults to display.
+                            </p>
+                          )}
+                        </div>
+                      </Tab>
+
+                      <Tab key={2} title="Nearest to You">
+                        <div className="h-[calc(100vh-160px)] overflow-y-auto pb-32">
+                          <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
+                            Based on your proximity to the issue.
+                          </h1>
+
+                          {isLoading ? (
+                            <div className="flex justify-center items-center">
+                              <ThreeDots
+                                height="40"
+                                width="80"
+                                radius="9"
+                                color="#ADD8E6"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                visible={true}
+                              />
+                            </div>
+                          ) : dashMuniResults &&
+                            dashMuniResults.items.length > 0 ? (
+                            <div className="flex justify-center items-center">
+                              <DashboardFaultCardContainer
+                                type="nearest"
+                                result={dashMuniResults}
+                                refreshwatch={refreshwatchlist}
+                              />
+                            </div>
+                          ) : (
+                            <p className="text-center text-sm text-opacity-60 text-white">
+                              There are no faults to display.
+                            </p>
+                          )}
+                        </div>
+                      </Tab>
+
                       <Tab key={0} title="Watchlist">
                         {/* Scrollable content */}
                         <div className="h-[calc(100vh-160px)] overflow-y-auto pb-32">
@@ -511,7 +590,8 @@ export default function CitizenDashboard({
                                 visible={true}
                               />
                             </div>
-                          ) : dashWatchResults && dashWatchResults.items.length > 0 ? (
+                          ) : dashWatchResults &&
+                            dashWatchResults.items.length > 0 ? (
                             <div className="flex justify-center items-center">
                               <DashboardFaultCardContainer
                                 type="watchlist"
@@ -526,82 +606,14 @@ export default function CitizenDashboard({
                           )}
                         </div>
                       </Tab>
-
-                      <Tab key={1} title="Most Upvoted">
-                        <div className="h-[calc(100vh-160px)] overflow-y-auto pb-32">
-                          <h1 className="text-l text-white text-center text-opacity-80 mb-4">
-                            Based on votes from the community in your area.
-                          </h1>
-
-                          {isLoading ? (
-                            <div className="flex justify-center items-center">
-                              <ThreeDots
-                                height="40"
-                                width="80"
-                                radius="9"
-                                color="#ADD8E6"
-                                ariaLabel="three-dots-loading"
-                                wrapperStyle={{}}
-                                wrapperClass=""
-                                visible={true}
-                              />
-                            </div>
-                          ) : dashMostUpvoteResults && dashMostUpvoteResults.items.length > 0 ? (
-                            <div className="flex justify-center items-center">
-                              <DashboardFaultCardContainer
-                                type="mostupvoted"
-                                result={dashMostUpvoteResults}
-                                refreshwatch={refreshwatchlist}
-                              />
-                            </div>
-                          ) : (
-                            <p className="text-center text-white text-opacity-60 text-sm">
-                              There are no faults to display.
-                            </p>
-                          )}
-                        </div>
-                      </Tab>
-
-                      <Tab key={2} title="Nearest to you">
-                        <div className="h-[calc(100vh-160px)] overflow-y-auto pb-32">
-                          <h1 className="text-center text-white text-opacity-80 mb-4 ml-2">
-                            Based on your proximity to the issue.
-                          </h1>
-
-                          {isLoading ? (
-                            <div className="flex justify-center items-center">
-                              <ThreeDots
-                                height="40"
-                                width="80"
-                                radius="9"
-                                color="#ADD8E6"
-                                ariaLabel="three-dots-loading"
-                                wrapperStyle={{}}
-                                wrapperClass=""
-                                visible={true}
-                              />
-                            </div>
-                          ) : dashMuniResults && dashMuniResults.items.length > 0 ? (
-                            <div className="flex justify-center items-center">
-                              <DashboardFaultCardContainer
-                                type="nearest"
-                                result={dashMuniResults}
-                                refreshwatch={refreshwatchlist}
-                              />
-                            </div>
-                          ) : (
-                            <p className="text-center text-sm text-opacity-60 text-white">
-                              There are no faults to display.
-                            </p>
-                          )}
-                        </div>
-                      </Tab>
                     </Tabs>
                   </Tab>
 
                   <Tab key={1} title="List">
                     <FaultTable
-                      tableitems={dashMostUpvoteResults ? dashMostUpvoteResults.items : []}
+                      tableitems={
+                        dashMostUpvoteResults ? dashMostUpvoteResults.items : []
+                      }
                       refreshwatch={refreshwatchlist}
                     />
                   </Tab>
