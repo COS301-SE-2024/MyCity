@@ -78,7 +78,7 @@ export const getWriteQueue = () => {
 // middleware to cache responses
 export const checkCache = async (req: Request, res: Response, next: NextFunction) => {
     const client = getRedisClient();
-    const cacheKey = req.originalUrl;
+    const cacheKey = req.originalUrl.toLowerCase();
 
     try {
         const cachedData = await client.get(cacheKey);
@@ -96,7 +96,7 @@ export const checkCache = async (req: Request, res: Response, next: NextFunction
 export const getFromCache = async (cacheKey: string) => {
     try {
         const client = getRedisClient();
-        const cachedData = await client.get(cacheKey);
+        const cachedData = await client.get(cacheKey.toLowerCase());
         if (cachedData) {
             return JSON.parse(cachedData); // cache hit
         } else {
@@ -112,14 +112,14 @@ export const cacheResponse = async (cacheKey: string, duration: number, response
     if ((Array.isArray(response) && response.length > 0) || (typeof response === "object" && Object.keys(response).length > 0)) {
         //cache response for duration amount of time 
         const client = getRedisClient();
-        client.setex(cacheKey, duration, JSON.stringify(response));
+        client.setex(cacheKey.toLowerCase(), duration, JSON.stringify(response));
     }
 };
 
 export const deleteCacheKey = async (key: string) => {
     try {
         const client = getRedisClient();
-        await client.del(key);
+        await client.del(key.toLowerCase());
     }
     catch (error) {
         console.error("Error deleting cache key:", error);
@@ -130,7 +130,8 @@ export const deleteCacheKeys = async (keys: string[]) => {
     try {
         const client = getRedisClient();
         // delete cache for the given keys
-        await client.del(...keys);
+        const lowercaseKeys = keys.map(key => key.toLowerCase());
+        await client.del(...lowercaseKeys);
     } catch (error) {
         console.error("Error deleting cache keys:", error);
     }

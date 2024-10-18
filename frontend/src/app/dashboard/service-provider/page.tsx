@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [company, setCompany] = useState("");
   const [companypicture, setCompanypicture] = useState("");
   const [upvotedTickets, setUpvoteTickets] = useState<any[]>([]);
+  const [InitialupvotedTickets, setInitialUpvoteTickets] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function Dashboard() {
       setCompanypicture(user_pic);
       setCompany(user_company);
       setUpvoteTickets(rspmostupvotes);
+      setInitialUpvoteTickets(rspmostupvotes);
       setIsLoading(false);
     };
 
@@ -65,6 +67,49 @@ export default function Dashboard() {
 
   const toggleHelpMenu = () => {
     setIsHelpOpen(!isHelpOpen);
+  };
+
+  const handleClick = (field : String) => {
+    if(InitialupvotedTickets != null)
+    {
+      switch (field) {
+        case "Closed Tickets":
+          {
+            const filteredData = InitialupvotedTickets .filter(ticket => ticket.state == "Closed")
+            setUpvoteTickets(filteredData);
+            break;
+          }
+
+        case "Opened Tickets":
+          {
+            const filteredData = InitialupvotedTickets .filter(ticket => ticket.state == "Opened")
+            setUpvoteTickets(filteredData);
+            break;
+          }
+        case "In Progress Tickets":
+          {
+            const filteredData = InitialupvotedTickets .filter(ticket => ticket.state == "In Progress")
+            setUpvoteTickets(filteredData);
+            break;
+          }
+        case "Taking Tenders Tickets":
+          {
+            const filteredData = InitialupvotedTickets .filter(ticket => ticket.state == "Taking Tenders")
+            setUpvoteTickets(filteredData);
+            break;
+          }
+        case "Fault type":
+          {
+            break;
+          }
+        
+
+      
+        default:
+          break;
+      }
+    }
+    // Add other actions here
   };
 
   const unreadNotifications = 74;
@@ -175,24 +220,24 @@ export default function Dashboard() {
                 onClick={toggleDropdown}
                 style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
               >
-                <span>Issues ordered by:</span>
+                <span>Issues filtered by:</span>
                 <ChevronDown className="ml-2" size={16} />
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {[
-                      "Urgency",
-                      "Ticket Number",
-                      "Fault Type",
-                      "Status",
-                      "Created By",
-                      "Address",
+                      "Closed Tickets",
+                        "Opened Tickets",
+                        "In Progress Tickets",
+                        "Taking Tenders Tickets",
+                        "Fault type",
                     ].map((field) => (
                       <a
                         key={field}
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => handleClick(field)}
                       >
                         {field}
                       </a>
