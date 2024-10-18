@@ -5,6 +5,8 @@ import Image from "next/image"; // Import Image from next/image
 import Navbar from "@/components/Navbar/Navbar";
 import { getGiveawayEntries, AddEntry } from "@/services/giveaway.service"; // Import the getGiveawayEntries function from the giveaway service
 import { useProfile } from "@/hooks/useProfile";
+import confetti from "canvas-confetti"; // Import confetti
+import Countdown from "react-countdown"; // Import the Countdown component
 
 interface EntriesType {
   count: number;
@@ -20,6 +22,24 @@ export default function Giveaway() {
     phoneNumber: "",
   });
 
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null); // To handle success or failure state
+
+  const launchDivConfetti = () => {
+    const canvas = document.getElementById(
+      "confetti-canvas"
+    ) as HTMLCanvasElement;
+    const confettiInstance = confetti.create(canvas, { resize: true });
+
+    // Launch confetti in the div
+    confettiInstance({
+      particleCount: 100,
+      spread: 70,
+      startVelocity: 30,
+      gravity: 0.5,
+      colors: ["#ff0", "#0f0", "#00f", "#f00", "#ff69b4"],
+    });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -30,8 +50,13 @@ export default function Giveaway() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted", formData);
+    // Submit the entry
+    setEntry(
+      formData.ticketNumber,
+      formData.name,
+      formData.email,
+      formData.phoneNumber
+    );
   };
 
   // Fetch the number of giveaway entries
@@ -79,17 +104,73 @@ export default function Giveaway() {
       if (userSession) {
         // Check if userSession is defined
         try {
-          const response = await AddEntry(ticketNumber, name, email, phoneNumber, userSession); // Your API endpoint
-          console.log("Response:", response);
+          const response = await AddEntry(
+            ticketNumber,
+            name,
+            email,
+            phoneNumber,
+            userSession
+          ); // Your API endpoint
+          if (response) {
+            setIsSuccess(true); // Mark success
+            setFormData({
+              ticketNumber: "",
+              name: "",
+              email: "",
+              phoneNumber: "",
+            }); // Clear form
+          } else {
+            setIsSuccess(false); // Mark failure
+          }
         } catch (error) {
           console.error("Error adding entry:", error);
+          setIsSuccess(false);
         }
       } else {
         console.error("User session is undefined");
+        setIsSuccess(false);
       }
     }
 
     addEntries(ticketNumber, name, email, phoneNumber);
+  };
+
+  const [currentState, setCurrentState] = useState<"before" | "live" | "after">(
+    "before"
+  );
+
+  // Set your target start and end date/time
+  const startDateTime = new Date("2024-10-25T08:00:00");
+  const endDateTime = new Date("2024-10-25T15:00:00");
+
+  useEffect(() => {
+    const checkDate = () => {
+      const currentDate = new Date();
+
+      if (currentDate < startDateTime) {
+        setCurrentState("before"); // Show "before competition" div
+      } else if (currentDate >= startDateTime && currentDate <= endDateTime) {
+        setCurrentState("live"); // Show "competition live" div
+      } else {
+        setCurrentState("after"); // Show "competition ended" div
+      }
+    };
+
+    checkDate(); // Run the date check when the component mounts
+    const intervalId = setInterval(checkDate, 5000); // Check every second
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, [startDateTime, endDateTime]);
+
+  // Function to render the countdown clock for the "before" state
+  const renderer = ({ days, hours, minutes, seconds }: any) => {
+    return (
+      <div className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 text-center py-2 animate-pulse">
+        <span>{days}d</span> : <span>{hours}h</span> : <span>{minutes}m</span> :{" "}
+        <span>{seconds}s</span>
+      </div>
+    );
   };
 
   return (
@@ -186,7 +267,7 @@ export default function Giveaway() {
                 <h3 className="text-lg font-bold mb-3">
                   (The first 100 valid entries will receive a sticker)
                 </h3>
-                <ul className="list-disc ml-6 text-sm space-y-2">
+                <ul className="list-disc ml-6 space-y-2 text-sm">
                   <li>Step 1: Enter the Giveaway.</li>
                   <li>Step 2: Show a MyCity team member your valid entry.</li>
                   <li>
@@ -323,123 +404,182 @@ export default function Giveaway() {
               {/* Right Column: How to Enter */}
               <div className="bg-gray-700 bg-opacity-70 p-6 rounded-lg shadow-md">
                 <h2 className="text-2xl font-bold mb-4 text-center">
-                  How to Enter
-                </h2>
-                <div className="flex justify-center items-center">
-                  <div className="mb-4 w-full ">
-                    <ol className="list-decimal ml-6 space-y-4">
-                      <li>Create an account on MyCity.</li>
-                      <li>Report a fault using MyCity.</li>
-                      <li>Go to this page and enter your ticket number.</li>
-                      <li>Provide your contact information.</li>
-                    </ol>
-                    <p className="my-4 text-center text-blue-300 font-semibold">
-                      * One entry per person.
-                    </p>
-                  </div>
-                  <div className="mb-4 w-full flex justify-center items-center">
-                    <Image
-                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/giveaway.webp"
-                      alt="Giveaway"
-                      width={246}
-                      height={246}
-                      className="object-fill rounded-md mb-4"
-                    />
-                  </div>
-                </div>
-
-                <h2 className="text-2xl font-bold mb-4 text-center">
                   Submit Your Entry
                 </h2>
-                <form onSubmit={handleSubmit}>
-                  {/* Ticket Number */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="ticketNumber"
-                      className="block text-sm font-medium text-white mb-2"
-                    >
-                      Ticket Number
-                    </label>
-                    <input
-                      type="text"
-                      id="ticketNumber"
-                      name="ticketNumber"
-                      value={formData.ticketNumber}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-2 bg-gray-800 text-white rounded-lg"
-                    />
-                  </div>
 
-                  {/* Name */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-medium text-white mb-2"
-                    >
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-2 bg-gray-800 text-white rounded-lg"
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="mb-4">
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-white mb-2"
-                    >
-                      Your Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-2 bg-gray-800 text-white rounded-lg"
-                    />
-                  </div>
-
-                  {/* Phone Number */}
-                  <div className="mb-6">
-                    <label
-                      htmlFor="phoneNumber"
-                      className="block text-sm font-medium text-white mb-2"
-                    >
-                      Your Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                      required
-                      className="w-full p-2 bg-gray-800 text-white rounded-lg"
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    className="w-full p-3 bg-blue-500 text-gray-900 font-semibold rounded-lg hover:bg-blue-600 transition-colors"
-                    onClick={() => setEntry(formData.ticketNumber, formData.name, formData.email, formData.phoneNumber)}
+                {currentState === "before" && (
+                  <div
+                    id="before-div"
+                    className="flex flex-col justify-center items-center w-full"
                   >
-                    Submit Entry
-                  </button>
-                </form>
+                    {/* Content for the "before the competition" div */}
+
+                    <Image
+                      src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/giveaway-before.webp"
+                      alt="Giveaway"
+                      width={500}
+                      height={500}
+                      className="w-1/2 object-cover rounded-md mb-4"
+                    />
+
+                    {/* Countdown timer until the start of the competition */}
+                    <Countdown date={startDateTime} renderer={renderer} />
+                    <h2 className="text-2xl font-bold mb-4 text-center">
+                      The competition hasn't started yet! Stay tuned for more
+                      details.
+                    </h2>
+                  </div>
+                )}
+                {currentState === "live" && (
+                  <div id="second-div">
+                    {/* Content for the second div (shown after the target date/time) */}
+                    {/* Display form if no success yet */}
+                    {isSuccess === null && (
+                      <form onSubmit={handleSubmit}>
+                        {/* Ticket Number */}
+                        <div className="mb-4">
+                          <label
+                            htmlFor="ticketNumber"
+                            className="block text-sm font-medium text-white mb-2"
+                          >
+                            Ticket Number
+                          </label>
+                          <input
+                            type="text"
+                            id="ticketNumber"
+                            name="ticketNumber"
+                            value={formData.ticketNumber}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+                          />
+                        </div>
+                        {/* Name */}
+                        <div className="mb-4">
+                          <label
+                            htmlFor="name"
+                            className="block text-sm font-medium text-white mb-2"
+                          >
+                            Your Name
+                          </label>
+                          <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+                          />
+                        </div>
+                        {/* Email */}
+                        <div className="mb-4">
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-white mb-2"
+                          >
+                            Your Email
+                          </label>
+                          <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+                          />
+                        </div>
+                        {/* Phone Number */}
+                        <div className="mb-6">
+                          <label
+                            htmlFor="phoneNumber"
+                            className="block text-sm font-medium text-white mb-2"
+                          >
+                            Your Phone Number
+                          </label>
+                          <input
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+                          />
+                        </div>
+                        {/* Submit Button */}
+                        <button
+                          type="submit"
+                          className="w-full p-3 bg-blue-500 text-gray-900 font-semibold rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                          Submit Entry
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                )}
+
+                {currentState === "after" && (
+                  <div id="after-div">
+                    {/* Content for the "after the competition" div */}
+                    <h2>
+                      The competition has ended! Thank you for participating.
+                    </h2>
+                  </div>
+                )}
+
+                {/* Show message after successful entry */}
+                {isSuccess === true &&
+                  (launchDivConfetti(),
+                  (
+                    <div
+                      id="confetti-container"
+                      style={{ position: "relative" }}
+                      className="bg-gray-700 bg-opacity-70 p-6 rounded-lg shadow-md border h-full"
+                    >
+                      {/* <div className="bg-gray-700 bg-opacity-70 p-6 rounded-lg shadow-md"> */}
+                      <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 text-center py-2 animate-pulse">
+                        You have successfully entered the giveaway!
+                      </h2>
+
+                      <Image
+                        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/giveaway/Sticker.webp"
+                        alt="Middle Prize"
+                        width={500}
+                        height={500}
+                        className="w-full object-cover rounded-md mb-4"
+                      />
+
+                      <h2 className="text-xl font-bold mb-4 text-center">
+                        Show this confirmation to a MyCity team member to
+                        receive your Sticker!
+                      </h2>
+
+                      <h2 className="text-2xl font-bold mb-4 text-center">
+                        Only one entry per person is allowed.
+                      </h2>
+                      {/* </div> */}
+                      {/* </canvas> */}
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
+          {isSuccess === false && (
+            <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                <h2 className="text-lg font-bold mb-4">Error</h2>
+                <p>There was a problem adding your entry. Please try again.</p>
+                <button
+                  onClick={() => setIsSuccess(null)}
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
