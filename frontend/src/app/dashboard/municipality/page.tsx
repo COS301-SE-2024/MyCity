@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [tableLoading, setTableLoading] = useState(true);
   const userProfile = useProfile();
   const [dashMuniResults, setDashMuniResults] = useState<any[]>([]);
+  const [initialdashMuniResults, setInitialDashMuniResults] = useState<any[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
 
@@ -101,8 +102,8 @@ export default function Dashboard() {
       user_municipality,
       user_session,
     );
-    console.log(rspmunicipality)
     setDashMuniResults(rspmunicipality.items);
+    setInitialDashMuniResults(rspmunicipality.items)
     setTableLoading(false);
   };
 
@@ -120,6 +121,7 @@ export default function Dashboard() {
     );
     console.log(rspmunicipality.items)
     setDashMuniResults(rspmunicipality.items);
+    setInitialDashMuniResults(rspmunicipality.items)
     setTableLoading(false);
   }, [userProfile]);
 
@@ -143,6 +145,49 @@ export default function Dashboard() {
   useEffect(()=>{
     CheckRightUser();
   })
+
+  const handleClick = (field : String) => {
+    if(initialdashMuniResults != null)
+    {
+      switch (field) {
+        case "Closed Tickets":
+          {
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "Closed")
+            setDashMuniResults(filteredData);
+            break;
+          }
+
+        case "Opened Tickets":
+          {
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "Opened")
+            setDashMuniResults(filteredData);
+            break;
+          }
+        case "In Progress Tickets":
+          {
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "In Progress")
+            setDashMuniResults(filteredData);
+            break;
+          }
+        case "Taking Tenders Tickets":
+          {
+            const filteredData = initialdashMuniResults.filter(ticket => ticket.state == "Taking Tenders")
+            setDashMuniResults(filteredData);
+            break;
+          }
+        case "Fault type":
+          {
+            break;
+          }
+        
+
+      
+        default:
+          break;
+      }
+    }
+    // Add other actions here
+  };
 
   const unreadNotifications = 99;
 
@@ -250,24 +295,24 @@ export default function Dashboard() {
                   onClick={toggleDropdown}
                   style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
                 >
-                  <span>Issues ordered by:</span>
+                  <span>Issues filtered by:</span>
                   <ChevronDown className="ml-2" size={16} />
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
                       {[
-                        "Urgency",
-                        "Ticket Number",
-                        "Fault Type",
-                        "Status",
-                        "Created By",
-                        "Address",
+                        "Closed Tickets",
+                        "Opened Tickets",
+                        "In Progress Tickets",
+                        "Taking Tenders Tickets",
+                        "Fault type",
                       ].map((field) => (
                         <a
                           key={field}
                           href="#"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => handleClick(field)}
                         >
                           {field}
                         </a>
@@ -377,7 +422,6 @@ export default function Dashboard() {
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {[
-                      "Urgency",
                       "Ticket Number",
                       "Fault Type",
                       "Status",
@@ -388,6 +432,7 @@ export default function Dashboard() {
                         key={field}
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => handleClick(field)}
                       >
                         {field}
                       </a>
