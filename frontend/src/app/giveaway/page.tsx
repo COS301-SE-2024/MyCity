@@ -444,43 +444,198 @@ export default function Giveaway() {
       </div>
 
       {/* Mobile View */}
-      <div className="block sm:hidden">
-        <Navbar showLogin={true} />
+      {/* Mobile View */}
+<div className="block sm:hidden">
+  <Navbar showLogin={true} />
 
-        {/* Background Image */}
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundImage:
-              'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundAttachment: "fixed",
-            zIndex: -11,
-          }}
-        ></div>
+  {/* Background Image */}
+  <div
+    style={{
+      position: "fixed", // Changed from absolute to fixed to start the background from the top
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundImage:
+        'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/Johannesburg-Skyline.webp")',
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      zIndex: -1, // Ensure the background stays behind the content
+    }}
+  ></div>
 
-        <main className="relative z-[-10] p-4">
-          <div className="text-white text-opacity-80 font-bold transform hover:scale-110 transition-transform duration-300 flex justify-center">
-            <Image
-              src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
-              alt="MyCity"
-              width={256}
-              height={256}
-            />
-          </div>
+  <main className="relative z-10 p-4">
+    {/* Smaller MyCity Logo */}
+    <div className="text-white text-opacity-80 font-bold flex justify-center mb-2">
+      <Image
+        src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/resources/MyCity-Logo-256.webp"
+        alt="MyCity"
+        width={120} // Reduced width
+        height={120} // Reduced height
+      />
+    </div>
 
-          {/* Page Title */}
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 text-center mt-10 mb-8">
-            Giveaway!
-          </h1>
-        </main>
+    {/* Page Title */}
+    <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 text-center mb-4">
+      Giveaway!
+    </h1>
+
+    {/* Giveaway Summary (Short version) */}
+    <div className="text-white text-opacity-90 space-y-4 mb-4">
+      <p className="text-sm">
+        Enter the MyCity giveaway for a chance to win amazing prizes like a branded umbrella, a Pelican Micro Case, and a MyCity logo sticker for the first 100 entries.
+      </p>
+      <ul className="list-disc ml-4 text-sm">
+        <li>Main prize: Pelican™ Micro Case (Valued at over R1000)</li>
+        <li>12x Branded Golf Umbrellas (Valued at over R200)</li>
+        <li>Sticker for first 100 entries</li>
+      </ul>
+    </div>
+
+    {/* Prize Information */}
+    <div className="text-white text-opacity-90 space-y-6">
+      {/* Main Prize */}
+      <div className="bg-gray-800 bg-opacity-70 p-4 rounded-lg shadow-lg">
+        <Image
+          src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/giveaway/Pelican-1030.webp"
+          alt="Main Prize"
+          width={300}
+          height={300}
+          className="w-full object-cover rounded-md mb-4"
+        />
+        <h3 className="text-lg font-bold">Pelican™ 1030 Micro Case</h3>
+        <h3 className="text-md font-bold mb-3">(1x Valued at over R1000)</h3>
       </div>
+
+      {/* Middle Prize */}
+      <div className="bg-gray-800 bg-opacity-70 p-4 rounded-lg shadow-lg">
+        <Image
+          src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/giveaway/Umbrella.webp"
+          alt="Middle Prize"
+          width={300}
+          height={300}
+          className="w-full object-cover rounded-md mb-4"
+        />
+        <h3 className="text-lg font-bold">DPG Branded Golf Umbrella</h3>
+        <h3 className="text-md font-bold mb-3">(12x Valued at over R200)</h3>
+      </div>
+
+      {/* Final Prize */}
+      <div className="bg-gray-800 bg-opacity-70 p-4 rounded-lg shadow-lg">
+        <Image
+          src="https://mycity-storage-bucket.s3.eu-west-1.amazonaws.com/giveaway/Sticker.webp"
+          alt="Final Prize"
+          width={300}
+          height={300}
+          className="w-full object-cover rounded-md mb-4"
+        />
+        <h3 className="text-lg font-bold">MyCity Logo Sticker</h3>
+        <h3 className="text-md font-bold mb-3">(First 100 entries)</h3>
+      </div>
+    </div>
+
+    {/* Entry Form Section */}
+    <div className="bg-gray-700 bg-opacity-70 p-6 rounded-lg shadow-md mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-white text-center">Submit Your Entry</h2>
+
+      <form onSubmit={handleSubmit}>
+        {/* Ticket Number */}
+        <div className="mb-4">
+          <label
+            htmlFor="ticketNumber"
+            className="block text-sm font-medium text-white mb-2"
+          >
+            Ticket Number
+          </label>
+          <input
+            type="text"
+            id="ticketNumber"
+            name="ticketNumber"
+            value={formData.ticketNumber}
+            onChange={handleChange}
+            required
+            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+          />
+        </div>
+
+        {/* Name */}
+        <div className="mb-4">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-white mb-2"
+          >
+            Your Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-white mb-2"
+          >
+            Your Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+          />
+        </div>
+
+        {/* Phone Number */}
+        <div className="mb-4">
+          <label
+            htmlFor="phoneNumber"
+            className="block text-sm font-medium text-white mb-2"
+          >
+            Your Phone Number
+          </label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            required
+            className="w-full p-2 bg-gray-800 text-white rounded-lg"
+          />
+        </div>
+
+        {/* Submit Button with Padding */}
+        <button
+          type="submit"
+          className="w-full p-3 bg-blue-500 text-gray-900 font-semibold rounded-lg hover:bg-blue-600 transition-colors mb-16" // Added bottom margin for padding
+          onClick={() =>
+            setEntry(
+              formData.ticketNumber,
+              formData.name,
+              formData.email,
+              formData.phoneNumber
+            )
+          }
+        >
+          Submit Entry
+        </button>
+      </form>
+    </div>
+  </main>
+</div>
+
     </div>
   );
 }
