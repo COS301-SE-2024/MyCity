@@ -144,6 +144,52 @@ export default function Dashboard() {
     CheckRightUser();
   })
 
+  const handleClick = (field : String) => {
+   
+    if(dashMuniResults != null)
+    {
+      switch (field) {
+        case "Ticket Number":
+          {
+            const sortedData = [... dashMuniResults].sort((a, b) => a.ticketnumber.localeCompare(b.ticketnumber))
+            setDashMuniResults(sortedData);
+            break;
+          }
+
+        case "Fault Type":
+          {
+            const sortedData = [... dashMuniResults].sort((a, b) => a.asset_id.localeCompare(b.asset_id))
+            setDashMuniResults(sortedData);
+            break;
+          }
+        case "Status":
+          {
+            const sortedData = [... dashMuniResults].sort((a, b) => a.state.localeCompare(b.state))
+            setDashMuniResults(sortedData);
+            break;
+          }
+        case "Address":
+          {
+            const sortedData = [... dashMuniResults].sort((a, b) => a.address.localeCompare(b.address))
+            setDashMuniResults(sortedData);
+            break;
+          }
+        case "Created By":
+          {
+            const sortedData = [... dashMuniResults].sort((a, b) => a.createdby.localeCompare(b.createdby))
+            setDashMuniResults(sortedData);
+            break;
+          }
+        
+
+      
+        default:
+          break;
+      }
+    }
+    // Add other actions here
+  };
+
   const unreadNotifications = 99;
 
   return (
@@ -257,7 +303,6 @@ export default function Dashboard() {
                   <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
                       {[
-                        "Urgency",
                         "Ticket Number",
                         "Fault Type",
                         "Status",
@@ -268,6 +313,7 @@ export default function Dashboard() {
                           key={field}
                           href="#"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => handleClick(field)}
                         >
                           {field}
                         </a>
@@ -377,7 +423,6 @@ export default function Dashboard() {
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {[
-                      "Urgency",
                       "Ticket Number",
                       "Fault Type",
                       "Status",
@@ -388,6 +433,7 @@ export default function Dashboard() {
                         key={field}
                         href="#"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={() => handleClick(field)}
                       >
                         {field}
                       </a>
