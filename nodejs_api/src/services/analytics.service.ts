@@ -23,6 +23,7 @@ export const getTicketsPerMunicipality = async (municipalityId: string) => {
     const statistics = response.Items || [];
     return statistics;
 };
+
 export const getContractsPerServiceProvider = async (serviceProvider: string) => {
     const params: QueryCommandInput = {
         TableName: CONTRACTS_PER_SERVICE_PROVIDER_TABLE,
