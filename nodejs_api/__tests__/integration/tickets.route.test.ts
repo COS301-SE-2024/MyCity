@@ -2,10 +2,18 @@ import request from "supertest";
 import { app } from "../../app";
 import * as ticketsService from "../../src/services/tickets.service";
 
+jest.mock("../../src/services/tickets.service");
+
 describe("Integration Tests - /tickets", () => {
 
     describe("GET /tickets/fault-types", () => {
         test("should return fault types", async () => {
+            const mockResponse = [
+                { asset_id: "asset123", assetIcon: "icon123", multiplier: 1.5 },
+                { asset_id: "asset456", assetIcon: "icon456", multiplier: 2.0 },
+            ];
+            jest.spyOn(ticketsService, "getFaultTypes").mockResolvedValue(mockResponse);
+
             const response = await request(app).get("/tickets/fault-types");
             expect(response.statusCode).toBe(200);
             expect(response.body).toEqual(
@@ -86,7 +94,6 @@ describe("Integration Tests - /tickets", () => {
                 .send(validFormData);
 
             expect(response.statusCode).toBe(500);
-
             expect(response.body).toEqual({ Error: "Internal Server Error" });
         });
 
@@ -451,7 +458,7 @@ describe("Integration Tests - /tickets", () => {
 
             expect(response.body).toEqual(mockResponse);
 
-            expect(ticketsService.getInMyMunicipality).toHaveBeenCalledWith("municipality_1");
+            expect(ticketsService.getInMyMunicipality).toHaveBeenCalledWith("municipality_1", undefined);
         });
 
         test("should return 400 if municipality is missing", async () => {
@@ -552,7 +559,7 @@ describe("Integration Tests - /tickets", () => {
 
             expect(response.body).toEqual(mockResponse);
 
-            expect(ticketsService.getWatchlist).toHaveBeenCalledWith("user_1");
+            expect(ticketsService.getWatchlist).toHaveBeenCalledWith("user_1", undefined);
         });
 
         test("should return 400 if username is missing", async () => {

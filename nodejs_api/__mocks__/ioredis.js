@@ -8,6 +8,7 @@ const Redis = jest.fn(() => ({
     get: jest.fn().mockResolvedValue(null),
     del: jest.fn().mockResolvedValue(1),
     quit: jest.fn().mockResolvedValue("OK"),
+    flushall: jest.fn().mockResolvedValue("OK"),
 }));
 
 module.exports = Redis;

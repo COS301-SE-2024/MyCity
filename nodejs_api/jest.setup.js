@@ -1,8 +1,3 @@
-const dotenv = require("dotenv");
-const { finished } = require("stream");
-
-dotenv.config();
-
 jest.mock("./src/services/jobs.service", () => ({
     addJobToReadQueue: jest.fn(() => {
         return {
@@ -12,3 +7,4 @@ jest.mock("./src/services/jobs.service", () => ({
     addJobToWriteQueue: jest.fn(),
 }));
 
+jest.mock("bull");
