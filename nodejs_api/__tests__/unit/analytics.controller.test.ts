@@ -8,7 +8,7 @@ describe("Analytics Controller", () => {
     let req: Partial<Request>;
     let res: Partial<Response>;
 
-    beforeEach(() => {
+    beforeAll(() => {
         req = {};
         res = {
             status: jest.fn().mockReturnThis(),
@@ -17,6 +17,10 @@ describe("Analytics Controller", () => {
     });
 
     describe("getTicketsPerMunicipality", () => {
+        beforeEach(() => {
+            req.originalUrl = "/analytics/tickets_per_municipality";
+        });
+
         test("should return 400 if municipality_id is missing", async () => {
             req.query = {}; // No municipality_id
 
@@ -50,6 +54,10 @@ describe("Analytics Controller", () => {
     });
 
     describe("getContractsPerServiceProvider", () => {
+        beforeEach(() => {
+            req.originalUrl = "/analytics/contracts_per_service_provider";
+        });
+
         test("should return 400 if service_provider is missing", async () => {
             req.query = {}; // No service_provider
 
@@ -83,6 +91,10 @@ describe("Analytics Controller", () => {
     });
 
     describe("getTendersPerServiceProvider", () => {
+        beforeEach(() => {
+            req.originalUrl = "/analytics/tenders_per_service_provider";
+        });
+
         test("should return 400 if service_provider is missing", async () => {
             req.query = {}; // No service_provider
 

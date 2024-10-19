@@ -11,7 +11,7 @@ describe("Searching Controller", () => {
     let jsonMock: jest.Mock;
     let statusMock: jest.Mock;
 
-    beforeEach(() => {
+    beforeAll(() => {
         // Reset mocks before each test
         jsonMock = jest.fn();
         statusMock = jest.fn().mockReturnThis(); // Allows chaining `.json`
@@ -24,6 +24,10 @@ describe("Searching Controller", () => {
     });
 
     describe("searchTickets", () => {
+        beforeEach(() => {
+            req.originalUrl = "/search/issues";
+        });
+
         it("should return 400 if q or user_municipality are missing", async () => {
             req = { query: {}, body: {} };
             await searchingController.searchTickets(req as Request, res as Response);
@@ -63,6 +67,11 @@ describe("Searching Controller", () => {
     });
 
     describe("searchMunicipalities", () => {
+        beforeEach(() => {
+            req.originalUrl = "/search/municipality";
+        });
+
+
         it("should return 400 if q is missing", async () => {
             req = { query: {} };
             await searchingController.searchMunicipalities(req as Request, res as Response);
@@ -97,6 +106,10 @@ describe("Searching Controller", () => {
     });
 
     describe("searchMunicipalityTickets", () => {
+        beforeEach(() => {
+            req.originalUrl = "/search/municipality-tickets";
+        });
+
         it("should return 400 if q is missing", async () => {
             req = { query: {} };
             await searchingController.searchMunicipalityTickets(req as Request, res as Response);
@@ -137,6 +150,10 @@ describe("Searching Controller", () => {
     });
 
     describe("searchServiceProviders", () => {
+        beforeEach(() => {
+            req.originalUrl = "/search/service-provider";
+        });
+
         it("should return 400 if q is missing", async () => {
             req = { query: {} };
             await searchingController.searchServiceProviders(req as Request, res as Response);
