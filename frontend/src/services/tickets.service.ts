@@ -467,14 +467,14 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
     }
 }
 
-export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, dateCreated: Date, user_role: UserRole, user_session: string,) {
+export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, dateCreated: string, user_role: UserRole, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-without-image";
         const data = {
             comment: comment,
             ticket_id: ticket_id,
             user_id: user_id,
-            date_created: dateCreated.toISOString(),
+            date_created: dateCreated,
             user_role: String(user_role)
         };
 
