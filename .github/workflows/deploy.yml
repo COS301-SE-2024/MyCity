@@ -7,7 +7,7 @@ on:
     branches: [main, development]
 
 jobs:
-  deployPythonAPI:
+  DeployPythonAPI:
     runs-on: ubuntu-latest
 
     steps:
@@ -91,7 +91,7 @@ jobs:
       run: python update_api_gateway.py
 
 
-  deployNodejsAPI:
+  DeployNodejsAPI:
     runs-on: ubuntu-latest
 
     steps:
@@ -614,6 +614,7 @@ jobs:
         else
           echo "No deployment for this branch"
           exit 0
+        fi
 
     - name: Deploy Serverless Express App
       working-directory: nodejs_api
