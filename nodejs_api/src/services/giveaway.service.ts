@@ -2,7 +2,7 @@ import { PutCommandInput, PutCommandOutput, QueryCommandInput, QueryCommandOutpu
 import { GIVEAWAY_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
-import { DB_PUT, DB_QUERY, DB_SCAN } from "../config/redis.config";
+import { DB_PUT, DB_QUERY, DB_SCAN, deleteCacheKey } from "../config/redis.config";
 import { CustomError } from "../errors/CustomError";
 
 export const getParticipantCount = async () => {
@@ -25,6 +25,8 @@ export const getParticipantCount = async () => {
 };
 
 export const addParticipant = async (formData: any) => {
+    await deleteCacheKey("/giveaway/participant/count");
+
     // verify that provided ticketNumber exists
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,

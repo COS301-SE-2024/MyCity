@@ -27,6 +27,7 @@ interface AcceptOrRejectTenderData {
 
 export const createTender = async (senderData: TenderData) => {
     await deleteAllCache();
+    
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
         throw new BadRequestError("Company Does not Exist");

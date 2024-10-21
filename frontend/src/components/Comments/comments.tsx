@@ -9,6 +9,7 @@ import {
   getTicketComments,
   getUserFirstLastName,
 } from '@/services/tickets.service';
+import { UserRole } from '@/types/custom.types';
 
 interface CommentsProps {
   onBack: () => void;
@@ -28,24 +29,7 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
       const userSession = String(user_data.current?.session_token);
       const commentsData = await getTicketComments(ticketId, userSession);
 
-      const userPoolId = process.env.USER_POOL_ID;
-      if (!userPoolId) {
-        throw new Error("USER_POOL_ID is not defined");
-      }
-
-      const enrichedComments = await Promise.allSettled(commentsData.map(async (comment: any) => {
-        const userAttributes = await getUserFirstLastName(comment.user_id, userPoolId);
-        return {
-          ...comment,
-          userName: `${userAttributes?.given_name} ${userAttributes?.family_name}`,
-          userImage: userAttributes?.picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
-          time: new Date(comment.date)
-        };
-      }));
-
-      const fulfilledComments = enrichedComments.filter((comment: any) => comment.status === "fulfilled").map((comment: any) => comment.value);
-
-      setComments(fulfilledComments);
+      setComments(commentsData);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -65,15 +49,18 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         const user_picture = String(user_data.current?.picture);
         const userSession = String(user_data.current?.session_token);
         const user_email = String(user_data.current?.email);
+        const userRole = user_data.current?.user_role || UserRole.CITIZEN; // default to citizen if user_role is not set
+
+        const dateCommentCreated = new Date();
 
         const newCommentData = {
           userName,
-          userImage: user_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
-          time: new Date(),
+          userImage: user_picture || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+          time: dateCommentCreated,
           commentText: newComment,
         };
 
-        await addCommentWithoutImage(newCommentData.commentText, ticketId, user_email, userSession);
+        await addCommentWithoutImage(newCommentData.commentText, ticketId, user_email, dateCommentCreated, userRole, userSession);
 
         setComments([...comments, newCommentData]);
         setNewComment('');
@@ -100,8 +87,8 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
       key={index}
       userName={comment.userName}
       userImage={comment.userImage}
-      time={new Date(comment.time)}
-      commentText={comment.commentText} // Use commentText to ensure the actual comment is displayed
+      time={new Date(comment.date)}
+      commentText={comment.comment} // Use commentText to ensure the actual comment is displayed
     />
   ))
 ) : (
