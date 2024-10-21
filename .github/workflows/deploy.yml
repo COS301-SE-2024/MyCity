@@ -121,464 +121,43 @@ jobs:
           timeout: 30
           vpc:
             securityGroupIds:
-              - ${{ secrets.VPC_SECURITY_GROUP_ID }}
+              - "${{ secrets.VPC_SECURITY_GROUP_ID }}"
             subnetIds:
-              - ${{ secrets.VPC_SUBNET_ID }}
+              - "${{ secrets.VPC_SUBNET_ID }}"
           stage: ${opt:stage, 'dev'}
-          region: ${{ secrets.AWS_REGION }}
+          region: "${{ secrets.AWS_REGION }}"
           deploymentBucket:
             name: ${self:custom.deploymentBuckets.${self:provider.stage}}
           iam:
             role: ${self:custom.lambdaFunctionRoleARNS.${self:provider.stage}}
           environment:
             API_ENV: ${self:provider.stage}
-            USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
-            USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
-            S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-            REDIS_HOST: ${{ secrets.REDIS_HOST }}
-            REDIS_PORT: ${{ secrets.REDIS_PORT }}
-            WEB_SOCKET_URL: ${{ secrets.WEB_SOCKET_URL }}
+            USER_POOL_ARN: "${{ secrets.USER_POOL_ARN }}"
+            USER_POOL_ID: "${{ secrets.USER_POOL_ID }}"
+            S3_BUCKET_NAME: "${{ secrets.S3_BUCKET_NAME }}"
+            REDIS_HOST: "${{ secrets.REDIS_HOST }}"
+            REDIS_PORT: "${{ secrets.REDIS_PORT }}"
+            WEB_SOCKET_URL: "${{ secrets.WEB_SOCKET_URL }}"
         functions:
           app:
             handler: dist/app.handler
             events:
-                
-                ######################  search endpoint  ####################
-                - http:
-                    method: get
-                    path: /search/issues
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /search/municipality
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /search/municipality-tickets
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /search/service-provider
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                ######################  tickets endpoint  ####################
-                - http:
-                    method: post
-                    path: /tickets/create
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tickets/addwatchlist
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tickets/accept
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tickets/close
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tickets/interact
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tickets/add-comment-with-image
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tickets/add-comment-without-image
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
 
                 - http:
                     method: get
                     path: /tickets/fault-types
 
-                - http:
-                    method: get
-                    path: /tickets/getmytickets
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/getinarea
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/getopeninarea
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/getwatchlist
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/view
-
-                - http:
-                    method: get
-                    path: /tickets/getUpvotes
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/getcompanytickets
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/getopencompanytickets
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-                - http:
-                    method: get
-                    path: /tickets/comments
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tickets/geodata/all
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                ######################  tenders endpoint  ####################
-                - http:
-                    method: post
-                    path: /tenders/create
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tenders/in-review
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tenders/accept
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-                - http:
-                    method: post
-                    path: /tenders/reject
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tenders/completed
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /tenders/terminate
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-                - http:
-                    method: post
-                    path: /tenders/done
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/didbid
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getmytenders
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getmunitenders
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getmunicipalitytenders
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getcontracts
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getmunicontract
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getcompanycontracts
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /tenders/getcompanycontractbyticket
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                ################## analytics endpoint  ########################
-                - http:
-                    method: get
-                    path: /analytics/tickets_per_municipality
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /analytics/contracts_per_service_provider
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /analytics/tenders_per_service_provider
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                ################  municipalities endpoint  ##############
-                - http:
-                    method: get
-                    path: /municipality/municipalities-list
-
-                - http:
-                    method: get
-                    path: /municipality/coordinates
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                ###############  notifications endpoint  ##################
-                - http:
-                    method: post
-                    path: /notifications/insert-tokens
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: get
-                    path: /notifications/get-tokens
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                ##############  users endpoint  ##############
-                - http:
-                    method: post
-                    path: /users/profile-picture/upload
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                #############  jobs endpoint  ###########
-                - http:
-                    method: get
-                    path: /jobs/job-status/:type/:id
-
-                - http:
-                    method: get
-                    path: /jobs/cache/delete-key
-
-                - http:
-                    method: get
-                    path: /jobs/cache/delete-all
-
-                #############  giveaway endpoint  ###########
-                - http:
-                    method: get
-                    path: /giveaway/participant/count
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
-
-                - http:
-                    method: post
-                    path: /giveaway/participant/add
-                    cors: true
-                    authorizer:
-                        type: COGNITO_USER_POOLS
-                        authorizerId:
-                        Ref: ApiGatewayAuthorizer
 
         custom:
           lambdaFunctionRoleARNS:
-            dev: ${{ secrets.NODEJS_LAMBDA_ROLE_DEV }}
-            prod: ${{ secrets.NODEJS_LAMBDA_ROLE_PROD }}
+            dev: "${{ secrets.NODEJS_LAMBDA_ROLE_DEV }}"
+            prod: "${{ secrets.NODEJS_LAMBDA_ROLE_PROD }}"
           lambdaFunctionNames:
             dev: mycity-nodejs-api-dev
             prod: mycity-nodejs-api-prod
           deploymentBuckets:
-            dev: ${{ secrets.NODEJS_DEPLOYMENT_BUCKET_DEV }}
-            prod: ${{ secrets.NODEJS_DEPLOYMENT_BUCKET_PROD }}
+            dev: "${{ secrets.NODEJS_DEPLOYMENT_BUCKET_DEV }}"
+            prod: "${{ secrets.NODEJS_DEPLOYMENT_BUCKET_PROD }}"
         resources:
           Resources:
             ApiGatewayRestApi:
@@ -588,28 +167,28 @@ jobs:
             ApiGatewayAuthorizer:
               Type: AWS::ApiGateway::Authorizer
               Properties:
-                Name: ${{ secrets.NODEJS_AUTHORIZER_NAME }}
+                Name: "${{ secrets.NODEJS_AUTHORIZER_NAME }}"
                 Type: COGNITO_USER_POOLS
                 RestApiId:
                   Ref: ApiGatewayRestApi
                 IdentitySource: method.request.header.Authorization
                 ProviderARNs:
-                  - ${{ secrets.USER_POOL_ARN }}
+                  - "${{ secrets.USER_POOL_ARN }}"
         EOF
 
     - name: Set Up AWS CLI
       working-directory: nodejs_api
       run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set default.region ${{ secrets.AWS_REGION }}
+        aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+        aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        aws configure set default.region "${{ secrets.AWS_REGION }}"
 
     - name: Set Nodejs Stage Name
       working-directory: nodejs_api
       run: |
-        if [ "${{ github.base_ref }}" == 'main' ]; then
+        if [ ${{ github.base_ref }} == 'main' ]; then
           echo "STAGE=prod" >> $GITHUB_ENV
-        elif [ "${{ github.base_ref }}" == 'development' ]; then
+        elif [ ${{ github.base_ref }} == 'development' ]; then
           echo "STAGE=dev" >> $GITHUB_ENV
         else
           echo "No deployment for this branch"
@@ -619,6 +198,6 @@ jobs:
     - name: Deploy Serverless Express App
       working-directory: nodejs_api
       env:
-        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}  # Using the Serverless Access Key
+        SERVERLESS_ACCESS_KEY: "${{ secrets.SERVERLESS_ACCESS_KEY }}"  # Using the Serverless Access Key
       run: |
-        npm run deploy -- --stage ${{ env.STAGE }}
+        npm run deploy -- --stage "${{ env.STAGE }}"
