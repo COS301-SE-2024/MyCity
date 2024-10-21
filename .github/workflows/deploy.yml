@@ -108,6 +108,26 @@ jobs:
       run: |
         npm ci
 
+    - name: Set Nodejs Stage Variable
+      working-directory: nodejs_api
+      run: |
+        if [ ${{ github.base_ref }} == 'main' ]; then
+          echo "STAGE=prod" >> $GITHUB_ENV
+          echo "TARGET_DEPLOYMENT_BUCKET=${{ secrets.NODEJS_DEPLOYMENT_BUCKET_PROD }}" >> $GITHUB_ENV
+          echo "TARGET_LAMBDA_ROLE=${{ secrets.NODEJS_LAMBDA_ROLE_PROD }}" >> $GITHUB_ENV
+          echo "TARGET_FUNCTION_NAME=mycity-nodejs-api-prod" >> $GITHUB_ENV
+          echo "TARGET_API_GATEWAY_NAME=mycity-nodejs-api-prod" >> $GITHUB_ENV
+        elif [ ${{ github.base_ref }} == 'development' ]; then
+          echo "STAGE=dev" >> $GITHUB_ENV
+          echo "TARGET_DEPLOYMENT_BUCKET=${{ secrets.NODEJS_DEPLOYMENT_BUCKET_DEV }}" >> $GITHUB_ENV
+          echo "TARGET_LAMBDA_ROLE=${{ secrets.NODEJS_LAMBDA_ROLE_DEV }}" >> $GITHUB_ENV
+          echo "TARGET_FUNCTION_NAME=mycity-nodejs-api-dev" >> $GITHUB_ENV
+          echo "TARGET_API_GATEWAY_NAME=mycity-nodejs-api-dev" >> $GITHUB_ENV
+        else
+          echo "No deployment for this branch"
+          exit 0
+        fi
+
     - name: Generate serverless.yml
       working-directory: nodejs_api
       run: |
@@ -126,14 +146,13 @@ jobs:
               - ${{ secrets.VPC_SECURITY_GROUP_ID }}
             subnetIds:
               - ${{ secrets.VPC_SUBNET_ID }}
-          stage: ${opt:stage, 'dev'}  # default to 'dev' if no stage is specified
           region: ${{ secrets.AWS_REGION }}
           deploymentBucket:
-            name: ${self:custom.deploymentBuckets.${self:provider.stage}}
+            name: ${{ env.TARGET_DEPLOYMENT_BUCKET }}
           iam:
-            role: ${self:custom.lambdaFunctionRoleARNS.${self:provider.stage}}
+            role: ${{ env.TARGET_LAMBDA_ROLE }}
           environment:
-            API_ENV: ${self:provider.stage}
+            API_ENV: ${{ env.STAGE }}
             USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
             USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
             S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
@@ -142,7 +161,7 @@ jobs:
             WEB_SOCKET_URL: ${{ secrets.WEB_SOCKET_URL }}
         functions:
           app:
-            name: ${self:custom.lambdaFunctionNames.${self:provider.stage}}
+            name: ${{ env.TARGET_FUNCTION_NAME }}
             handler: dist/app.handler
             events:
 
@@ -572,29 +591,12 @@ jobs:
                     authorizerId:
                       Ref: ApiGatewayAuthorizer
 
-        custom:
-          lambdaFunctionRoleARNS:
-            dev: ${{ secrets.NODEJS_LAMBDA_ROLE_DEV }}
-            prod: ${{ secrets.NODEJS_LAMBDA_ROLE_PROD }}
-
-          lambdaFunctionNames:
-            dev: mycity-nodejs-api-dev
-            prod: mycity-nodejs-api-prod
-
-          deploymentBuckets:
-            dev: ${{ secrets.NODEJS_DEPLOYMENT_BUCKET_DEV }}
-            prod: ${{ secrets.NODEJS_DEPLOYMENT_BUCKET_PROD }}
-
-          apiGatewayNames:
-            dev: mycity-nodejs-api-dev
-            prod: mycity-nodejs-api-prod
-
         resources:
           Resources:
             ApiGatewayRestApi:
               Type: AWS::ApiGateway::RestApi
               Properties:
-                Name: ${self:custom.apiGatewayNames.${self:provider.stage}}
+                Name: ${{ env.TARGET_API_GATEWAY_NAME }}
 
             ApiGatewayAuthorizer:
               Type: AWS::ApiGateway::Authorizer
@@ -605,7 +607,7 @@ jobs:
                   Ref: ApiGatewayRestApi
                 IdentitySource: method.request.header.Authorization
                 ProviderARNs:
-                  - ${self:provider.environment.USER_POOL_ARN}
+                  - ${{ secrets.USER_POOL_ARN }}
         EOF
 
     - name: Set Up AWS CLI
@@ -615,18 +617,6 @@ jobs:
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region ${{ secrets.AWS_REGION }}
-
-    - name: Set Nodejs Stage Name
-      working-directory: nodejs_api
-      run: |
-        if [ ${{ github.base_ref }} == 'main' ]; then
-          echo "STAGE=prod" >> $GITHUB_ENV
-        elif [ ${{ github.base_ref }} == 'development' ]; then
-          echo "STAGE=dev" >> $GITHUB_ENV
-        else
-          echo "No deployment for this branch"
-          exit 0
-        fi
 
     - name: Deploy Serverless Express App
       working-directory: nodejs_api
