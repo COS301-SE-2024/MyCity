@@ -8,7 +8,7 @@ describe("Municipalities Controller", () => {
     let req: Partial<Request>;
     let res: Partial<Response>;
 
-    beforeEach(() => {
+    beforeAll(() => {
         req = {};
         res = {
             status: jest.fn().mockReturnThis(),
@@ -17,6 +17,10 @@ describe("Municipalities Controller", () => {
     });
 
     describe("getAllMunicipalitiesList", () => {
+        beforeEach(() => {
+            req.originalUrl = "/municipality/municipalities-list";
+        });
+
         test("should return 200 and the municipalities list on success", async () => {
             const mockResponse = [{ id: 1, name: "Municipality A" }, { id: 2, name: "Municipality B" }];
             (municipalitiesService.getAllMunicipalities as jest.Mock).mockResolvedValue(mockResponse);
@@ -39,6 +43,10 @@ describe("Municipalities Controller", () => {
     });
 
     describe("getMunicipalityCoordinates", () => {
+        beforeEach(() => {
+            req.originalUrl = "/municipality/coordinates";
+        });
+
         test("should return 400 if municipality is missing", async () => {
             req.query = {}; // No municipality
 

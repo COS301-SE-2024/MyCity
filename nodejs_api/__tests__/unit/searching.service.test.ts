@@ -1,13 +1,8 @@
 import * as searchingService from "../../src/services/searching.service";
-import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
 import { BadRequestError } from "../../src/types/error.types";
-import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { addJobToReadQueue } from "../../src/services/jobs.service";
 
-jest.mock("../../src/config/dynamodb.config", () => ({
-    dynamoDBDocumentClient: {
-        send: jest.fn(),
-    },
-}));
+
 
 describe("Searching Service Tests", () => {
     afterEach(() => {
@@ -24,11 +19,11 @@ describe("Searching Service Tests", () => {
                 { municipality_id: "testMunicipality", description: "another description", asset_id: "asset2" },
                 { municipality_id: "otherMunicipality", description: "test description", asset_id: "asset3" }
             ];
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: mockItems });
+
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: mockItems }) });
 
             const result = await searchingService.searchTickets(userMunicipality, searchTerm);
-
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
             expect(result).toEqual([
                 { municipality_id: "testMunicipality", description: "test description", asset_id: "asset1" }
             ]);
@@ -39,17 +34,18 @@ describe("Searching Service Tests", () => {
             const searchTerm = "test@user"; // Invalid search term
 
             await expect(searchingService.searchTickets(userMunicipality, searchTerm)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).not.toHaveBeenCalled();
+            expect(addJobToReadQueue).not.toHaveBeenCalled();
         });
 
         it("should throw BadRequestError if the DynamoDB call fails", async () => {
             const userMunicipality = "testMunicipality";
             const searchTerm = "test";
             const mockError = new Error("DynamoDB Error");
-            (dynamoDBDocumentClient.send as jest.Mock).mockRejectedValueOnce(mockError);
+            (addJobToReadQueue as jest.Mock).mockResolvedValue(mockError);
+
 
             await expect(searchingService.searchTickets(userMunicipality, searchTerm)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
         });
     });
 
@@ -61,11 +57,12 @@ describe("Searching Service Tests", () => {
                 { municipality_id: "testMunicipality" },
                 { municipality_id: "anotherMunicipality" }
             ];
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: mockItems });
+
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: mockItems }) });
 
             const result = await searchingService.searchMunicipalities(searchTerm);
 
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
             expect(result).toEqual([{ municipality_id: "testMunicipality" }]);
         });
 
@@ -73,16 +70,16 @@ describe("Searching Service Tests", () => {
             const searchTerm = "test@municipality"; // Invalid search term
 
             await expect(searchingService.searchMunicipalities(searchTerm)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).not.toHaveBeenCalled();
+            expect(addJobToReadQueue).not.toHaveBeenCalled();
         });
 
         it("should throw BadRequestError if the DynamoDB call fails", async () => {
             const searchTerm = "test";
             const mockError = new Error("DynamoDB Error");
-            (dynamoDBDocumentClient.send as jest.Mock).mockRejectedValueOnce(mockError);
+            (addJobToReadQueue as jest.Mock).mockResolvedValueOnce(mockError);
 
             await expect(searchingService.searchMunicipalities(searchTerm)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
         });
     });
 
@@ -94,11 +91,11 @@ describe("Searching Service Tests", () => {
                 { municipality_id: "testMunicipality", description: "test description", asset_id: "asset1" },
                 { municipality_id: "otherMunicipality", description: "other description", asset_id: "asset2" }
             ];
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: mockItems });
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: mockItems }) });
 
             const result = await searchingService.searchAltMunicipalityTickets(municipalityName);
 
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
             expect(result).toEqual([{ municipality_id: "testMunicipality", description: "test description", asset_id: "asset1" }]);
         });
 
@@ -106,16 +103,16 @@ describe("Searching Service Tests", () => {
             const municipalityName = "test@municipality"; // Invalid municipality name
 
             await expect(searchingService.searchAltMunicipalityTickets(municipalityName)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).not.toHaveBeenCalled();
+            expect(addJobToReadQueue).not.toHaveBeenCalled();
         });
 
         it("should throw BadRequestError if the DynamoDB call fails", async () => {
             const municipalityName = "testMunicipality";
             const mockError = new Error("DynamoDB Error");
-            (dynamoDBDocumentClient.send as jest.Mock).mockRejectedValueOnce(mockError);
+            (addJobToReadQueue as jest.Mock).mockRejectedValueOnce(mockError);
 
             await expect(searchingService.searchAltMunicipalityTickets(municipalityName)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
         });
     });
 
@@ -127,11 +124,11 @@ describe("Searching Service Tests", () => {
                 { name: "test service provider" },
                 { name: "another service provider" }
             ];
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: mockItems });
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: mockItems }) });
 
             const result = await searchingService.searchServiceProviders(searchTerm);
 
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
             expect(result).toEqual([{ name: "test service provider" }]);
         });
 
@@ -139,16 +136,16 @@ describe("Searching Service Tests", () => {
             const searchTerm = "test@provider"; // Invalid search term
 
             await expect(searchingService.searchServiceProviders(searchTerm)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).not.toHaveBeenCalled();
+            expect(addJobToReadQueue).not.toHaveBeenCalled();
         });
 
         it("should throw BadRequestError if the DynamoDB call fails", async () => {
             const searchTerm = "test";
             const mockError = new Error("DynamoDB Error");
-            (dynamoDBDocumentClient.send as jest.Mock).mockRejectedValueOnce(mockError);
+            (addJobToReadQueue as jest.Mock).mockRejectedValueOnce(mockError);
 
             await expect(searchingService.searchServiceProviders(searchTerm)).rejects.toThrow(BadRequestError);
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(expect.any(ScanCommand));
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.anything());
         });
     });
 });

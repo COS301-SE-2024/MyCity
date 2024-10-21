@@ -9,11 +9,7 @@ const router: Router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// create a ticket
 router.post("/create", upload.single("file"), ticketsController.createTicket);
-
-router.use(express.json());
-
 router.get("/getUpvotes", checkCache, ticketsController.getMostUpvoted);
 router.get("/getinarea", checkCache, ticketsController.getInArea);
 router.get("/getwatchlist", checkCache, ticketsController.getMyWatchlist);
