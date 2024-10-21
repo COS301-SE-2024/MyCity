@@ -1009,9 +1009,10 @@ export const getTicketComments = async (currTicketId: string) => {
             TableName: TICKET_UPDATE_TABLE,
             IndexName: "ticket_id-index",
             KeyConditionExpression: "ticket_id = :ticket_id",
-            ProjectionExpression: "ticketupdate_id, #comment, user_id",
+            ProjectionExpression: "ticketupdate_id, #comment, user_id, #date",
             ExpressionAttributeNames: {
-                "#comment": "comment" // alias the reserved keyword "comment"
+                "#comment": "comment", // alias the reserved keyword "comment"
+                "#date": "date"
             },
             ExpressionAttributeValues: {
                 ":ticket_id": currTicketId
