@@ -32,13 +32,16 @@ const MapboxMap: React.FC<MapboxMapProps> = ({ centerLng = 28.23142, centerLat =
         ];
 
         if (centerOnMuni) {
-          // center map on municipality only if specified
-          [centerLng, centerLat] = getMuniLngLat() || [centerLng, centerLat];
-        }
-        else {
-          // center map on user's location if available
-          const userLocation = await getUserLocation();
-          [centerLng, centerLat] = userLocation || [centerLng, centerLat];
+          // center map on municipality if specified and available, but fallback to user's location or default on failure
+          const municipalityLocation = getMuniLngLat();
+
+          if (municipalityLocation) {
+            [centerLng, centerLat] = municipalityLocation;
+          }
+          else {
+            const userLocation = await getUserLocation();
+            [centerLng, centerLat] = userLocation || [centerLng, centerLat];
+          }
         }
 
         const initializedMap = new mapboxgl.Map({
