@@ -229,7 +229,7 @@ export const addCommentWithImage = async (req: Request, res: Response) => {
 };
 
 export const addCommentWithoutImage = async (req: Request, res: Response) => {
-    const requiredFields = ["comment", "ticket_id", "user_id"];
+    const requiredFields = ["comment", "ticket_id", "user_id", "date_created", "user_role"];
     const missingFields = requiredFields.filter(field => !req.body[field]);
 
     if (missingFields.length > 0) {
@@ -238,7 +238,7 @@ export const addCommentWithoutImage = async (req: Request, res: Response) => {
 
     try {
         const { comment, ticket_id, user_id } = req.body;
-        const response = await ticketsService.addTicketCommentWithoutImage(comment, ticket_id, user_id);
+        const response = await ticketsService.addTicketCommentWithoutImage(req.body);
         return res.status(200).json(response);
     } catch (error: any) {
         return res.status(500).json({ Error: error.message });
@@ -246,9 +246,9 @@ export const addCommentWithoutImage = async (req: Request, res: Response) => {
 };
 
 export const getTicketComments = async (req: Request, res: Response) => {
-    const ticketId = req.headers["X-Ticket-ID"] as string;
+    const ticketId = req.query["ticket_id"] as string;
     if (!ticketId) {
-        return res.status(400).json({ Error: "Missing request header: X-Ticket-ID" });
+        return res.status(400).json({ Error: "Missing parameter: ticket_id" });
     }
     try {
         const response = await ticketsService.getTicketComments(ticketId);
