@@ -26,7 +26,14 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
     try {
       const user_data = await userProfile.getUserProfile();
       const userSession = String(user_data.current?.session_token);
-      const commentsData = await getTicketComments(ticketId, userSession);
+      const commentsData = await getTicketComments(ticketId, userSession) as any[];
+
+      // order comments by date
+      commentsData.sort((a: any, b: any) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateA - dateB;
+      });
 
       setComments(commentsData);
       setLoading(false);
