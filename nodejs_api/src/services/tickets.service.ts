@@ -1,13 +1,14 @@
 import { QueryCommandInput, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, PutCommandOutput, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
-import { ASSETS_TABLE, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
+import { ASSETS_TABLE, cognitoClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
-import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
+import { deleteAllCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE, deleteCacheKey } from "../config/redis.config";
 import { sendWebSocketMessage } from "../utils/tenders.utils";
+import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 
 interface Ticket {
     dateClosed: string;
@@ -39,7 +40,7 @@ interface TicketData {
 
 
 export const createTicket = async (formData: any, file: Express.Multer.File | undefined) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const username = formData["username"] as string;
     let imageLink = "";
@@ -59,7 +60,7 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         params: assetParams
     }
 
-    const assetReadJob = await addJobToReadQueue(assetJobdata, { priority: 1 });
+    const assetReadJob = await addJobToReadQueue(assetJobdata);
     const assetResponse = await assetReadJob.finished() as GetCommandOutput;
 
     if (!assetResponse.Item) {
@@ -145,7 +146,9 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
     const watchlistJob = await addJobToWriteQueue(watchlistJobData);
     const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
 
-    const message = JSON.stringify({ action: "createticket", body : municipalityId })
+    // ----------------- update items in cache -----------------
+
+    const message = JSON.stringify({ action: "createticket", body: municipalityId })
     await sendWebSocketMessage(message);
 
     // after accepting
@@ -405,7 +408,7 @@ export const getWatchlist = async (userId: string, lastEvaluatedKeyString: strin
                 params: params2
             };
 
-            const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+            const job2 = await addJobToReadQueue(jobData2);
             const respItem = await job2.finished() as QueryCommandOutput;
             const ticketsItems = respItem.Items;
 
@@ -467,7 +470,7 @@ export const viewTicketData = async (ticketId: string) => {
 };
 
 export const interactTicket = async (ticketData: any) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     const interactType = String(ticketData.type).toUpperCase();
     const params: QueryCommandInput = {
@@ -511,7 +514,7 @@ export const interactTicket = async (ticketData: any) => {
                     params: updateParams
                 };
 
-                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                const updateJob = await addJobToWriteQueue(updateJobData);
                 await updateJob.finished();
                 return { Status: "SUCCESSFUL", vote: votes };
             }
@@ -535,7 +538,7 @@ export const interactTicket = async (ticketData: any) => {
                     params: updateParams
                 };
 
-                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                const updateJob = await addJobToWriteQueue(updateJobData);
                 await updateJob.finished();
                 return { Status: "SUCCESSFUL", views: views };
             }
@@ -558,7 +561,7 @@ export const interactTicket = async (ticketData: any) => {
                     params: updateParams
                 };
 
-                const updateJob = await addJobToWriteQueue(updateJobData, { priority: 1 });
+                const updateJob = await addJobToWriteQueue(updateJobData);
                 await updateJob.finished();
                 return { Status: "SUCCESSFUL", vote: votes };
             }
@@ -644,9 +647,9 @@ export const getMostUpvoted = async (lastEvaluatedKeyArrayString: string) => {
         params: params3
     };
 
-    const job1 = await addJobToReadQueue(jobData1, { priority: 1 });
-    const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
-    const job3 = await addJobToReadQueue(jobData3, { priority: 1 });
+    const job1 = await addJobToReadQueue(jobData1);
+    const job2 = await addJobToReadQueue(jobData2);
+    const job3 = await addJobToReadQueue(jobData3);
 
     const result1 = await job1.finished() as QueryCommandOutput;
     const result2 = await job2.finished() as QueryCommandOutput;
@@ -679,7 +682,7 @@ export const getMostUpvoted = async (lastEvaluatedKeyArrayString: string) => {
 };
 
 export const closeTicket = async (ticketData: any) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
@@ -737,7 +740,7 @@ export const closeTicket = async (ticketData: any) => {
 };
 
 export const acceptTicket = async (ticketData: any) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     const ticketDateOpened = await getTicketDateOpened(ticketData.ticket_id);
 
@@ -801,7 +804,7 @@ export const getCompanyTickets = async (companyname: string) => {
         params: params
     };
 
-    const job = await addJobToReadQueue(jobData, { priority: 1 });
+    const job = await addJobToReadQueue(jobData);
     const responseTender = await job.finished() as QueryCommandOutput
 
     const tenderItems = responseTender.Items;
@@ -822,7 +825,7 @@ export const getCompanyTickets = async (companyname: string) => {
                 params: params2
             };
 
-            const job2 = await addJobToReadQueue(jobData2, { priority: 1 });
+            const job2 = await addJobToReadQueue(jobData2);
             const responseCompanyTickets = await job2.finished() as QueryCommandOutput;
             const companyTickets = responseCompanyTickets.Items;
 
@@ -852,7 +855,7 @@ export const getCompanyTickets = async (companyname: string) => {
         params: params3
     };
 
-    const job3 = await addJobToReadQueue(jobData3, { priority: 1 });
+    const job3 = await addJobToReadQueue(jobData3);
     const response = await job3.finished() as QueryCommandOutput;
     const topItems = response.Items || [];
 
@@ -915,7 +918,7 @@ export const getOpenCompanyTickets = async () => {
 };
 
 export const addTicketCommentWithImage = async (comment: string, ticket_id: string, image_url: string, user_id: string) => {
-      await clearRedisCache();
+    await deleteAllCache();
 
     // Validate ticket_id
     validateTicketId(ticket_id);
@@ -958,25 +961,23 @@ export const addTicketCommentWithImage = async (comment: string, ticket_id: stri
     return response;
 };
 
-export const addTicketCommentWithoutImage = async (comment: string, ticket_id: string, user_id: string) => {
+export const addTicketCommentWithoutImage = async (commentData: any) => {
+    await deleteAllCache();
+
     // Validate ticket_id
-    validateTicketId(ticket_id);
+    validateTicketId(commentData.ticket_id);
 
     // Generate unique ticket update ID
     const ticketupdate_id = generateId();
 
-    // Get current date and time
-    const currentDatetime = new Date();
-    const formattedDatetime = currentDatetime.toISOString();
-
     // Prepare comment item
     const commentItem = {
         ticketupdate_id: ticketupdate_id,
-        comment: comment,
-        date: formattedDatetime,
+        comment: commentData.comment,
+        date: commentData.date_created,
         imageURL: "<empty>",  // Set to <empty> if no image is provided
-        ticket_id: ticket_id,
-        user_id: user_id
+        ticket_id: commentData.ticket_id,
+        user_id: commentData.user_id
     };
 
     // Insert comment into ticket_updates table
@@ -995,7 +996,7 @@ export const addTicketCommentWithoutImage = async (comment: string, ticket_id: s
 
     const response = {
         message: "Comment added successfully",
-        ticketupdate_id: ticketupdate_id,
+        ticketupdate_id: ticketupdate_id
     };
 
     return response;
@@ -1008,10 +1009,16 @@ export const getTicketComments = async (currTicketId: string) => {
             TableName: TICKET_UPDATE_TABLE,
             IndexName: "ticket_id-index",
             KeyConditionExpression: "ticket_id = :ticket_id",
+            ProjectionExpression: "ticketupdate_id, #comment, user_id, #date",
+            ExpressionAttributeNames: {
+                "#comment": "comment", // alias the reserved keyword "comment"
+                "#date": "date"
+            },
             ExpressionAttributeValues: {
                 ":ticket_id": currTicketId
             }
         };
+
 
         const jobData: JobData = {
             type: DB_QUERY,
@@ -1021,7 +1028,58 @@ export const getTicketComments = async (currTicketId: string) => {
         const job = await addJobToReadQueue(jobData);
         const response = await job.finished() as QueryCommandOutput;
         const items = response.Items || [];
-        return items;
+
+        if (items.length > 0) {
+            let cognitoUsername: string = "";
+            try {
+                const USER_POOL_ID = process.env.USER_POOL_ID;
+                for (let commentItem of items) {
+                    cognitoUsername = (commentItem["user_id"] as string).toLowerCase();
+                    const userResponse: AdminGetUserCommandOutput = await cognitoClient.send(
+                        new AdminGetUserCommand({
+                            UserPoolId: USER_POOL_ID,
+                            Username: cognitoUsername
+                        })
+                    );
+
+                    let userImage: string | null = null;
+                    let userGivenName: string | null = null;
+                    let userFamilyName: string | null = null;
+
+                    if (userResponse.UserAttributes) {
+                        for (let attr of userResponse.UserAttributes) {
+                            if (attr.Name === "picture") {
+                                userImage = attr.Value || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
+                            }
+
+                            if (attr.Name === "given_name") {
+                                userGivenName = attr.Value!;
+                            }
+
+                            if (attr.Name === "family_name") {
+                                userFamilyName = attr.Value!;
+                            }
+
+                            if (userImage && userGivenName && userFamilyName) {
+                                break;
+                            }
+                        }
+                    }
+
+                    commentItem["userImage"] = userImage;
+                    commentItem["userName"] = userGivenName + " " + userFamilyName;
+                }
+
+                return items;
+            } catch (error: any) {
+                if (error.name === "UserNotFoundException") {
+                    console.error(`${error.message}: ${cognitoUsername}`);
+                } else {
+                    console.error("An error occurred:", error);
+                }
+            }
+        }
+        
     } catch (e: any) {
         if (e instanceof ClientError) {
             throw new BadRequestError(`Failed to search for the ticket comments: ${e.response.Error.Message}`);

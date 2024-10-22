@@ -4,7 +4,7 @@ import { BadRequestError, NotFoundError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, sendWebSocketMessage, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 import WebSocket from "ws";
-import { clearRedisCache, DB_GET, DB_PUT, DB_QUERY, DB_UPDATE } from "../config/redis.config";
+import { deleteAllCache, DB_GET, DB_PUT, DB_QUERY, DB_UPDATE } from "../config/redis.config";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
 
@@ -26,7 +26,8 @@ interface AcceptOrRejectTenderData {
 }
 
 export const createTender = async (senderData: TenderData) => {
-    await clearRedisCache();
+    await deleteAllCache();
+    
     const companyPid = await getCompanyIDFromName(senderData.company_name);
     if (!companyPid) {
         throw new BadRequestError("Company Does not Exist");
@@ -49,7 +50,7 @@ export const createTender = async (senderData: TenderData) => {
         params: params
     }
 
-    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const readJob = await addJobToReadQueue(jobData);
     const responseCheck = await readJob.finished() as QueryCommandOutput;
 
     if (responseCheck.Items && responseCheck.Items.length > 0) {
@@ -148,7 +149,7 @@ export const inReview = async (senderData: InReviewData) => {
 };
 
 export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
@@ -166,7 +167,7 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
         params: params
     }
 
-    const readJob = await addJobToReadQueue(jobData, { priority: 1 });
+    const readJob = await addJobToReadQueue(jobData);
     const responseTender = await readJob.finished() as QueryCommandOutput;
 
     const tenderItems = responseTender.Items;
@@ -251,7 +252,7 @@ export const acceptTender = async (senderData: AcceptOrRejectTenderData) => {
 };
 
 export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const params: QueryCommandInput = {
         TableName: TENDERS_TABLE,
@@ -303,7 +304,7 @@ export const rejectTender = async (senderData: AcceptOrRejectTenderData) => {
 };
 
 export const completeContract = async (senderData: { contract_id: string }) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const params: GetCommandInput = {
         TableName: CONTRACT_TABLE,
@@ -373,7 +374,7 @@ export const completeContract = async (senderData: { contract_id: string }) => {
 };
 
 export const terminateContract = async (senderData: { contract_id: string }) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const params: GetCommandInput = {
         TableName: CONTRACT_TABLE,
@@ -473,7 +474,7 @@ export const terminateContract = async (senderData: { contract_id: string }) => 
 };
 
 export const doneContract = async (senderData: { contract_id: string }) => {
-    await clearRedisCache();
+    await deleteAllCache();
 
     const params: GetCommandInput = {
         TableName: CONTRACT_TABLE,

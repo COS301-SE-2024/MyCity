@@ -8,7 +8,7 @@ describe("Notifications Controller", () => {
     let req: Partial<Request>;
     let res: Partial<Response>;
 
-    beforeEach(() => {
+    beforeAll(() => {
         req = {};
         res = {
             status: jest.fn().mockReturnThis(),
@@ -17,6 +17,10 @@ describe("Notifications Controller", () => {
     });
 
     describe("insertNotificationToken", () => {
+        beforeEach(() => {
+            req.originalUrl = "/notifications/insert-tokens";
+        });
+
         test("should return 400 if required fields are missing", async () => {
             req.body = { username: "testUser" }; // Missing deviceID and token
 
@@ -50,6 +54,10 @@ describe("Notifications Controller", () => {
     });
 
     describe("getNotificationTokens", () => {
+        beforeEach(() => {
+            req.originalUrl = "/notifications/get-tokens";
+        });
+
         test("should return 400 if username is missing", async () => {
             req.query = {}; // No username
 

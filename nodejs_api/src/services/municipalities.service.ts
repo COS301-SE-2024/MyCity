@@ -21,7 +21,7 @@ export const getAllMunicipalities = async () => {
 
        // Note that only the name of the municipality is being fetched
     // and results are sorted in ascending order
-    const municipalitiesList = municipalities.sort();
+    const municipalitiesList = municipalities.sort((a, b) => a.municipality_id.localeCompare(b.municipality_id));
     return municipalitiesList;
 };
 

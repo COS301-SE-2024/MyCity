@@ -1,12 +1,8 @@
+import { CONTRACTS_PER_SERVICE_PROVIDER_TABLE, TENDERS_PER_SERVICE_PROVIDER_TABLE, TICKETS_PER_MUNICIPALITY_TABLE } from "../../src/config/dynamodb.config";
 import * as analyticsService from "../../src/services/analytics.service";
-import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
-
-jest.mock("../../src/config/dynamodb.config");
+import { addJobToReadQueue } from "../../src/services/jobs.service";
 
 describe("Analytics Service", () => {
-    const mockSend = jest.fn();
-    (dynamoDBDocumentClient.send as jest.Mock) = mockSend;
-
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -15,13 +11,14 @@ describe("Analytics Service", () => {
         it("should return tickets for a given municipality", async () => {
             const municipalityId = "123";
             const mockResponse = { Items: [{ ticketId: "1" }, { ticketId: "2" }] };
-            mockSend.mockResolvedValue(mockResponse);
+
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await analyticsService.getTicketsPerMunicipality(municipalityId);
 
-            expect(mockSend).toHaveBeenCalledWith(expect.objectContaining({
-                input: {
-                    TableName: "tickets_per_municipality",
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: TICKETS_PER_MUNICIPALITY_TABLE,
                     KeyConditionExpression: "municipality_id = :municipality_id",
                     ExpressionAttributeValues: {
                         ":municipality_id": "123",
@@ -34,7 +31,7 @@ describe("Analytics Service", () => {
         it("should return an empty array if no tickets found", async () => {
             const municipalityId = "123";
             const mockResponse = { Items: [] };
-            mockSend.mockResolvedValue(mockResponse);
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await analyticsService.getTicketsPerMunicipality(municipalityId);
 
@@ -43,7 +40,7 @@ describe("Analytics Service", () => {
 
         it("should handle errors gracefully", async () => {
             const municipalityId = "123";
-            mockSend.mockRejectedValue(new Error("DynamoDB error"));
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockRejectedValue(new Error("DynamoDB error")) });
 
             await expect(analyticsService.getTicketsPerMunicipality(municipalityId)).rejects.toThrow("DynamoDB error");
         });
@@ -53,13 +50,13 @@ describe("Analytics Service", () => {
         it("should return contracts for a given service provider", async () => {
             const serviceProvider = "Provider1";
             const mockResponse = { Items: [{ contractId: "1" }, { contractId: "2" }] };
-            mockSend.mockResolvedValue(mockResponse);
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await analyticsService.getContractsPerServiceProvider(serviceProvider);
 
-            expect(mockSend).toHaveBeenCalledWith(expect.objectContaining({
-                input: {
-                    TableName: "contracts_per_service_provider",
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: CONTRACTS_PER_SERVICE_PROVIDER_TABLE,
                     KeyConditionExpression: "service_provider = :service_provider",
                     ExpressionAttributeValues: {
                         ":service_provider": "Provider1",
@@ -73,7 +70,7 @@ describe("Analytics Service", () => {
         it("should return an empty array if no contracts found", async () => {
             const serviceProvider = "Provider1";
             const mockResponse = { Items: [] };
-            mockSend.mockResolvedValue(mockResponse);
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await analyticsService.getContractsPerServiceProvider(serviceProvider);
 
@@ -82,7 +79,7 @@ describe("Analytics Service", () => {
 
         it("should handle errors gracefully", async () => {
             const serviceProvider = "Provider1";
-            mockSend.mockRejectedValue(new Error("DynamoDB error"));
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockRejectedValue(new Error("DynamoDB error")) });
 
             await expect(analyticsService.getContractsPerServiceProvider(serviceProvider)).rejects.toThrow("DynamoDB error");
         });
@@ -92,14 +89,14 @@ describe("Analytics Service", () => {
         it("should return tenders for a given service provider", async () => {
             const serviceProvider = "Provider1";
             const mockResponse = { Items: [{ tenderId: "1" }, { tenderId: "2" }] };
-            mockSend.mockResolvedValue(mockResponse);
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await analyticsService.getTendersPerServiceProvider(serviceProvider);
 
 
-            expect(mockSend).toHaveBeenCalledWith(expect.objectContaining({
-                input: {
-                    TableName: "tenders_per_service_provider",
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: TENDERS_PER_SERVICE_PROVIDER_TABLE,
                     KeyConditionExpression: "service_provider = :service_provider",
                     ExpressionAttributeValues: {
                         ":service_provider": "Provider1",
@@ -113,7 +110,7 @@ describe("Analytics Service", () => {
         it("should return an empty array if no tenders found", async () => {
             const serviceProvider = "Provider1";
             const mockResponse = { Items: [] };
-            mockSend.mockResolvedValue(mockResponse);
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await analyticsService.getTendersPerServiceProvider(serviceProvider);
 
@@ -122,7 +119,7 @@ describe("Analytics Service", () => {
 
         it("should handle errors gracefully", async () => {
             const serviceProvider = "Provider1";
-            mockSend.mockRejectedValue(new Error("DynamoDB error"));
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockRejectedValue(new Error("DynamoDB error")) });
 
             await expect(analyticsService.getTendersPerServiceProvider(serviceProvider)).rejects.toThrow("DynamoDB error");
         });

@@ -1,4 +1,4 @@
-import { DashboardTicket, FaultGeoData, FaultType, PaginatedResults, UnprocessedFaultGeoData } from "@/types/custom.types";
+import { DashboardTicket, FaultGeoData, FaultType, PaginatedResults, UnprocessedFaultGeoData, UserRole } from "@/types/custom.types";
 import { CognitoIdentityProviderClient, AdminGetUserCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 interface UserAttributes {
@@ -467,14 +467,17 @@ export async function addCommentWithImage(comment: string, ticket_id: string, im
     }
 }
 
-export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, user_session: string,) {
+export async function addCommentWithoutImage(comment: string, ticket_id: string, user_id: string, dateCreated: string, user_role: UserRole, user_session: string,) {
     try {
         const apiUrl = "/api/tickets/add-comment-without-image";
         const data = {
-            comment,
-            ticket_id,
-            user_id
+            comment: comment,
+            ticket_id: ticket_id,
+            user_id: user_id,
+            date_created: dateCreated,
+            user_role: String(user_role)
         };
+
         const response = await fetch(apiUrl, {
             method: "POST",
             headers: {
@@ -498,13 +501,12 @@ export async function addCommentWithoutImage(comment: string, ticket_id: string,
 
 export async function getTicketComments(ticket_id: string, user_session: string) {
     try {
-        const apiUrl = `/api/tickets/comments`;
+        const apiUrl = `/api/tickets/comments?ticket_id=${encodeURIComponent(ticket_id)}`;
         const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
                 "Authorization": user_session,
-                "Content-Type": "application/json",
-                "X-Ticket-ID": ticket_id, // Add ticket_id in the headers
+                "Content-Type": "application/json"
             },
         });
 

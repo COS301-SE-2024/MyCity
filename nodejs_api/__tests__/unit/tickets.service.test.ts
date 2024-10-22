@@ -1,14 +1,15 @@
 import * as ticketsService from "../../src/services/tickets.service";
-import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
 import { uploadFile } from "../../src/config/s3bucket.config";
-import WebSocket from "ws";
+import { addJobToReadQueue, addJobToWriteQueue } from "../../src/services/jobs.service";
 
 // Mocking dynamoDBDocumentClient and uploadFile
-jest.mock("../../src/config/dynamodb.config");
-jest.mock("../../src/config/s3bucket.config");
-jest.mock("ws")
+jest.mock("../../src/config/s3bucket.config", () => ({
+    uploadFile: jest.fn()
+}));
 
-
+jest.mock("../../src/utils/tenders.utils", () => ({
+    sendWebSocketMessage: jest.fn(),
+}));
 
 describe("tickets service - getFaultTypes", () => {
     test("should return a list of fault types", async () => {
@@ -17,7 +18,7 @@ describe("tickets service - getFaultTypes", () => {
             { asset_id: "2", assetIcon: "icon2.png", multiplier: 2 },
         ];
 
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: assetsMock });
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: assetsMock }) });
 
         const faultTypes = await ticketsService.getFaultTypes();
 
@@ -28,7 +29,7 @@ describe("tickets service - getFaultTypes", () => {
     });
 
     test("should return an empty array if no assets are found", async () => {
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: [] });
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: [] }) });
 
         const faultTypes = await ticketsService.getFaultTypes();
 
@@ -56,11 +57,10 @@ describe("tickets service - createTicket", () => {
     });
 
     test("should create a ticket successfully", async () => {
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({
-            Item: { asset_id: "asset123" }, // Mock GetCommand for asset existence
-        });
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock PutCommand for ticket creation
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock PutCommand for watchlist
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Item: { asset_id: "asset123" } }) }); // Mock GetCommand for asset existence
+        (addJobToWriteQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) }); // Mock PutCommand for ticket creation
+        (addJobToWriteQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) }); // Mock PutCommand for watchlist
+
         (uploadFile as jest.Mock).mockResolvedValueOnce("https://example.com/testImage.jpg");
 
         const result = await ticketsService.createTicket(formData, mockFile);
@@ -73,11 +73,12 @@ describe("tickets service - createTicket", () => {
             })
         );
         expect(uploadFile).toHaveBeenCalledWith("ticket_images", "testUser", mockFile);
-        expect(dynamoDBDocumentClient.send).toHaveBeenCalledTimes(4); // Asset check, ticket creation, and watchlist addition
+        expect(addJobToReadQueue).toHaveBeenCalledTimes(2);
+        expect(addJobToWriteQueue).toHaveBeenCalledTimes(2);
     });
 
     test("should throw an error if asset does not exist", async () => {
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock empty response for asset check
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) }); // Mock empty response for asset check
 
         await expect(ticketsService.createTicket(formData, mockFile)).rejects.toThrow("NoItems");
     });
@@ -101,8 +102,8 @@ describe("tickets service - addWatchlist", () => {
     });
 
     test("should throw an error if ticket does not exist", async () => {
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: [] }); // Mock no existing watchlist entry
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock ticket not found
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: [] }) });  // Mock no existing watchlist entry
+        (addJobToWriteQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) });
 
         await expect(ticketsService.addWatchlist(ticketData)).rejects.toThrow("TicketDoesntExists");
     });
@@ -119,11 +120,11 @@ describe("tickets service - getTicketDetails", () => {
     });
 
     test("should return ticket details for a valid ticket ID", async () => {
-        
+
     });
 
     test("should throw an error if ticket does not exist", async () => {
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock no ticket found
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) }); // Mock no ticket found
 
         await expect(ticketsService.viewTicketData(ticketId)).rejects.toThrow("Failed to get Ticket data");
     });
@@ -141,7 +142,7 @@ describe("tickets service - deleteTicket", () => {
     });
 
     test("should throw an error if ticket does not exist", async () => {
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock no ticket found
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) }); // Mock no ticket found
 
         await expect(ticketsService.closeTicket(ticketId)).rejects.toThrow("TicketDoesntExist");
     });

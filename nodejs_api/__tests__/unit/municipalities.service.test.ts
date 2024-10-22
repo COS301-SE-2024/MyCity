@@ -1,16 +1,7 @@
+import exp from "constants";
+import { MUNICIPALITIES_TABLE } from "../../src/config/dynamodb.config";
+import { addJobToReadQueue } from "../../src/services/jobs.service";
 import * as municipalityService from "../../src/services/municipalities.service";
-import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
-import { ScanCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
-
-jest.mock("@aws-sdk/lib-dynamodb", () => ({
-    ScanCommand: jest.fn(),
-    GetCommand: jest.fn(),
-    DynamoDBDocumentClient: {
-        from: jest.fn(() => ({
-            send: jest.fn(),
-        })),
-    },
-}));
 
 describe("Municipality Service", () => {
     afterEach(() => {
@@ -27,7 +18,7 @@ describe("Municipality Service", () => {
                 ],
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock successful ScanCommand response
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) }); // Mock successful read job response
 
             const result = await municipalityService.getAllMunicipalities();
 
@@ -36,26 +27,32 @@ describe("Municipality Service", () => {
                 { municipality_id: "B" },
                 { municipality_id: "C" },
             ]);
-            expect(ScanCommand).toHaveBeenCalledWith({
-                TableName: "municipalities",
-            });
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: MUNICIPALITIES_TABLE,
+                        ProjectionExpression: "municipality_id"
+                }
+            }));
+            expect(addJobToReadQueue).toHaveBeenCalledTimes(1);
         });
 
         it("should return an empty list if no municipalities are found", async () => {
             const mockResponse = {
-                Items: [],
+                Items: null,
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock empty response
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) }); // Mock empty response
 
             const result = await municipalityService.getAllMunicipalities();
 
             expect(result).toEqual([]);
-            expect(ScanCommand).toHaveBeenCalledWith({
-                TableName: "municipalities",
-            });
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: MUNICIPALITIES_TABLE,
+                    ProjectionExpression: "municipality_id"
+                }
+            }));
+            expect(addJobToReadQueue).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -69,19 +66,22 @@ describe("Municipality Service", () => {
                 },
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock successful GetCommand response
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) });
 
             const result = await municipalityService.getMunicipalityCoordinates(mockMunicipality);
 
             expect(result).toEqual(mockResponse.Item);
-            expect(GetCommand).toHaveBeenCalledWith({
-                TableName: "municipalities",
-                Key: {
-                    municipality_id: mockMunicipality,
-                },
-                ProjectionExpression: "latitude, longitude",
-            });
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: MUNICIPALITIES_TABLE,
+                    Key: {
+                        municipality_id: mockMunicipality,
+                    },
+                    ProjectionExpression: "latitude, longitude",
+                }
+            }
+            ));
+            expect(addJobToReadQueue).toHaveBeenCalledTimes(1);
         });
 
         it("should return null if no coordinates are found for the municipality", async () => {
@@ -90,19 +90,23 @@ describe("Municipality Service", () => {
                 Item: null,
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock no coordinates response
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) }); // Mock no coordinates response
 
             const result = await municipalityService.getMunicipalityCoordinates(mockMunicipality);
 
             expect(result).toBeNull();
-            expect(GetCommand).toHaveBeenCalledWith({
-                TableName: "municipalities",
-                Key: {
-                    municipality_id: mockMunicipality,
-                },
-                ProjectionExpression: "latitude, longitude",
-            });
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining(
+                {
+                    params: {
+                        TableName: "municipalities",
+                        Key: {
+                            municipality_id: mockMunicipality,
+                        },
+                        ProjectionExpression: "latitude, longitude",
+                    }
+                }
+            ));
+            expect(addJobToReadQueue).toHaveBeenCalledTimes(1);
         });
     });
 });

@@ -1,18 +1,7 @@
+import { addJobToReadQueue, addJobToWriteQueue } from "../../src/services/jobs.service";
 import * as notificationService from "../../src/services/notifications.service";
-import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
 import { ClientError } from "../../src/types/error.types";
-import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
-// Mock the entire AWS SDK module
-jest.mock("@aws-sdk/lib-dynamodb", () => ({
-    PutCommand: jest.fn(),
-    QueryCommand: jest.fn(),
-    DynamoDBDocumentClient: {
-        from: jest.fn(() => ({
-            send: jest.fn(),
-        })),
-    },
-}));
 
 describe("Notification Service", () => {
     afterEach(() => {
@@ -27,22 +16,25 @@ describe("Notification Service", () => {
                 token: "tokenABC",
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({}); // Mock successful PutCommand response
+            (addJobToWriteQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({}) }); // Mock successful PutCommand response
+
 
             const result = await notificationService.insertNotificationToken(mockTokenData);
 
             expect(result).toEqual({ message: "Notification Token Saved", token: "tokenABC" });
-            expect(PutCommand).toHaveBeenCalledWith({
-                TableName: "notifications",
-                Item: {
-                    username: "testUser",
-                    deviceID: "device123",
-                    token: "tokenABC",
-                    subscriptions: ["status", "upvotes", "comments"],
-                    date: expect.any(String), // Check if date is a valid string
-                },
-            });
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToWriteQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: "notifications",
+                    Item: {
+                        username: "testUser",
+                        deviceID: "device123",
+                        token: "tokenABC",
+                        subscriptions: ["status", "upvotes", "comments"],
+                        date: expect.any(String), // Check if date is a valid string
+                    },
+                }
+            }));
+            expect(addJobToWriteQueue).toHaveBeenCalledTimes(1);
         });
 
         it("should throw an error if inserting the token fails", async () => {
@@ -52,10 +44,10 @@ describe("Notification Service", () => {
                 token: "tokenABC",
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockRejectedValueOnce(new Error("DynamoDB error")); // Mock error response
+            (addJobToWriteQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockRejectedValue(new Error("DynamoDB error")) }); // Mock error response
 
             await expect(notificationService.insertNotificationToken(mockTokenData)).rejects.toThrow("DynamoDB error");
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToWriteQueue).toHaveBeenCalled();
         });
     });
 
@@ -69,19 +61,21 @@ describe("Notification Service", () => {
                 ],
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock successful QueryCommand response
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) }); // Mock successful QueryCommand response
 
             const result = await notificationService.getNotificationTokens(mockUsername);
 
             expect(result).toEqual(mockResponse.Items);
-            expect(QueryCommand).toHaveBeenCalledWith({
-                TableName: "notifications",
-                KeyConditionExpression: "username = :username",
-                ExpressionAttributeValues: {
-                    ":username": mockUsername,
-                },
-            });
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            expect(addJobToReadQueue).toHaveBeenCalledWith(expect.objectContaining({
+                params: {
+                    TableName: "notifications",
+                    KeyConditionExpression: "username = :username",
+                    ExpressionAttributeValues: {
+                        ":username": mockUsername,
+                    },
+                }
+            }));
+            expect(addJobToReadQueue).toHaveBeenCalledTimes(1);
         });
 
         it("should throw a ClientError if no tokens are found for the user", async () => {
@@ -90,11 +84,11 @@ describe("Notification Service", () => {
                 Items: [],
             };
 
-            (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce(mockResponse); // Mock no tokens response
+            (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue(mockResponse) }); // Mock no tokens response
 
             await expect(notificationService.getNotificationTokens(mockUsername)).rejects.toThrow(ClientError);
-            await expect(notificationService.getNotificationTokens(mockUsername)).rejects.toThrow("Cannot read properties of undefined (reading 'Items')");
-            expect(dynamoDBDocumentClient.send).toHaveBeenCalled();
+            await expect(notificationService.getNotificationTokens(mockUsername)).rejects.toThrow("NoTokens");
+            expect(addJobToReadQueue).toHaveBeenCalled();
         });
     });
 });

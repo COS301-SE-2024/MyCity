@@ -17,6 +17,10 @@ describe("tenders controller controller", () => {
     });
 
     describe("createTender", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/create";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_name: "Company A" }; // Missing fields
             await tendersController.createTender(req as Request, res as Response);
@@ -94,6 +98,10 @@ describe("tenders controller controller", () => {
 
 
     describe("inReview", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/in-review";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_name: "Company A" }; // Missing fields
             await tendersController.inReview(req as Request, res as Response);
@@ -164,6 +172,10 @@ describe("tenders controller controller", () => {
 
 
     describe("acceptTender", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/accept";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_id: "1" }; // Missing fields
             await tendersController.acceptTender(req as Request, res as Response);
@@ -233,6 +245,10 @@ describe("tenders controller controller", () => {
 
 
     describe("rejectTender", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/reject";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_id: "1" }; // Missing fields
             await tendersController.rejectTender(req as Request, res as Response);
@@ -302,6 +318,10 @@ describe("tenders controller controller", () => {
 
 
     describe("completeContract", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/completed";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_id: "1" }; // Missing fields
             await tendersController.completeContract(req as Request, res as Response);
@@ -371,6 +391,10 @@ describe("tenders controller controller", () => {
 
 
     describe("terminateContract", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/terminate";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_id: "1" }; // Missing fields
             await tendersController.terminateContract(req as Request, res as Response);
@@ -440,6 +464,10 @@ describe("tenders controller controller", () => {
 
 
     describe("doneContract", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tenders/done";
+        });
+
         it("should return 400 if required fields are missing", async () => {
             req.body = { company_id: "1" }; // Missing fields
             await tendersController.doneContract(req as Request, res as Response);

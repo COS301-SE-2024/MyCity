@@ -1,17 +1,17 @@
 import express, { Router } from "express";
 import * as tendersController from "../controllers/tenders.controller";
-import { cacheMiddleware } from "../config/redis.config";
+import { checkCache } from "../config/redis.config";
 
 const router: Router = express.Router();
 
-router.get("/didbid", cacheMiddleware, tendersController.didMakeTender);
-router.get("/getmytenders", cacheMiddleware, tendersController.getCompanyTenders);
-router.get("/getmunitenders", cacheMiddleware, tendersController.getMunicipalityTenders);
-router.get("/getmunicipalitytenders", cacheMiddleware, tendersController.getTicketTender);
-router.get("/getcontracts", cacheMiddleware, tendersController.getContracts);
-router.get("/getmunicontract", cacheMiddleware, tendersController.getMuniContract);
-router.get("/getcompanycontracts", cacheMiddleware, tendersController.getCompanyContracts);
-router.get("/getcompanycontractbyticket", cacheMiddleware, tendersController.getCompanyContractByTicket);
+router.get("/didbid", checkCache, tendersController.didMakeTender);
+router.get("/getmytenders", checkCache, tendersController.getCompanyTenders);
+router.get("/getmunitenders", checkCache, tendersController.getMunicipalityTenders);
+router.get("/getmunicipalitytenders", checkCache, tendersController.getTicketTender);
+router.get("/getcontracts", checkCache, tendersController.getContracts);
+router.get("/getmunicontract", checkCache, tendersController.getMuniContract);
+router.get("/getcompanycontracts", checkCache, tendersController.getCompanyContracts);
+router.get("/getcompanycontractbyticket", checkCache, tendersController.getCompanyContractByTicket);
 router.post("/create", tendersController.createTender);
 router.post("/in-review", tendersController.inReview);
 router.post("/accept", tendersController.acceptTender);
