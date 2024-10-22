@@ -1,95 +1,87 @@
 import request from "supertest";
-import { app } from "../../app"; // Adjust the path as necessary to import your Express app
+import { app } from "../../app";
+import * as tendersService from "../../src/services/tenders.service";
+
+jest.mock("../../src/services/tenders.service");
 
 describe("Integration Test - /tenders", () => {
 
-    describe("POST /create", () => {
-        test("should create a new tender", async () => {
-            
-        });
-    });
-
-    describe("POST /in-review", () => {
-        test("should mark a tender as in review", async () => {
-
-        });
-    });
-
-    describe("POST /accept", () => {
-        test("should accept a tender", async () => {
-
-        });
-    });
-
-    describe("POST /reject", () => {
-        test("should reject a tender", async () => {
-
-        });
-    });
-
-    describe("POST /completed", () => {
-        test("should mark a contract as completed", async () => {
-
-        });
-    });
-
-    describe("POST /terminate", () => {
-        test("should terminate a contract", async () => {
-            
-        });
-    });
-
-    describe("POST /done", () => {
-        test("should mark a contract as done", async () => {
-
-        });
-    });
-
-    describe("POST /didbid", () => {
-        test("should check if a bid was made", async () => {
-
-        });
-    });
-
     describe("GET /getmytenders", () => {
         test("should return a list of company tenders", async () => {
-            const response = await request(app).get("/tenders/getmytenders");
+            const mockResponse = [
+                { tender_id: "tender1" },
+                { tender_id: "tender2" },
+                { tender_id: "tender3" },
+            ];
+            jest.spyOn(tendersService, "getCompanyTenders").mockResolvedValue(mockResponse);
+
+            const response = await request(app).get("/tenders/getmytenders?name=Xero");
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResponse);
+            expect(tendersService.getCompanyTenders).toHaveBeenCalledTimes(1);
         });
     });
 
     describe("GET /getmunitenders", () => {
         test("should return a list of municipality tenders", async () => {
-            const response = await request(app).get("/tenders/getmunitenders");
-        });
-    });
+            const mockResponse = [
+                { tender_id: "tender1" },
+                { tender_id: "tender2" },
+                { tender_id: "tender3" },
+            ];
+            jest.spyOn(tendersService, "getMunicipalityTenders").mockResolvedValue(mockResponse);
 
-    describe("GET /getmunicipalitytenders", () => {
-        test("should return tenders for a specific ticket", async () => {
+            const response = await request(app).get("/tenders/getmunitenders?municipality=Tshwane");
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResponse);
+            expect(tendersService.getMunicipalityTenders).toHaveBeenCalledTimes(1);
         });
     });
 
     describe("GET /getcontracts", () => {
         test("should return a list of contracts", async () => {
-            const response = await request(app).get("/tenders/getcontracts");
+            const mockResponse = [
+                { contract_id: "contract1" },
+                { contract_id: "contract2" },
+                { contract_id: "contract3" },
+            ];
+            jest.spyOn(tendersService, "getContracts").mockResolvedValue(mockResponse);
+
+            const response = await request(app).get("/tenders/getcontracts?tender=123");
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResponse);
+            expect(tendersService.getContracts).toHaveBeenCalledTimes(1);
         });
     });
 
     describe("GET /getmunicontract", () => {
         test("should return municipality contracts", async () => {
-            const response = await request(app).get("/tenders/getmunicontract");
+            const mockResponse = {
+                contract_id: "contract1",
+                municipality_id: "municipality1"
+            };
+            jest.spyOn(tendersService, "getMuniContract").mockResolvedValue(mockResponse);
+
+            const response = await request(app).get("/tenders/getmunicontract?ticket=123");
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResponse);
+            expect(tendersService.getMuniContract).toHaveBeenCalledTimes(1);
         });
     });
 
     describe("GET /getcompanycontracts", () => {
         test("should return company contracts", async () => {
-            const response = await request(app).get("/tenders/getcompanycontracts");
+            const mockResponse = [
+                { contract_id: "contract1" },
+                { contract_id: "contract2" },
+                { contract_id: "contract3" },
+            ];
+            jest.spyOn(tendersService, "getCompanyContracts").mockResolvedValue(mockResponse);
 
-        });
-    });
-
-    describe("GET /getcompanycontractbyticket", () => {
-        test("should return company contracts by ticket", async () => {
-
+            const response = await request(app).get("/tenders/getcompanycontracts?tender=123&company=Xero");
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toEqual(mockResponse);
+            expect(tendersService.getCompanyContracts).toHaveBeenCalledTimes(1);
         });
     });
 

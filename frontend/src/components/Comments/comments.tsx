@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaPaperPlane } from 'react-icons/fa';
 import Comment from './comment'; // Adjust the import path as necessary
 import { useProfile } from "@/hooks/useProfile";
-import { 
+import {
   addCommentWithoutImage,
   getTicketComments,
-  getUserFirstLastName,
 } from '@/services/tickets.service';
+import { UserRole } from '@/types/custom.types';
 
 interface CommentsProps {
   onBack: () => void;
@@ -20,32 +20,22 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
   const [newComment, setNewComment] = useState(''); // State for new comment input
   const [comments, setComments] = useState<any[]>([]); // State for all comments
   const [loading, setLoading] = useState(true); // State to manage loading
-  const userProfile = useProfile(); 
+  const userProfile = useProfile();
 
   const fetchComments = async () => {
     try {
       const user_data = await userProfile.getUserProfile();
       const userSession = String(user_data.current?.session_token);
-      const commentsData = await getTicketComments(ticketId, userSession);
+      const commentsData = await getTicketComments(ticketId, userSession) as any[];
 
-      const userPoolId = process.env.USER_POOL_ID;
-      if (!userPoolId) {
-        throw new Error("USER_POOL_ID is not defined");
-      }
+      // order comments by date
+      commentsData.sort((a: any, b: any) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateA - dateB;
+      });
 
-      const enrichedComments = await Promise.allSettled(commentsData.map(async (comment: any) => {
-        const userAttributes = await getUserFirstLastName(comment.user_id, userPoolId);
-        return {
-          ...comment,
-          userName: `${userAttributes?.given_name} ${userAttributes?.family_name}`,
-          userImage: userAttributes?.picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
-          time: new Date(comment.date)
-        };
-      }));
-
-      const fulfilledComments = enrichedComments.filter((comment: any) => comment.status === "fulfilled").map((comment: any) => comment.value);
-
-      setComments(fulfilledComments);
+      setComments(commentsData);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -65,15 +55,18 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         const user_picture = String(user_data.current?.picture);
         const userSession = String(user_data.current?.session_token);
         const user_email = String(user_data.current?.email);
+        const userRole = user_data.current?.user_role || UserRole.CITIZEN; // default to citizen if user_role is not set
+
+        const dateCommentCreated = new Date().toISOString();
 
         const newCommentData = {
-          userName,
-          userImage: user_picture || 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
-          time: new Date(),
-          commentText: newComment,
+          userName: userName,
+          userImage: user_picture || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541",
+          date: dateCommentCreated,
+          comment: newComment,
         };
 
-        await addCommentWithoutImage(newCommentData.commentText, ticketId, user_email, userSession);
+        await addCommentWithoutImage(newCommentData.comment, ticketId, user_email, dateCommentCreated, userRole, userSession);
 
         setComments([...comments, newCommentData]);
         setNewComment('');
@@ -92,21 +85,21 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
         <h2 className="text-xl text-black font-bold">Comments</h2>
       </div>
       <div className="flex-grow text-black overflow-auto mb-4">
-      {loading ? (
-  <p>Loading comments...</p>
-) : comments.length > 0 ? (
-  comments.map((comment, index) => (
-    <Comment
-      key={index}
-      userName={comment.userName}
-      userImage={comment.userImage}
-      time={new Date(comment.time)}
-      commentText={comment.commentText} // Use commentText to ensure the actual comment is displayed
-    />
-  ))
-) : (
-  <p>No comments to display.</p>
-)}
+        {loading ? (
+          <p>Loading comments...</p>
+        ) : comments.length > 0 ? (
+          comments.map((comment, index) => (
+            <Comment
+              key={index}
+              userName={comment.userName}
+              userImage={comment.userImage}
+              time={new Date(comment.date)}
+              commentText={comment.comment} // Use commentText to ensure the actual comment is displayed
+            />
+          ))
+        ) : (
+          <p>No comments to display.</p>
+        )}
 
       </div>
       <div className="flex items-center p-2 border-t">
@@ -119,9 +112,8 @@ const Comments: React.FC<CommentsProps> = ({ onBack, isCitizen, ticketId }) => {
           onChange={(e) => setNewComment(e.target.value)}
         />
         <button
-          className={`flex items-center justify-center p-2 rounded-full ${
-            newComment.trim() ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+          className={`flex items-center justify-center p-2 rounded-full ${newComment.trim() ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           onClick={handleNewComment}
           disabled={!newComment.trim()}
         >

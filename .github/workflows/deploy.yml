@@ -1,0 +1,626 @@
+name: Deploy Serverless APIs
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches: [main, development]
+
+jobs:
+  DeployPythonAPI:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      working-directory: python_api
+      run: |
+        python -m pip install -r requirements.txt
+
+    - name: Generate config.json
+      working-directory: python_api
+      run: |
+        cat <<EOF > .chalice/config.json
+        {
+          "version": "2.0",
+          "app_name": "mycity-python-api",
+          "environment_variables": {
+            "USER_POOL_ID": "${{ secrets.USER_POOL_ID }}",
+            "REST_API_AUTHORIZER": "${{ secrets.REST_API_AUTHORIZER }}",
+            "USER_POOL_ARN": "${{ secrets.USER_POOL_ARN }}"
+          },
+          "stages": {
+            "dev": {
+              "api_gateway_stage": "dev",
+              "environment_variables": {
+                "API_ENV": "${{ secrets.API_DEV_STAGE_ENV }}"
+              }
+            },
+            "prod": {
+              "api_gateway_stage": "prod",
+              "environment_variables": {
+                "API_ENV": "${{ secrets.API_PROD_STAGE_ENV }}"
+              }
+            }
+          }
+        }
+        EOF
+
+
+    - name: Set Up AWS CLI
+      working-directory: python_api
+      run: |
+        pip install awscli
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set default.region ${{ secrets.AWS_REGION }}
+
+
+    - name: Set Python API Stage Name
+      working-directory: python_api
+      run: |
+          if [ ${{ github.base_ref }} == 'main' ]; then
+            echo "API_STAGE_NAME=prod" >> $GITHUB_ENV
+          elif [ ${{ github.base_ref }} == 'development' ]; then
+            echo "API_STAGE_NAME=dev" >> $GITHUB_ENV
+          else
+            echo "No Chalice deployment for this branch"
+            exit 0
+          fi
+
+
+    - name: Deploy Serverless Chalice App
+      working-directory: python_api
+      env:
+        API_STAGE_NAME: ${{ env.API_STAGE_NAME }}
+      run: |
+          chalice deploy --stage ${{ env.API_STAGE_NAME }}
+
+
+    - name: Update API Gateway
+      working-directory: python_api/.chalice
+      env:
+        API_STAGE_NAME: ${{ env.API_STAGE_NAME }}
+      run: python update_api_gateway.py
+
+
+  DeployNodejsAPI:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install dependencies
+      working-directory: nodejs_api
+      run: |
+        npm ci
+
+    - name: Set Nodejs Stage Variable
+      working-directory: nodejs_api
+      run: |
+        if [ ${{ github.base_ref }} == 'main' ]; then
+          echo "STAGE=prod" >> $GITHUB_ENV
+          echo "TARGET_DEPLOYMENT_BUCKET=${{ secrets.NODEJS_DEPLOYMENT_BUCKET_PROD }}" >> $GITHUB_ENV
+          echo "TARGET_LAMBDA_ROLE=${{ secrets.NODEJS_LAMBDA_ROLE_PROD }}" >> $GITHUB_ENV
+          echo "TARGET_FUNCTION_NAME=mycity-nodejs-api-prod" >> $GITHUB_ENV
+          echo "TARGET_API_GATEWAY_NAME=mycity-nodejs-api-prod" >> $GITHUB_ENV
+        elif [ ${{ github.base_ref }} == 'development' ]; then
+          echo "STAGE=dev" >> $GITHUB_ENV
+          echo "TARGET_DEPLOYMENT_BUCKET=${{ secrets.NODEJS_DEPLOYMENT_BUCKET_DEV }}" >> $GITHUB_ENV
+          echo "TARGET_LAMBDA_ROLE=${{ secrets.NODEJS_LAMBDA_ROLE_DEV }}" >> $GITHUB_ENV
+          echo "TARGET_FUNCTION_NAME=mycity-nodejs-api-dev" >> $GITHUB_ENV
+          echo "TARGET_API_GATEWAY_NAME=mycity-nodejs-api-dev" >> $GITHUB_ENV
+        else
+          echo "No deployment for this branch"
+          exit 0
+        fi
+
+    - name: Generate serverless.yml
+      working-directory: nodejs_api
+      run: |
+        cat <<EOF > serverless.yml
+        # "org" ensures this Service is used with the correct Serverless Framework Access Key.
+        org: lanlords
+        # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+        app: mycity
+        service: mycity-nodejs-api
+        provider:
+          name: aws
+          runtime: nodejs20.x
+          timeout: 30
+          vpc:
+            securityGroupIds:
+              - ${{ secrets.VPC_SECURITY_GROUP_ID }}
+            subnetIds:
+              - ${{ secrets.VPC_SUBNET_ID }}
+          region: ${{ secrets.AWS_REGION }}
+          deploymentBucket:
+            name: ${{ env.TARGET_DEPLOYMENT_BUCKET }}
+          iam:
+            role: ${{ env.TARGET_LAMBDA_ROLE }}
+          environment:
+            API_ENV: ${{ env.STAGE }}
+            USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
+            USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+            S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+            REDIS_HOST: ${{ secrets.REDIS_HOST }}
+            REDIS_PORT: ${{ secrets.REDIS_PORT }}
+            WEB_SOCKET_URL: ${{ secrets.WEB_SOCKET_URL }}
+        functions:
+          app:
+            name: ${{ env.TARGET_FUNCTION_NAME }}
+            handler: dist/app.handler
+            events:
+
+              ######################  search endpoint  ####################
+              - http:
+                  method: get
+                  path: /search/issues
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /search/municipality
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /search/municipality-tickets
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /search/service-provider
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              ######################  tickets endpoint  ####################
+              - http:
+                  method: post
+                  path: /tickets/create
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tickets/addwatchlist
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tickets/accept
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tickets/close
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tickets/interact
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tickets/add-comment-with-image
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tickets/add-comment-without-image
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/fault-types
+
+              - http:
+                  method: get
+                  path: /tickets/getmytickets
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/getinarea
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/getopeninarea
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/getwatchlist
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/view
+
+              - http:
+                  method: get
+                  path: /tickets/getUpvotes
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/getcompanytickets
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/getopencompanytickets
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+              - http:
+                  method: get
+                  path: /tickets/comments
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tickets/geodata/all
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              ######################  tenders endpoint  ####################
+              - http:
+                  method: post
+                  path: /tenders/create
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tenders/in-review
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tenders/accept
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+              - http:
+                  method: post
+                  path: /tenders/reject
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tenders/completed
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /tenders/terminate
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+              - http:
+                  method: post
+                  path: /tenders/done
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/didbid
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getmytenders
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getmunitenders
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getmunicipalitytenders
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getcontracts
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getmunicontract
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getcompanycontracts
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /tenders/getcompanycontractbyticket
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              ################## analytics endpoint  ########################
+              - http:
+                  method: get
+                  path: /analytics/tickets_per_municipality
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /analytics/contracts_per_service_provider
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /analytics/tenders_per_service_provider
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              ################  municipalities endpoint  ##############
+              - http:
+                  method: get
+                  path: /municipality/municipalities-list
+
+              - http:
+                  method: get
+                  path: /municipality/coordinates
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              ###############  notifications endpoint  ##################
+              - http:
+                  method: post
+                  path: /notifications/insert-tokens
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: get
+                  path: /notifications/get-tokens
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              ##############  users endpoint  ##############
+              - http:
+                  method: post
+                  path: /users/profile-picture/upload
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              #############  jobs endpoint  ###########
+              - http:
+                  method: get
+                  path: /jobs/job-status/:type/:id
+
+              - http:
+                  method: get
+                  path: /jobs/cache/delete-key
+
+              - http:
+                  method: get
+                  path: /jobs/cache/delete-all
+
+              #############  giveaway endpoint  ###########
+              - http:
+                  method: get
+                  path: /giveaway/participant/count
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+              - http:
+                  method: post
+                  path: /giveaway/participant/add
+                  cors: true
+                  authorizer:
+                    type: COGNITO_USER_POOLS
+                    authorizerId:
+                      Ref: ApiGatewayAuthorizer
+
+        resources:
+          Resources:
+            ApiGatewayRestApi:
+              Type: AWS::ApiGateway::RestApi
+              Properties:
+                Name: ${{ env.TARGET_API_GATEWAY_NAME }}
+
+            ApiGatewayAuthorizer:
+              Type: AWS::ApiGateway::Authorizer
+              Properties:
+                Name: ${{ secrets.NODEJS_AUTHORIZER_NAME }}
+                Type: COGNITO_USER_POOLS
+                RestApiId:
+                  Ref: ApiGatewayRestApi
+                IdentitySource: method.request.header.Authorization
+                ProviderARNs:
+                  - ${{ secrets.USER_POOL_ARN }}
+        EOF
+
+    - name: Set Up AWS CLI
+      working-directory: nodejs_api
+      run: |
+        cat serverless.yml
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set default.region ${{ secrets.AWS_REGION }}
+
+    - name: Deploy Serverless Express App
+      working-directory: nodejs_api
+      env:
+        SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}  # Using the Serverless Access Key
+      run: |
+        npm run deploy -- --stage ${{ env.STAGE }}

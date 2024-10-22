@@ -31,6 +31,10 @@ describe("Users Controller", () => {
     });
 
     describe("uploadProfilePicture", () => {
+        beforeEach(() => {
+            req.originalUrl = "/users/profile-picture/upload";
+        });
+
         it("should return 400 if username or file is missing", async () => {
             req.body = { username: "testUser" }; // Missing file
 

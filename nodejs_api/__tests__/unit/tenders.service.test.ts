@@ -1,17 +1,15 @@
+import { addJobToReadQueue, addJobToWriteQueue } from "../../src/services/jobs.service";
 import * as tendersService from "../../src/services/tenders.service";
-import { dynamoDBDocumentClient } from "../../src/config/dynamodb.config";
 import { BadRequestError } from "../../src/types/error.types";
-import { QueryCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 // Mocking dependencies
-jest.mock("../../src/config/dynamodb.config", () => ({
-    dynamoDBDocumentClient: {
-        send: jest.fn(),
-    },
-}));
 jest.mock("../../src/utils/tickets.utils", () => ({
     generateId: jest.fn(() => "mockedId"),
     getCompanyIDFromName: jest.fn(),
+}));
+
+jest.mock("../../src/utils/tenders.utils", () => ({
+    sendWebSocketMessage: jest.fn(),
 }));
 
 describe("createTender", () => {
@@ -32,7 +30,8 @@ describe("createTender", () => {
 
         mockGetCompanyIDFromName.mockResolvedValueOnce("companyId");
         
-        (dynamoDBDocumentClient.send as jest.Mock).mockResolvedValueOnce({ Items: [] }); // No existing tender
+        (addJobToWriteQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: []}) }); // No existing tender
+        (addJobToReadQueue as jest.Mock).mockResolvedValue({ finished: jest.fn().mockResolvedValue({ Items: []}) });
 
         // Act
         const result = await tendersService.createTender(senderData);
@@ -44,12 +43,9 @@ describe("createTender", () => {
             tender_id: "mockedId",
         });
 
-        expect(dynamoDBDocumentClient.send).toHaveBeenCalledTimes(2); // Two calls: one for QueryCommand, one for PutCommand
-        expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(
-            expect.any(QueryCommand)
-        );
-        expect(dynamoDBDocumentClient.send).toHaveBeenCalledWith(
-            expect.any(PutCommand)
+        expect(addJobToWriteQueue).toHaveBeenCalledTimes(1);
+        expect(addJobToWriteQueue).toHaveBeenCalledWith(
+            expect.anything()
         );
     });
 
@@ -68,7 +64,7 @@ describe("createTender", () => {
         await expect(tendersService.createTender(senderData)).rejects.toThrow(BadRequestError);
         await expect(tendersService.createTender(senderData)).rejects.toThrow("Company Does not Exist");
 
-        expect(dynamoDBDocumentClient.send).not.toHaveBeenCalled(); // No database calls should be made
+        expect(addJobToReadQueue).not.toHaveBeenCalled(); // No database calls should be made
     });
 
     test("should throw an error if company already has a tender on this Ticket", async () => {

@@ -17,30 +17,38 @@ describe("tickets controller", () => {
 
 
     describe("getFaultTypes", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/fault-types";
+        });
+
         test("should return fault types on absence of error", async () => {
             const mockResult = [{ asset_id: "1", assetIcon: "icon", multiplier: 1 }];
             (ticketsService.getFaultTypes as jest.Mock).mockResolvedValue(mockResult); // mock service response
-    
+
             await ticketsController.getFaultTypes(req as Request, res as Response); // cast to full Request and Response
-    
+
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith(mockResult);
         });
-    
+
         test("should return 500 on internal server error", async () => {
             const mockError = new Error("Internal server error");
             (ticketsService.getFaultTypes as jest.Mock).mockRejectedValue(mockError);
-    
+
             await ticketsController.getFaultTypes(req as Request, res as Response);
-    
+
             expect(res.status).toHaveBeenCalledWith(500);
             expect(res.json).toHaveBeenCalledWith({ Error: mockError.message });
         });
     });
-    
+
 
 
     describe("viewTicketData", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/view";
+        });
+
         test("should return 400 if ticket_id is missing", async () => {
             req.query = {}; // Missing ticket_id
 
@@ -76,6 +84,10 @@ describe("tickets controller", () => {
 
 
     describe("createTicket", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/create";
+        });
+
         test("should return 400 if required fields are missing", async () => {
             req.body = { address: "123", asset: "asset" }; // Missing other fields
 
@@ -128,6 +140,10 @@ describe("tickets controller", () => {
 
 
     describe("addWatchlist", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/addwatchlist";
+        });
+
         test("should return 400 if required fields are missing", async () => {
             req.body = { username: "user" }; // Missing ticket_id
 
@@ -165,6 +181,10 @@ describe("tickets controller", () => {
 
 
     describe("acceptTicket", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/accept";
+        });
+
         test("should return 400 if required fields are missing", async () => {
             req.body = {}; // Missing ticket_id
 
@@ -202,6 +222,10 @@ describe("tickets controller", () => {
 
 
     describe("closeTicket", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/close";
+        });
+
         test("should return 400 if required fields are missing", async () => {
             req.body = {}; // Missing ticket_id
 
@@ -236,10 +260,11 @@ describe("tickets controller", () => {
         });
     });
 
-
-
-
     describe("getMyTickets", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/getmytickets";
+        });
+
         test("should return 400 if username is missing", async () => {
             req.query = {}; // No username
 
@@ -274,6 +299,11 @@ describe("tickets controller", () => {
 
 
     describe("getOpenTicketsInMunicipality", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/getopeninarea";
+        });
+
+
         test("should return 400 if municipality is missing", async () => {
             req.query = {}; // No municipality
 
@@ -308,6 +338,10 @@ describe("tickets controller", () => {
 
 
     describe("interactTicket", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/interact";
+        });
+
         test("should return 400 if required fields are missing", async () => {
             req.body = {}; // No fields provided
 
@@ -320,6 +354,10 @@ describe("tickets controller", () => {
 
 
     describe("getMostUpvotedTickets", () => {
+        beforeEach(() => {
+            req.originalUrl = "/tickets/getUpvotes";
+        });
+
         test("should return 200 and call service on success", async () => {
             const mockResult = [{ ticket_id: 1, description: "test ticket" }];
             (ticketsService.getMostUpvoted as jest.Mock).mockResolvedValue(mockResult);
@@ -341,7 +379,7 @@ describe("tickets controller", () => {
         });
     });
 
-    
+
 
 });
 
