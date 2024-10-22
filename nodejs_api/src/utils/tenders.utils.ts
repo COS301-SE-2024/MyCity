@@ -1,9 +1,9 @@
-import { QueryCommand, QueryCommandInput, QueryCommandOutput, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { QueryCommandInput, QueryCommandOutput, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { COMPANIES_TABLE, CONTRACT_TABLE, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { JobData } from "../types/job.types";
 import { DB_QUERY, DB_UPDATE } from "../config/redis.config";
-import { addJobToWriteQueue, addMultipleJobsToReadQueue } from "../services/jobs.service";
+import { addJobToReadQueue, addJobToWriteQueue, addMultipleJobsToReadQueue } from "../services/jobs.service";
 import { WebSocket } from "ws";
 
 export const updateTenderTable = async (tender_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
@@ -33,17 +33,23 @@ export const updateTenderTable = async (tender_id: string, update_expression: st
 
 export const updateContractTable = async (contract_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
-        const response = await dynamoDBDocumentClient.send(
-            new UpdateCommand({
-                TableName: CONTRACT_TABLE,
-                Key: {
-                    contract_id: contract_id
-                },
-                UpdateExpression: update_expression,
-                ExpressionAttributeNames: expression_attribute_names,
-                ExpressionAttributeValues: expression_attribute_values
-            })
-        );
+        const params: UpdateCommandInput = {
+            TableName: CONTRACT_TABLE,
+            Key: {
+                contract_id: contract_id
+            },
+            UpdateExpression: update_expression,
+            ExpressionAttributeNames: expression_attribute_names,
+            ExpressionAttributeValues: expression_attribute_values
+        };
+
+        const jobData: JobData = {
+            type: DB_UPDATE,
+            params: params
+        };
+
+        const writeJob = await addJobToWriteQueue(jobData);
+        const response = await writeJob.finished() as UpdateCommandOutput;
 
         return response;
     } catch (error: any) {
@@ -122,8 +128,6 @@ export const assignLongLat = async (data: any[]) => {
 };
 
 export const assignMuni = async (data: any[]) => {
-    const queryJobs: JobData[] = [];
-
     for (const item of data) {
         if (!item) {
             continue;
@@ -142,20 +146,30 @@ export const assignMuni = async (data: any[]) => {
             params: params
         };
 
-        queryJobs.push(jobData);
+        const readJob = await addJobToReadQueue(jobData);
+        const responseTender = await readJob.finished() as QueryCommandOutput;
 
         if (!responseTender.Items || responseTender.Items.length <= 0) {
             item.municipality = "Stellenbosch Local";
             item.ticketnumber = "MAA2-4052-8NAS";
         } else {
             const tenders = responseTender.Items[0];
-            const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
+
+            const ticketParams: QueryCommandInput = {
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": tenders.ticket_id
                 }
-            }));
+            };
+
+            const ticketJobData: JobData = {
+                type: DB_QUERY,
+                params: ticketParams
+            };
+
+            const ticketJob = await addJobToReadQueue(ticketJobData);
+            const responseTickets = await ticketJob.finished() as QueryCommandOutput;
 
             if (!responseTickets.Items || responseTickets.Items.length <= 0) {
                 item.municipality = "Stellenbosch Local";
@@ -168,7 +182,6 @@ export const assignMuni = async (data: any[]) => {
         }
     }
 };
-
 
 export const sendWebSocketMessage = (message: string) => {
     return new Promise((resolve, reject) => {

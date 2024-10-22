@@ -894,8 +894,6 @@ export const getCompanyTickets = async (companyname: string) => {
 
 
 export const getOpenCompanyTickets = async () => {
-    const collective: any[] = [];
-
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "state-updatedAt-index",
