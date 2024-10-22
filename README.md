@@ -108,7 +108,7 @@
       <td>
         <div align="center">
           <img width="100" height="auto" href="https://drive.google.com/drive/folders/12j6ciH338590703i1MX8mGWqSPuA9goL?usp=sharing" src="/images/icon_Project-Day.png" alt="Project Day" href=""/><br/>
-          <a href="https://drive.google.com/drive/folders/12j6ciH338590703i1MX8mGWqSPuA9goL?usp=sharing">Project Day</a>
+          <a href="https://drive.google.com/file/d/1twBTTB_Klx6jygstb3XfYCP4rNowVeKn/view?usp=drive_link">Project Day</a>
         </div>
       </td>
     </tr>
