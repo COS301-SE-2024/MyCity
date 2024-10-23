@@ -58,6 +58,11 @@
 
 # Project Overview
 
+<video width="600" controls>
+  <source src="/video/Final Video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 <details>
 <summary><p>MyCity will revolutionise the way municipalities, communities, and third-party vendors and organisations manage, repair and track assets, by acting as a single point of contact to allow users to log tickets related to these assets, and provide updates while the ticket is in progress.</p> </summary>
 
@@ -108,7 +113,7 @@
       <td>
         <div align="center">
           <img width="100" height="auto" href="https://drive.google.com/drive/folders/12j6ciH338590703i1MX8mGWqSPuA9goL?usp=sharing" src="/images/icon_Project-Day.png" alt="Project Day" href=""/><br/>
-          <a href="https://drive.google.com/file/d/1twBTTB_Klx6jygstb3XfYCP4rNowVeKn/view?usp=drive_link">Project Day</a>
+          <a href="https://drive.google.com/drive/folders/12j6ciH338590703i1MX8mGWqSPuA9goL?usp=sharing">Project Day</a>
         </div>
       </td>
     </tr>
