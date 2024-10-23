@@ -57,7 +57,8 @@
 - [Meet Team LAN Lords](#meet-team-lan-lords)
 
 # Project Overview
-https://github.com/COS301-SE-2024/MyCity/blob/bde512ae0a0cec80b2b0f5a65d24a264fda90211/video/Final%20Video.mp4
+
+[🎥 How it works](https://drive.google.com/file/d/1twBTTB_Klx6jygstb3XfYCP4rNowVeKn/view?usp=drive_link)
 
 <details>
 <summary><p>MyCity will revolutionise the way municipalities, communities, and third-party vendors and organisations manage, repair and track assets, by acting as a single point of contact to allow users to log tickets related to these assets, and provide updates while the ticket is in progress.</p> </summary>
