@@ -1,5 +1,5 @@
 import { GetCommand, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE,TICKETS_PER_MUNICIPALITY_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
@@ -313,3 +313,40 @@ export const getTicketDateOpened = async (ticketId: string) => {
     const dateOpened = queryResultItems[0].dateOpened as string;
     return dateOpened;
 };
+
+export const StatsTickettable = async (municipality : string, asset : string) =>{
+    const update_expression = 'SET #byAsset.#assetName = if_not_exists(#byAsset.#assetName, :start) + :increment';
+    
+    const expression_attribute_names = {
+        '#byAsset': 'by asset',
+        '#assetName': asset
+    };
+    
+    const expression_attribute_values = {
+        ':increment': 1,
+        ':start': 0
+    };
+    
+    try {
+        const params: UpdateCommandInput = {
+            TableName: TICKETS_PER_MUNICIPALITY_TABLE, // Replace with your actual table name
+            Key: {
+                municipality_id: municipality,
+            },
+            UpdateExpression: update_expression,
+            ExpressionAttributeNames: expression_attribute_names,
+            ExpressionAttributeValues: expression_attribute_values
+        };
+
+        const jobData = {
+            type: 'DB_UPDATE',
+            params: params
+        };
+
+        const writeJob = await addJobToWriteQueue(jobData);
+        const response = await writeJob.finished() as UpdateCommandOutput;
+        console.log('Update success:', response);
+    } catch (error) {
+        console.error('Error updating asset count:', error);
+    }
+}

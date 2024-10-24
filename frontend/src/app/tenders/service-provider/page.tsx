@@ -253,22 +253,6 @@ export default function MuniTenders() {
                   )}
                 </Tab>
 
-                {/* <Tab key={2} title="Closed Tenders">
-                  {loadingTabs.closedTenders ? (
-                    <div className="flex justify-center items-center h-64">
-                      <ThreeDots
-                        height="40"
-                        width="80"
-                        radius="9"
-                        color="#ADD8E6"
-                        ariaLabel="three-dots-loading"
-                        visible={true}
-                      />
-                    </div>
-                  ) : (
-                    <ClosedTenders />
-                  )}
-                </Tab> */}
               </Tabs>
             </div>
           </main>

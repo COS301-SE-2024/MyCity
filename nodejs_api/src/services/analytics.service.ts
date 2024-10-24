@@ -63,3 +63,4 @@ export const getTendersPerServiceProvider = async (serviceProvider: string) => {
     const statistics = response.Items || [];
     return statistics;
 };
+ 

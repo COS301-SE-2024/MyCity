@@ -1,7 +1,7 @@
 import { QueryCommandInput, GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, PutCommandOutput, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { BadRequestError, ClientError } from "../types/error.types";
 import { ASSETS_TABLE, cognitoClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE, WATCHLIST_TABLE } from "../config/dynamodb.config";
-import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
+import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, StatsTickettable, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
 import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
@@ -142,6 +142,8 @@ export const createTicket = async (formData: any, file: Express.Multer.File | un
         type: DB_PUT,
         params: putWatchlistParams
     }
+
+    await StatsTickettable(municipalityId,assetId);
 
     const watchlistJob = await addJobToWriteQueue(watchlistJobData);
     const watchlistResponse = await watchlistJob.finished() as PutCommandOutput;
