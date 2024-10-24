@@ -1,11 +1,11 @@
-import { GetCommand, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { GetCommandInput, GetCommandOutput, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { cognitoClient, COMPANIES_TABLE, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
 import { JobData } from "../types/job.types";
-import { addJobToReadQueue, addJobToWriteQueue } from "../services/jobs.service";
-import { DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
+import { addJobToReadQueue, addJobToWriteQueue, addMultipleJobsToReadQueue } from "../services/jobs.service";
+import { DB_GET, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
 
 interface Company {
     name: string;
@@ -13,64 +13,89 @@ interface Company {
 }
 
 export const getUserProfile = async (ticketData: any[]) => {
-    let cognitoUsername = "";
-    try {
-        const USER_POOL_ID = process.env.USER_POOL_ID;
-        for (let ticket of ticketData) {
-            cognitoUsername = (ticket["username"] as string).toLowerCase();
-            const userResponse: AdminGetUserCommandOutput = await cognitoClient.send(
-                new AdminGetUserCommand({
-                    UserPoolId: USER_POOL_ID,
-                    Username: cognitoUsername
-                })
-            );
+    const promises = [];
+    const muniJobs: JobData[] = [];
 
-            let userImage: string | null = null;
-            let userName: string | null = null;
+    const USER_POOL_ID = process.env.USER_POOL_ID;
+    for (let ticket of ticketData) {
+        const cognitoUsername = (ticket["username"] as string).toLowerCase();
+        const userResponsePromise = cognitoClient.send(
+            new AdminGetUserCommand({
+                UserPoolId: USER_POOL_ID,
+                Username: cognitoUsername
+            })
+        );
 
-            if (userResponse.UserAttributes) {
-                for (let attr of userResponse.UserAttributes) {
-                    if (attr.Name === "picture") {
-                        userImage = attr.Value!;
-                    }
-                    if (attr.Name === "given_name") {
-                        userName = attr.Value!;
-                    }
-
-                    if (userImage && userName) {
-                        break;
-                    }
-                }
+        const muniParams: GetCommandInput = {
+            TableName: MUNICIPALITIES_TABLE,
+            Key: {
+                "municipality_id": ticket.municipality_id
             }
+        };
 
-            ticket["user_picture"] = userImage;
-            ticket["createdby"] = userName;
+        const muniJobData: JobData = {
+            type: DB_GET,
+            params: muniParams
+        };
 
-            const responseMunicipality = await dynamoDBDocumentClient.send(
-                new GetCommand({
-                    TableName: MUNICIPALITIES_TABLE,
-                    Key: {
-                        "municipality_id": ticket.municipality_id
-                    }
-                })
-            );
+        muniJobs.push(muniJobData);
+        promises.push(userResponsePromise);
+    }
 
+    try {
+        const muniResponses = await addMultipleJobsToReadQueue(muniJobs);
+
+        muniResponses.forEach(async (jobResult, index) => {
+            const responseMunicipality = await jobResult.finished() as GetCommandOutput;
             if (responseMunicipality.Item) {
                 const municipality = responseMunicipality.Item;
-                ticket.municipality_picture = municipality["municipalityLogo"];
-                ticket.municipality = municipality["municipality_id"];
+                ticketData[index].municipality_picture = municipality["municipalityLogo"];
+                ticketData[index].municipality = municipality["municipality_id"];
             } else {
-                ticket.municipality_picture = "";
-                ticket.municipality = "";
+                ticketData[index].municipality_picture = "";
+                ticketData[index].municipality = "";
             }
-        }
+        });
+
+        const userResponses = await Promise.allSettled(promises);
+
+        userResponses.forEach((result, index) => {
+            if (result.status === "fulfilled") {
+                const userResponse = result.value as AdminGetUserCommandOutput;
+                let userImage: string | null = null;
+                let userName: string | null = null;
+
+                if (userResponse.UserAttributes) {
+                    for (let attr of userResponse.UserAttributes) {
+                        if (attr.Name === "picture") {
+                            userImage = attr.Value!;
+                        }
+                        if (attr.Name === "given_name") {
+                            userName = attr.Value!;
+                        }
+
+                        if (userImage && userName) {
+                            break;
+                        }
+                    }
+                }
+
+                ticketData[index]["user_picture"] = userImage;
+                ticketData[index]["createdby"] = userName;
+            }
+            else {
+                if (result.reason.name === "UserNotFoundException") {
+                    ticketData[index]["user_picture"] = "";
+                    ticketData[index]["createdby"] = "deleted_user";
+                }
+                else {
+                    console.error("An error occurred:", result.reason);
+                }
+            }
+        });
 
     } catch (error: any) {
-        if (error.name === "UserNotFoundException") {
-            console.error(`${error.message}: ${cognitoUsername}`);
-        } else {
-            console.error("An error occurred:", error);
-        }
+        throw error;
     }
 };
 
@@ -176,41 +201,70 @@ export const generateTicketNumber = (municipalityName: string): string => {
     return ticketNumber;
 };
 
-export const updateCommentCounts = async (items: any[], batchSize: number = 7) => {
-    // split items into smaller batches
-    for (let i = 0; i < items.length; i += batchSize) {
-        const batch = items.slice(i, i + batchSize);
+export const updateCommentCounts = async (items: any[], batchSize: number = 10) => {
+    // // split items into smaller batches
+    // for (let i = 0; i < items.length; i += batchSize) {
+    //     const batch = items.slice(i, i + batchSize);
 
-        const queryPromises = batch.map(async (item) => {
-            const params: QueryCommandInput = {
-                TableName: TICKET_UPDATE_TABLE,
-                IndexName: "ticket_id-index",
-                KeyConditionExpression: "ticket_id = :ticket_id",
-                ExpressionAttributeValues: {
-                    ":ticket_id": item.ticket_id
-                },
-                Select: "COUNT"
-            };
+    //     const queryPromises = batch.map(async (item) => {
+    //         const params: QueryCommandInput = {
+    //             TableName: TICKET_UPDATE_TABLE,
+    //             IndexName: "ticket_id-index",
+    //             KeyConditionExpression: "ticket_id = :ticket_id",
+    //             ExpressionAttributeValues: {
+    //                 ":ticket_id": item.ticket_id
+    //             },
+    //             Select: "COUNT"
+    //         };
 
-            const jobData: JobData = {
-                type: "DB_QUERY",
-                params: params
-            };
+    //         const jobData: JobData = {
+    //             type: DB_QUERY,
+    //             params: params
+    //         };
 
-            const readJob = await addJobToReadQueue(jobData);
-            const queryResponse = await readJob.finished() as QueryCommandOutput;
-            item.commentcount = queryResponse.Count || 0;
-        });
+    //         const readJob = await addJobToReadQueue(jobData);
+    //         const queryResponse = await readJob.finished() as QueryCommandOutput;
+    //         item.commentcount = queryResponse.Count || 0;
+    //     });
 
-        // wait for this batch of queries to complete before continuing
-        const resultspromises = await Promise.allSettled(queryPromises);
+    //     // wait for this batch of queries to complete before continuing
+    //     const resultspromises = await Promise.allSettled(queryPromises);
 
-        resultspromises.forEach((result, index) => {
-            if (result.status === "rejected") {
-                console.error(`Promise ${index} failed with error: ${result.reason}`);
-            }
-        });
+    //     resultspromises.forEach((result, index) => {
+    //         if (result.status === "rejected") {
+    //             console.error(`Promise ${index} failed with error: ${result.reason}`);
+    //         }
+    //     });
+    // }
+
+    const getCommentCountJobs: JobData[] = [];
+
+    for (let item of items) {
+        const params: QueryCommandInput = {
+            TableName: TICKET_UPDATE_TABLE,
+            IndexName: "ticket_id-index",
+            KeyConditionExpression: "ticket_id = :ticket_id",
+            ExpressionAttributeValues: {
+                ":ticket_id": item.ticket_id
+            },
+            Select: "COUNT"
+        };
+
+        const jobData: JobData = {
+            type: DB_QUERY,
+            params: params
+        };
+
+        getCommentCountJobs.push(jobData);
     }
+
+    const commentCountResults = await addMultipleJobsToReadQueue(getCommentCountJobs);
+
+    commentCountResults.forEach(async (jobResult, index) => {
+        const response = await jobResult.finished() as QueryCommandOutput;
+        const commentCount = response.Count || 0;
+        items[index].commentcount = commentCount;
+    });
 };
 
 export const getDistance = (origin: [number, number], destination: [number, number]): number => {

@@ -149,10 +149,10 @@ export const deleteAllCache = async () => {
 
 export const processReadQueue = () => {
     const queue = getReadQueue();
-    queue.process(readQueueProcessor);
+    queue.process(1, readQueueProcessor);
 };
 
 export const processWriteQueue = () => {
     const queue = getWriteQueue();
-    queue.process(writeQueueProcessor);
+    queue.process(1, writeQueueProcessor);
 };

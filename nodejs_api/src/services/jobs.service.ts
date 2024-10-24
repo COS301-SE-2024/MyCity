@@ -30,6 +30,16 @@ export const addJobToReadQueue = async (jobData: JobData, options?: JobOptions) 
     return job;
 };
 
+export const addMultipleJobsToReadQueue = async (jobData: JobData[]) => {
+    const readQueue = getReadQueue();
+
+    const jobs = await readQueue.addBulk(jobData.map((singleJobData) => ({
+        data: singleJobData
+    })));
+
+    return jobs;
+};
+
 export const addJobToWriteQueue = async (jobData: JobData, options?: JobOptions) => {
     const writeQueue = getWriteQueue();
     const job = await writeQueue.add({

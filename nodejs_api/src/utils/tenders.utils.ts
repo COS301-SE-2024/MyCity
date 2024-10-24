@@ -1,9 +1,9 @@
-import { QueryCommand, UpdateCommand, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { QueryCommandInput, QueryCommandOutput, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { COMPANIES_TABLE, CONTRACT_TABLE, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { JobData } from "../types/job.types";
-import { DB_UPDATE } from "../config/redis.config";
-import { addJobToWriteQueue } from "../services/jobs.service";
+import { DB_QUERY, DB_UPDATE } from "../config/redis.config";
+import { addJobToReadQueue, addJobToWriteQueue, addMultipleJobsToReadQueue } from "../services/jobs.service";
 import { WebSocket } from "ws";
 
 export const updateTenderTable = async (tender_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
@@ -33,17 +33,23 @@ export const updateTenderTable = async (tender_id: string, update_expression: st
 
 export const updateContractTable = async (contract_id: string, update_expression: string, expression_attribute_names: Record<string, string>, expression_attribute_values: Record<string, any>) => {
     try {
-        const response = await dynamoDBDocumentClient.send(
-            new UpdateCommand({
-                TableName: CONTRACT_TABLE,
-                Key: {
-                    contract_id: contract_id
-                },
-                UpdateExpression: update_expression,
-                ExpressionAttributeNames: expression_attribute_names,
-                ExpressionAttributeValues: expression_attribute_values
-            })
-        );
+        const params: UpdateCommandInput = {
+            TableName: CONTRACT_TABLE,
+            Key: {
+                contract_id: contract_id
+            },
+            UpdateExpression: update_expression,
+            ExpressionAttributeNames: expression_attribute_names,
+            ExpressionAttributeValues: expression_attribute_values
+        };
+
+        const jobData: JobData = {
+            type: DB_UPDATE,
+            params: params
+        };
+
+        const writeJob = await addJobToWriteQueue(jobData);
+        const response = await writeJob.finished() as UpdateCommandOutput;
 
         return response;
     } catch (error: any) {
@@ -52,51 +58,73 @@ export const updateContractTable = async (contract_id: string, update_expression
 };
 
 export const assignCompanyName = async (data: any[]) => {
+    const queryJobs: JobData[] = [];
+
     for (const item of data) {
         if (!item) {
             continue;
         }
-        const responseName = await dynamoDBDocumentClient.send(new QueryCommand({
+
+        const params: QueryCommandInput = {
             TableName: COMPANIES_TABLE,
             KeyConditionExpression: "pid = :pid",
             ExpressionAttributeValues: {
                 ":pid": item.company_id
             }
-        }));
+        };
 
-        if (!responseName.Items || responseName.Items.length <= 0) {
-            item.companyname = "Xero industries";
-        } else {
-            const items = responseName.Items[0];
-            item.companyname = items.name;
-        }
+        const jobData: JobData = {
+            type: DB_QUERY,
+            params: params
+        };
+
+        queryJobs.push(jobData);
     }
+
+    const jobResults = await addMultipleJobsToReadQueue(queryJobs);
+
+    jobResults.forEach(async (job, index) => {
+        const response = await job.finished() as QueryCommandOutput;
+        const company = response.Items ? response.Items[0] : null;
+        data[index].companyname = company ? company.name : "Xero industries";
+    });
 };
 
 export const assignLongLat = async (data: any[]) => {
+    const queryJobs: JobData[] = [];
+
     for (const item of data) {
         if (!item) {
             continue;
         }
-        const response = await dynamoDBDocumentClient.send(new QueryCommand({
+
+        const params: QueryCommandInput = {
             TableName: TICKETS_TABLE,
             KeyConditionExpression: "ticket_id = :ticket_id",
             ExpressionAttributeValues: {
                 ":ticket_id": item.ticket_id
             },
             ProjectionExpression: "longitude, latitude, ticketnumber"
-        }));
+        };
 
-        if (!response.Items || response.Items.length <= 0) {
-            item.longitude = "26.5623685320641";
-            item.latitude = "-32.90383";
-        } else {
-            const ticket = response.Items[0];
-            item.longitude = ticket.longitude;
-            item.latitude = ticket.latitude;
-            item.ticketnumber = ticket.ticketnumber;
-        }
+        const jobData: JobData = {
+            type: DB_QUERY,
+            params: params
+        };
+
+        queryJobs.push(jobData);
     }
+
+    const jobResults = await addMultipleJobsToReadQueue(queryJobs);
+
+    jobResults.forEach(async (job, index) => {
+        const response = await job.finished() as QueryCommandOutput;
+        const ticket = response.Items ? response.Items[0] : null;
+
+        data[index].longitude = ticket ? ticket.longitude : 26.5623685320641;
+        data[index].latitude = ticket ? ticket.latitude : -32.90383;
+        data[index].ticketnumber = ticket ? ticket.ticketnumber : undefined;
+    });
 };
 
 export const assignMuni = async (data: any[]) => {
@@ -104,26 +132,44 @@ export const assignMuni = async (data: any[]) => {
         if (!item) {
             continue;
         }
-        const responseTender = await dynamoDBDocumentClient.send(new QueryCommand({
+
+        const params: QueryCommandInput = {
             TableName: TENDERS_TABLE,
             KeyConditionExpression: "tender_id = :tender_id",
             ExpressionAttributeValues: {
                 ":tender_id": item.tender_id
             }
-        }));
+        };
+
+        const jobData: JobData = {
+            type: DB_QUERY,
+            params: params
+        };
+
+        const readJob = await addJobToReadQueue(jobData);
+        const responseTender = await readJob.finished() as QueryCommandOutput;
 
         if (!responseTender.Items || responseTender.Items.length <= 0) {
             item.municipality = "Stellenbosch Local";
             item.ticketnumber = "MAA2-4052-8NAS";
         } else {
             const tenders = responseTender.Items[0];
-            const responseTickets = await dynamoDBDocumentClient.send(new QueryCommand({
+
+            const ticketParams: QueryCommandInput = {
                 TableName: TICKETS_TABLE,
                 KeyConditionExpression: "ticket_id = :ticket_id",
                 ExpressionAttributeValues: {
                     ":ticket_id": tenders.ticket_id
                 }
-            }));
+            };
+
+            const ticketJobData: JobData = {
+                type: DB_QUERY,
+                params: ticketParams
+            };
+
+            const ticketJob = await addJobToReadQueue(ticketJobData);
+            const responseTickets = await ticketJob.finished() as QueryCommandOutput;
 
             if (!responseTickets.Items || responseTickets.Items.length <= 0) {
                 item.municipality = "Stellenbosch Local";
@@ -136,7 +182,6 @@ export const assignMuni = async (data: any[]) => {
         }
     }
 };
-
 
 export const sendWebSocketMessage = (message: string) => {
     return new Promise((resolve, reject) => {

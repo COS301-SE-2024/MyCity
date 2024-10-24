@@ -4,7 +4,7 @@ import { ASSETS_TABLE, cognitoClient, TENDERS_TABLE, TICKET_UPDATE_TABLE, TICKET
 import { generateId, generateTicketNumber, getCompanyIDFromName, getMunicipality, getTicketDateOpened, getUserProfile, updateCommentCounts, updateTicketTable, validateTicketId } from "../utils/tickets.utils";
 import { uploadFile } from "../config/s3bucket.config";
 import WebSocket from "ws";
-import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
+import { addJobToReadQueue, addJobToWriteQueue, addMultipleJobsToReadQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
 import { deleteAllCache, DB_GET, DB_PUT, DB_QUERY, DB_SCAN, DB_UPDATE, deleteCacheKey } from "../config/redis.config";
 import { sendWebSocketMessage } from "../utils/tenders.utils";
@@ -371,10 +371,13 @@ export const getWatchlist = async (userId: string, lastEvaluatedKeyString: strin
 
     const params: QueryCommandInput = {
         TableName: WATCHLIST_TABLE,
+        IndexName: "user_id-ticket_id-index",
         KeyConditionExpression: "user_id = :user_id",
         ExpressionAttributeValues: {
             ":user_id": userId
         },
+        ProjectionExpression: "ticket_id",
+        ScanIndexForward: false,
         Limit: 15
     };
 
@@ -382,15 +385,16 @@ export const getWatchlist = async (userId: string, lastEvaluatedKeyString: strin
         params.ExclusiveStartKey = JSON.parse(lastEvaluatedKeyString);
     }
 
-    const jobsData: JobData = {
+    const jobData: JobData = {
         type: DB_QUERY,
         params: params
     };
 
-    const job = await addJobToReadQueue(jobsData);
+    const job = await addJobToReadQueue(jobData);
     const response = await job.finished() as QueryCommandOutput;
 
     const items = response.Items;
+    const ticketJobs: JobData[] = [];
 
     if (items && items.length > 0) {
         for (const item of items) {
@@ -408,16 +412,22 @@ export const getWatchlist = async (userId: string, lastEvaluatedKeyString: strin
                 params: params2
             };
 
-            const job2 = await addJobToReadQueue(jobData2);
-            const respItem = await job2.finished() as QueryCommandOutput;
-            const ticketsItems = respItem.Items;
+            ticketJobs.push(jobData2);
+        }
 
-            if (ticketsItems && ticketsItems.length > 0) {
-                await updateCommentCounts(ticketsItems);
-                await getUserProfile(ticketsItems);
-                collective.push(...ticketsItems);
+        const ticketJobResults = await addMultipleJobsToReadQueue(ticketJobs);
+
+        for (const jobResult of ticketJobResults) {
+            const response = await jobResult.finished() as QueryCommandOutput;
+            const ticket = response.Items || [];
+            if (ticket.length > 0) {
+                collective.push(ticket[0]);
             }
         }
+
+        await updateCommentCounts(collective);
+        await getUserProfile(collective);
+
         return {
             lastEvaluatedKey: response.LastEvaluatedKey,
             items: collective
@@ -809,6 +819,8 @@ export const getCompanyTickets = async (companyname: string) => {
 
     const tenderItems = responseTender.Items;
 
+    const companyTicketJobs: JobData[] = [];
+
     if (tenderItems && tenderItems.length > 0) {
         for (const item of tenderItems) {
             const params2: QueryCommandInput = {
@@ -825,15 +837,20 @@ export const getCompanyTickets = async (companyname: string) => {
                 params: params2
             };
 
-            const job2 = await addJobToReadQueue(jobData2);
-            const responseCompanyTickets = await job2.finished() as QueryCommandOutput;
-            const companyTickets = responseCompanyTickets.Items;
+            companyTicketJobs.push(jobData2);
+        }
 
+        const ticketJobResults = await addMultipleJobsToReadQueue(companyTicketJobs);
+
+        for (const jobResult of ticketJobResults) {
+            const responseCompanyTickets = await jobResult.finished() as QueryCommandOutput;
+            const companyTickets = responseCompanyTickets.Items;
             if (companyTickets && companyTickets.length > 0) {
-                await getUserProfile(companyTickets);
                 collective.push(...companyTickets);
             }
         }
+
+        await getUserProfile(collective);
     }
 
     const params3: QueryCommandInput = {
@@ -877,8 +894,6 @@ export const getCompanyTickets = async (companyname: string) => {
 
 
 export const getOpenCompanyTickets = async () => {
-    const collective: any[] = [];
-
     const params: QueryCommandInput = {
         TableName: TICKETS_TABLE,
         IndexName: "state-updatedAt-index",
@@ -1019,7 +1034,6 @@ export const getTicketComments = async (currTicketId: string) => {
             }
         };
 
-
         const jobData: JobData = {
             type: DB_QUERY,
             params: params
@@ -1031,16 +1045,25 @@ export const getTicketComments = async (currTicketId: string) => {
 
         if (items.length > 0) {
             let cognitoUsername: string = "";
-            try {
-                const USER_POOL_ID = process.env.USER_POOL_ID;
-                for (let commentItem of items) {
-                    cognitoUsername = (commentItem["user_id"] as string).toLowerCase();
-                    const userResponse: AdminGetUserCommandOutput = await cognitoClient.send(
-                        new AdminGetUserCommand({
-                            UserPoolId: USER_POOL_ID,
-                            Username: cognitoUsername
-                        })
-                    );
+            const USER_POOL_ID = process.env.USER_POOL_ID;
+            const cognitoPromises = [];
+            for (let commentItem of items) {
+                cognitoUsername = (commentItem["user_id"] as string).toLowerCase();
+                const response = cognitoClient.send(
+                    new AdminGetUserCommand({
+                        UserPoolId: USER_POOL_ID,
+                        Username: cognitoUsername
+                    })
+                );
+
+                cognitoPromises.push(response);
+            }
+
+            const userProfiles = await Promise.allSettled(cognitoPromises);
+
+            userProfiles.forEach((result, index) => {
+                if (result.status === "fulfilled") {
+                    const userResponse = result.value as AdminGetUserCommandOutput;
 
                     let userImage: string | null = null;
                     let userGivenName: string | null = null;
@@ -1066,20 +1089,23 @@ export const getTicketComments = async (currTicketId: string) => {
                         }
                     }
 
-                    commentItem["userImage"] = userImage;
-                    commentItem["userName"] = userGivenName + " " + userFamilyName;
+                    items[index]["userImage"] = userImage;
+                    items[index]["userName"] = userGivenName + " " + userFamilyName;
                 }
+                else {
+                    if (result.reason.name === "UserNotFoundException") {
+                        items[index]["userImage"] = "";
+                        items[index]["userName"] = "deleted_user";
+                    }
+                    else {
+                        console.error("An error occurred:", result.reason);
+                    }
+                }
+            });
 
-                return items;
-            } catch (error: any) {
-                if (error.name === "UserNotFoundException") {
-                    console.error(`${error.message}: ${cognitoUsername}`);
-                } else {
-                    console.error("An error occurred:", error);
-                }
-            }
+            return items;
         }
-        
+
     } catch (e: any) {
         if (e instanceof ClientError) {
             throw new BadRequestError(`Failed to search for the ticket comments: ${e.response.Error.Message}`);
@@ -1106,14 +1132,12 @@ export const getGeodataAll = async () => {
         for (const fault of faultData) {
             const upvotes = fault.upvotes || 0;
 
-            if (upvotes < 10) {
+            if (upvotes < 100) {
                 fault.urgency = "non-urgent";
-            } else if (upvotes >= 10 && upvotes < 20) {
+            } else if (upvotes >= 100 && upvotes < 400) {
                 fault.urgency = "semi-urgent";
-            } else if (upvotes >= 20 && upvotes <= 40) {
+            } else if (upvotes >= 400) {
                 fault.urgency = "urgent";
-            } else {
-                fault.urgency = "non-urgent";
             }
 
             delete fault.upvotes;
