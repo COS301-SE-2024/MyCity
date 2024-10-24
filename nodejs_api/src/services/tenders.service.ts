@@ -1,11 +1,11 @@
-import { GetCommand, GetCommandInput, GetCommandOutput, PutCommand, PutCommandInput, QueryCommand, QueryCommandInput, QueryCommandOutput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { COMPANIES_TABLE, CONTRACT_TABLE, dynamoDBDocumentClient, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { GetCommandInput, GetCommandOutput, PutCommandInput, QueryCommandInput, QueryCommandOutput, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { COMPANIES_TABLE, CONTRACT_TABLE, TENDERS_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError, NotFoundError } from "../types/error.types";
 import { generateId, getCompanyIDFromName, getTicketDateOpened, updateTicketTable } from "../utils/tickets.utils";
 import { assignCompanyName, assignLongLat, assignMuni, sendWebSocketMessage, updateContractTable, updateTenderTable } from "../utils/tenders.utils";
 import WebSocket from "ws";
 import { deleteAllCache, DB_GET, DB_PUT, DB_QUERY, DB_UPDATE } from "../config/redis.config";
-import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
+import { addJobToReadQueue, addJobToWriteQueue, addMultipleJobsToReadQueue } from "./jobs.service";
 import { JobData } from "../types/job.types";
 
 interface TenderData {
@@ -625,6 +625,7 @@ export const getMunicipalityTenders = async (municipality: string) => {
 
     const collective: any[] = [];
     const tickets = responseTickets.Items;
+    const tenderJobs = [];
 
     for (const item of tickets) {
         const paramsTender: QueryCommandInput = {
@@ -641,15 +642,21 @@ export const getMunicipalityTenders = async (municipality: string) => {
             params: paramsTender
         }
 
-        const readJobTender = await addJobToReadQueue(tendersJobData);
-        const responseTender = await readJobTender.finished() as QueryCommandOutput;
+        tenderJobs.push(tendersJobData);
+    }
 
-        if (responseTender.Items && responseTender.Items.length > 0) {
-            await assignMuni(responseTender.Items);
-            await assignLongLat(responseTender.Items);
-            await assignCompanyName(responseTender.Items);
-            collective.push(...responseTender.Items);
-        }
+    const readJobs = await addMultipleJobsToReadQueue(tenderJobs);
+
+    for (let jobResult of readJobs) {
+        const responseTenders = await jobResult.finished() as QueryCommandOutput;
+        const tenders = responseTenders.Items || [];
+        collective.push(...tenders);
+    }
+
+    if (collective.length > 0) {
+        await assignMuni(collective);
+        await assignLongLat(collective);
+        await assignCompanyName(collective);
     }
 
     return collective;
