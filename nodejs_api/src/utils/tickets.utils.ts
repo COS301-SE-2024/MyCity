@@ -1,11 +1,8 @@
-import { GetCommandInput, GetCommandOutput, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput, UpdateCommandInput, UpdateCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { cognitoClient, COMPANIES_TABLE, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { BatchGetCommand, BatchGetCommandInput, QueryCommand, QueryCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { cognitoClient, COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKET_UPDATE_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
 import { AdminGetUserCommand, AdminGetUserCommandOutput } from "@aws-sdk/client-cognito-identity-provider";
 import { v4 as uuidv4 } from "uuid";
-import { JobData } from "../types/job.types";
-import { addJobToReadQueue, addJobToWriteQueue, addMultipleJobsToReadQueue } from "../services/jobs.service";
-import { DB_GET, DB_QUERY, DB_SCAN, DB_UPDATE } from "../config/redis.config";
 
 interface Company {
     name: string;
@@ -13,48 +10,38 @@ interface Company {
 }
 
 export const getUserProfile = async (ticketData: any[]) => {
-    const promises = [];
-    const muniJobs: JobData[] = [];
-
     const USER_POOL_ID = process.env.USER_POOL_ID;
-    for (let ticket of ticketData) {
-        const cognitoUsername = (ticket["username"] as string).toLowerCase();
-        const userResponsePromise = cognitoClient.send(
-            new AdminGetUserCommand({
-                UserPoolId: USER_POOL_ID,
-                Username: cognitoUsername
-            })
-        );
+    const promises: any = [];
 
-        const muniParams: GetCommandInput = {
-            TableName: MUNICIPALITIES_TABLE,
-            Key: {
-                "municipality_id": ticket.municipality_id
+    const uniqueMunicipalityIds = Array.from(new Set(ticketData.map((item) => item.municipality_id)));
+
+    const params: BatchGetCommandInput = {
+        RequestItems: {
+            [MUNICIPALITIES_TABLE]: {
+                Keys: uniqueMunicipalityIds.map((municipality_id) => ({
+                    municipality_id: municipality_id
+                })),
+                ProjectionExpression: "municipalityLogo, municipality_id"
             }
-        };
-
-        const muniJobData: JobData = {
-            type: DB_GET,
-            params: muniParams
-        };
-
-        muniJobs.push(muniJobData);
-        promises.push(userResponsePromise);
-    }
+        }
+    };
 
     try {
-        const muniResponses = await addMultipleJobsToReadQueue(muniJobs);
+        const batchCommand = new BatchGetCommand(params);
+        const results = await dynamoDBDocumentClient.send(batchCommand);
 
-        muniResponses.forEach(async (jobResult, index) => {
-            const responseMunicipality = await jobResult.finished() as GetCommandOutput;
-            if (responseMunicipality.Item) {
-                const municipality = responseMunicipality.Item;
-                ticketData[index].municipality_picture = municipality["municipalityLogo"];
-                ticketData[index].municipality = municipality["municipality_id"];
-            } else {
-                ticketData[index].municipality_picture = "";
-                ticketData[index].municipality = "";
-            }
+        results.Responses?.[MUNICIPALITIES_TABLE].forEach((municipality, index) => {
+            ticketData[index].municipality_picture = municipality["municipalityLogo"];
+            ticketData[index].municipality = municipality["municipality_id"];
+
+            const cognitoUsername = (ticketData[index]["username"] as string).toLowerCase();
+            const userResponsePromise = cognitoClient.send(
+                new AdminGetUserCommand({
+                    UserPoolId: USER_POOL_ID,
+                    Username: cognitoUsername
+                })
+            );
+            promises.push(userResponsePromise);
         });
 
         const userResponses = await Promise.allSettled(promises);
@@ -128,13 +115,8 @@ export const updateTicketTable = async (ticket_id: string, ticketDateOpened: str
             ExpressionAttributeValues: expression_attribute_values
         };
 
-        const jobData: JobData = {
-            type: DB_UPDATE,
-            params: params
-        };
-
-        const writeJob = await addJobToWriteQueue(jobData);
-        const response = await writeJob.finished() as UpdateCommandOutput;
+        const writeCommand = new UpdateCommand(params);
+        const response = await dynamoDBDocumentClient.send(writeCommand);
         return response;
     } catch (error: any) {
         throw new BadRequestError(`Failed to update ticket: ${error.message}`);
@@ -156,13 +138,8 @@ export const getCompanyIDFromName = async (companyName: string) => {
             ProjectionExpression: "pid"
         };
 
-        const jobData: JobData = {
-            type: "DB_QUERY",
-            params: params
-        };
-
-        const readJob = await addJobToReadQueue(jobData);
-        const response = await readJob.finished() as QueryCommandOutput;
+        const readCommand = new QueryCommand(params);
+        const response = await dynamoDBDocumentClient.send(readCommand);
         const items = response.Items as Company[] || [];
 
         const company = items.length > 0 ? items[0] : null;
@@ -237,8 +214,6 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 10) 
     //     });
     // }
 
-    const getCommentCountJobs: JobData[] = [];
-
     for (let item of items) {
         const params: QueryCommandInput = {
             TableName: TICKET_UPDATE_TABLE,
@@ -250,21 +225,10 @@ export const updateCommentCounts = async (items: any[], batchSize: number = 10) 
             Select: "COUNT"
         };
 
-        const jobData: JobData = {
-            type: DB_QUERY,
-            params: params
-        };
-
-        getCommentCountJobs.push(jobData);
+        const queryCommand = new QueryCommand(params);
+        const response = await dynamoDBDocumentClient.send(queryCommand);
+        item.commentcount = response.Count || 0;
     }
-
-    const commentCountResults = await addMultipleJobsToReadQueue(getCommentCountJobs);
-
-    commentCountResults.forEach(async (jobResult, index) => {
-        const response = await jobResult.finished() as QueryCommandOutput;
-        const commentCount = response.Count || 0;
-        items[index].commentcount = commentCount;
-    });
 };
 
 export const getDistance = (origin: [number, number], destination: [number, number]): number => {
@@ -299,13 +263,9 @@ export const getMunicipality = async (latitude: number, longitude: number): Prom
             ProjectionExpression: "longitude, latitude, municipality_id",
             ExclusiveStartKey: lastEvaluatedKey
         };
-        const jobData: JobData = {
-            type: DB_SCAN,
-            params: params
-        };
 
-        const readJob = await addJobToReadQueue(jobData);
-        const responseMuni = await readJob.finished() as ScanCommandOutput;
+        const readCommand = new ScanCommand(params);
+        responseMuni = await dynamoDBDocumentClient.send(readCommand);
 
         if (responseMuni.Items) {
             items = items.concat(responseMuni.Items);
@@ -351,12 +311,9 @@ export const getTicketDateOpened = async (ticketId: string) => {
         },
         ProjectionExpression: "dateOpened"
     };
-    const jobData: JobData = {
-        type: DB_QUERY,
-        params: params
-    };
-    const readJob = await addJobToReadQueue(jobData);
-    const queryResult = await readJob.finished() as ScanCommandOutput;
+
+    const readCommand = new QueryCommand(params);
+    const queryResult = await dynamoDBDocumentClient.send(readCommand);
 
     const queryResultItems = queryResult.Items;
 

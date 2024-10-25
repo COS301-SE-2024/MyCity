@@ -14,16 +14,11 @@ import jobsRouter from "./src/routes/jobs.route";
 import giveawayRouter from "./src/routes/giveaway.route";
 
 import { corsOptions } from "./src/config/cors";
-import { processReadQueue, processWriteQueue } from "./src/config/redis.config";
 import { CustomError } from "./src/errors/CustomError";
 
 dotenv.config();
 
 const app: Express = express();
-
-// start the job processors
-processReadQueue();
-processWriteQueue();
 
 //middleware
 app.use(cors(corsOptions));

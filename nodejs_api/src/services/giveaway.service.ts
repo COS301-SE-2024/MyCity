@@ -1,8 +1,6 @@
-import { PutCommandInput, PutCommandOutput, QueryCommandInput, QueryCommandOutput, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { GIVEAWAY_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
-import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
-import { JobData } from "../types/job.types";
-import { DB_PUT, DB_QUERY, DB_SCAN, deleteCacheKey } from "../config/redis.config";
+import { PutCommand, PutCommandInput, QueryCommand, QueryCommandInput, ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
+import { dynamoDBDocumentClient, GIVEAWAY_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { deleteCacheKey } from "../config/redis.config";
 import { CustomError } from "../errors/CustomError";
 
 export const getParticipantCount = async () => {
@@ -11,13 +9,8 @@ export const getParticipantCount = async () => {
         Select: "COUNT"
     };
 
-    const jobData: JobData = {
-        type: DB_SCAN,
-        params
-    }
-
-    const job = await addJobToReadQueue(jobData);
-    const response = await job.finished() as ScanCommandOutput;
+    const command = new ScanCommand(params);
+    const response = await dynamoDBDocumentClient.send(command);
 
     return {
         count: response.Count || 0
@@ -37,13 +30,8 @@ export const addParticipant = async (formData: any) => {
         }
     };
 
-    const queryTicketJobData: JobData = {
-        type: DB_QUERY,
-        params: params
-    }
-
-    const queryJob = await addJobToReadQueue(queryTicketJobData);
-    const queryResponse = await queryJob.finished() as QueryCommandOutput;
+    const queryCommand = new QueryCommand(params);
+    const queryResponse = await dynamoDBDocumentClient.send(queryCommand);
 
     if (queryResponse.Items?.length === 0) {
         throw new CustomError("Invalid ticket number provided", 400);
@@ -70,14 +58,8 @@ export const addParticipant = async (formData: any) => {
         Item: participantDetails
     };
 
-    const jobData: JobData = {
-        type: DB_PUT,
-        params: putItemParams
-    }
-
-
-    const putItemJob = await addJobToWriteQueue(jobData);
-    const putItemResponse = await putItemJob.finished() as PutCommandOutput;
+    const putItemCommand = new PutCommand(putItemParams);
+    await dynamoDBDocumentClient.send(putItemCommand);
 
     return {
         message: "Participant added successfully",
@@ -101,13 +83,8 @@ const generateEntryId = async () => {
             }
         };
 
-        const jobData: JobData = {
-            type: DB_QUERY,
-            params: queryParticipantParams
-        }
-
-        const queryParticipantJob = await addJobToReadQueue(jobData);
-        const queryParticipantResponse = await queryParticipantJob.finished() as QueryCommandOutput;
+        const queryParticipantCommand = new QueryCommand(queryParticipantParams);
+        const queryParticipantResponse = await dynamoDBDocumentClient.send(queryParticipantCommand);
 
         if (queryParticipantResponse.Items?.length === 0) {
             participantExists = false;

@@ -1,9 +1,6 @@
-import { ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { COMPANIES_TABLE, MUNICIPALITIES_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
+import { ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
+import { COMPANIES_TABLE, dynamoDBDocumentClient, MUNICIPALITIES_TABLE, TICKETS_TABLE } from "../config/dynamodb.config";
 import { BadRequestError } from "../types/error.types";
-import { addJobToReadQueue } from "./jobs.service";
-import { DB_SCAN } from "../config/redis.config";
-import { JobData } from "../types/job.types";
 
 export const searchTickets = async (userMunicipality: string, searchTerm: string) => {
     validateSearchTerm(searchTerm);
@@ -12,14 +9,8 @@ export const searchTickets = async (userMunicipality: string, searchTerm: string
             TableName: TICKETS_TABLE
         };
 
-
-        const jobData: JobData = {
-            type: DB_SCAN,
-            params: params
-        }
-
-        const readJob = await addJobToReadQueue(jobData);
-        const response = await readJob.finished() as ScanCommandOutput;
+        const readCommand = new ScanCommand(params);
+        const response = await dynamoDBDocumentClient.send(readCommand);
         const items = response.Items || [];
 
         const filteredItems = items.filter(item =>
@@ -40,13 +31,8 @@ export const searchMunicipalities = async (searchTerm: string) => {
             TableName: MUNICIPALITIES_TABLE
         };
 
-        const jobData: JobData = {
-            type: DB_SCAN,
-            params: params
-        }
-
-        const readJob = await addJobToReadQueue(jobData);
-        const response = await readJob.finished() as ScanCommandOutput;
+        const readCommand = new ScanCommand(params);
+        const response = await dynamoDBDocumentClient.send(readCommand);
         const items = response.Items || [];
 
         const filteredItems = items.filter(item =>
@@ -65,13 +51,8 @@ export const searchAltMunicipalityTickets = async (municipalityName: string) => 
             TableName: TICKETS_TABLE
         };
 
-        const jobData: JobData = {
-            type: DB_SCAN,
-            params: params
-        }
-
-        const readJob = await addJobToReadQueue(jobData);
-        const response = await readJob.finished() as ScanCommandOutput;
+        const readCommand = new ScanCommand(params);
+        const response = await dynamoDBDocumentClient.send(readCommand);
         const items = response.Items || [];
 
         const filteredItems = items.filter(item =>
@@ -90,12 +71,8 @@ export const searchServiceProviders = async (searchTerm: string) => {
             TableName: COMPANIES_TABLE
         };
 
-        const jobData: JobData = {
-            type: DB_SCAN,
-            params: params        }
-
-        const readJob = await addJobToReadQueue(jobData);
-        const response = await readJob.finished() as ScanCommandOutput;
+        const readCommand = new ScanCommand(params);
+        const response = await dynamoDBDocumentClient.send(readCommand);
         const items = response.Items || [];
 
         const filteredItems = items.filter(item =>

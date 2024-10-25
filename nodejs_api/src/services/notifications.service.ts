@@ -1,9 +1,7 @@
-import { PutCommandInput, QueryCommandInput, QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, PutCommandInput, QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
 import { ClientError } from "../types/error.types";
-import { NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
-import { addJobToReadQueue, addJobToWriteQueue } from "./jobs.service";
-import { deleteAllCache, DB_PUT, DB_QUERY } from "../config/redis.config";
-import { JobData } from "../types/job.types";
+import { dynamoDBDocumentClient, NOTIFICATIONS_TABLE } from "../config/dynamodb.config";
+import { deleteAllCache } from "../config/redis.config";
 
 interface TokenData {
     username: string;
@@ -31,14 +29,9 @@ export const insertNotificationToken = async (tokenData: TokenData) => {
         Item: notificationItem
     };
 
-    const jobData: JobData = {
-        type: DB_PUT,
-        params: params
-    }
-
-    const writeJob = await addJobToWriteQueue(jobData);
     try {
-        await writeJob.finished();
+        const command = new PutCommand(params);
+        await dynamoDBDocumentClient.send(command);
         const accresponse = { message: "Notification Token Saved", token };
         return accresponse;
     }
@@ -56,14 +49,8 @@ export const getNotificationTokens = async (username: string) => {
         }
     };
 
-    const jobData: JobData = {
-        type: DB_QUERY,
-        params: params
-    }
-
-
-    const readJob = await addJobToReadQueue(jobData);
-    const response = await readJob.finished() as QueryCommandOutput;
+    const readCommand = new QueryCommand(params);
+    const response = await dynamoDBDocumentClient.send(readCommand);
     const items = response.Items || [];
 
     if (items.length > 0) {

@@ -1,8 +1,5 @@
-import { GetCommandInput, GetCommandOutput, ScanCommandInput, ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
-import { MUNICIPALITIES_TABLE } from "../config/dynamodb.config";
-import { addJobToReadQueue } from "./jobs.service";
-import { DB_GET, DB_SCAN } from "../config/redis.config";
-import { JobData } from "../types/job.types";
+import { GetCommand, GetCommandInput, ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
+import { dynamoDBDocumentClient, MUNICIPALITIES_TABLE } from "../config/dynamodb.config";
 
 export const getAllMunicipalities = async () => {
     const params: ScanCommandInput = {
@@ -10,23 +7,18 @@ export const getAllMunicipalities = async () => {
         ProjectionExpression: "municipality_id"
     }
 
-    const jobData: JobData = {
-        type: DB_SCAN,
-        params: params
-    }
-
-    const readJob = await addJobToReadQueue(jobData);
-    const response = await readJob.finished() as ScanCommandOutput;
+    const readCommand = new ScanCommand(params);
+    const response = await dynamoDBDocumentClient.send(readCommand);
     const municipalities = response.Items || [];
 
-       // Note that only the name of the municipality is being fetched
+    // Note that only the name of the municipality is being fetched
     // and results are sorted in ascending order
     const municipalitiesList = municipalities.sort((a, b) => a.municipality_id.localeCompare(b.municipality_id));
     return municipalitiesList;
 };
 
 export const getMunicipalityCoordinates = async (municipality: string) => {
-    const params: GetCommandInput = { 
+    const params: GetCommandInput = {
         TableName: MUNICIPALITIES_TABLE,
         Key: {
             "municipality_id": municipality
@@ -34,13 +26,8 @@ export const getMunicipalityCoordinates = async (municipality: string) => {
         ProjectionExpression: "latitude, longitude"
     };
 
-    const jobData: JobData = {
-        type: DB_GET,
-        params: params
-    }
-
-    const readJob = await addJobToReadQueue(jobData);
-    const response = await readJob.finished() as GetCommandOutput;
+    const readCommand = new GetCommand(params);
+    const response = await dynamoDBDocumentClient.send(readCommand);
     const coordinates = response.Item || null;
     return coordinates;
 };
